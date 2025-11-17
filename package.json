@@ -1,0 +1,38 @@
+{
+  "name": "upsizer",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@auth/firebase-adapter": "^2.11.1",
+    "axios": "^1.13.2",
+    "firebase": "^12.6.0",
+    "next": "^16.0.3",
+    "next-auth": "^5.0.0-beta.30",
+    "react": "^19.2.0",
+    "react-compare-image": "^3.5.12",
+    "react-dom": "^19.2.0",
+    "react-icons": "^5.5.0",
+    "replicate": "^1.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "@types/react": "^19.2.5",
+    "@types/react-dom": "^19.2.3",
+    "autoprefixer": "^10.4.22",
+    "eslint": "^9.39.1",
+    "eslint-config-next": "^16.0.3",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.18",
+    "typescript": "^5.9.3"
+  }
+}
