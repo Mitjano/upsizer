@@ -6,7 +6,7 @@ import Providers from "@/components/Providers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Free AI Image Upscaler - Enhance Photos 2x-8x | Upsizer",
+  title: "Free AI Image Upscaler - Enhance Photos 2x-8x | Pixelift",
   description: "Upscale images up to 8x with AI technology. Free, no watermarks, 10s processing. Restore old photos, enhance portraits, and improve image quality instantly.",
   keywords: [
     "AI image upscaler",

@@ -1,5 +1,5 @@
 {
-  "name": "upsizer",
+  "name": "pixelift",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -8,10 +8,10 @@
     "start": "next start",
     "lint": "next lint"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["ai", "image upscaler", "pixelift", "real-esrgan", "gfpgan"],
+  "author": "Pixelift",
   "license": "ISC",
-  "description": "",
+  "description": "AI-powered image upscaling with Real-ESRGAN and GFPGAN",
   "dependencies": {
     "@auth/firebase-adapter": "^2.11.1",
     "axios": "^1.13.2",

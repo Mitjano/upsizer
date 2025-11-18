@@ -337,13 +337,13 @@ export default function PricingPage() {
               <div className="flex items-start gap-3">
                 <FaEnvelope className="text-blue-400 mt-1 flex-shrink-0" />
                 <div>
-                  <div className="font-medium">Email us at <span className="text-blue-400">sales@upsizer.io</span> for any queries</div>
+                  <div className="font-medium">Email us at <span className="text-blue-400">sales@pixelift.pl</span> for any queries</div>
                 </div>
               </div>
             </div>
 
             <div className="mt-6 pt-6 border-t border-gray-700 text-sm text-gray-400">
-              <p>Book a 1:1 session with our experts to see how Upsizer can help your business transform images at scale</p>
+              <p>Book a 1:1 session with our experts to see how Pixelift can help your business transform images at scale</p>
             </div>
           </div>
         </div>
@@ -422,7 +422,7 @@ export default function PricingPage() {
               Start Free Trial
             </a>
             <a
-              href="mailto:sales@upsizer.io"
+              href="mailto:sales@pixelift.pl"
               className="px-8 py-4 bg-gray-700 hover:bg-gray-600 rounded-lg font-semibold text-lg transition"
             >
               Contact Sales
@@ -434,7 +434,7 @@ export default function PricingPage() {
       {/* Footer */}
       <footer className="border-t border-gray-800 mt-20">
         <div className="container mx-auto px-4 py-8 text-center text-gray-500">
-          <p>&copy; 2025 Upsizer. All rights reserved.</p>
+          <p>&copy; 2025 Pixelift. All rights reserved.</p>
         </div>
       </footer>
     </div>

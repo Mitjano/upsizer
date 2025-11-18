@@ -262,7 +262,7 @@ export default function EnhancedImageUploader() {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `upsized_${scale}x_${selectedFile?.name || "image.png"}`;
+      a.download = `pixelift_${scale}x_${selectedFile?.name || "image.png"}`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
@@ -344,7 +344,7 @@ export default function EnhancedImageUploader() {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `upsized_${scale}x_${img.file.name}`;
+        a.download = `pixelift_${scale}x_${img.file.name}`;
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
@@ -578,7 +578,7 @@ export default function EnhancedImageUploader() {
                     {item.status === 'completed' && item.upscaledUrl && (
                       <a
                         href={item.upscaledUrl}
-                        download={`upsized_${scale}x_${item.file.name}`}
+                        download={`pixelift_${scale}x_${item.file.name}`}
                         className="text-xs text-green-400 hover:underline flex items-center gap-1"
                       >
                         ✅ Download
