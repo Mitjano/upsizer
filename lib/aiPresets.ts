@@ -6,6 +6,10 @@ export interface AIPreset {
   scale: number;
   enhanceFace: boolean;
   recommended: string;
+  // New enhancement options
+  denoise?: boolean;
+  removeArtifacts?: boolean;
+  colorCorrection?: boolean;
 }
 
 export const AI_PRESETS: AIPreset[] = [
@@ -16,6 +20,9 @@ export const AI_PRESETS: AIPreset[] = [
     icon: "✨",
     scale: 1,
     enhanceFace: true,
+    denoise: true,
+    removeArtifacts: true,
+    colorCorrection: true,
     recommended: "Quality enhancement only",
   },
   {
@@ -52,6 +59,9 @@ export const AI_PRESETS: AIPreset[] = [
     icon: "📸",
     scale: 2,
     enhanceFace: true,
+    denoise: true,
+    removeArtifacts: true,
+    colorCorrection: true,
     recommended: "Old photos, vintage images",
   },
   {
@@ -61,6 +71,9 @@ export const AI_PRESETS: AIPreset[] = [
     icon: "⚡",
     scale: 8,
     enhanceFace: true,
+    denoise: true,
+    removeArtifacts: true,
+    colorCorrection: true,
     recommended: "Professional use, printing",
   },
   {

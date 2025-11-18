@@ -11,11 +11,8 @@ export async function POST(request: NextRequest) {
     const image = formData.get("image") as File;
     const scale = parseInt(formData.get("scale") as string) || 2;
     const enhanceFace = formData.get("enhanceFace") === "true";
-
-    // New enhancement options
     const denoise = formData.get("denoise") === "true";
     const removeArtifacts = formData.get("removeArtifacts") === "true";
-    const colorCorrection = formData.get("colorCorrection") === "true";
 
     if (!image) {
       return NextResponse.json(
@@ -24,45 +21,49 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Convert image to base64 data URL
+    // Read and crop image to 200x200px for FREE preview
     const bytes = await image.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    const base64 = buffer.toString("base64");
+
+    // Create a 200x200px center crop for preview
+    // This reduces processing cost dramatically
+    const sharp = require('sharp');
+    const croppedBuffer = await sharp(buffer)
+      .resize(200, 200, {
+        fit: 'cover',
+        position: 'center'
+      })
+      .toBuffer();
+
+    const base64 = croppedBuffer.toString("base64");
     const mimeType = image.type;
     const dataUrl = `data:${mimeType};base64,${base64}`;
 
-    console.log(`Processing image: ${image.name}, Scale: ${scale}x, Enhance Face: ${enhanceFace}, Denoise: ${denoise}, Remove Artifacts: ${removeArtifacts}, Color Correction: ${colorCorrection}`);
+    console.log(`Generating FREE preview: Scale ${scale}x, Enhance Face: ${enhanceFace}`);
 
     let output;
 
     if (enhanceFace) {
-      // Use GFPGAN for face enhancement + upscaling
-      console.log("Using GFPGAN for face enhancement...");
+      // Use GFPGAN for preview
       output = await replicate.run(
         "tencentarc/gfpgan:9283608cc6b7be6b65a8e44983db012355fde4132009bf99d976b2f0896856a3",
         {
           input: {
             img: dataUrl,
             scale: scale,
-            version: "v1.4", // Best quality
+            version: "v1.4",
           },
         }
       );
     } else {
-      // Use Real-ESRGAN for general upscaling
-      console.log("Using Real-ESRGAN for upscaling...");
-
-      // Real-ESRGAN supports denoise and face_enhance options
+      // Use Real-ESRGAN for preview
       const realesrganInput: any = {
         image: dataUrl,
         scale: scale,
         face_enhance: false,
       };
 
-      // Add denoising if requested (reduces grain/noise)
       if (denoise || removeArtifacts) {
-        console.log("Applying denoising/artifact removal...");
-        // Real-ESRGAN has built-in denoising when using certain versions
         realesrganInput.noise_reduction = denoise ? 0.7 : 0.5;
       }
 
@@ -74,29 +75,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Note: colorCorrection would require a separate model or post-processing
-    // For now, we log it for future implementation
-    if (colorCorrection) {
-      console.log("Color correction requested (will be implemented with additional model)");
-    }
-
-    console.log("Processing complete!");
-
-    // Output is typically a URL to the processed image
     const resultUrl = Array.isArray(output) ? output[0] : output;
 
     return NextResponse.json({
       success: true,
-      imageUrl: resultUrl,
+      previewUrl: resultUrl,
       scale: scale,
-      enhanceFace: enhanceFace,
+      message: "This is a 200x200px preview. Full image processing will use 1 credit.",
     });
 
   } catch (error: any) {
-    console.error("Error processing image:", error);
+    console.error("Error generating preview:", error);
     return NextResponse.json(
       {
-        error: "Failed to process image",
+        error: "Failed to generate preview",
         details: error.message
       },
       { status: 500 }

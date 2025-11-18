@@ -348,6 +348,66 @@ export default function PricingPage() {
           </div>
         </div>
 
+        {/* Features Section */}
+        <div className="max-w-6xl mx-auto mb-16">
+          <h2 className="text-3xl font-bold text-center mb-12">Powerful Features Included</h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Feature 1: FREE Preview */}
+            <div className="bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-xl border border-blue-500/30 p-6">
+              <div className="text-4xl mb-4">👁️</div>
+              <h3 className="text-xl font-bold mb-3">FREE Preview System</h3>
+              <p className="text-gray-400 text-sm">
+                Try before you buy! Generate a FREE 200x200px preview with all your settings before using any credits. Perfect for testing different presets.
+              </p>
+            </div>
+
+            {/* Feature 2: Batch Processing */}
+            <div className="bg-gradient-to-br from-green-500/10 to-blue-500/10 rounded-xl border border-green-500/30 p-6">
+              <div className="text-4xl mb-4">📦</div>
+              <h3 className="text-xl font-bold mb-3">Batch Processing</h3>
+              <p className="text-gray-400 text-sm">
+                Upload and process up to 50 images at once with the same settings. Perfect for photographers and content creators working with multiple files.
+              </p>
+            </div>
+
+            {/* Feature 3: AI Presets */}
+            <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-xl border border-purple-500/30 p-6">
+              <div className="text-4xl mb-4">✨</div>
+              <h3 className="text-xl font-bold mb-3">7 AI Presets</h3>
+              <p className="text-gray-400 text-sm">
+                Quality Boost, Portrait, Landscape, Art, Restoration, Maximum, and Custom modes. Each optimized for specific use cases with one-click application.
+              </p>
+            </div>
+
+            {/* Feature 4: Advanced Enhancement */}
+            <div className="bg-gradient-to-br from-orange-500/10 to-red-500/10 rounded-xl border border-orange-500/30 p-6">
+              <div className="text-4xl mb-4">🎨</div>
+              <h3 className="text-xl font-bold mb-3">Advanced Enhancements</h3>
+              <p className="text-gray-400 text-sm">
+                Denoising, JPEG artifact removal, color correction, and face enhancement. Fine-tune every aspect of your image processing.
+              </p>
+            </div>
+
+            {/* Feature 5: Scale Options */}
+            <div className="bg-gradient-to-br from-cyan-500/10 to-blue-500/10 rounded-xl border border-cyan-500/30 p-6">
+              <div className="text-4xl mb-4">⚡</div>
+              <h3 className="text-xl font-bold mb-3">Flexible Scaling</h3>
+              <p className="text-gray-400 text-sm">
+                Choose from 1x (quality only), 2x, 4x, or 8x upscaling. Enhance without resizing or scale up to 8x the original resolution.
+              </p>
+            </div>
+
+            {/* Feature 6: Real-time Comparison */}
+            <div className="bg-gradient-to-br from-yellow-500/10 to-orange-500/10 rounded-xl border border-yellow-500/30 p-6">
+              <div className="text-4xl mb-4">🔍</div>
+              <h3 className="text-xl font-bold mb-3">Interactive Comparison</h3>
+              <p className="text-gray-400 text-sm">
+                Drag to compare before and after images side-by-side. See the quality improvements in real-time with our interactive slider.
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* CTA Section */}
         <div className="text-center mt-16 bg-gradient-to-r from-green-500/10 to-blue-500/10 rounded-2xl border border-green-500/20 p-12 max-w-4xl mx-auto">
           <h2 className="text-4xl font-bold mb-4">Ready to get started?</h2>
