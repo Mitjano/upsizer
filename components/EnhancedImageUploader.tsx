@@ -202,7 +202,13 @@ export default function EnhancedImageUploader() {
       }
 
       const data = await response.json();
-      setFreePreviewUrl(data.previewUrl);
+      console.log("Preview API response:", data);
+
+      if (data.success && data.previewUrl) {
+        setFreePreviewUrl(data.previewUrl);
+      } else {
+        throw new Error("No preview URL in response");
+      }
 
     } catch (error: any) {
       console.error("Preview error:", error);
@@ -241,11 +247,17 @@ export default function EnhancedImageUploader() {
       }
 
       const data = await response.json();
-      setProgress("Processing complete!");
-      setUpscaledUrl(data.imageUrl);
+      console.log("Upscale API response:", data);
+
+      if (data.success && data.imageUrl) {
+        setProgress("Processing complete!");
+        setUpscaledUrl(data.imageUrl);
+      } else {
+        throw new Error("No image URL in response");
+      }
 
     } catch (error: any) {
-      console.error("Error:", error);
+      console.error("Upscale error:", error);
       alert(`Failed to process image: ${error.message}`);
       setProgress("");
     } finally {
