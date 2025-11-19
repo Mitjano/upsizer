@@ -9,9 +9,10 @@ import { nanoid } from "nanoid";
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const requestId = nanoid(12);
+  const { id } = await params;
 
   try {
     // 1. Authenticate API key
@@ -29,7 +30,7 @@ export async function GET(
     }
 
     // 2. Get job status
-    const jobId = params.id;
+    const jobId = id;
     const job = await getJobStatus(jobId);
 
     if (!job) {
