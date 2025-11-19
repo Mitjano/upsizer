@@ -45,8 +45,8 @@ export async function POST(request: NextRequest) {
 
     if (enhanceFace) {
       // Use GFPGAN for preview
-      output = await replicate.run(
-        "tencentarc/gfpgan:9283608cc6b7be6b65a8e44983db012355fde4132009bf99d976b2f0896856a3",
+      const prediction = await replicate.run(
+        "tencentarc/gfpgan:9283608cc6b7be6b65a8e44983db012355fde4132009bf99d976b2f0896856a3" as `${string}/${string}:${string}`,
         {
           input: {
             img: dataUrl,
@@ -55,6 +55,7 @@ export async function POST(request: NextRequest) {
           },
         }
       );
+      output = prediction;
     } else {
       // Use Real-ESRGAN for preview
       const realesrganInput: any = {
@@ -67,27 +68,32 @@ export async function POST(request: NextRequest) {
         realesrganInput.noise_reduction = denoise ? 0.7 : 0.5;
       }
 
-      output = await replicate.run(
-        "nightmareai/real-esrgan:f121d640bd286e1fdc67f9799164c1d5be36ff74576ee11c803ae5b665dd46aa",
+      const prediction = await replicate.run(
+        "nightmareai/real-esrgan:f121d640bd286e1fdc67f9799164c1d5be36ff74576ee11c803ae5b665dd46aa" as `${string}/${string}:${string}`,
         {
           input: realesrganInput,
         }
       );
+      output = prediction;
     }
 
     console.log("Replicate raw output:", JSON.stringify(output));
+    console.log("Replicate output type:", typeof output);
+    console.log("Replicate output keys:", output && typeof output === 'object' ? Object.keys(output) : 'N/A');
 
     // Handle different Replicate response formats
-    let resultUrl: string;
+    let resultUrl: string | undefined;
     if (Array.isArray(output)) {
       resultUrl = output[0];
     } else if (typeof output === 'string') {
       resultUrl = output;
     } else if (output && typeof output === 'object') {
       // Replicate might return an object with url property
-      resultUrl = (output as any).url || (output as any).output || String(output);
-    } else {
-      resultUrl = String(output);
+      resultUrl = (output as any).url || (output as any).output || (output as any)[0];
+    }
+
+    if (!resultUrl || resultUrl === '[object Object]') {
+      throw new Error(`Invalid Replicate output format: ${JSON.stringify(output)}`);
     }
 
     const responseData = {
