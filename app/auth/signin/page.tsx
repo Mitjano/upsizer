@@ -11,7 +11,7 @@ export default function SignInPage() {
         {/* Logo */}
         <Link href="/" className="flex items-center justify-center gap-2 mb-8">
           <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-blue-500 rounded-lg"></div>
-          <span className="text-2xl font-bold">Upsizer</span>
+          <span className="text-2xl font-bold">Pixelift</span>
         </Link>
 
         {/* Card */}
