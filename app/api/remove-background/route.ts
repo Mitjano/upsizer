@@ -27,18 +27,16 @@ export async function POST(request: NextRequest) {
 
     console.log('Processing background removal with BRIA RMBG 2.0...');
 
-    // Convert file to base64 data URI
+    // Convert file to Buffer (Replicate Node.js client supports Buffer directly)
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
-    const base64Image = buffer.toString('base64');
-    const dataUri = `data:${file.type};base64,${base64Image}`;
 
     // Run BRIA Remove Background Model
     const output = await replicate.run(
-      "briaai/RMBG-2.0:95fcc2a26d3899cd6c2691c900465aaeff466285a65fe84e11edb4782bd71c7",
+      "bria/remove-background",
       {
         input: {
-          image: dataUri
+          image: buffer
         }
       }
     ) as any;
