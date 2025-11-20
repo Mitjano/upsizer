@@ -44,6 +44,8 @@ export async function POST(request: NextRequest) {
     ) as any;
 
     console.log('Background removal completed');
+    console.log('Output type:', typeof output);
+    console.log('Output:', JSON.stringify(output, null, 2));
 
     // Handle output
     let imageUrl: string;
@@ -55,7 +57,8 @@ export async function POST(request: NextRequest) {
     } else if (Array.isArray(output) && output.length > 0) {
       imageUrl = output[0];
     } else {
-      throw new Error('Unexpected output format from Replicate API');
+      console.error('Unexpected output format. Output:', output);
+      throw new Error(`Unexpected output format from Replicate API: ${JSON.stringify(output)}`);
     }
 
     // Fetch the processed image
