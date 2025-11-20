@@ -1,10 +1,11 @@
-import EnhancedImageUploader from "@/components/EnhancedImageUploader";
 import FAQ from "@/components/FAQ";
 import Header from "@/components/Header";
 import DemoComparison from "@/components/DemoComparison";
+import CategoryExamples from "@/components/CategoryExamples";
 import UseCases from "@/components/UseCases";
 import EnterpriseSolutions from "@/components/EnterpriseSolutions";
 import SEOContent from "@/components/SEOContent";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -22,7 +23,7 @@ export default function Home() {
         <p className="text-xl text-gray-400 mb-4 max-w-3xl mx-auto">
           Transform low-resolution images into stunning high-quality photos with advanced AI technology.
         </p>
-        <div className="flex items-center justify-center gap-4 mb-12 flex-wrap">
+        <div className="flex items-center justify-center gap-4 mb-8 flex-wrap">
           <span className="px-4 py-2 bg-green-500/10 border border-green-500 rounded-full text-sm font-medium text-green-400">
             ⚡ Lightning Fast Processing
           </span>
@@ -34,16 +35,28 @@ export default function Home() {
           </span>
         </div>
 
+        {/* CTA Buttons */}
+        <div className="flex items-center justify-center gap-4 mb-12">
+          <Link
+            href="/dashboard"
+            className="px-8 py-4 bg-gradient-to-r from-green-500 to-blue-500 rounded-lg font-semibold text-lg hover:opacity-90 transition"
+          >
+            Start Upscaling - Free
+          </Link>
+          <Link
+            href="/pricing"
+            className="px-8 py-4 bg-gray-800 border border-gray-700 rounded-lg font-semibold text-lg hover:bg-gray-700 transition"
+          >
+            View Pricing
+          </Link>
+        </div>
+
         {/* Demo Comparison Slider */}
         <DemoComparison />
-
-        {/* Upload Section */}
-        <EnhancedImageUploader />
-
-        <p className="text-sm text-gray-500 mt-4">
-          By uploading a file or URL you agree to our Terms of Use and Privacy Policy.
-        </p>
       </section>
+
+      {/* Category Examples Section */}
+      <CategoryExamples />
 
       {/* Features Section */}
       <section id="features" className="container mx-auto px-4 py-16">

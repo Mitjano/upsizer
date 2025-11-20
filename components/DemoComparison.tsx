@@ -3,11 +3,11 @@
 import ReactCompareImage from "react-compare-image";
 
 export default function DemoComparison() {
-  // Using different images to show clear before/after difference
+  // Using different images to show clear before/after difference - RECTANGULAR format (16:9)
   // Before: Lower resolution/quality portrait
-  const beforeImage = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&q=40&blur=2";
+  const beforeImage = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=500&fit=crop&q=40&blur=2";
   // After: Higher resolution/quality version
-  const afterImage = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200&h=1200&fit=crop&q=95";
+  const afterImage = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1600&h=1000&fit=crop&q=95";
 
   return (
     <div className="max-w-5xl mx-auto mb-16">
@@ -18,7 +18,7 @@ export default function DemoComparison() {
         </p>
       </div>
 
-      <div className="relative rounded-2xl overflow-hidden border-2 border-gray-700 shadow-2xl">
+      <div className="relative rounded-2xl overflow-hidden border-2 border-gray-700 shadow-2xl max-h-[500px]">
         <div className="absolute top-4 left-4 z-10 bg-red-500/90 px-3 py-1 rounded text-sm font-semibold">
           Original (Low Quality)
         </div>

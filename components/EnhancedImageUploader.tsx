@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { useSession } from "next-auth/react";
 import { AI_PRESETS, AIPreset } from "@/lib/aiPresets";
 import ImageComparison from "./ImageComparison";
 import { FaTimes, FaInfoCircle } from "react-icons/fa";
@@ -17,6 +18,7 @@ interface BatchImageItem {
 }
 
 export default function EnhancedImageUploader() {
+  const { data: session } = useSession();
   const [dragActive, setDragActive] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -206,6 +208,21 @@ export default function EnhancedImageUploader() {
 
       if (data.success && data.previewUrl) {
         setFreePreviewUrl(data.previewUrl);
+
+        // Log usage to Firebase (preview is free, doesn't cost credits)
+        if (session?.user?.email) {
+          fetch("/api/user/log-usage", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              userId: session.user.email,
+              type: "preview",
+              scale,
+              enhanceFace,
+              imageUrl: data.previewUrl,
+            }),
+          }).catch((err) => console.error("Failed to log preview usage:", err));
+        }
       } else {
         throw new Error("No preview URL in response");
       }
@@ -252,6 +269,21 @@ export default function EnhancedImageUploader() {
       if (data.success && data.imageUrl) {
         setProgress("Processing complete!");
         setUpscaledUrl(data.imageUrl);
+
+        // Log usage to Firebase (full image costs 1 credit)
+        if (session?.user?.email) {
+          fetch("/api/user/log-usage", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              userId: session.user.email,
+              type: "full",
+              scale,
+              enhanceFace,
+              imageUrl: data.imageUrl,
+            }),
+          }).catch((err) => console.error("Failed to log usage:", err));
+        }
       } else {
         throw new Error("No image URL in response");
       }

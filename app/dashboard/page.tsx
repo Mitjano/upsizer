@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import Header from "@/components/Header";
+import EnhancedImageUploader from "@/components/EnhancedImageUploader";
 
 export default function DashboardPage() {
   const { data: session, status } = useSession();
@@ -12,8 +13,20 @@ export default function DashboardPage() {
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/auth/signin");
+    } else if (status === "authenticated" && session?.user) {
+      // Sync user data to Firebase
+      fetch("/api/user/sync", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: session.user.email, // Using email as userId
+          email: session.user.email,
+          displayName: session.user.name,
+          photoURL: session.user.image,
+        }),
+      }).catch((err) => console.error("Failed to sync user:", err));
     }
-  }, [status, router]);
+  }, [status, session, router]);
 
   if (status === "loading") {
     return (
@@ -67,49 +80,17 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Recent Activity */}
+        {/* Image Upscaler */}
         <div className="bg-gray-800/50 rounded-xl border border-gray-700 p-6 mb-8">
-          <h2 className="text-2xl font-bold mb-4">Recent Activity</h2>
-          <div className="text-center py-12 text-gray-400">
-            <svg
-              className="mx-auto h-16 w-16 mb-4 opacity-50"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-              />
-            </svg>
-            <p>No images processed yet</p>
-            <p className="text-sm mt-2">
-              Go to the home page to start upscaling images!
-            </p>
-            <a
-              href="/"
-              className="inline-block mt-4 px-6 py-2 bg-green-500 hover:bg-green-600 rounded-lg font-medium transition"
-            >
-              Start Upscaling
-            </a>
-          </div>
+          <h2 className="text-2xl font-bold mb-6">AI Image Upscaler</h2>
+          <EnhancedImageUploader />
+          <p className="text-sm text-gray-500 mt-4 text-center">
+            By uploading a file or URL you agree to our Terms of Use and Privacy Policy.
+          </p>
         </div>
 
         {/* Quick Actions */}
-        <div className="grid md:grid-cols-3 gap-6">
-          <a
-            href="/"
-            className="bg-gray-800/50 rounded-xl border border-gray-700 p-6 hover:border-green-500 transition group"
-          >
-            <div className="text-3xl mb-3 group-hover:scale-110 transition">🚀</div>
-            <h3 className="text-xl font-semibold mb-2">Upscale Image</h3>
-            <p className="text-gray-400 text-sm">
-              Process a new image with AI upscaling
-            </p>
-          </a>
-
+        <div className="grid md:grid-cols-2 gap-6">
           <a
             href="/pricing"
             className="bg-gray-800/50 rounded-xl border border-gray-700 p-6 hover:border-green-500 transition group"
