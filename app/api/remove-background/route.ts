@@ -25,20 +25,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'File too large. Maximum size is 10MB' }, { status: 400 });
     }
 
-    // Convert to base64
-    const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-    const base64Image = buffer.toString('base64');
-    const dataUri = `data:${file.type};base64,${base64Image}`;
-
     console.log('Processing background removal with BRIA RMBG 2.0...');
 
     // Run BRIA Remove Background Model
+    // Send file directly, not as base64 data URI
     const output = await replicate.run(
       "bria/remove-background:e62372ec9304f309dc216065f5c6823d477d16c1cd0f34609137d8eae79b5fd1",
       {
         input: {
-          image: dataUri
+          image: file
         }
       }
     ) as any;
