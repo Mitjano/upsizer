@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import EnhancedImageUploader from "@/components/EnhancedImageUploader";
 
 export default function DashboardPage() {
@@ -114,6 +115,9 @@ export default function DashboardPage() {
           </a>
         </div>
       </div>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }

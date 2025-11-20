@@ -4,6 +4,7 @@ import CategoryExamples from "@/components/CategoryExamples";
 import UseCases from "@/components/UseCases";
 import EnterpriseSolutions from "@/components/EnterpriseSolutions";
 import SEOContent from "@/components/SEOContent";
+import Footer from "@/components/Footer";
 import Link from "next/link";
 
 export default function Home() {
@@ -223,11 +224,7 @@ export default function Home() {
       <SEOContent />
 
       {/* Footer */}
-      <footer className="border-t border-gray-800 mt-20">
-        <div className="container mx-auto px-4 py-8 text-center text-gray-500">
-          <p>&copy; 2025 Pixelift. All rights reserved.</p>
-        </div>
-      </footer>
+      <Footer />
     </main>
   );
 }

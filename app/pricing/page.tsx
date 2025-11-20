@@ -1,6 +1,7 @@
 "use client";
 
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import { useState } from "react";
 import { FaCheck, FaDatabase, FaDownload, FaEnvelope, FaQuoteLeft, FaCog } from "react-icons/fa";
 
@@ -432,11 +433,7 @@ export default function PricingPage() {
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-gray-800 mt-20">
-        <div className="container mx-auto px-4 py-8 text-center text-gray-500">
-          <p>&copy; 2025 Pixelift. All rights reserved.</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
