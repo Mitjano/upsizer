@@ -60,11 +60,11 @@ export default function Home() {
           {/* CTA Buttons */}
           <div className="flex items-center justify-center gap-4 mb-8 flex-wrap">
             <Link
-              href="/dashboard"
+              href="/tools/upscaler"
               className="group relative px-10 py-5 bg-gradient-to-r from-green-500 to-blue-500 rounded-xl font-bold text-xl hover:shadow-2xl hover:shadow-green-500/50 transition-all duration-300 hover:scale-105 overflow-hidden"
             >
               <span className="relative z-10 flex items-center gap-2">
-                Start Free
+                Try Image Upscaler
                 <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                 </svg>
@@ -72,10 +72,10 @@ export default function Home() {
               <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </Link>
             <Link
-              href="/pricing"
-              className="px-10 py-5 bg-gray-800/80 backdrop-blur-sm border-2 border-gray-700 hover:border-green-500 rounded-xl font-bold text-xl transition-all duration-300 hover:scale-105"
+              href="/tools/remove-bg"
+              className="px-10 py-5 bg-gray-800/80 backdrop-blur-sm border-2 border-gray-700 hover:border-purple-500 rounded-xl font-bold text-xl transition-all duration-300 hover:scale-105"
             >
-              View Plans
+              Remove Background
             </Link>
           </div>
 
@@ -120,13 +120,13 @@ export default function Home() {
                 </p>
 
                 <Link
-                  href="/dashboard"
+                  href="/tools/upscaler"
                   className="group/btn inline-flex items-center gap-3 px-12 py-6 bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-400 hover:to-blue-400 rounded-2xl text-xl font-bold shadow-2xl shadow-green-500/30 hover:shadow-green-500/50 transition-all duration-300 hover:scale-105"
                 >
                   <svg className="w-7 h-7 group-hover/btn:animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                   </svg>
-                  <span>Upload Your Image Now</span>
+                  <span>Try Our AI Tools</span>
                   <svg className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                   </svg>

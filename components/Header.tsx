@@ -2,11 +2,24 @@
 
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 export default function Header() {
   const { data: session, status } = useSession();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showToolsDropdown, setShowToolsDropdown] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowToolsDropdown(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   return (
     <header className="border-b border-gray-800 bg-gray-900/95 backdrop-blur-sm sticky top-0 z-50">
@@ -19,9 +32,90 @@ export default function Header() {
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-6">
-          <Link href="/#features" className="hover:text-green-400 transition">
-            Features
-          </Link>
+          {/* Tools Dropdown */}
+          <div className="relative" ref={dropdownRef}>
+            <button
+              onClick={() => setShowToolsDropdown(!showToolsDropdown)}
+              className="flex items-center gap-1 hover:text-green-400 transition font-medium"
+            >
+              Tools
+              <svg
+                className={`w-4 h-4 transition-transform duration-200 ${
+                  showToolsDropdown ? 'rotate-180' : ''
+                }`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            {/* Dropdown Menu */}
+            {showToolsDropdown && (
+              <div className="absolute left-0 mt-2 w-72 bg-gray-800 border border-gray-700 rounded-xl shadow-2xl overflow-hidden">
+                <div className="py-2">
+                  {/* Image Upscaler */}
+                  <Link
+                    href="/tools/upscaler"
+                    onClick={() => setShowToolsDropdown(false)}
+                    className="flex items-start gap-3 px-4 py-3 hover:bg-gray-700 transition-colors"
+                  >
+                    <div className="mt-1 text-purple-400">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="font-semibold text-white">Image Upscaler</div>
+                      <div className="text-sm text-gray-400">Enhance images up to 8x resolution</div>
+                    </div>
+                  </Link>
+
+                  {/* Background Remover */}
+                  <Link
+                    href="/tools/remove-bg"
+                    onClick={() => setShowToolsDropdown(false)}
+                    className="flex items-start gap-3 px-4 py-3 hover:bg-gray-700 transition-colors"
+                  >
+                    <div className="mt-1 text-pink-400">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                      </svg>
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold text-white">Background Remover</span>
+                        <span className="px-2 py-0.5 text-xs bg-green-500 text-white rounded-full">
+                          NEW
+                        </span>
+                      </div>
+                      <div className="text-sm text-gray-400">Remove backgrounds with AI precision</div>
+                    </div>
+                  </Link>
+
+                  {/* Coming Soon - Face Restoration */}
+                  <div className="flex items-start gap-3 px-4 py-3 opacity-50 cursor-not-allowed">
+                    <div className="mt-1 text-blue-400">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold text-gray-400">Face Restoration</span>
+                        <span className="px-2 py-0.5 text-xs bg-gray-600 text-gray-300 rounded-full">
+                          SOON
+                        </span>
+                      </div>
+                      <div className="text-sm text-gray-500">Restore and enhance face photos</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
           <Link href="/pricing" className="hover:text-green-400 transition">
             Pricing
           </Link>
