@@ -54,6 +54,34 @@ export default function Home() {
       {/* Category Examples Section */}
       <CategoryExamples />
 
+      {/* Upload Teaser Section */}
+      <section className="container mx-auto px-4 py-16">
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-gradient-to-r from-green-500/10 to-blue-500/10 border-2 border-green-500/30 rounded-2xl p-12 text-center">
+            <h2 className="text-3xl font-bold mb-4">Ready to Transform Your Images?</h2>
+            <p className="text-gray-400 mb-8 text-lg">
+              Upload your image and see the AI magic in seconds. No credit card required.
+            </p>
+
+            <Link
+              href="/dashboard"
+              className="inline-block bg-gradient-to-r from-green-500 to-blue-500 hover:opacity-90 transition px-12 py-6 rounded-xl text-xl font-bold"
+            >
+              <div className="flex items-center gap-3">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                </svg>
+                Upload Your Image
+              </div>
+            </Link>
+
+            <p className="text-sm text-gray-500 mt-4">
+              Sign in with Google • 3 free credits • No watermark
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Features Section */}
       <section id="features" className="container mx-auto px-4 py-16">
         <h2 className="text-3xl font-bold text-center mb-12">
