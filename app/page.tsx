@@ -1,6 +1,5 @@
 import FAQ from "@/components/FAQ";
 import Header from "@/components/Header";
-import DemoComparison from "@/components/DemoComparison";
 import CategoryExamples from "@/components/CategoryExamples";
 import UseCases from "@/components/UseCases";
 import EnterpriseSolutions from "@/components/EnterpriseSolutions";
@@ -36,7 +35,7 @@ export default function Home() {
         </div>
 
         {/* CTA Buttons */}
-        <div className="flex items-center justify-center gap-4 mb-12">
+        <div className="flex items-center justify-center gap-4 mb-16">
           <Link
             href="/dashboard"
             className="px-8 py-4 bg-gradient-to-r from-green-500 to-blue-500 rounded-lg font-semibold text-lg hover:opacity-90 transition"
@@ -50,9 +49,6 @@ export default function Home() {
             View Pricing
           </Link>
         </div>
-
-        {/* Demo Comparison Slider */}
-        <DemoComparison />
       </section>
 
       {/* Category Examples Section */}
