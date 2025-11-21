@@ -140,18 +140,10 @@ export default function BackgroundRemover() {
     console.log('Starting save to Firebase for user:', session.user.email);
 
     try {
-      // Get image dimensions
-      console.log('Creating image bitmap to get dimensions...');
-      const img = await createImageBitmap(processedBlob);
-      const { width, height } = img;
-      console.log(`Image dimensions: ${width}x${height}`);
-
-      // Save via backend API to avoid CORS issues
+      // Save via backend API - dimensions will be calculated server-side
       const formData = new FormData();
       formData.append('originalFile', originalFile);
       formData.append('processedFile', new File([processedBlob], 'processed.png', { type: 'image/png' }));
-      formData.append('width', width.toString());
-      formData.append('height', height.toString());
 
       const response = await fetch('/api/save-image', {
         method: 'POST',

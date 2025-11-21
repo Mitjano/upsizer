@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { adminDb, adminStorage } from '@/lib/firebase-admin';
+import sharp from 'sharp';
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,8 +14,6 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData();
     const originalFile = formData.get('originalFile') as File;
     const processedFile = formData.get('processedFile') as File;
-    const width = parseInt(formData.get('width') as string);
-    const height = parseInt(formData.get('height') as string);
 
     if (!originalFile || !processedFile) {
       return NextResponse.json({ error: 'Missing files' }, { status: 400 });
@@ -22,6 +21,12 @@ export async function POST(request: NextRequest) {
 
     const userEmail = session.user.email;
     const timestamp = Date.now();
+
+    // Convert processed file buffer and get metadata using sharp
+    const processedBuffer = Buffer.from(await processedFile.arrayBuffer());
+    const imageMetadata = await sharp(processedBuffer).metadata();
+    const width = imageMetadata.width || 0;
+    const height = imageMetadata.height || 0;
 
     // Upload original to Storage
     const originalFileName = `originals/${userEmail}/${timestamp}_${originalFile.name}`;
@@ -37,7 +42,6 @@ export async function POST(request: NextRequest) {
 
     // Upload processed to Storage
     const processedFileName = `processed/${userEmail}/${timestamp}_processed.png`;
-    const processedBuffer = Buffer.from(await processedFile.arrayBuffer());
     const processedFileRef = adminStorage.bucket().file(processedFileName);
     await processedFileRef.save(processedBuffer, {
       metadata: {
