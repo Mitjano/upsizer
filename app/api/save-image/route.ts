@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { adminDb, adminStorage } from '@/lib/firebase-admin';
-import sharp from 'sharp';
 
 export async function POST(request: NextRequest) {
   try {
@@ -22,13 +21,8 @@ export async function POST(request: NextRequest) {
     const userEmail = session.user.email;
     const timestamp = Date.now();
 
-    // Convert processed file buffer and get metadata using sharp
-    // First convert to PNG to ensure compatibility
+    // Convert files to buffers
     const processedBuffer = Buffer.from(await processedFile.arrayBuffer());
-    const pngBuffer = await sharp(processedBuffer).png().toBuffer();
-    const imageMetadata = await sharp(pngBuffer).metadata();
-    const width = imageMetadata.width || 0;
-    const height = imageMetadata.height || 0;
 
     // Upload original to Storage
     const originalFileName = `originals/${userEmail}/${timestamp}_${originalFile.name}`;
@@ -45,7 +39,7 @@ export async function POST(request: NextRequest) {
     // Upload processed to Storage
     const processedFileName = `processed/${userEmail}/${timestamp}_processed.png`;
     const processedFileRef = adminStorage.bucket().file(processedFileName);
-    await processedFileRef.save(pngBuffer, {
+    await processedFileRef.save(processedBuffer, {
       metadata: {
         contentType: 'image/png',
       },
@@ -59,8 +53,6 @@ export async function POST(request: NextRequest) {
       originalPath: originalFileName,
       processedPath: processedFileName,
       fileSize: originalFile.size,
-      width,
-      height,
       createdAt: new Date(),
       userId: userEmail,
     });
