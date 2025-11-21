@@ -23,8 +23,10 @@ export async function POST(request: NextRequest) {
     const timestamp = Date.now();
 
     // Convert processed file buffer and get metadata using sharp
+    // First convert to PNG to ensure compatibility
     const processedBuffer = Buffer.from(await processedFile.arrayBuffer());
-    const imageMetadata = await sharp(processedBuffer).metadata();
+    const pngBuffer = await sharp(processedBuffer).png().toBuffer();
+    const imageMetadata = await sharp(pngBuffer).metadata();
     const width = imageMetadata.width || 0;
     const height = imageMetadata.height || 0;
 
@@ -43,7 +45,7 @@ export async function POST(request: NextRequest) {
     // Upload processed to Storage
     const processedFileName = `processed/${userEmail}/${timestamp}_processed.png`;
     const processedFileRef = adminStorage.bucket().file(processedFileName);
-    await processedFileRef.save(processedBuffer, {
+    await processedFileRef.save(pngBuffer, {
       metadata: {
         contentType: 'image/png',
       },
