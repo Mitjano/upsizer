@@ -5,14 +5,14 @@ service firebase.storage {
     // Allow public read, but authenticated write for originals
     match /originals/{userEmail}/{allPaths=**} {
       allow read: if true; // Public read access
-      allow write: if request.auth != null && request.auth.token.email == userEmail;
+      allow write: if request.auth != null;
       allow delete: if request.auth != null && request.auth.token.email == userEmail;
     }
 
     // Allow public read, but authenticated write for processed images
     match /processed/{userEmail}/{allPaths=**} {
       allow read: if true; // Public read access
-      allow write: if request.auth != null && request.auth.token.email == userEmail;
+      allow write: if request.auth != null;
       allow delete: if request.auth != null && request.auth.token.email == userEmail;
     }
   }

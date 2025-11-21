@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import { db, storage } from '@/lib/firebase';
 import { collection, query, where, orderBy, getDocs, deleteDoc, doc, Timestamp } from 'firebase/firestore';
-import { ref, deleteObject } from 'firebase/storage';
+import { ref, deleteObject, uploadBytes } from 'firebase/storage';
 
 interface ProcessedImage {
   id: string;
@@ -157,21 +157,43 @@ export default function BackgroundRemover() {
       const { width, height } = img;
       console.log(`Image dimensions: ${width}x${height}`);
 
-      // Save via backend API to avoid CORS issues
-      const formData = new FormData();
-      formData.append('originalFile', originalFile);
-      formData.append('processedFile', new File([processedBlob], 'processed.png', { type: 'image/png' }));
-      formData.append('width', width.toString());
-      formData.append('height', height.toString());
+      const timestamp = Date.now();
+      const userEmail = session.user.email;
 
+      // Upload original file to Firebase Storage (client-side)
+      const originalPath = `originals/${userEmail}/${timestamp}_${originalFile.name}`;
+      const originalRef = ref(storage, originalPath);
+      console.log('Uploading original to Storage:', originalPath);
+      await uploadBytes(originalRef, originalFile);
+      console.log('Original uploaded successfully');
+
+      // Upload processed file to Firebase Storage (client-side)
+      const processedPath = `processed/${userEmail}/${timestamp}_processed.png`;
+      const processedRef = ref(storage, processedPath);
+      console.log('Uploading processed to Storage:', processedPath);
+      await uploadBytes(processedRef, processedBlob);
+      console.log('Processed uploaded successfully');
+
+      // Save metadata via backend API
       const response = await fetch('/api/save-image', {
         method: 'POST',
-        body: formData,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          originalFilename: originalFile.name,
+          originalPath,
+          processedPath,
+          fileSize: originalFile.size,
+          width,
+          height,
+          userId: userEmail,
+        }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to save image');
+        throw new Error(errorData.error || 'Failed to save metadata');
       }
 
       const result = await response.json();
