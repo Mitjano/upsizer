@@ -2,6 +2,8 @@ import { getPublishedPosts } from "@/lib/blog";
 import Link from "next/link";
 import Image from "next/image";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: "Blog - Pixelift",
   description: "Latest articles, tutorials, and insights about AI-powered image enhancement",

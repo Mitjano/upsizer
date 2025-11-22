@@ -1,7 +1,9 @@
-import { getPostBySlug, getPublishedPosts } from "@/lib/blog";
+import { getPostBySlug } from "@/lib/blog";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+
+export const dynamic = 'force-dynamic';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -21,13 +23,6 @@ export async function generateMetadata({ params }: PageProps) {
     title: `${post.title} - Pixelift Blog`,
     description: post.excerpt,
   };
-}
-
-export async function generateStaticParams() {
-  const posts = await getPublishedPosts();
-  return posts.map((post) => ({
-    slug: post.slug,
-  }));
 }
 
 export default async function BlogPostPage({ params }: PageProps) {
