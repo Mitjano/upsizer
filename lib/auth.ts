@@ -4,6 +4,7 @@ import GoogleProvider from "next-auth/providers/google";
 // Admin emails - add your admin emails here
 const ADMIN_EMAILS = [
   "admin@pixelift.pl",
+  "michalchmielarz00@gmail.com",
   // Add more admin emails as needed
 ];
 
