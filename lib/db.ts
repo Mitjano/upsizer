@@ -772,3 +772,197 @@ export function trackEmailTemplateUsage(id: string): void {
     writeJSON(EMAIL_TEMPLATES_FILE, templates);
   }
 }
+
+// ===================
+// Reports
+// ===================
+
+export interface Report {
+  id: string;
+  name: string;
+  type: 'users' | 'usage' | 'revenue' | 'campaigns' | 'custom';
+  format: 'pdf' | 'csv' | 'json';
+  dateRange: {
+    start: string;
+    end: string;
+  };
+  filters?: Record<string, any>;
+  createdAt: string;
+  createdBy: string;
+  fileSize?: number;
+  downloadCount: number;
+  lastDownloadedAt?: string;
+}
+
+const REPORTS_FILE = path.join(DATA_DIR, 'reports.json');
+
+function ensureReportsFile() {
+  if (!fs.existsSync(REPORTS_FILE)) {
+    fs.writeFileSync(REPORTS_FILE, JSON.stringify([], null, 2));
+  }
+}
+
+export function getAllReports(): Report[] {
+  ensureReportsFile();
+  const data = fs.readFileSync(REPORTS_FILE, 'utf-8');
+  return JSON.parse(data);
+}
+
+export function getReportById(id: string): Report | null {
+  const reports = getAllReports();
+  return reports.find(r => r.id === id) || null;
+}
+
+export function createReport(data: Omit<Report, 'id' | 'createdAt' | 'downloadCount'>): Report {
+  const reports = getAllReports();
+
+  const report: Report = {
+    id: nanoid(),
+    ...data,
+    createdAt: new Date().toISOString(),
+    downloadCount: 0,
+  };
+
+  reports.push(report);
+  fs.writeFileSync(REPORTS_FILE, JSON.stringify(reports, null, 2));
+
+  return report;
+}
+
+export function updateReport(id: string, updates: Partial<Report>): Report | null {
+  const reports = getAllReports();
+  const index = reports.findIndex(r => r.id === id);
+
+  if (index === -1) return null;
+
+  reports[index] = { ...reports[index], ...updates };
+  fs.writeFileSync(REPORTS_FILE, JSON.stringify(reports, null, 2));
+
+  return reports[index];
+}
+
+export function deleteReport(id: string): boolean {
+  const reports = getAllReports();
+  const filtered = reports.filter(r => r.id !== id);
+
+  if (filtered.length === reports.length) return false;
+
+  fs.writeFileSync(REPORTS_FILE, JSON.stringify(filtered, null, 2));
+  return true;
+}
+
+export function trackReportDownload(id: string): void {
+  const reports = getAllReports();
+  const index = reports.findIndex(r => r.id === id);
+
+  if (index !== -1) {
+    reports[index].downloadCount += 1;
+    reports[index].lastDownloadedAt = new Date().toISOString();
+    fs.writeFileSync(REPORTS_FILE, JSON.stringify(reports, null, 2));
+  }
+}
+
+// Generate report data based on type
+export function generateReportData(type: Report['type'], dateRange: Report['dateRange'], filters?: Record<string, any>) {
+  const startDate = new Date(dateRange.start);
+  const endDate = new Date(dateRange.end);
+
+  switch (type) {
+    case 'users': {
+      let users = getAllUsers().filter(u => {
+        const createdAt = new Date(u.createdAt);
+        return createdAt >= startDate && createdAt <= endDate;
+      });
+
+      if (filters?.status) {
+        users = users.filter(u => u.status === filters.status);
+      }
+
+      return {
+        summary: {
+          total: users.length,
+          active: users.filter(u => u.status === 'active').length,
+          inactive: users.filter(u => u.status === 'inactive').length,
+        },
+        data: users.map(u => ({
+          id: u.id,
+          name: u.name,
+          email: u.email,
+          status: u.status,
+          createdAt: u.createdAt,
+          credits: u.credits,
+        })),
+      };
+    }
+
+    case 'usage': {
+      let usage = getAllUsage().filter(u => {
+        const createdAt = new Date(u.createdAt);
+        return createdAt >= startDate && createdAt <= endDate;
+      });
+
+      if (filters?.userId) {
+        usage = usage.filter(u => u.userId === filters.userId);
+      }
+
+      return {
+        summary: {
+          total: usage.length,
+          totalCreditsUsed: usage.reduce((sum, u) => sum + u.creditsUsed, 0),
+        },
+        data: usage,
+      };
+    }
+
+    case 'revenue': {
+      let transactions = getAllTransactions().filter(t => {
+        const createdAt = new Date(t.createdAt);
+        return createdAt >= startDate && createdAt <= endDate;
+      });
+
+      if (filters?.status) {
+        transactions = transactions.filter(t => t.status === filters.status);
+      }
+
+      const completed = transactions.filter(t => t.status === 'completed');
+
+      return {
+        summary: {
+          total: transactions.length,
+          completed: completed.length,
+          totalRevenue: completed.reduce((sum, t) => sum + t.amount, 0),
+          averageTransaction: completed.length > 0
+            ? completed.reduce((sum, t) => sum + t.amount, 0) / completed.length
+            : 0,
+        },
+        data: transactions,
+      };
+    }
+
+    case 'campaigns': {
+      let campaigns = getAllCampaigns().filter(c => {
+        const createdAt = new Date(c.createdAt);
+        return createdAt >= startDate && createdAt <= endDate;
+      });
+
+      if (filters?.status) {
+        campaigns = campaigns.filter(c => c.status === filters.status);
+      }
+
+      return {
+        summary: {
+          total: campaigns.length,
+          active: campaigns.filter(c => c.status === 'active').length,
+          paused: campaigns.filter(c => c.status === 'paused').length,
+          totalSpent: campaigns.reduce((sum, c) => sum + c.spent, 0),
+          totalImpressions: campaigns.reduce((sum, c) => sum + c.impressions, 0),
+          totalClicks: campaigns.reduce((sum, c) => sum + c.clicks, 0),
+        },
+        data: campaigns,
+      };
+    }
+
+    default:
+      return { summary: {}, data: [] };
+  }
+}

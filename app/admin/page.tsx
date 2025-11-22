@@ -228,6 +228,15 @@ export default async function AdminDashboard() {
             <h3 className="text-lg font-bold mb-1">Email Templates</h3>
             <p className="text-gray-400 text-sm">Manage email content</p>
           </Link>
+
+          <Link
+            href="/admin/reports"
+            className="bg-gradient-to-br from-sky-500/20 to-sky-600/10 border border-sky-500/40 hover:border-sky-500 rounded-xl p-6 transition-all group hover:scale-105"
+          >
+            <div className="text-4xl mb-3 group-hover:scale-110 transition">📊</div>
+            <h3 className="text-lg font-bold mb-1">Reports</h3>
+            <p className="text-gray-400 text-sm">Generate data reports</p>
+          </Link>
         </div>
       </div>
 
