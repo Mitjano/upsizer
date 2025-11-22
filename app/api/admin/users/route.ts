@@ -1,17 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
-import fs from 'fs';
-import path from 'path';
-
-const USERS_FILE = path.join(process.cwd(), 'data', 'users.json');
-
-// Ensure file exists
-if (!fs.existsSync(path.dirname(USERS_FILE))) {
-  fs.mkdirSync(path.dirname(USERS_FILE), { recursive: true });
-}
-if (!fs.existsSync(USERS_FILE)) {
-  fs.writeFileSync(USERS_FILE, JSON.stringify([]));
-}
+import { getAllUsers, updateUser } from '@/lib/db';
 
 export async function GET(request: NextRequest) {
   try {
@@ -21,7 +10,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const users = JSON.parse(fs.readFileSync(USERS_FILE, 'utf-8'));
+    const users = getAllUsers();
 
     return NextResponse.json({ users });
   } catch (error) {
@@ -39,29 +28,19 @@ export async function PATCH(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { email, credits, role, status } = body;
+    const { userId, updates } = body;
 
-    const users = JSON.parse(fs.readFileSync(USERS_FILE, 'utf-8'));
-    const userIndex = users.findIndex((u: any) => u.email === email);
+    if (!userId) {
+      return NextResponse.json({ error: 'User ID required' }, { status: 400 });
+    }
 
-    if (userIndex === -1) {
+    const updatedUser = updateUser(userId, updates);
+
+    if (!updatedUser) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    // Update user
-    if (credits !== undefined) {
-      users[userIndex].credits = credits;
-    }
-    if (role !== undefined) {
-      users[userIndex].role = role;
-    }
-    if (status !== undefined) {
-      users[userIndex].status = status;
-    }
-
-    fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
-
-    return NextResponse.json({ success: true, user: users[userIndex] });
+    return NextResponse.json({ success: true, user: updatedUser });
   } catch (error) {
     console.error('User update error:', error);
     return NextResponse.json({ error: 'Failed to update user' }, { status: 500 });

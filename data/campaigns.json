@@ -1,0 +1,45 @@
+[
+  {
+    "name": "Google Ads - Image Upscaling",
+    "type": "google_ads",
+    "status": "active",
+    "budget": 5000,
+    "spent": 3245.5,
+    "impressions": 125400,
+    "clicks": 3210,
+    "conversions": 156,
+    "startDate": "2025-01-01T00:00:00.000Z",
+    "id": "xfW1nqvEx97o3nlMF9uLX",
+    "createdAt": "2025-11-22T20:24:35.067Z",
+    "updatedAt": "2025-11-22T20:24:35.067Z"
+  },
+  {
+    "name": "Facebook Ads - AI Tools",
+    "type": "facebook_ads",
+    "status": "active",
+    "budget": 3000,
+    "spent": 2150.75,
+    "impressions": 89500,
+    "clicks": 2145,
+    "conversions": 98,
+    "startDate": "2025-01-15T00:00:00.000Z",
+    "id": "cEBM1oDHHi5WuF9DlFgaM",
+    "createdAt": "2025-11-22T20:24:35.067Z",
+    "updatedAt": "2025-11-22T20:24:35.067Z"
+  },
+  {
+    "name": "Email Campaign - Pro Features",
+    "type": "email",
+    "status": "completed",
+    "budget": 500,
+    "spent": 450,
+    "impressions": 45000,
+    "clicks": 1250,
+    "conversions": 67,
+    "startDate": "2025-02-01T00:00:00.000Z",
+    "endDate": "2025-02-28T00:00:00.000Z",
+    "id": "yXU2touNug7QAPiD6X8yd",
+    "createdAt": "2025-11-22T20:24:35.067Z",
+    "updatedAt": "2025-11-22T20:24:35.067Z"
+  }
+]
