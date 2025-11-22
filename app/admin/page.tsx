@@ -73,21 +73,21 @@ export default async function AdminDashboard() {
         </h2>
         <div className="grid md:grid-cols-4 gap-4">
           <Link
-            href="/admin/blog/new"
+            href="/admin/analytics"
             className="bg-gradient-to-br from-green-500/20 to-green-600/10 border border-green-500/40 hover:border-green-500 rounded-xl p-6 transition-all group hover:scale-105"
+          >
+            <div className="text-4xl mb-3 group-hover:scale-110 transition">📈</div>
+            <h3 className="text-lg font-bold mb-1">Analytics</h3>
+            <p className="text-gray-400 text-sm">Traffic & performance stats</p>
+          </Link>
+
+          <Link
+            href="/admin/blog/new"
+            className="bg-gradient-to-br from-blue-500/20 to-blue-600/10 border border-blue-500/40 hover:border-blue-500 rounded-xl p-6 transition-all group hover:scale-105"
           >
             <div className="text-4xl mb-3 group-hover:scale-110 transition">✍️</div>
             <h3 className="text-lg font-bold mb-1">Write New Post</h3>
             <p className="text-gray-400 text-sm">Create a new blog article</p>
-          </Link>
-
-          <Link
-            href="/admin/blog"
-            className="bg-gradient-to-br from-blue-500/20 to-blue-600/10 border border-blue-500/40 hover:border-blue-500 rounded-xl p-6 transition-all group hover:scale-105"
-          >
-            <div className="text-4xl mb-3 group-hover:scale-110 transition">📚</div>
-            <h3 className="text-lg font-bold mb-1">Manage Posts</h3>
-            <p className="text-gray-400 text-sm">Edit or delete existing posts</p>
           </Link>
 
           <Link
@@ -97,6 +97,42 @@ export default async function AdminDashboard() {
             <div className="text-4xl mb-3 group-hover:scale-110 transition">👥</div>
             <h3 className="text-lg font-bold mb-1">User Management</h3>
             <p className="text-gray-400 text-sm">View and manage users</p>
+          </Link>
+
+          <Link
+            href="/admin/marketing"
+            className="bg-gradient-to-br from-pink-500/20 to-pink-600/10 border border-pink-500/40 hover:border-pink-500 rounded-xl p-6 transition-all group hover:scale-105"
+          >
+            <div className="text-4xl mb-3 group-hover:scale-110 transition">🎯</div>
+            <h3 className="text-lg font-bold mb-1">Marketing</h3>
+            <p className="text-gray-400 text-sm">Manage ad campaigns</p>
+          </Link>
+
+          <Link
+            href="/admin/finance"
+            className="bg-gradient-to-br from-yellow-500/20 to-yellow-600/10 border border-yellow-500/40 hover:border-yellow-500 rounded-xl p-6 transition-all group hover:scale-105"
+          >
+            <div className="text-4xl mb-3 group-hover:scale-110 transition">💰</div>
+            <h3 className="text-lg font-bold mb-1">Finance</h3>
+            <p className="text-gray-400 text-sm">Revenue & transactions</p>
+          </Link>
+
+          <Link
+            href="/admin/seo"
+            className="bg-gradient-to-br from-indigo-500/20 to-indigo-600/10 border border-indigo-500/40 hover:border-indigo-500 rounded-xl p-6 transition-all group hover:scale-105"
+          >
+            <div className="text-4xl mb-3 group-hover:scale-110 transition">🔍</div>
+            <h3 className="text-lg font-bold mb-1">SEO Tools</h3>
+            <p className="text-gray-400 text-sm">Optimize rankings</p>
+          </Link>
+
+          <Link
+            href="/admin/system"
+            className="bg-gradient-to-br from-red-500/20 to-red-600/10 border border-red-500/40 hover:border-red-500 rounded-xl p-6 transition-all group hover:scale-105"
+          >
+            <div className="text-4xl mb-3 group-hover:scale-110 transition">⚡</div>
+            <h3 className="text-lg font-bold mb-1">System</h3>
+            <p className="text-gray-400 text-sm">Logs & monitoring</p>
           </Link>
 
           <Link

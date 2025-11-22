@@ -11,6 +11,11 @@ const navigation = [
     icon: "📊",
   },
   {
+    name: "Analytics",
+    href: "/admin/analytics",
+    icon: "📈",
+  },
+  {
     name: "Blog Posts",
     href: "/admin/blog",
     icon: "📝",
@@ -19,6 +24,26 @@ const navigation = [
     name: "Users",
     href: "/admin/users",
     icon: "👥",
+  },
+  {
+    name: "Marketing",
+    href: "/admin/marketing",
+    icon: "🎯",
+  },
+  {
+    name: "Finance",
+    href: "/admin/finance",
+    icon: "💰",
+  },
+  {
+    name: "SEO Tools",
+    href: "/admin/seo",
+    icon: "🔍",
+  },
+  {
+    name: "System",
+    href: "/admin/system",
+    icon: "⚡",
   },
   {
     name: "Settings",
