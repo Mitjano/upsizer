@@ -104,12 +104,20 @@ export default function BackgroundRemover() {
         throw new Error(errorData.error || 'Failed to process image');
       }
 
-      const blob = await response.blob();
+      const data = await response.json();
+
+      // Convert base64 to blob for display
+      const imageData = atob(data.imageData);
+      const arrayBuffer = new Uint8Array(imageData.length);
+      for (let i = 0; i < imageData.length; i++) {
+        arrayBuffer[i] = imageData.charCodeAt(i);
+      }
+      const blob = new Blob([arrayBuffer], { type: 'image/png' });
       const processedUrl = URL.createObjectURL(blob);
       setProcessedImage(processedUrl);
 
-      // Upload to Firebase Storage and save metadata to Firestore
-      await saveProcessedImage(file, blob);
+      // Save metadata with Replicate URL to Firestore (no Firebase Storage upload)
+      await saveProcessedImage(file, data.imageUrl);
 
       // Reload images list
       await loadProcessedImages();
@@ -121,23 +129,26 @@ export default function BackgroundRemover() {
     }
   };
 
-  const saveProcessedImage = async (originalFile: File, processedBlob: Blob) => {
+  const saveProcessedImage = async (originalFile: File, replicateUrl: string) => {
     if (!session?.user?.email) {
       console.log('User not logged in, skipping save');
       throw new Error('You must be logged in to save images');
     }
 
-    console.log('Starting save to Firebase for user:', session.user.email);
+    console.log('Starting save to Firestore for user:', session.user.email);
 
     try {
-      // Save via backend API - dimensions will be calculated server-side
-      const formData = new FormData();
-      formData.append('originalFile', originalFile);
-      formData.append('processedFile', new File([processedBlob], 'processed.png', { type: 'image/png' }));
-
+      // Save only metadata to Firestore with Replicate URL (no Firebase Storage upload)
       const response = await fetch('/api/save-image', {
         method: 'POST',
-        body: formData,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          originalFilename: originalFile.name,
+          replicateUrl: replicateUrl,
+          fileSize: originalFile.size,
+        }),
       });
 
       if (!response.ok) {
@@ -146,9 +157,9 @@ export default function BackgroundRemover() {
       }
 
       const result = await response.json();
-      console.log('Image saved successfully:', result);
+      console.log('Image metadata saved successfully:', result);
     } catch (err: any) {
-      console.error('Error saving to Firebase:', err);
+      console.error('Error saving to Firestore:', err);
       throw new Error(`Failed to save image: ${err.message || 'Unknown error'}`);
     }
   };

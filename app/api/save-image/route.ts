@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
-import { adminDb, adminStorage } from '@/lib/firebase-admin';
+import { adminDb } from '@/lib/firebase-admin';
 
 export async function POST(request: NextRequest) {
   try {
@@ -10,39 +10,35 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const formData = await request.formData();
-    const originalFile = formData.get('originalFile') as File;
-    const processedFile = formData.get('processedFile') as File;
+    const body = await request.json();
+    const { originalFilename, replicateUrl, fileSize } = body;
 
-    if (!originalFile || !processedFile) {
-      return NextResponse.json({ error: 'Missing files' }, { status: 400 });
+    if (!originalFilename || !replicateUrl) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
     const userEmail = session.user.email;
-    const timestamp = Date.now();
 
-    // bgremover.pl doesn't save images to storage at all - they just keep metadata
-    // We'll store the processed image URL directly (from Replicate) to avoid decoder issues
-    // This is simpler, faster, and avoids Firebase Storage decoder errors entirely
-
-    // Just save metadata to Firestore with the blob URL (client handles the actual file)
+    // bgremover.pl approach: Store the Replicate CDN URL directly in Firestore
+    // No Firebase Storage upload = no decoder errors
+    // The Replicate URL is temporary but works for the session
     const docRef = await adminDb.collection('processedImages').add({
-      originalFilename: originalFile.name,
-      processedPath: '', // No storage path - image stays in browser memory
-      fileSize: originalFile.size,
+      originalFilename,
+      processedPath: replicateUrl, // Store Replicate URL directly - no Firebase Storage
+      fileSize: fileSize || 0,
       createdAt: new Date(),
       userId: userEmail,
     });
 
-    console.log('Metadata saved with ID:', docRef.id);
+    console.log('Image metadata saved with ID:', docRef.id, 'URL:', replicateUrl);
 
     return NextResponse.json({
       success: true,
       id: docRef.id,
-      processedPath: '', // No storage path - image handled by client
+      processedPath: replicateUrl,
     });
   } catch (error: any) {
-    console.error('Error saving image:', error);
+    console.error('Error saving image metadata:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to save image' },
       { status: 500 }

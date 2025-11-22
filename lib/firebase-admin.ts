@@ -13,7 +13,8 @@ if (getApps().length === 0) {
       clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
       privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(/\\n/g, "\n"),
     }),
-    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+    // Remove storageBucket to prevent Firestore from validating URLs as Storage paths
+    // We store Replicate URLs directly, not Firebase Storage paths
   });
   adminDb = getFirestore(app);
   adminStorage = getStorage(app);

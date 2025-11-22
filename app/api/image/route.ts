@@ -11,15 +11,12 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Missing path parameter' }, { status: 400 });
     }
 
-    // Get the download URL from Firebase Storage
-    const storageRef = ref(storage, path);
-    const downloadURL = await getDownloadURL(storageRef);
-
-    // Fetch the image from Firebase Storage
-    const imageResponse = await fetch(downloadURL);
+    // Path is now a full Replicate URL (no Firebase Storage lookup needed)
+    // Just proxy it through our API to avoid CORS issues
+    const imageResponse = await fetch(path);
 
     if (!imageResponse.ok) {
-      throw new Error('Failed to fetch image from storage');
+      throw new Error('Failed to fetch image from Replicate');
     }
 
     const imageBuffer = await imageResponse.arrayBuffer();

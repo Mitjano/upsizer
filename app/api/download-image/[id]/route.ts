@@ -29,18 +29,27 @@ export async function GET(
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    // Download processed image from Firebase Storage (already PNG from processing)
-    const processedPath = imageData.processedPath;
-    const file = adminStorage.bucket().file(processedPath);
+    // Download processed image from Replicate URL (no Firebase Storage)
+    const replicateUrl = imageData.processedPath;
 
-    const [fileBuffer] = await file.download();
+    if (!replicateUrl) {
+      return NextResponse.json({ error: 'Image URL not found' }, { status: 404 });
+    }
+
+    // Fetch image from Replicate CDN
+    const imageResponse = await fetch(replicateUrl);
+    if (!imageResponse.ok) {
+      throw new Error('Failed to fetch image from Replicate');
+    }
+
+    const imageBuffer = await imageResponse.arrayBuffer();
 
     // Get original filename without extension
     const originalFilename = imageData.originalFilename || 'image';
     const baseFilename = originalFilename.split('.')[0];
     const downloadFilename = `${baseFilename}_processed.png`;
 
-    return new Response(new Uint8Array(fileBuffer), {
+    return new Response(new Uint8Array(imageBuffer), {
       status: 200,
       headers: {
         'Content-Type': 'image/png',

@@ -100,12 +100,11 @@ export async function POST(request: NextRequest) {
     const imageBlob = await imageResponse.blob();
     const imageBuffer = await imageBlob.arrayBuffer();
 
-    return new NextResponse(Buffer.from(imageBuffer), {
-      status: 200,
-      headers: {
-        'Content-Type': 'image/png',
-        'Content-Disposition': 'attachment; filename="removed-background.png"',
-      },
+    // Return both the image blob AND the Replicate URL in the response
+    // Frontend needs the URL to save to Firestore (avoiding Firebase Storage decoder errors)
+    return NextResponse.json({
+      imageUrl: imageUrl,  // Replicate CDN URL
+      imageData: Buffer.from(imageBuffer).toString('base64'),  // Base64 for immediate display
     });
   } catch (error: any) {
     console.error('Error removing background:', error);
