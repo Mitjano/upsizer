@@ -119,10 +119,5 @@ export async function deletePost(id: string): Promise<boolean> {
   }
 }
 
-// Helper function to generate slug from title
-export function generateSlug(title: string): string {
-  return title
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-}
+// Re-export generateSlug from blog-utils for backwards compatibility
+export { generateSlug } from "./blog-utils";
