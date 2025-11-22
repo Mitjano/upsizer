@@ -14,10 +14,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No image provided' }, { status: 400 });
     }
 
-    // Validate file type
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    // Validate file type - NO WEBP to avoid Firebase decoder errors
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
     if (!allowedTypes.includes(file.type)) {
-      return NextResponse.json({ error: 'Invalid file type. Please upload JPG, PNG, or WebP' }, { status: 400 });
+      return NextResponse.json({ error: 'Invalid file type. Please upload JPG or PNG' }, { status: 400 });
     }
 
     // Validate file size (10MB)
@@ -32,12 +32,10 @@ export async function POST(request: NextRequest) {
     const buffer = Buffer.from(arrayBuffer);
     const base64 = buffer.toString('base64');
 
-    // Determine MIME type
+    // Determine MIME type - only JPG/PNG supported
     let mimeType = 'image/jpeg';
     if (file.type === 'image/png') {
       mimeType = 'image/png';
-    } else if (file.type === 'image/webp') {
-      mimeType = 'image/webp';
     }
 
     const dataURI = `data:${mimeType};base64,${base64}`;
