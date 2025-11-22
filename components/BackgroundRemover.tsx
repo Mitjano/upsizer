@@ -3,47 +3,47 @@
 import { useState, useCallback, useEffect } from 'react';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
-import { Timestamp } from 'firebase/firestore';
 
-interface ProcessedImage {
+interface ImageData {
   id: string;
   originalFilename: string;
-  originalPath: string;
-  processedPath: string;
   fileSize: number;
   width: number;
   height: number;
-  createdAt: Timestamp;
-  userId?: string;
+  processedPath: string; // Replicate URL
+  createdAt: string;
 }
 
-// Helper function to convert storage path to proxy URL
-const getProxyUrl = (path: string) => {
-  return `/api/image?path=${encodeURIComponent(path)}`;
-};
+interface UploadQueueItem {
+  id: string;
+  file: File;
+  status: 'pending' | 'uploading' | 'completed' | 'failed';
+  progress: number;
+  error?: string;
+  resultImageId?: string;
+}
 
 export default function BackgroundRemover() {
   const { data: session } = useSession();
-  const [originalImage, setOriginalImage] = useState<string | null>(null);
-  const [processedImage, setProcessedImage] = useState<string | null>(null);
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [images, setImages] = useState<ImageData[]>([]);
+  const [uploadQueue, setUploadQueue] = useState<UploadQueueItem[]>([]);
+  const [isProcessingQueue, setIsProcessingQueue] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isDragActive, setIsDragActive] = useState(false);
-  const [processedImages, setProcessedImages] = useState<ProcessedImage[]>([]);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
   const [isLoadingImages, setIsLoadingImages] = useState(true);
 
-  // Load user's processed images from API
+  // Load images on mount
   useEffect(() => {
-    loadProcessedImages();
+    fetchImages();
   }, [session]);
 
-  const loadProcessedImages = async () => {
+  const fetchImages = async () => {
     if (!session?.user?.email) {
       setIsLoadingImages(false);
       return;
     }
 
-    setIsLoadingImages(true);
     try {
       const response = await fetch('/api/get-images');
       if (!response.ok) {
@@ -51,143 +51,206 @@ export default function BackgroundRemover() {
       }
 
       const data = await response.json();
-      const images: ProcessedImage[] = data.images.map((img: any) => ({
-        ...img,
-        createdAt: new Date(img.createdAt) as any,
-      }));
-
-      setProcessedImages(images);
+      setImages(data.images || []);
     } catch (err) {
-      console.error('Error loading images:', err);
+      console.error('Failed to fetch images:', err);
     } finally {
       setIsLoadingImages(false);
     }
   };
 
-  const handleFile = async (file: File) => {
-    if (!file) return;
+  const handleDragEnter = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  };
 
-    // Validate file type
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-    if (!allowedTypes.includes(file.type)) {
-      setError('Please upload a valid image (JPG, PNG, or WebP)');
-      return;
-    }
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  };
 
-    // Validate file size (10MB)
-    if (file.size > 10 * 1024 * 1024) {
-      setError('File size must be less than 10MB');
-      return;
-    }
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
 
-    setError(null);
-    setProcessedImage(null);
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
 
-    // Preview original
-    const reader = new FileReader();
-    reader.onload = (e) => setOriginalImage(e.target?.result as string);
-    reader.readAsDataURL(file);
-
-    // Process
-    setIsProcessing(true);
-    try {
-      const formData = new FormData();
-      formData.append('image', file);
-
-      const response = await fetch('/api/remove-background', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to process image');
-      }
-
-      const data = await response.json();
-
-      // Convert base64 to blob for display
-      const imageData = atob(data.imageData);
-      const arrayBuffer = new Uint8Array(imageData.length);
-      for (let i = 0; i < imageData.length; i++) {
-        arrayBuffer[i] = imageData.charCodeAt(i);
-      }
-      const blob = new Blob([arrayBuffer], { type: 'image/png' });
-      const processedUrl = URL.createObjectURL(blob);
-      setProcessedImage(processedUrl);
-
-      // Save metadata with Replicate URL to Firestore (no Firebase Storage upload)
-      await saveProcessedImage(file, data.imageUrl);
-
-      // Reload images list
-      await loadProcessedImages();
-    } catch (err: any) {
-      setError(err.message || 'Failed to process image');
-      console.error('Error:', err);
-    } finally {
-      setIsProcessing(false);
+    const files = e.dataTransfer.files;
+    if (files && files.length > 0) {
+      handleFilesSelect(Array.from(files));
     }
   };
 
-  const saveProcessedImage = async (originalFile: File, replicateUrl: string) => {
-    if (!session?.user?.email) {
-      console.log('User not logged in, skipping save');
-      throw new Error('You must be logged in to save images');
-    }
-
-    console.log('Starting save to Firestore for user:', session.user.email);
-
-    try {
-      // Save only metadata to Firestore with Replicate URL (no Firebase Storage upload)
-      const response = await fetch('/api/save-image', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          originalFilename: originalFile.name,
-          replicateUrl: replicateUrl,
-          fileSize: originalFile.size,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to save image');
-      }
-
-      const result = await response.json();
-      console.log('Image metadata saved successfully:', result);
-    } catch (err: any) {
-      console.error('Error saving to Firestore:', err);
-      throw new Error(`Failed to save image: ${err.message || 'Unknown error'}`);
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      handleFilesSelect(Array.from(files));
     }
   };
 
-  const handleDelete = async (image: ProcessedImage) => {
-    if (!confirm(`Are you sure you want to delete ${image.originalFilename}?`)) return;
+  const handleFilesSelect = (files: File[]) => {
+    const validFiles: File[] = [];
+    const errors: string[] = [];
 
-    try {
-      const response = await fetch(`/api/delete-image/${image.id}`, {
-        method: 'DELETE',
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to delete image');
+    files.forEach(file => {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        errors.push(`${file.name}: Not an image file`);
+        return;
       }
 
-      // Reload images
-      await loadProcessedImages();
-    } catch (err) {
-      console.error('Error deleting image:', err);
-      setError('Failed to delete image');
+      // Validate file size (max 10MB)
+      if (file.size > 10 * 1024 * 1024) {
+        errors.push(`${file.name}: File too large (max 10MB)`);
+        return;
+      }
+
+      validFiles.push(file);
+    });
+
+    if (errors.length > 0) {
+      setError(errors.join(', '));
+    } else {
+      setError(null);
+    }
+
+    if (validFiles.length > 0) {
+      // Add files to upload queue with unique IDs
+      const newQueueItems: UploadQueueItem[] = validFiles.map(file => ({
+        id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        file,
+        status: 'pending',
+        progress: 0
+      }));
+
+      setUploadQueue(prev => [...prev, ...newQueueItems]);
     }
   };
 
-  const handleDownloadClick = async (image: ProcessedImage) => {
+  // Process upload queue
+  useEffect(() => {
+    const processQueue = async () => {
+      if (isProcessingQueue) return;
+
+      const pendingItem = uploadQueue.find(item => item.status === 'pending');
+      if (!pendingItem) return;
+
+      setIsProcessingQueue(true);
+
+      try {
+        if (!session?.user?.email) {
+          throw new Error('You must be logged in to process images');
+        }
+
+        const pendingItemId = pendingItem.id;
+
+        // Update status to uploading
+        setUploadQueue(prev => prev.map(item =>
+          item.id === pendingItemId
+            ? { ...item, status: 'uploading', progress: 0 }
+            : item
+        ));
+
+        // Simulate progress
+        const progressInterval = setInterval(() => {
+          setUploadQueue(prev => prev.map(item =>
+            item.id === pendingItemId && item.progress < 90
+              ? { ...item, progress: item.progress + 10 }
+              : item
+          ));
+        }, 200);
+
+        // Process image (remove background)
+        const formData = new FormData();
+        formData.append('image', pendingItem.file);
+
+        const response = await fetch('/api/remove-background', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to process image');
+        }
+
+        const data = await response.json();
+
+        // Save metadata to Firestore
+        const saveResponse = await fetch('/api/save-image', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            originalFilename: pendingItem.file.name,
+            replicateUrl: data.imageUrl,
+            fileSize: pendingItem.file.size,
+          }),
+        });
+
+        if (!saveResponse.ok) {
+          const errorData = await saveResponse.json();
+          throw new Error(errorData.error || 'Failed to save image');
+        }
+
+        const result = await saveResponse.json();
+
+        clearInterval(progressInterval);
+
+        // Update status to completed
+        setUploadQueue(prev => prev.map(item =>
+          item.id === pendingItemId
+            ? { ...item, status: 'completed', progress: 100, resultImageId: result.id }
+            : item
+        ));
+
+        // Refresh images
+        await fetchImages();
+
+        // Auto-remove completed item after 2 seconds
+        setTimeout(() => {
+          setUploadQueue(prev => prev.filter(item => item.id !== pendingItemId));
+        }, 2000);
+
+      } catch (error: any) {
+        const pendingItemId = pendingItem.id;
+        // Update status to failed
+        setUploadQueue(prev => prev.map(item =>
+          item.id === pendingItemId
+            ? {
+                ...item,
+                status: 'failed',
+                progress: 0,
+                error: error.message || 'Upload failed'
+              }
+            : item
+        ));
+      } finally {
+        setIsProcessingQueue(false);
+      }
+    };
+
+    processQueue();
+  }, [uploadQueue, isProcessingQueue, session]);
+
+  const clearCompletedUploads = () => {
+    setUploadQueue(prev => prev.filter(item => item.status !== 'completed' && item.status !== 'failed'));
+  };
+
+  const removeFromQueue = (item: UploadQueueItem) => {
+    setUploadQueue(prev => prev.filter(i => i !== item));
+  };
+
+  const handleDownload = async (imageId: string, filename: string) => {
     try {
-      // Direct download without modal
-      const url = `/api/download-image/${image.id}`;
+      const url = `/api/download-image/${imageId}`;
       const response = await fetch(url);
 
       if (!response.ok) {
@@ -200,63 +263,92 @@ export default function BackgroundRemover() {
       const downloadUrl = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = downloadUrl;
-      a.download = `${image.originalFilename.split('.')[0]}_processed.png`;
+      a.download = `${filename.split('.')[0]}_processed.png`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(downloadUrl);
-    } catch (err) {
-      console.error('Download error:', err);
+    } catch (error: any) {
       setError('Failed to download image');
     }
   };
 
-  const onDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsDragActive(false);
-    const file = e.dataTransfer.files[0];
-    if (file) handleFile(file);
-  }, []);
+  const handleDelete = async (imageId: string) => {
+    if (!confirm('Are you sure you want to delete this image?')) return;
 
-  const onDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsDragActive(true);
-  }, []);
+    try {
+      const response = await fetch(`/api/delete-image/${imageId}`, {
+        method: 'DELETE',
+      });
 
-  const onDragLeave = useCallback((e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsDragActive(false);
-  }, []);
+      if (!response.ok) {
+        throw new Error('Failed to delete image');
+      }
 
-  const onFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) handleFile(file);
-  }, []);
+      // Refresh images
+      await fetchImages();
+      setSuccess('Image deleted successfully');
+      setTimeout(() => setSuccess(null), 3000);
+    } catch (error) {
+      setError('Failed to delete image');
+    }
+  };
 
   return (
     <div className="space-y-8">
-      {/* Upload Area */}
-      <div
-        onDrop={onDrop}
-        onDragOver={onDragOver}
-        onDragLeave={onDragLeave}
-        className={`border-2 border-dashed rounded-xl p-12 text-center cursor-pointer transition-all ${
-          isDragActive
-            ? 'border-purple-500 bg-purple-500/10'
-            : 'border-gray-700 hover:border-purple-500 hover:bg-gray-800/50'
-        }`}
-      >
-        <input
-          type="file"
-          accept="image/jpeg,image/jpg,image/png,image/webp"
-          onChange={onFileSelect}
-          className="hidden"
-          id="file-upload"
-        />
-        <label htmlFor="file-upload" className="cursor-pointer">
-          <div className="flex flex-col items-center gap-4">
-            <div className="w-16 h-16 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
-              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      {/* Notifications */}
+      {error && (
+        <div className="p-4 bg-red-500/10 border border-red-500 rounded-lg">
+          <div className="flex items-start">
+            <svg className="w-5 h-5 text-red-500 mt-0.5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+            </svg>
+            <span className="text-red-400 font-medium">{error}</span>
+          </div>
+        </div>
+      )}
+
+      {success && (
+        <div className="p-4 bg-green-500/10 border border-green-500 rounded-lg">
+          <div className="flex items-start">
+            <svg className="w-5 h-5 text-green-500 mt-0.5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+            </svg>
+            <span className="text-green-400 font-medium">{success}</span>
+          </div>
+        </div>
+      )}
+
+      {/* Upload Section */}
+      <div className="bg-white/5 backdrop-blur-sm rounded-xl p-8 border border-gray-700">
+        <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+          </svg>
+          Remove Background
+        </h2>
+
+        <div
+          onDragEnter={handleDragEnter}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+          className={`border-4 border-dashed rounded-2xl p-12 text-center transition-all duration-200 ${
+            isDragging
+              ? 'border-purple-500 bg-purple-50/10 scale-105'
+              : uploadQueue.length > 0
+              ? 'border-purple-400 bg-purple-50/5'
+              : 'border-gray-600 hover:border-purple-400'
+          }`}
+        >
+          {uploadQueue.length === 0 ? (
+            <>
+              <svg
+                className="w-20 h-20 text-gray-500 mx-auto mb-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -264,56 +356,141 @@ export default function BackgroundRemover() {
                   d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
                 />
               </svg>
-            </div>
-            <div>
-              <p className="text-lg font-semibold text-white">
-                {isDragActive ? 'Drop image here' : 'Drag & drop an image here'}
+              <p className="text-2xl font-bold text-white mb-2">
+                Drop your images here
               </p>
-              <p className="text-sm text-gray-400 mt-2">
-                or click to browse (JPG, PNG, WebP up to 10MB)
+              <p className="text-gray-400 mb-6">
+                or click to browse (PNG, JPG, WebP, max 10MB per file)
               </p>
+              <label className="inline-block">
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleFileInputChange}
+                  className="hidden"
+                />
+                <span className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 cursor-pointer inline-block">
+                  Choose Images
+                </span>
+              </label>
+            </>
+          ) : (
+            <div className="space-y-4 w-full">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xl font-bold text-white">
+                  Upload Queue ({uploadQueue.length} {uploadQueue.length === 1 ? 'file' : 'files'})
+                </h3>
+                {uploadQueue.filter(item => item.status === 'completed' || item.status === 'failed').length > 0 && (
+                  <button
+                    onClick={clearCompletedUploads}
+                    className="text-sm text-gray-400 hover:text-purple-400 font-semibold transition-colors"
+                  >
+                    Clear Completed
+                  </button>
+                )}
+              </div>
+
+              <div className="space-y-3 max-h-96 overflow-y-auto">
+                {uploadQueue.map((item) => (
+                  <div
+                    key={item.id}
+                    className={`p-4 rounded-xl border-2 ${
+                      item.status === 'completed'
+                        ? 'border-green-500/50 bg-green-500/10'
+                        : item.status === 'failed'
+                        ? 'border-red-500/50 bg-red-500/10'
+                        : item.status === 'uploading'
+                        ? 'border-purple-500/50 bg-purple-500/10'
+                        : 'border-gray-600 bg-gray-800/30'
+                    }`}
+                  >
+                    <div className="flex items-center gap-4">
+                      {/* Status Icon */}
+                      <div className="flex-shrink-0">
+                        {item.status === 'completed' && (
+                          <svg className="w-8 h-8 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                          </svg>
+                        )}
+                        {item.status === 'failed' && (
+                          <svg className="w-8 h-8 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                          </svg>
+                        )}
+                        {item.status === 'uploading' && (
+                          <svg className="w-8 h-8 text-purple-500 animate-spin" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                        )}
+                        {item.status === 'pending' && (
+                          <svg className="w-8 h-8 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+                          </svg>
+                        )}
+                      </div>
+
+                      {/* File Info */}
+                      <div className="flex-grow min-w-0">
+                        <p className="font-semibold text-white truncate">{item.file.name}</p>
+                        <p className="text-sm text-gray-400">
+                          {(item.file.size / 1024 / 1024).toFixed(2)} MB
+                          {item.status === 'completed' && ' - Completed'}
+                          {item.status === 'failed' && ` - ${item.error}`}
+                          {item.status === 'uploading' && ' - Processing...'}
+                          {item.status === 'pending' && ' - Waiting...'}
+                        </p>
+
+                        {/* Progress Bar */}
+                        {item.status === 'uploading' && (
+                          <div className="mt-2">
+                            <div className="w-full bg-gray-700 rounded-full h-2 overflow-hidden">
+                              <div
+                                className="h-full bg-gradient-to-r from-purple-600 to-pink-600 transition-all duration-300"
+                                style={{ width: `${item.progress}%` }}
+                              ></div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Remove Button */}
+                      {(item.status === 'pending' || item.status === 'failed' || item.status === 'completed') && (
+                        <button
+                          onClick={() => removeFromQueue(item)}
+                          className="flex-shrink-0 text-gray-500 hover:text-red-500 transition-colors"
+                        >
+                          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Add More Files Button */}
+              <label className="block">
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleFileInputChange}
+                  className="hidden"
+                />
+                <span className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 cursor-pointer inline-flex items-center gap-2">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                  Add More Images
+                </span>
+              </label>
             </div>
-          </div>
-        </label>
+          )}
+        </div>
       </div>
-
-      {/* Error */}
-      {error && (
-        <div className="p-4 bg-red-500/10 border border-red-500 rounded-lg">
-          <p className="text-red-400 font-medium">{error}</p>
-        </div>
-      )}
-
-      {/* Processing */}
-      {isProcessing && (
-        <div className="text-center py-8">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-purple-500/30 border-t-purple-500"></div>
-          <p className="mt-4 text-gray-400 font-medium">Removing background with AI...</p>
-          <p className="text-sm text-gray-500 mt-2">This usually takes 10-15 seconds</p>
-        </div>
-      )}
-
-      {/* Current Results */}
-      {(originalImage || processedImage) && !isProcessing && (
-        <div className="grid md:grid-cols-2 gap-8">
-          {originalImage && (
-            <div>
-              <h3 className="text-lg font-semibold mb-4 text-gray-300">Original Image</h3>
-              <div className="relative aspect-square rounded-lg overflow-hidden border border-gray-700 bg-gray-800">
-                <Image src={originalImage} alt="Original" fill className="object-contain" />
-              </div>
-            </div>
-          )}
-          {processedImage && (
-            <div>
-              <h3 className="text-lg font-semibold mb-4 text-gray-300">Background Removed</h3>
-              <div className="relative aspect-square rounded-lg overflow-hidden border border-gray-700 bg-[linear-gradient(45deg,#1f2937_25%,transparent_25%,transparent_75%,#1f2937_75%,#1f2937),linear-gradient(45deg,#1f2937_25%,transparent_25%,transparent_75%,#1f2937_75%,#1f2937)] bg-[length:20px_20px] bg-[position:0_0,10px_10px]">
-                <Image src={processedImage} alt="Processed" fill className="object-contain" />
-              </div>
-            </div>
-          )}
-        </div>
-      )}
 
       {/* Image Gallery */}
       {session && (
@@ -326,7 +503,7 @@ export default function BackgroundRemover() {
               Your Images
             </h2>
             <span className="text-sm text-gray-400">
-              {processedImages.length} {processedImages.length === 1 ? 'image' : 'images'}
+              {images.length} {images.length === 1 ? 'image' : 'images'}
             </span>
           </div>
 
@@ -334,7 +511,7 @@ export default function BackgroundRemover() {
             <div className="text-center py-12">
               <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-purple-500/30 border-t-purple-500"></div>
             </div>
-          ) : processedImages.length === 0 ? (
+          ) : images.length === 0 ? (
             <div className="text-center py-12">
               <svg className="w-16 h-16 text-gray-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -344,11 +521,11 @@ export default function BackgroundRemover() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {processedImages.map((image) => (
+              {images.map((image) => (
                 <div key={image.id} className="bg-gray-800/50 rounded-lg overflow-hidden border border-gray-700 hover:border-purple-500 transition-all">
                   <div className="aspect-square relative bg-[linear-gradient(45deg,#1f2937_25%,transparent_25%,transparent_75%,#1f2937_75%,#1f2937),linear-gradient(45deg,#1f2937_25%,transparent_25%,transparent_75%,#1f2937_75%,#1f2937)] bg-[length:20px_20px] bg-[position:0_0,10px_10px]">
                     <Image
-                      src={getProxyUrl(image.processedPath)}
+                      src={image.processedPath}
                       alt={image.originalFilename}
                       fill
                       className="object-contain"
@@ -365,7 +542,7 @@ export default function BackgroundRemover() {
                     </div>
                     <div className="flex gap-2">
                       <button
-                        onClick={() => handleDownloadClick(image)}
+                        onClick={() => handleDownload(image.id, image.originalFilename)}
                         className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white py-2 px-3 rounded-lg text-sm font-semibold hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-1"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -374,7 +551,7 @@ export default function BackgroundRemover() {
                         Download
                       </button>
                       <button
-                        onClick={() => handleDelete(image)}
+                        onClick={() => handleDelete(image.id)}
                         className="bg-red-500/20 text-red-400 hover:bg-red-500/30 py-2 px-3 rounded-lg transition-all duration-200"
                         title="Delete"
                       >
@@ -390,7 +567,6 @@ export default function BackgroundRemover() {
           )}
         </div>
       )}
-
     </div>
   );
 }
