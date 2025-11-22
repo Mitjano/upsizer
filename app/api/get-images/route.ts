@@ -18,19 +18,28 @@ export async function GET(request: NextRequest) {
       .orderBy('createdAt', 'desc')
       .get();
 
-    const images = imagesSnapshot.docs.map(doc => {
-      const data = doc.data();
-      return {
-        id: doc.id,
-        originalFilename: data.originalFilename,
-        originalPath: data.originalPath,
-        processedPath: data.processedPath,
-        fileSize: data.fileSize,
-        width: data.width,
-        height: data.height,
-        createdAt: data.createdAt?.toDate?.().toISOString() || data.createdAt,
-      };
-    });
+    const images = imagesSnapshot.docs
+      .map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          originalFilename: data.originalFilename,
+          originalPath: data.originalPath,
+          processedPath: data.processedPath,
+          fileSize: data.fileSize,
+          width: data.width,
+          height: data.height,
+          createdAt: data.createdAt?.toDate?.().toISOString() || data.createdAt,
+        };
+      })
+      // Filter out WEBP files to avoid decoder errors
+      .filter(image => {
+        const isWebp = image.originalPath?.includes('.webp') || image.processedPath?.includes('.webp');
+        if (isWebp) {
+          console.log(`Skipping WEBP file: ${image.originalFilename}`);
+        }
+        return !isWebp;
+      });
 
     return NextResponse.json({ images });
   } catch (error: any) {

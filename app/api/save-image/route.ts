@@ -21,25 +21,8 @@ export async function POST(request: NextRequest) {
     const userEmail = session.user.email;
     const timestamp = Date.now();
 
-    // Upload original file directly (no conversion needed)
-    const originalBuffer = Buffer.from(await originalFile.arrayBuffer());
-    const originalFileName = `originals/${userEmail}/${timestamp}_${originalFile.name}`;
-    const originalFileRef = adminStorage.bucket().file(originalFileName);
-
-    // Disable automatic metadata extraction by setting metadata manually
-    await originalFileRef.save(originalBuffer, {
-      metadata: {
-        contentType: originalFile.type,
-        metadata: {
-          // Firebase will skip WEBP decoder if we explicitly set metadata
-          firebaseStorageDownloadTokens: `${timestamp}`,
-        }
-      },
-      validation: false, // Skip content validation
-    });
-    console.log('Original uploaded:', originalFileName);
-
-    // Upload processed file (already PNG from Replicate/client)
+    // We only save the processed PNG file (already processed by Replicate)
+    // No need to save the original file or convert WEBP - bgremover.pl doesn't save originals either
     const processedBuffer = Buffer.from(await processedFile.arrayBuffer());
     const processedFileName = `processed/${userEmail}/${timestamp}_processed.png`;
     const processedFileRef = adminStorage.bucket().file(processedFileName);
@@ -58,7 +41,6 @@ export async function POST(request: NextRequest) {
     // Save metadata to Firestore
     const docRef = await adminDb.collection('processedImages').add({
       originalFilename: originalFile.name,
-      originalPath: originalFileName,
       processedPath: processedFileName,
       fileSize: originalFile.size,
       createdAt: new Date(),
@@ -70,7 +52,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       id: docRef.id,
-      originalPath: originalFileName,
       processedPath: processedFileName,
     });
   } catch (error: any) {
