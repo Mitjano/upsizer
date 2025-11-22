@@ -21,10 +21,8 @@
   "license": "ISC",
   "description": "AI-powered image upscaling with Real-ESRGAN and GFPGAN",
   "dependencies": {
-    "@auth/firebase-adapter": "^2.11.1",
     "axios": "^1.13.2",
     "bullmq": "^5.63.2",
-    "firebase": "^12.6.0",
     "ioredis": "^5.8.2",
     "nanoid": "^5.1.6",
     "next": "^16.0.3",
