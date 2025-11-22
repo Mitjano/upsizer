@@ -3,6 +3,8 @@ import Link from "next/link";
 import { getAllPosts } from "@/lib/blog";
 import { getAllUsers, getAllUsage, getAllTransactions } from "@/lib/db";
 
+export const dynamic = 'force-dynamic';
+
 export default async function AdminDashboard() {
   const session = await auth();
   const allPosts = await getAllPosts();
