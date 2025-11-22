@@ -1156,3 +1156,146 @@ export async function triggerWebhook(webhookId: string, event: string, payload: 
 
   createWebhookLog(log);
 }
+
+// ===================
+// A/B Tests
+// ===================
+
+export interface ABTest {
+  id: string;
+  name: string;
+  description: string;
+  type: 'page' | 'feature' | 'email' | 'cta' | 'custom';
+  status: 'draft' | 'running' | 'paused' | 'completed';
+  variants: {
+    id: string;
+    name: string;
+    description?: string;
+    traffic: number; // Percentage 0-100
+    conversions: number;
+    visitors: number;
+  }[];
+  targetMetric: string;
+  targetUrl?: string;
+  startDate?: string;
+  endDate?: string;
+  winner?: string; // variant id
+  confidence?: number; // 0-100
+  createdAt: string;
+  updatedAt: string;
+  createdBy: string;
+}
+
+const ABTESTS_FILE = path.join(DATA_DIR, 'abtests.json');
+
+export function getAllABTests(): ABTest[] {
+  return readJSON(ABTESTS_FILE, []);
+}
+
+export function getABTestById(id: string): ABTest | null {
+  const tests = getAllABTests();
+  return tests.find(t => t.id === id) || null;
+}
+
+export function createABTest(data: Omit<ABTest, 'id' | 'createdAt' | 'updatedAt'>): ABTest {
+  const tests = getAllABTests();
+
+  const test: ABTest = {
+    id: nanoid(),
+    ...data,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+
+  tests.push(test);
+  writeJSON(ABTESTS_FILE, tests);
+
+  return test;
+}
+
+export function updateABTest(id: string, updates: Partial<ABTest>): ABTest | null {
+  const tests = getAllABTests();
+  const index = tests.findIndex(t => t.id === id);
+
+  if (index === -1) return null;
+
+  tests[index] = {
+    ...tests[index],
+    ...updates,
+    updatedAt: new Date().toISOString(),
+  };
+  writeJSON(ABTESTS_FILE, tests);
+
+  return tests[index];
+}
+
+export function deleteABTest(id: string): boolean {
+  const tests = getAllABTests();
+  const filtered = tests.filter(t => t.id !== id);
+
+  if (filtered.length === tests.length) return false;
+
+  writeJSON(ABTESTS_FILE, filtered);
+  return true;
+}
+
+export function recordABTestEvent(testId: string, variantId: string, eventType: 'visitor' | 'conversion'): void {
+  const tests = getAllABTests();
+  const testIndex = tests.findIndex(t => t.id === testId);
+
+  if (testIndex === -1) return;
+
+  const test = tests[testIndex];
+  const variantIndex = test.variants.findIndex(v => v.id === variantId);
+
+  if (variantIndex === -1) return;
+
+  if (eventType === 'visitor') {
+    test.variants[variantIndex].visitors++;
+  } else if (eventType === 'conversion') {
+    test.variants[variantIndex].conversions++;
+  }
+
+  writeJSON(ABTESTS_FILE, tests);
+}
+
+// Calculate statistical significance
+export function calculateABTestWinner(testId: string): { winner: string; confidence: number } | null {
+  const test = getABTestById(testId);
+  if (!test || test.variants.length < 2) return null;
+
+  const variants = test.variants.filter(v => v.visitors > 0);
+  if (variants.length < 2) return null;
+
+  // Find variant with highest conversion rate
+  const variantsWithRates = variants.map(v => ({
+    ...v,
+    conversionRate: v.visitors > 0 ? v.conversions / v.visitors : 0,
+  }));
+
+  variantsWithRates.sort((a, b) => b.conversionRate - a.conversionRate);
+
+  const winner = variantsWithRates[0];
+  const runnerUp = variantsWithRates[1];
+
+  // Simple confidence calculation (for demo purposes)
+  // In production, use proper statistical significance testing (chi-square, z-test, etc.)
+  const winnerRate = winner.conversionRate;
+  const runnerUpRate = runnerUp.conversionRate;
+
+  if (winnerRate === 0 || runnerUpRate === 0) {
+    return { winner: winner.id, confidence: 50 };
+  }
+
+  const improvement = ((winnerRate - runnerUpRate) / runnerUpRate) * 100;
+  const minSampleSize = Math.max(winner.visitors, runnerUp.visitors);
+
+  // Simplified confidence score based on improvement and sample size
+  let confidence = Math.min(95, (improvement * minSampleSize) / 100);
+  confidence = Math.max(50, confidence);
+
+  return {
+    winner: winner.id,
+    confidence: Math.round(confidence),
+  };
+}
