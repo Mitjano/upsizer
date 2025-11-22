@@ -1,16 +1,13 @@
 import FAQ from "@/components/FAQ";
-import Header from "@/components/Header";
 import CategoryExamples from "@/components/CategoryExamples";
 import UseCases from "@/components/UseCases";
 import EnterpriseSolutions from "@/components/EnterpriseSolutions";
 import SEOContent from "@/components/SEOContent";
-import Footer from "@/components/Footer";
 import Link from "next/link";
 
 export default function Home() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
-      <Header />
 
       {/* Hero Section */}
       <section className="relative container mx-auto px-4 py-20 md:py-32 text-center overflow-hidden">
@@ -216,9 +213,6 @@ export default function Home() {
 
       {/* SEO Content Section */}
       <SEOContent />
-
-      {/* Footer */}
-      <Footer />
     </main>
   );
 }
