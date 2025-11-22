@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Backup not found' }, { status: 404 });
       }
 
-      return new NextResponse(data, {
+      return new NextResponse(data.toString(), {
         headers: {
           'Content-Type': 'application/json',
           'Content-Disposition': `attachment; filename="backup-${backupId}.json"`,
