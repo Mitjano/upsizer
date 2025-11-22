@@ -1299,3 +1299,232 @@ export function calculateABTestWinner(testId: string): { winner: string; confide
     confidence: Math.round(confidence),
   };
 }
+
+// ===================
+// Content Moderation
+// ===================
+
+export interface ModerationRule {
+  id: string;
+  name: string;
+  type: 'keyword' | 'pattern' | 'ai' | 'custom';
+  target: 'post' | 'comment' | 'user_profile' | 'all';
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  action: 'flag' | 'auto_approve' | 'auto_reject' | 'quarantine';
+  keywords?: string[];
+  pattern?: string; // regex
+  aiPrompt?: string;
+  enabled: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ModerationQueue {
+  id: string;
+  contentType: 'post' | 'comment' | 'user_profile' | 'other';
+  contentId: string;
+  content: string;
+  author: string;
+  status: 'pending' | 'approved' | 'rejected' | 'flagged';
+  flags: {
+    ruleId: string;
+    ruleName: string;
+    severity: string;
+    reason: string;
+    confidence?: number;
+  }[];
+  reviewedBy?: string;
+  reviewedAt?: string;
+  notes?: string;
+  createdAt: string;
+}
+
+const MODERATION_RULES_FILE = path.join(DATA_DIR, 'moderation-rules.json');
+const MODERATION_QUEUE_FILE = path.join(DATA_DIR, 'moderation-queue.json');
+
+export function getAllModerationRules(): ModerationRule[] {
+  return readJSON(MODERATION_RULES_FILE, []);
+}
+
+export function getModerationRuleById(id: string): ModerationRule | null {
+  const rules = getAllModerationRules();
+  return rules.find(r => r.id === id) || null;
+}
+
+export function createModerationRule(data: Omit<ModerationRule, 'id' | 'createdAt' | 'updatedAt'>): ModerationRule {
+  const rules = getAllModerationRules();
+
+  const rule: ModerationRule = {
+    id: nanoid(),
+    ...data,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+
+  rules.push(rule);
+  writeJSON(MODERATION_RULES_FILE, rules);
+
+  return rule;
+}
+
+export function updateModerationRule(id: string, updates: Partial<ModerationRule>): ModerationRule | null {
+  const rules = getAllModerationRules();
+  const index = rules.findIndex(r => r.id === id);
+
+  if (index === -1) return null;
+
+  rules[index] = {
+    ...rules[index],
+    ...updates,
+    updatedAt: new Date().toISOString(),
+  };
+  writeJSON(MODERATION_RULES_FILE, rules);
+
+  return rules[index];
+}
+
+export function deleteModerationRule(id: string): boolean {
+  const rules = getAllModerationRules();
+  const filtered = rules.filter(r => r.id !== id);
+
+  if (filtered.length === rules.length) return false;
+
+  writeJSON(MODERATION_RULES_FILE, filtered);
+  return true;
+}
+
+export function getAllModerationQueue(status?: string, limit: number = 100): ModerationQueue[] {
+  let queue = readJSON<ModerationQueue[]>(MODERATION_QUEUE_FILE, []);
+
+  if (status) {
+    queue = queue.filter(q => q.status === status);
+  }
+
+  // Sort by creation date (newest first)
+  queue.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+  return queue.slice(0, limit);
+}
+
+export function getModerationQueueById(id: string): ModerationQueue | null {
+  const queue = getAllModerationQueue();
+  return queue.find(q => q.id === id) || null;
+}
+
+export function addToModerationQueue(data: Omit<ModerationQueue, 'id' | 'createdAt'>): ModerationQueue {
+  const queue = readJSON<ModerationQueue[]>(MODERATION_QUEUE_FILE, []);
+
+  const item: ModerationQueue = {
+    id: nanoid(),
+    ...data,
+    createdAt: new Date().toISOString(),
+  };
+
+  queue.push(item);
+  writeJSON(MODERATION_QUEUE_FILE, queue);
+
+  return item;
+}
+
+export function updateModerationQueue(id: string, updates: Partial<ModerationQueue>): ModerationQueue | null {
+  const queue = readJSON<ModerationQueue[]>(MODERATION_QUEUE_FILE, []);
+  const index = queue.findIndex(q => q.id === id);
+
+  if (index === -1) return null;
+
+  queue[index] = {
+    ...queue[index],
+    ...updates,
+  };
+  writeJSON(MODERATION_QUEUE_FILE, queue);
+
+  return queue[index];
+}
+
+export function deleteModerationQueueItem(id: string): boolean {
+  const queue = readJSON<ModerationQueue[]>(MODERATION_QUEUE_FILE, []);
+  const filtered = queue.filter(q => q.id !== id);
+
+  if (filtered.length === queue.length) return false;
+
+  writeJSON(MODERATION_QUEUE_FILE, filtered);
+  return true;
+}
+
+// Check content against moderation rules
+export function moderateContent(
+  contentType: ModerationQueue['contentType'],
+  contentId: string,
+  content: string,
+  author: string
+): ModerationQueue {
+  const rules = getAllModerationRules().filter(r => r.enabled && (r.target === contentType || r.target === 'all'));
+  const flags: ModerationQueue['flags'] = [];
+
+  for (const rule of rules) {
+    let flagged = false;
+
+    if (rule.type === 'keyword' && rule.keywords) {
+      const lowerContent = content.toLowerCase();
+      for (const keyword of rule.keywords) {
+        if (lowerContent.includes(keyword.toLowerCase())) {
+          flagged = true;
+          flags.push({
+            ruleId: rule.id,
+            ruleName: rule.name,
+            severity: rule.severity,
+            reason: `Contains blocked keyword: "${keyword}"`,
+            confidence: 100,
+          });
+          break;
+        }
+      }
+    }
+
+    if (rule.type === 'pattern' && rule.pattern) {
+      try {
+        const regex = new RegExp(rule.pattern, 'i');
+        if (regex.test(content)) {
+          flagged = true;
+          flags.push({
+            ruleId: rule.id,
+            ruleName: rule.name,
+            severity: rule.severity,
+            reason: `Matches pattern: ${rule.pattern}`,
+            confidence: 95,
+          });
+        }
+      } catch (e) {
+        // Invalid regex, skip
+      }
+    }
+  }
+
+  // Determine status based on flags and actions
+  let status: ModerationQueue['status'] = 'approved';
+
+  if (flags.length > 0) {
+    const highestSeverity = flags.reduce((max, f) => {
+      const severities = { low: 1, medium: 2, high: 3, critical: 4 };
+      const current = severities[f.severity as keyof typeof severities] || 0;
+      return current > max ? current : max;
+    }, 0);
+
+    if (highestSeverity >= 3) {
+      status = 'rejected';
+    } else if (highestSeverity >= 2) {
+      status = 'flagged';
+    } else {
+      status = 'pending';
+    }
+  }
+
+  return addToModerationQueue({
+    contentType,
+    contentId,
+    content,
+    author,
+    status,
+    flags,
+  });
+}

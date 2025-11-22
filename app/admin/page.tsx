@@ -255,6 +255,15 @@ export default async function AdminDashboard() {
             <h3 className="text-lg font-bold mb-1">A/B Testing</h3>
             <p className="text-gray-400 text-sm">Optimize conversions</p>
           </Link>
+
+          <Link
+            href="/admin/moderation"
+            className="bg-gradient-to-br from-red-500/20 to-red-600/10 border border-red-500/40 hover:border-red-500 rounded-xl p-6 transition-all group hover:scale-105"
+          >
+            <div className="text-4xl mb-3 group-hover:scale-110 transition">🛡️</div>
+            <h3 className="text-lg font-bold mb-1">Content Moderation</h3>
+            <p className="text-gray-400 text-sm">AI-powered filtering</p>
+          </Link>
         </div>
       </div>
 
