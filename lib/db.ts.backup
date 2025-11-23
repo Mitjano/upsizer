@@ -61,18 +61,6 @@ function readJSON<T>(filePath: string, defaultData: T): T {
   }
 }
 
-// Helper for reading with cache
-function readJSONWithCache<T>(filePath: string, cacheKey: string, defaultData: T): T {
-  // Check cache first
-  const cached = dbCache.get<T>(cacheKey);
-  if (cached !== null) return cached;
-
-  // Read from disk and cache
-  const data = readJSON<T>(filePath, defaultData);
-  dbCache.set(cacheKey, data);
-  return data;
-}
-
 function writeJSON(filePath: string, data: any) {
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
 
@@ -106,7 +94,14 @@ function writeJSON(filePath: string, data: any) {
 
 // User CRUD operations
 export function getAllUsers(): User[] {
-  return readJSONWithCache<User[]>(USERS_FILE, CacheKeys.USERS, []);
+  // Check cache first
+  const cached = dbCache.get<User[]>(CacheKeys.USERS);
+  if (cached) return cached;
+
+  // Read from disk and cache
+  const users = readJSON<User[]>(USERS_FILE, []);
+  dbCache.set(CacheKeys.USERS, users);
+  return users;
 }
 
 export function getUserByEmail(email: string): User | null {
@@ -184,7 +179,7 @@ export interface Transaction {
 const TRANSACTIONS_FILE = path.join(DATA_DIR, 'transactions.json');
 
 export function getAllTransactions(): Transaction[] {
-  return readJSONWithCache<Transaction[]>(TRANSACTIONS_FILE, CacheKeys.TRANSACTIONS, []);
+  return readJSON<Transaction[]>(TRANSACTIONS_FILE, []);
 }
 
 export function getTransactionsByUserId(userId: string): Transaction[] {
@@ -234,7 +229,7 @@ export interface Usage {
 const USAGE_FILE = path.join(DATA_DIR, 'usage.json');
 
 export function getAllUsage(): Usage[] {
-  return readJSONWithCache<Usage[]>(USAGE_FILE, CacheKeys.USAGE, []);
+  return readJSON<Usage[]>(USAGE_FILE, []);
 }
 
 export function getUsageByUserId(userId: string): Usage[] {
@@ -285,7 +280,7 @@ export interface Campaign {
 const CAMPAIGNS_FILE = path.join(DATA_DIR, 'campaigns.json');
 
 export function getAllCampaigns(): Campaign[] {
-  return readJSONWithCache<Campaign[]>(CAMPAIGNS_FILE, CacheKeys.CAMPAIGNS, []);
+  return readJSON<Campaign[]>(CAMPAIGNS_FILE, []);
 }
 
 export function getCampaignById(id: string): Campaign | null {
@@ -349,7 +344,7 @@ export interface Notification {
 const NOTIFICATIONS_FILE = path.join(DATA_DIR, 'notifications.json');
 
 export function getAllNotifications(): Notification[] {
-  return readJSONWithCache<Notification[]>(NOTIFICATIONS_FILE, CacheKeys.NOTIFICATIONS, []);
+  return readJSON<Notification[]>(NOTIFICATIONS_FILE, []);
 }
 
 export function getUnreadNotifications(): Notification[] {
@@ -415,7 +410,7 @@ export interface ApiKey {
 const API_KEYS_FILE = path.join(DATA_DIR, 'api_keys.json');
 
 export function getAllApiKeys(): ApiKey[] {
-  return readJSONWithCache<ApiKey[]>(API_KEYS_FILE, CacheKeys.API_KEYS, []);
+  return readJSON<ApiKey[]>(API_KEYS_FILE, []);
 }
 
 export function getApiKeysByUserId(userId: string): ApiKey[] {
@@ -502,7 +497,7 @@ export interface FeatureFlag {
 const FEATURE_FLAGS_FILE = path.join(DATA_DIR, 'feature_flags.json');
 
 export function getAllFeatureFlags(): FeatureFlag[] {
-  return readJSONWithCache<FeatureFlag[]>(FEATURE_FLAGS_FILE, CacheKeys.FEATURE_FLAGS, []);
+  return readJSON<FeatureFlag[]>(FEATURE_FLAGS_FILE, []);
 }
 
 export function getFeatureFlagByKey(key: string): FeatureFlag | null {
@@ -760,7 +755,7 @@ export interface EmailTemplate {
 const EMAIL_TEMPLATES_FILE = path.join(DATA_DIR, 'email_templates.json');
 
 export function getAllEmailTemplates(): EmailTemplate[] {
-  return readJSONWithCache<EmailTemplate[]>(EMAIL_TEMPLATES_FILE, CacheKeys.EMAIL_TEMPLATES, []);
+  return readJSON<EmailTemplate[]>(EMAIL_TEMPLATES_FILE, []);
 }
 
 export function getEmailTemplateById(id: string): EmailTemplate | null {

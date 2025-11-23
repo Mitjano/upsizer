@@ -1,0 +1,196 @@
+/**
+ * Zod validation schemas for API requests
+ * Provides type-safe input validation
+ */
+
+import { z } from 'zod';
+
+// Common schemas
+export const emailSchema = z.string().email('Invalid email address');
+export const nanoidSchema = z.string().length(21, 'Invalid ID format');
+export const urlSchema = z.string().url('Invalid URL');
+
+// User schemas
+export const updateUserSchema = z.object({
+  userId: nanoidSchema,
+  updates: z.object({
+    name: z.string().min(2).max(100).optional(),
+    role: z.enum(['user', 'premium', 'admin']).optional(),
+    status: z.enum(['active', 'banned', 'suspended']).optional(),
+    credits: z.number().int().min(0).optional(),
+  }).refine(data => Object.keys(data).length > 0, {
+    message: 'At least one field must be provided',
+  }),
+});
+
+export const createUserSchema = z.object({
+  email: emailSchema,
+  name: z.string().min(2).max(100).optional(),
+  role: z.enum(['user', 'premium', 'admin']).default('user'),
+  credits: z.number().int().min(0).default(10),
+});
+
+// Moderation schemas
+export const createModerationRuleSchema = z.object({
+  name: z.string().min(3).max(100),
+  type: z.enum(['keyword', 'pattern', 'ai', 'custom']),
+  target: z.enum(['post', 'comment', 'user_profile', 'all']),
+  severity: z.enum(['low', 'medium', 'high', 'critical']),
+  action: z.enum(['flag', 'auto_approve', 'auto_reject', 'quarantine']),
+  keywords: z.array(z.string()).optional(),
+  pattern: z.string().optional(),
+  enabled: z.boolean().default(true),
+}).refine(
+  (data) => {
+    if (data.type === 'keyword') return data.keywords && data.keywords.length > 0;
+    if (data.type === 'pattern') return data.pattern && data.pattern.length > 0;
+    return true;
+  },
+  {
+    message: 'Keywords required for keyword type, pattern required for pattern type',
+  }
+);
+
+export const reviewModerationQueueSchema = z.object({
+  queueId: nanoidSchema,
+  status: z.enum(['approved', 'rejected', 'flagged']),
+  notes: z.string().max(500).optional(),
+});
+
+// Ticket schemas
+export const createTicketSchema = z.object({
+  subject: z.string().min(5).max(200),
+  description: z.string().min(10).max(2000),
+  priority: z.enum(['low', 'medium', 'high', 'urgent']).default('medium'),
+  category: z.enum(['technical', 'billing', 'feature_request', 'bug', 'other']).default('other'),
+  userId: z.string().optional(),
+  userName: z.string().min(2).max(100),
+  userEmail: emailSchema,
+});
+
+export const addTicketMessageSchema = z.object({
+  ticketId: nanoidSchema,
+  message: z.string().min(1).max(2000),
+});
+
+export const updateTicketSchema = z.object({
+  ticketId: nanoidSchema,
+  updates: z.object({
+    status: z.enum(['open', 'in_progress', 'resolved', 'closed']).optional(),
+    priority: z.enum(['low', 'medium', 'high', 'urgent']).optional(),
+    assignedTo: z.string().optional(),
+  }).refine(data => Object.keys(data).length > 0, {
+    message: 'At least one field must be provided',
+  }),
+});
+
+// Referral schemas
+export const createReferralSchema = z.object({
+  referrerId: z.string().min(1),
+  referrerName: z.string().min(2).max(100),
+  code: z.string().min(3).max(20).regex(/^[A-Z0-9]+$/, 'Code must be uppercase alphanumeric'),
+  status: z.enum(['pending', 'active', 'converted', 'expired']).default('pending'),
+});
+
+export const trackReferralSchema = z.object({
+  code: z.string(),
+  action: z.enum(['click', 'signup', 'conversion']),
+  userId: z.string().optional(),
+  userName: z.string().optional(),
+  amount: z.number().positive().optional(),
+});
+
+// Feature Flag schemas
+export const createFeatureFlagSchema = z.object({
+  name: z.string().min(3).max(100),
+  key: z.string().min(3).max(50).regex(/^[a-z0-9_]+$/, 'Key must be lowercase snake_case'),
+  description: z.string().max(500).optional(),
+  enabled: z.boolean().default(false),
+  rolloutPercentage: z.number().min(0).max(100).default(0),
+});
+
+// Webhook schemas
+export const createWebhookSchema = z.object({
+  name: z.string().min(3).max(100),
+  url: urlSchema,
+  events: z.array(z.string()).min(1, 'At least one event required'),
+  secret: z.string().min(16).optional(),
+  enabled: z.boolean().default(true),
+});
+
+export const testWebhookSchema = z.object({
+  webhookId: nanoidSchema,
+});
+
+// A/B Test schemas
+export const createABTestSchema = z.object({
+  name: z.string().min(3).max(100),
+  description: z.string().max(500).optional(),
+  variants: z.array(z.object({
+    id: z.string(),
+    name: z.string(),
+    weight: z.number().min(0).max(100),
+  })).min(2, 'At least 2 variants required'),
+  status: z.enum(['draft', 'running', 'paused', 'completed']).default('draft'),
+});
+
+// Email Template schemas
+export const createEmailTemplateSchema = z.object({
+  name: z.string().min(3).max(100),
+  subject: z.string().min(3).max(200),
+  htmlContent: z.string().min(10),
+  textContent: z.string().optional(),
+  variables: z.array(z.string()).optional(),
+});
+
+// Backup schemas
+export const createBackupSchema = z.object({
+  name: z.string().min(3).max(100).optional(),
+  description: z.string().max(500).optional(),
+});
+
+// API Key schemas
+export const createApiKeySchema = z.object({
+  name: z.string().min(3).max(100),
+  permissions: z.array(z.string()).min(1, 'At least one permission required'),
+  expiresAt: z.string().datetime().optional(),
+});
+
+/**
+ * Helper function to validate request body
+ * Returns { success: true, data } or { success: false, errors }
+ */
+export function validateRequest<T>(schema: z.ZodSchema<T>, data: unknown): {
+  success: true;
+  data: T;
+} | {
+  success: false;
+  errors: z.ZodError;
+} {
+  try {
+    const validated = schema.parse(data);
+    return { success: true, data: validated };
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return { success: false, errors: error };
+    }
+    throw error;
+  }
+}
+
+/**
+ * Format Zod errors for API response
+ */
+export function formatZodErrors(errors: z.ZodError): Record<string, string[]> {
+  const formatted: Record<string, string[]> = {};
+
+  for (const issue of errors.issues) {
+    const path = issue.path.join('.');
+    if (!formatted[path]) {
+      formatted[path] = [];
+    }
+    formatted[path].push(issue.message);
+  }
+
+  return formatted;
+}

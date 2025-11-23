@@ -1,9 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { getAllUsers, updateUser } from '@/lib/db';
+import { apiLimiter, getClientIdentifier, rateLimitResponse } from '@/lib/rate-limit';
+import { updateUserSchema, validateRequest, formatZodErrors } from '@/lib/validation';
 
 export async function GET(request: NextRequest) {
   try {
+    // Rate limiting
+    const identifier = getClientIdentifier(request);
+    const { allowed, resetAt } = apiLimiter.check(identifier);
+    if (!allowed) {
+      return rateLimitResponse(resetAt);
+    }
+
     const session = await auth();
 
     if (!session || !session.user?.isAdmin) {
@@ -21,6 +30,13 @@ export async function GET(request: NextRequest) {
 
 export async function PATCH(request: NextRequest) {
   try {
+    // Rate limiting
+    const identifier = getClientIdentifier(request);
+    const { allowed, resetAt } = apiLimiter.check(identifier);
+    if (!allowed) {
+      return rateLimitResponse(resetAt);
+    }
+
     const session = await auth();
 
     if (!session || !session.user?.isAdmin) {
@@ -28,12 +44,20 @@ export async function PATCH(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { userId, updates } = body;
 
-    if (!userId) {
-      return NextResponse.json({ error: 'User ID required' }, { status: 400 });
+    // Validate request
+    const validation = validateRequest(updateUserSchema, body);
+    if (!validation.success) {
+      return NextResponse.json(
+        {
+          error: 'Validation failed',
+          details: formatZodErrors(validation.errors)
+        },
+        { status: 400 }
+      );
     }
 
+    const { userId, updates } = validation.data;
     const updatedUser = updateUser(userId, updates);
 
     if (!updatedUser) {
