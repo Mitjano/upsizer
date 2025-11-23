@@ -4,6 +4,9 @@ import { FcGoogle } from "react-icons/fc";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 
+// Force dynamic rendering to avoid hydration issues
+export const dynamic = 'force-dynamic';
+
 export default function SignInPage() {
   const handleGoogleSignIn = () => {
     signIn("google", { callbackUrl: "/dashboard" });
