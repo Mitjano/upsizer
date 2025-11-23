@@ -1,7 +1,17 @@
 import { Resend } from 'resend';
 
-// Initialize Resend with API key from environment
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Lazy initialization - only create Resend instance when needed
+let resendInstance: Resend | null = null;
+
+function getResend(): Resend | null {
+  if (!process.env.RESEND_API_KEY) {
+    return null;
+  }
+  if (!resendInstance) {
+    resendInstance = new Resend(process.env.RESEND_API_KEY);
+  }
+  return resendInstance;
+}
 
 export interface TicketEmailData {
   ticketId: string;
@@ -26,7 +36,8 @@ export interface TicketReplyEmailData {
  * Send email notification when a new support ticket is created
  */
 export async function sendTicketCreatedEmail(data: TicketEmailData): Promise<boolean> {
-  if (!process.env.RESEND_API_KEY) {
+  const resend = getResend();
+  if (!resend) {
     console.warn('RESEND_API_KEY not configured - skipping email');
     return false;
   }
@@ -73,7 +84,8 @@ export async function sendTicketCreatedEmail(data: TicketEmailData): Promise<boo
  * Send email notification to user when admin replies to their ticket
  */
 export async function sendTicketReplyEmail(data: TicketReplyEmailData): Promise<boolean> {
-  if (!process.env.RESEND_API_KEY) {
+  const resend = getResend();
+  if (!resend) {
     console.warn('RESEND_API_KEY not configured - skipping email');
     return false;
   }
