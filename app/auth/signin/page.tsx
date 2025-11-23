@@ -8,8 +8,9 @@ async function handleGoogleSignIn(formData: FormData) {
   await signIn("google", { redirectTo: callbackUrl });
 }
 
-export default function SignInPage({ searchParams }: { searchParams: { callbackUrl?: string } }) {
-  const callbackUrl = searchParams.callbackUrl || "/dashboard";
+export default async function SignInPage({ searchParams }: { searchParams: Promise<{ callbackUrl?: string }> }) {
+  const params = await searchParams;
+  const callbackUrl = params.callbackUrl || "/dashboard";
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
       <div className="container mx-auto px-4 py-8">
