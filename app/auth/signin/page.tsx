@@ -9,56 +9,58 @@ async function handleGoogleSignIn() {
 
 export default function SignInPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center px-4 py-8">
-      <div className="w-full max-w-md">
-        {/* Header with Sign Up Link */}
-        <div className="flex justify-between items-center mb-8">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-blue-500 rounded-lg"></div>
-            <span className="text-2xl font-bold text-gray-900">Pixelift</span>
-          </Link>
-          <div className="flex items-center gap-2">
-            <span className="text-gray-600 text-sm">Don't have an account?</span>
-            <Link
-              href="/auth/signup"
-              className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-full text-sm font-medium transition"
-            >
-              Sign up
-            </Link>
-          </div>
-        </div>
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white flex items-center justify-center px-4">
+      <div className="max-w-md w-full">
+        {/* Logo */}
+        <Link href="/" className="flex items-center justify-center gap-2 mb-8">
+          <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-blue-500 rounded-lg"></div>
+          <span className="text-2xl font-bold">Pixelift</span>
+        </Link>
 
-        {/* Main Card */}
-        <div className="bg-white rounded-3xl shadow-xl p-10">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">Sign in</h1>
+        {/* Card */}
+        <div className="bg-gray-800/50 rounded-2xl border border-gray-700 p-8">
+          <h1 className="text-3xl font-bold text-center mb-2">Welcome Back</h1>
+          <p className="text-gray-400 text-center mb-8">
+            Sign in to access your dashboard
+          </p>
 
-          {/* Google Sign In Button */}
-          <form action={handleGoogleSignIn} className="mb-6">
+          {/* Google Sign In - Server Action Approach */}
+          <form action={handleGoogleSignIn}>
             <button
               type="submit"
-              className="w-full flex items-center justify-center gap-3 bg-white border-2 border-gray-200 hover:border-gray-300 text-gray-700 py-3.5 px-6 rounded-xl font-medium transition shadow-sm hover:shadow"
+              className="w-full flex items-center justify-center gap-3 bg-white text-gray-900 hover:bg-gray-100 py-3 px-6 rounded-lg font-medium transition"
             >
               <FcGoogle className="text-2xl" />
-              <span className="text-purple-700 font-semibold">Continue with Google</span>
+              Continue with Google
             </button>
           </form>
 
-          {/* Footer Text */}
-          <p className="text-center text-sm text-gray-500 mt-8">
-            By continuing, you agree to Pixelift's{" "}
-            <Link href="/privacy" className="text-purple-600 hover:underline font-medium">
-              Privacy Policy
-            </Link>{" "}
-            and{" "}
-            <Link href="/terms" className="text-purple-600 hover:underline font-medium">
-              Terms of Use
-            </Link>
+          {/* Info */}
+          <p className="text-center text-sm text-gray-400 mt-6">
+            Sign in with your Google account to get started. Your account will be created automatically on first sign-in.
           </p>
+
+          {/* Sign Up Link */}
+          <div className="mt-6 pt-6 border-t border-gray-700">
+            <p className="text-center text-sm text-gray-400">
+              Don't have an account?{" "}
+              <Link href="/auth/signup" className="text-green-400 hover:text-green-300 font-medium">
+                Sign up
+              </Link>
+            </p>
+          </div>
         </div>
 
-        {/* Bottom Help Text */}
-        <p className="text-center text-sm text-gray-500 mt-6">
-          Sign in with your Google account. Your account will be created automatically on first sign-in.
+        {/* Terms */}
+        <p className="text-center text-xs text-gray-500 mt-6">
+          By continuing, you agree to our{" "}
+          <Link href="/terms" className="hover:underline">
+            Terms of Service
+          </Link>{" "}
+          and{" "}
+          <Link href="/privacy" className="hover:underline">
+            Privacy Policy
+          </Link>
         </p>
       </div>
     </div>
