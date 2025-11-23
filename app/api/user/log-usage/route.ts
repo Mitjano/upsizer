@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
-import { createUsage, getUserByEmail, updateUser } from '@/lib/db';
+import { createUsage, getUserByEmail } from '@/lib/db';
 
 export async function POST(request: NextRequest) {
   try {
@@ -30,22 +30,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Insufficient credits' }, { status: 402 });
     }
 
-    // Log usage
+    // Log usage (createUsage automatically updates user credits and totalUsage)
     const usage = createUsage({
       userId: user.id,
       type,
-      credits: creditsCost,
-      metadata: {
-        scale,
-        enhanceFace,
-        imageUrl,
-      },
-    });
-
-    // Deduct credits from user
-    updateUser(user.id, {
-      credits: user.credits - creditsCost,
-      totalUsage: (user.totalUsage || 0) + creditsCost,
+      creditsUsed: creditsCost,
+      imageSize: scale,
+      model: enhanceFace ? 'enhanced' : 'standard',
     });
 
     return NextResponse.json({
