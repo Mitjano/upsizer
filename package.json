@@ -42,6 +42,7 @@
     "react-icons": "^5.5.0",
     "recharts": "^3.4.1",
     "replicate": "^1.4.0",
+    "resend": "^6.5.2",
     "zod": "^4.1.12"
   },
   "devDependencies": {

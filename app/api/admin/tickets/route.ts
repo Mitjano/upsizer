@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
-import { createTicket, updateTicket, deleteTicket, addTicketMessage } from '@/lib/db';
+import { createTicket, updateTicket, deleteTicket, addTicketMessage, getTicketById } from '@/lib/db';
 import { apiLimiter, getClientIdentifier, rateLimitResponse } from '@/lib/rate-limit';
 import { createTicketSchema, addTicketMessageSchema, updateTicketSchema, validateRequest, formatZodErrors } from '@/lib/validation';
+import { sendTicketReplyEmail } from '@/lib/email';
 
 export async function POST(request: NextRequest) {
   try {
@@ -34,6 +35,19 @@ export async function POST(request: NextRequest) {
       }
 
       const ticket = addTicketMessage(ticketId, session.user.email || 'Staff', message, true);
+
+      // Send email notification to user (non-blocking)
+      if (ticket && ticket.userEmail && ticket.userEmail !== 'public') {
+        sendTicketReplyEmail({
+          ticketId: ticket.id,
+          subject: ticket.subject,
+          replyMessage: message,
+          replyAuthor: session.user.email || 'Support Team',
+          userName: ticket.userName,
+          userEmail: ticket.userEmail,
+        }).catch(err => console.error('Reply email notification failed:', err));
+      }
+
       return NextResponse.json({ success: true, ticket });
     }
 
