@@ -1,303 +1,153 @@
-# Pixelift Enterprise API - Deployment Guide
+# Pixelift Deployment Guide
 
-## Quick Start (Local Development)
+## ✅ Problem SOLVED: White Background After Deployment
 
-### 1. Install Redis
+**Root Cause:** PM2 was starting from `/root/upsizer` instead of `/root/upsizer/.next/standalone`, 
+causing Next.js to not find static CSS files in standalone mode.
 
-**macOS (Homebrew):**
-```bash
-brew install redis
-brew services start redis
-```
-
-**Windows (WSL or Docker):**
-```bash
-# Docker
-docker run -d -p 6379:6379 --name redis redis:alpine
-
-# Or download from: https://github.com/microsoftarchive/redis/releases
-```
-
-**Linux:**
-```bash
-sudo apt-get install redis-server
-sudo systemctl start redis
-```
-
-### 2. Verify Redis is Running
-
-```bash
-redis-cli ping
-# Should return: PONG
-```
-
-### 3. Start the Worker
-
-Open a **second terminal** and run:
-
-```bash
-npm run worker
-```
-
-You should see:
-```
-🚀 Starting Pixelift Image Processing Worker...
-✅ Worker started successfully!
-💡 Processing jobs from queue...
-```
-
-### 4. Start Next.js App
-
-In your first terminal:
-
-```bash
-npm run dev
-```
-
-### 5. Test the API
-
-1. Go to http://localhost:3000/dashboard/api
-2. Create a new API key
-3. Copy the key (shown only once!)
-4. Test with curl:
-
-```bash
-curl -X POST http://localhost:3000/api/v1/upscale \
-  -H "Authorization: Bearer YOUR_API_KEY_HERE" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "image_url": "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0",
-    "scale": 2,
-    "enhance_face": false
-  }'
-```
-
-## Production Deployment
-
-### Option 1: DigitalOcean App Platform (Recommended)
-
-**1. Setup Redis:**
-- Use **Upstash Redis** (free tier available)
-- Sign up at https://upstash.com
-- Create database, copy `REDIS_URL`
-
-**2. Deploy Next.js App:**
-
-Create `app.yaml`:
-```yaml
-name: pixelift-api
-services:
-  # Main Next.js app
-  - name: web
-    github:
-      repo: your-username/pixelift
-      branch: main
-    source_dir: /
-    build_command: npm run build
-    run_command: npm start
-    environment_slug: node-js
-    envs:
-      - key: REDIS_URL
-        value: ${redis.REDIS_URL}
-      - key: REPLICATE_API_TOKEN
-        value: ${_REPLICATE_TOKEN}
-      - key: NEXTAUTH_SECRET
-        value: ${_NEXTAUTH_SECRET}
-    http_port: 3000
-
-  # Background worker
-  - name: worker
-    github:
-      repo: your-username/pixelift
-      branch: main
-    source_dir: /
-    build_command: npm install && npm run build
-    run_command: npm run worker:prod
-    environment_slug: node-js
-    envs:
-      - key: REDIS_URL
-        value: ${redis.REDIS_URL}
-      - key: REPLICATE_API_TOKEN
-        value: ${_REPLICATE_TOKEN}
-```
-
-**3. Deploy:**
-```bash
-doctl apps create --spec app.yaml
-```
-
-### Option 2: Vercel + Separate Worker
-
-**1. Deploy Next.js to Vercel:**
-```bash
-vercel deploy
-```
-
-Add environment variables in Vercel dashboard.
-
-**2. Deploy Worker Separately:**
-
-**Option A: Railway**
-```bash
-# Install Railway CLI
-npm i -g @railway/cli
-
-# Login and deploy
-railway login
-railway init
-railway up
-```
-
-**Option B: Render**
-- Create account at render.com
-- New Web Service → Background Worker
-- Build command: `npm install`
-- Start command: `npm run worker:prod`
-- Add environment variables
-
-### Redis Options for Production
-
-| Provider | Free Tier | Price | Recommended For |
-|----------|-----------|-------|-----------------|
-| **Upstash** | 10,000 commands/day | $0.20/100k | ✅ Best choice |
-| Redis Cloud | 30MB storage | $5/mo | Medium traffic |
-| AWS ElastiCache | No free tier | ~$15/mo | Enterprise |
-| DigitalOcean | No free tier | $15/mo | Self-hosted |
-
-**Recommended:** Upstash (easiest setup, generous free tier)
-
-## Environment Variables Checklist
-
-Copy to production:
-
-```bash
-# Required
-REDIS_URL=redis://...
-REPLICATE_API_TOKEN=r8_...
-NEXTAUTH_SECRET=... # generate with: openssl rand -base64 32
-NEXTAUTH_URL=https://yourdomain.com
-
-# Firebase
-NEXT_PUBLIC_FIREBASE_API_KEY=...
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=...
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=...
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=...
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=...
-NEXT_PUBLIC_FIREBASE_APP_ID=...
-
-# Optional
-WEBHOOK_SECRET=... # for webhook signature verification
-```
-
-## Monitoring & Troubleshooting
-
-### Check Worker is Running
-
-**Logs should show:**
-```
-✅ Worker started successfully!
-🔄 Processing job job_123456
-✅ Job job_123456 completed in 18.5s
-```
-
-### Common Issues
-
-**1. "Redis connection refused"**
-```bash
-# Check Redis is running
-redis-cli ping
-
-# Check REDIS_URL is correct
-echo $REDIS_URL
-```
-
-**2. "Jobs stuck in pending"**
-- Ensure worker is running
-- Check worker logs for errors
-- Verify Replicate API token is valid
-
-**3. "Rate limit errors in production"**
-- Check Redis connection
-- Verify rate limit keys: `redis-cli KEYS ratelimit:*`
-
-### Monitor Queue
-
-Install BullMQ Board (optional):
-```bash
-npm install -g @bull-board/cli
-bull-board $REDIS_URL
-```
-
-Open http://localhost:3000/admin to see queue status.
-
-## Scaling
-
-### Horizontal Scaling
-
-Run **multiple workers** for higher throughput:
-
-```bash
-# Terminal 1
-npm run worker
-
-# Terminal 2
-npm run worker
-
-# Terminal 3
-npm run worker
-```
-
-BullMQ automatically distributes jobs across workers.
-
-### Vertical Scaling
-
-Increase worker concurrency in [lib/queue.ts:268](lib/queue.ts#L268):
-
-```typescript
-concurrency: 10, // Process 10 jobs simultaneously (default: 5)
-```
-
-## Cost Estimation
-
-**For 10,000 API requests/month:**
-
-| Service | Cost |
-|---------|------|
-| DigitalOcean App (Web) | $5/mo |
-| DigitalOcean App (Worker) | $5/mo |
-| Upstash Redis | Free |
-| Replicate API | ~$50/mo |
-| **Total** | **~$60/mo** |
-
-**Revenue potential:**
-- 10 Professional customers @ $299/mo = $2,990/mo
-- **Profit: ~$2,930/mo**
-
-## Support
-
-- Issues: GitHub repository
-- Email: sales@pixelift.pl
-- Docs: `/api/v1/docs`
-
-## Security Checklist
-
-- [ ] Use strong `NEXTAUTH_SECRET` (32+ characters)
-- [ ] Enable HTTPS in production
-- [ ] Set `WEBHOOK_SECRET` for signature verification
-- [ ] Use environment-specific API keys (test vs live)
-- [ ] Enable rate limiting (already configured)
-- [ ] Monitor failed jobs and errors
-- [ ] Backup Firebase data regularly
-
-## Next Steps
-
-1. ✅ Deploy to production
-2. 📊 Set up analytics (track API usage)
-3. 💳 Integrate Stripe for billing
-4. 📧 Add email notifications for limits
-5. 🎨 Create customer dashboard
-6. 📱 Build mobile SDKs
+**Fix Applied:** PM2 now starts from the standalone directory. This is PERMANENT.
 
 ---
 
-**Ready to deploy? Start with Upstash Redis + DigitalOcean App Platform for easiest setup.**
+## 🚀 Quick Deployment
+
+From your local machine:
+
+```bash
+./deploy-production.sh
+```
+
+This automated script:
+1. ✅ Pulls latest code from GitHub
+2. ✅ Installs npm dependencies  
+3. ✅ Builds production bundle
+4. ✅ Copies static files to standalone folder
+5. ✅ Restarts PM2 from CORRECT directory (standalone)
+6. ✅ Shows status and logs
+
+---
+
+## 🔧 Manual Deployment (if script fails)
+
+```bash
+# 1. SSH to server
+ssh root@138.68.79.23
+
+# 2. Navigate and pull
+cd /root/upsizer
+git pull origin master
+
+# 3. Install and build
+npm install
+npm run build
+
+# 4. Copy static files (CRITICAL!)
+cp -r .next/static .next/standalone/.next/
+cp -r public .next/standalone/
+
+# 5. Restart PM2 from standalone directory (CRITICAL!)
+pm2 delete pixelift-web
+cd .next/standalone
+pm2 start server.js --name pixelift-web
+pm2 save
+```
+
+---
+
+## 🐛 Troubleshooting
+
+### White background / No CSS
+
+```bash
+ssh root@138.68.79.23
+cd /root/upsizer
+
+# Copy static files
+cp -r .next/static .next/standalone/.next/
+cp -r public .next/standalone/
+
+# Restart from standalone directory
+pm2 delete pixelift-web
+cd .next/standalone
+pm2 start server.js --name pixelift-web
+pm2 save
+```
+
+### Verify PM2 is running from correct directory
+
+```bash
+pm2 show pixelift-web | grep "exec cwd"
+# Should show: /root/upsizer/.next/standalone
+```
+
+---
+
+## 📊 PM2 Commands
+
+```bash
+pm2 status                      # Check status
+pm2 logs pixelift-web          # View logs
+pm2 logs pixelift-web --lines 50
+pm2 restart pixelift-web       # Restart
+pm2 stop pixelift-web          # Stop
+pm2 delete pixelift-web        # Delete process
+pm2 save                       # Save configuration
+pm2 show pixelift-web          # Detailed info
+```
+
+---
+
+## ✅ Post-Deployment Checklist
+
+- [ ] Site loads: https://pixelift.pl
+- [ ] Dark background visible (CSS working)
+- [ ] Dashboard shows real statistics after login
+- [ ] Sitemap accessible: https://pixelift.pl/sitemap.xml
+- [ ] Robots.txt accessible: https://pixelift.pl/robots.txt
+- [ ] Structured data in page source (view source, search for "@type")
+
+---
+
+## 📁 Architecture
+
+```
+User → Nginx (443) → Next.js (3000 in standalone mode)
+                   ↓
+            .next/standalone/
+                ├── server.js (entry point)
+                ├── .next/static/ (CSS, JS)
+                └── public/ (images, etc)
+```
+
+**Key Points:**
+- PM2 MUST run from `.next/standalone` directory
+- Static files MUST be in `.next/standalone/.next/static`
+- Nginx proxies everything to localhost:3000
+
+---
+
+## 🔄 Environment Variables
+
+Located at: `/root/upsizer/.env.local`
+
+```bash
+NEXTAUTH_SECRET=...
+NEXTAUTH_URL=https://pixelift.pl
+REPLICATE_API_TOKEN=...
+```
+
+---
+
+## 📝 Recent Changes
+
+- ✅ Real dashboard statistics
+- ✅ SEO improvements (sitemap, robots, structured data)  
+- ✅ Security enhancements (rate limiting, validation)
+- ✅ Logger utility
+- ✅ Stripe payment foundation
+- ✅ **Fixed PM2 working directory for CSS**
+
+---
+
+**Last Updated:** November 24, 2025
+**CSS Issue:** RESOLVED ✅

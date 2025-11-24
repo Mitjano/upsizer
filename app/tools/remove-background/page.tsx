@@ -1,7 +1,6 @@
 'use client';
 
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import ToolsLayout from '@/components/ToolsLayout';
 import { BackgroundRemover } from '@/components/BackgroundRemover';
@@ -9,15 +8,8 @@ import { ProcessedImagesGallery } from '@/components/ProcessedImagesGallery';
 
 export default function RemoveBackgroundPage() {
   const { data: session, status } = useSession();
-  const router = useRouter();
   const [userRole, setUserRole] = useState<'user' | 'premium' | 'admin'>('user');
   const [credits, setCredits] = useState(0);
-
-  useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/auth/signin?callbackUrl=/tools/remove-background');
-    }
-  }, [status, router]);
 
   useEffect(() => {
     if (session?.user?.email) {
@@ -31,16 +23,6 @@ export default function RemoveBackgroundPage() {
         .catch(err => console.error('Error fetching user data:', err));
     }
   }, [session]);
-
-  if (status === 'loading') {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500"></div>
-      </div>
-    );
-  }
-
-  if (!session) return null;
 
   return (
     <>

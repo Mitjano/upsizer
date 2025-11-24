@@ -1,30 +1,11 @@
 'use client';
 
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 import ToolsLayout from '@/components/ToolsLayout';
 import EnhancedImageUploader from '@/components/EnhancedImageUploader';
 
 export default function UpscalerPage() {
   const { data: session, status } = useSession();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/auth/signin');
-    }
-  }, [status, router]);
-
-  if (status === 'loading') {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500"></div>
-      </div>
-    );
-  }
-
-  if (!session) return null;
 
   return (
     <>
