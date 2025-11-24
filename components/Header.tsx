@@ -133,7 +133,7 @@ export default function Header() {
                       {session.user?.name?.[0] || "U"}
                     </div>
                   )}
-                  <span className="hidden md:block">
+                  <span className="hidden md:block" style={{color: '#ffffff'}}>
                     {session.user?.name?.split(" ")[0]}
                   </span>
                 </button>
