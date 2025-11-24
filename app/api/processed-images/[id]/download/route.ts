@@ -142,16 +142,21 @@ export async function GET(
       const cleanName = nameWithoutExt.replace(/_+$/, '').replace(/[()]/g, '')
       const filename = `${cleanName}_${resolution}_bg-removed.${format}`
 
+      // Encode filename for Content-Disposition header (RFC 5987)
+      const encodedFilename = encodeURIComponent(filename)
+
       console.log('Download filename generated:', filename)
+      console.log('Encoded filename:', encodedFilename)
 
       // Determine content type
       const contentType = format === 'png' ? 'image/png' : 'image/jpeg'
 
       // Return file with proper headers
+      // Use both filename and filename* for maximum compatibility
       return new NextResponse(processedBuffer as any, {
         headers: {
           'Content-Type': contentType,
-          'Content-Disposition': `attachment; filename="${filename}"`,
+          'Content-Disposition': `attachment; filename="${filename}"; filename*=UTF-8''${encodedFilename}`,
           'Cache-Control': 'public, max-age=31536000, immutable'
         }
       })
