@@ -140,7 +140,7 @@ export async function GET(
       const contentType = format === 'png' ? 'image/png' : 'image/jpeg'
 
       // Return file with proper headers
-      return new NextResponse(processedBuffer, {
+      return new NextResponse(processedBuffer as any, {
         headers: {
           'Content-Type': contentType,
           'Content-Disposition': `attachment; filename="${filename}"`,
