@@ -142,19 +142,22 @@ export default function Header() {
                 <div className="absolute right-0 mt-2 w-48 bg-gray-800 border border-gray-700 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
                   <Link
                     href="/dashboard"
-                    className="block px-4 py-2 text-white hover:bg-gray-700 transition"
+                    className="block px-4 py-2 hover:bg-gray-700 transition"
+                    style={{color: '#ffffff'}}
                   >
                     Dashboard
                   </Link>
                   <Link
                     href="/dashboard/api"
-                    className="block px-4 py-2 text-white hover:bg-gray-700 transition"
+                    className="block px-4 py-2 hover:bg-gray-700 transition"
+                    style={{color: '#ffffff'}}
                   >
                     API Keys
                   </Link>
                   <Link
                     href="/dashboard/settings"
-                    className="block px-4 py-2 text-white hover:bg-gray-700 transition"
+                    className="block px-4 py-2 hover:bg-gray-700 transition"
+                    style={{color: '#ffffff'}}
                   >
                     Settings
                   </Link>
