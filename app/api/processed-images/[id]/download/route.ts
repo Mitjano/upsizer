@@ -134,8 +134,15 @@ export async function GET(
 
       // Generate filename - remove extension properly
       const ext = path.extname(image.originalFilename)
-      const nameWithoutExt = image.originalFilename.slice(0, -ext.length)
-      const filename = `${nameWithoutExt}_${resolution}_bg-removed.${format}`
+      const nameWithoutExt = ext.length > 0
+        ? image.originalFilename.slice(0, -ext.length)
+        : image.originalFilename
+
+      // Clean filename: remove any trailing underscores or special chars
+      const cleanName = nameWithoutExt.replace(/_+$/, '').replace(/[()]/g, '')
+      const filename = `${cleanName}_${resolution}_bg-removed.${format}`
+
+      console.log('Download filename generated:', filename)
 
       // Determine content type
       const contentType = format === 'png' ? 'image/png' : 'image/jpeg'
