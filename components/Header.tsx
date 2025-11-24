@@ -231,13 +231,25 @@ export default function Header() {
       {mobileMenuOpen && (
         <div className="md:hidden border-t border-gray-800 bg-gray-900">
           <div className="container mx-auto px-4 py-4 space-y-3">
-            <Link
-              href="/#features"
-              className="block py-2 text-white hover:text-green-400 transition"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Features
-            </Link>
+            {/* Tools Section */}
+            <div className="border-b border-gray-800 pb-3 mb-3">
+              <div className="text-xs font-semibold text-gray-500 uppercase mb-2">Tools</div>
+              <Link
+                href="/tools/upscaler"
+                className="block py-2 text-white hover:text-green-400 transition"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Image Upscaler
+              </Link>
+              <Link
+                href="/tools/remove-background"
+                className="block py-2 text-white hover:text-green-400 transition"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Background Remover
+              </Link>
+            </div>
+
             <Link
               href="/#use-cases"
               className="block py-2 text-white hover:text-green-400 transition"
