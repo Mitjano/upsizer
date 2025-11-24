@@ -156,6 +156,42 @@ export const createApiKeySchema = z.object({
   expiresAt: z.string().datetime().optional(),
 });
 
+// Image processing schemas
+export const imageUpscaleSchema = z.object({
+  scale: z.enum(['2', '4', '8']).default('2'),
+  faceEnhance: z.boolean().default(false),
+});
+
+export const backgroundRemovalSchema = z.object({
+  format: z.enum(['png', 'jpg']).default('png'),
+  resolution: z.enum(['low', 'medium', 'high', 'original']).default('low'),
+});
+
+// File validation
+export const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+export const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+
+export function validateFileSize(size: number): boolean {
+  return size <= MAX_FILE_SIZE;
+}
+
+export function validateFileType(type: string): boolean {
+  return ACCEPTED_IMAGE_TYPES.includes(type.toLowerCase());
+}
+
+// Sanitization helpers
+export function sanitizeInput(input: string): string {
+  return input
+    .replace(/[<>]/g, '')
+    .replace(/javascript:/gi, '')
+    .replace(/on\w+=/gi, '')
+    .trim();
+}
+
+export function sanitizeEmail(email: string): string {
+  return email.toLowerCase().trim();
+}
+
 /**
  * Helper function to validate request body
  * Returns { success: true, data } or { success: false, errors }

@@ -5,10 +5,27 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
+interface DashboardStats {
+  totalImages: number;
+  credits: number;
+  role: string;
+  toolsAvailable: number;
+  upscalerUsage: { count: number; credits: number };
+  bgRemovalUsage: { count: number; credits: number };
+  mostUsedTool: string;
+  recentActivity: Array<{
+    id: string;
+    type: string;
+    creditsUsed: number;
+    date: string;
+  }>;
+}
+
 export default function DashboardPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const [userData, setUserData] = useState<any>(null);
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -18,10 +35,17 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (session?.user?.email) {
-      fetch('/api/user')
+      setLoading(true);
+      fetch('/api/dashboard/stats')
         .then(res => res.json())
-        .then(data => setUserData(data))
-        .catch(err => console.error('Error fetching user data:', err));
+        .then(data => {
+          setStats(data);
+          setLoading(false);
+        })
+        .catch(err => {
+          console.error('Error fetching dashboard stats:', err);
+          setLoading(false);
+        });
     }
   }, [session]);
 
@@ -80,27 +104,49 @@ export default function DashboardPage() {
         <div className="grid md:grid-cols-4 gap-6 mb-12">
           <div className="bg-gray-800/50 rounded-xl border border-gray-700 p-6">
             <div className="text-green-400 text-3xl mb-2">⚡</div>
-            <div className="text-2xl font-bold mb-1">0</div>
+            <div className="text-2xl font-bold mb-1">
+              {loading ? (
+                <div className="h-8 w-16 bg-gray-700 animate-pulse rounded"></div>
+              ) : (
+                stats?.totalImages || 0
+              )}
+            </div>
             <div className="text-sm text-gray-400">Images Processed</div>
           </div>
 
           <div className="bg-gray-800/50 rounded-xl border border-gray-700 p-6">
             <div className="text-blue-400 text-3xl mb-2">💎</div>
-            <div className="text-2xl font-bold mb-1">{userData?.credits || 0}</div>
+            <div className="text-2xl font-bold mb-1">
+              {loading ? (
+                <div className="h-8 w-16 bg-gray-700 animate-pulse rounded"></div>
+              ) : (
+                stats?.credits || 0
+              )}
+            </div>
             <div className="text-sm text-gray-400">Credits Remaining</div>
           </div>
 
           <div className="bg-gray-800/50 rounded-xl border border-gray-700 p-6">
             <div className="text-purple-400 text-3xl mb-2">📊</div>
             <div className="text-2xl font-bold mb-1 capitalize">
-              {userData?.role === 'user' ? 'Free' : userData?.role || 'Free'}
+              {loading ? (
+                <div className="h-8 w-20 bg-gray-700 animate-pulse rounded"></div>
+              ) : (
+                stats?.role === 'user' ? 'Free' : stats?.role || 'Free'
+              )}
             </div>
             <div className="text-sm text-gray-400">Current Plan</div>
           </div>
 
           <div className="bg-gray-800/50 rounded-xl border border-gray-700 p-6">
             <div className="text-yellow-400 text-3xl mb-2">🛠️</div>
-            <div className="text-2xl font-bold mb-1">2</div>
+            <div className="text-2xl font-bold mb-1">
+              {loading ? (
+                <div className="h-8 w-8 bg-gray-700 animate-pulse rounded"></div>
+              ) : (
+                stats?.toolsAvailable || 2
+              )}
+            </div>
             <div className="text-sm text-gray-400">Tools Available</div>
           </div>
         </div>
@@ -156,32 +202,71 @@ export default function DashboardPage() {
         <div className="mb-12">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold">Recent Activity</h2>
-            <Link href="/tools/upscaler" className="text-sm text-green-400 hover:text-green-300 transition">
-              View all →
-            </Link>
           </div>
 
-          <div className="bg-gray-800/30 rounded-xl border border-gray-700 p-8 text-center">
-            <div className="text-6xl mb-4">📂</div>
-            <h3 className="text-xl font-semibold mb-2">No activity yet</h3>
-            <p className="text-gray-400 mb-6">
-              Start using our tools to see your processing history here
-            </p>
-            <div className="flex gap-4 justify-center">
-              <Link
-                href="/tools/upscaler"
-                className="px-6 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg font-medium transition"
-              >
-                Try Upscaler
-              </Link>
-              <Link
-                href="/tools/remove-background"
-                className="px-6 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-medium transition"
-              >
-                Try Background Remover
-              </Link>
+          {loading ? (
+            <div className="bg-gray-800/30 rounded-xl border border-gray-700 p-6">
+              <div className="space-y-3">
+                {[1, 2, 3].map(i => (
+                  <div key={i} className="h-16 bg-gray-700 animate-pulse rounded"></div>
+                ))}
+              </div>
             </div>
-          </div>
+          ) : stats?.recentActivity && stats.recentActivity.length > 0 ? (
+            <div className="bg-gray-800/30 rounded-xl border border-gray-700 overflow-hidden">
+              <div className="divide-y divide-gray-700">
+                {stats.recentActivity.map((activity) => (
+                  <div key={activity.id} className="p-4 hover:bg-gray-800/50 transition flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                        activity.type === 'Image Upscaler'
+                          ? 'bg-purple-500/20 text-purple-400'
+                          : 'bg-blue-500/20 text-blue-400'
+                      }`}>
+                        {activity.type === 'Image Upscaler' ? '🔍' : '✂️'}
+                      </div>
+                      <div>
+                        <div className="font-medium">{activity.type}</div>
+                        <div className="text-sm text-gray-400">
+                          {new Date(activity.date).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-sm text-gray-400">
+                      -{activity.creditsUsed} credit{activity.creditsUsed !== 1 ? 's' : ''}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="bg-gray-800/30 rounded-xl border border-gray-700 p-8 text-center">
+              <div className="text-6xl mb-4">📂</div>
+              <h3 className="text-xl font-semibold mb-2">No activity yet</h3>
+              <p className="text-gray-400 mb-6">
+                Start using our tools to see your processing history here
+              </p>
+              <div className="flex gap-4 justify-center">
+                <Link
+                  href="/tools/upscaler"
+                  className="px-6 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg font-medium transition"
+                >
+                  Try Upscaler
+                </Link>
+                <Link
+                  href="/tools/remove-background"
+                  className="px-6 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-medium transition"
+                >
+                  Try Background Remover
+                </Link>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Usage Stats */}
@@ -193,28 +278,42 @@ export default function DashboardPage() {
               <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                 <span>💰</span> Credit Usage
               </h3>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-3 h-3 rounded-full bg-purple-500"></div>
-                    <span className="text-sm">Image Upscaler</span>
-                  </div>
-                  <span className="text-sm font-medium">0 credits</span>
+              {loading ? (
+                <div className="space-y-4">
+                  {[1, 2].map(i => (
+                    <div key={i} className="h-6 bg-gray-700 animate-pulse rounded"></div>
+                  ))}
                 </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-                    <span className="text-sm">Background Remover</span>
+              ) : (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-3 h-3 rounded-full bg-purple-500"></div>
+                      <span className="text-sm">Image Upscaler</span>
+                    </div>
+                    <span className="text-sm font-medium">
+                      {stats?.upscalerUsage.credits || 0} credits
+                    </span>
                   </div>
-                  <span className="text-sm font-medium">0 credits</span>
-                </div>
-                <div className="pt-4 border-t border-gray-700">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-400">Total Used</span>
-                    <span className="font-bold">0 credits</span>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                      <span className="text-sm">Background Remover</span>
+                    </div>
+                    <span className="text-sm font-medium">
+                      {stats?.bgRemovalUsage.credits || 0} credits
+                    </span>
+                  </div>
+                  <div className="pt-4 border-t border-gray-700">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-400">Total Used</span>
+                      <span className="font-bold">
+                        {(stats?.upscalerUsage.credits || 0) + (stats?.bgRemovalUsage.credits || 0)} credits
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
 
             {/* Most Used Tool */}
@@ -222,13 +321,33 @@ export default function DashboardPage() {
               <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                 <span>📈</span> Most Used Tool
               </h3>
-              <div className="text-center py-8">
-                <div className="text-4xl mb-3">🎯</div>
-                <p className="text-gray-400">No data yet</p>
-                <p className="text-sm text-gray-500 mt-2">
-                  Start processing images to see statistics
-                </p>
-              </div>
+              {loading ? (
+                <div className="text-center py-8">
+                  <div className="h-12 w-12 bg-gray-700 animate-pulse rounded-full mx-auto mb-3"></div>
+                  <div className="h-6 w-32 bg-gray-700 animate-pulse rounded mx-auto"></div>
+                </div>
+              ) : stats?.mostUsedTool && stats.mostUsedTool !== 'None' ? (
+                <div className="text-center py-8">
+                  <div className="text-4xl mb-3">
+                    {stats.mostUsedTool === 'Image Upscaler' ? '🔍' : '✂️'}
+                  </div>
+                  <p className="text-white font-semibold">{stats.mostUsedTool}</p>
+                  <p className="text-sm text-gray-400 mt-2">
+                    {stats.mostUsedTool === 'Image Upscaler'
+                      ? `${stats.upscalerUsage.count} image${stats.upscalerUsage.count !== 1 ? 's' : ''} processed`
+                      : `${stats.bgRemovalUsage.count} image${stats.bgRemovalUsage.count !== 1 ? 's' : ''} processed`
+                    }
+                  </p>
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <div className="text-4xl mb-3">🎯</div>
+                  <p className="text-gray-400">No data yet</p>
+                  <p className="text-sm text-gray-500 mt-2">
+                    Start processing images to see statistics
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>

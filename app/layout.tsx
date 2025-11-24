@@ -3,39 +3,56 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/Providers";
 import LayoutWrapper from "@/components/LayoutWrapper";
+import StructuredData from "@/components/StructuredData";
 import { Toaster } from 'react-hot-toast';
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Free AI Image Upscaler - Enhance Photos 2x-8x | Pixelift",
-  description: "Upscale images up to 8x with AI technology. Free, no watermarks, 10s processing. Restore old photos, enhance portraits, and improve image quality instantly.",
+  metadataBase: new URL('https://pixelift.pl'),
+  title: {
+    default: "Pixelift - AI Image Tools | Upscaler & Background Remover",
+    template: "%s | Pixelift"
+  },
+  description: "Professional AI-powered image tools. Upscale images up to 8x with Real-ESRGAN and remove backgrounds instantly with BRIA RMBG 2.0. Free, fast, and secure.",
   keywords: [
     "AI image upscaler",
+    "background remover",
     "image enhancer",
     "photo upscale",
-    "increase image resolution",
+    "remove background online",
     "AI photo enhancement",
     "Real-ESRGAN",
-    "GFPGAN",
-    "free image upscaler",
+    "BRIA RMBG",
+    "free image tools",
     "enhance image quality",
-    "upscale photos online",
-    "AI image quality",
+    "transparent background",
     "photo restoration",
     "enlarge images",
-    "high resolution images"
+    "high resolution images",
+    "AI image processing"
   ],
+  authors: [{ name: "Pixelift" }],
+  creator: "Pixelift",
+  publisher: "Pixelift",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
   openGraph: {
-    title: "Free AI Image Upscaler - Enhance Photos 2x-8x",
-    description: "Upscale images up to 8x with AI. Free, no watermarks, fast processing. Restore old photos and enhance portraits instantly.",
+    title: "Pixelift - AI Image Tools",
+    description: "Professional AI-powered image upscaling and background removal. Free, fast, and secure.",
     type: "website",
     locale: "en_US",
+    url: "https://pixelift.pl",
+    siteName: "Pixelift",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Free AI Image Upscaler - Enhance Photos 2x-8x",
-    description: "Upscale images up to 8x with AI technology. Free, no watermarks, 10s processing. Restore & enhance photos instantly.",
+    title: "Pixelift - AI Image Tools",
+    description: "Professional AI-powered image upscaling and background removal. Free, fast, and secure.",
+    creator: "@pixelift",
   },
   robots: {
     index: true,
@@ -48,6 +65,14 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
+  alternates: {
+    canonical: "https://pixelift.pl",
+  },
+  verification: {
+    // Add your verification codes here when ready
+    // google: "your-google-verification-code",
+    // yandex: "your-yandex-verification-code",
+  },
 };
 
 export default function RootLayout({
@@ -57,6 +82,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <StructuredData />
+      </head>
       <body className={inter.className}>
         <Providers>
           <LayoutWrapper>{children}</LayoutWrapper>
