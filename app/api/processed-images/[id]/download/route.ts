@@ -88,7 +88,7 @@ export async function GET(
 
     try {
       let fileBuffer = await readFile(filePath)
-      let processedBuffer = fileBuffer
+      let processedBuffer: Buffer = fileBuffer
 
       // Determine target resolution
       let targetWidth: number | null = null
@@ -121,15 +121,17 @@ export async function GET(
       // Convert format
       if (format === 'jpg') {
         // Convert to JPEG with white background (since JPG doesn't support transparency)
-        processedBuffer = await sharpInstance
+        const jpgBuffer = await sharpInstance
           .flatten({ background: '#ffffff' })
           .jpeg({ quality: 90 })
           .toBuffer()
+        processedBuffer = Buffer.from(jpgBuffer)
       } else {
         // Keep as PNG with transparency
-        processedBuffer = await sharpInstance
+        const pngBuffer = await sharpInstance
           .png({ compressionLevel: 9 })
           .toBuffer()
+        processedBuffer = Buffer.from(pngBuffer)
       }
 
       // Generate filename
