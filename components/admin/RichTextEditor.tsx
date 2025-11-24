@@ -45,7 +45,7 @@ export default function RichTextEditor({
     content,
     editorProps: {
       attributes: {
-        class: "prose prose-invert max-w-none focus:outline-none min-h-[400px] px-6 py-4",
+        class: "prose prose-invert prose-lg max-w-none focus:outline-none min-h-[500px] px-6 py-4 text-gray-100 prose-headings:text-white prose-p:text-gray-100 prose-li:text-gray-100 prose-strong:text-white prose-a:text-green-400",
       },
     },
     onUpdate: ({ editor }) => {
@@ -78,60 +78,70 @@ export default function RichTextEditor({
   };
 
   return (
-    <div className="border border-gray-700 rounded-xl bg-gray-900 overflow-hidden">
+    <div className="border-2 border-gray-700 rounded-xl bg-gray-900 overflow-hidden shadow-xl">
       {/* Toolbar */}
-      <div className="border-b border-gray-700 p-2 flex flex-wrap gap-2 bg-gray-800/50">
+      <div className="border-b-2 border-gray-700 p-3 flex flex-wrap gap-2 bg-gray-800">
         {/* Text Formatting */}
-        <div className="flex gap-1 border-r border-gray-700 pr-2">
+        <div className="flex gap-1 border-r border-gray-700 pr-3 mr-1">
           <button
             type="button"
             onClick={() => editor.chain().focus().toggleBold().run()}
-            className={`p-2 rounded hover:bg-gray-700 transition ${
-              editor.isActive("bold") ? "bg-gray-700 text-green-400" : "text-gray-400"
+            className={`px-3 py-2 rounded-lg font-bold transition-all ${
+              editor.isActive("bold")
+                ? "bg-green-500 text-white shadow-md"
+                : "bg-gray-700 text-gray-200 hover:bg-gray-600"
             }`}
             title="Bold"
           >
-            <strong>B</strong>
+            B
           </button>
           <button
             type="button"
             onClick={() => editor.chain().focus().toggleItalic().run()}
-            className={`p-2 rounded hover:bg-gray-700 transition ${
-              editor.isActive("italic") ? "bg-gray-700 text-green-400" : "text-gray-400"
+            className={`px-3 py-2 rounded-lg italic transition-all ${
+              editor.isActive("italic")
+                ? "bg-green-500 text-white shadow-md"
+                : "bg-gray-700 text-gray-200 hover:bg-gray-600"
             }`}
             title="Italic"
           >
-            <em>I</em>
+            I
           </button>
           <button
             type="button"
             onClick={() => editor.chain().focus().toggleUnderline().run()}
-            className={`p-2 rounded hover:bg-gray-700 transition ${
-              editor.isActive("underline") ? "bg-gray-700 text-green-400" : "text-gray-400"
+            className={`px-3 py-2 rounded-lg underline transition-all ${
+              editor.isActive("underline")
+                ? "bg-green-500 text-white shadow-md"
+                : "bg-gray-700 text-gray-200 hover:bg-gray-600"
             }`}
             title="Underline"
           >
-            <u>U</u>
+            U
           </button>
           <button
             type="button"
             onClick={() => editor.chain().focus().toggleStrike().run()}
-            className={`p-2 rounded hover:bg-gray-700 transition ${
-              editor.isActive("strike") ? "bg-gray-700 text-green-400" : "text-gray-400"
+            className={`px-3 py-2 rounded-lg line-through transition-all ${
+              editor.isActive("strike")
+                ? "bg-green-500 text-white shadow-md"
+                : "bg-gray-700 text-gray-200 hover:bg-gray-600"
             }`}
             title="Strikethrough"
           >
-            <s>S</s>
+            S
           </button>
         </div>
 
         {/* Headings */}
-        <div className="flex gap-1 border-r border-gray-700 pr-2">
+        <div className="flex gap-1 border-r border-gray-700 pr-3 mr-1">
           <button
             type="button"
             onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-            className={`px-2 py-1 rounded hover:bg-gray-700 transition text-sm ${
-              editor.isActive("heading", { level: 1 }) ? "bg-gray-700 text-green-400" : "text-gray-400"
+            className={`px-3 py-2 rounded-lg font-semibold text-sm transition-all ${
+              editor.isActive("heading", { level: 1 })
+                ? "bg-green-500 text-white shadow-md"
+                : "bg-gray-700 text-gray-200 hover:bg-gray-600"
             }`}
             title="Heading 1"
           >
@@ -140,8 +150,10 @@ export default function RichTextEditor({
           <button
             type="button"
             onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-            className={`px-2 py-1 rounded hover:bg-gray-700 transition text-sm ${
-              editor.isActive("heading", { level: 2 }) ? "bg-gray-700 text-green-400" : "text-gray-400"
+            className={`px-3 py-2 rounded-lg font-semibold text-sm transition-all ${
+              editor.isActive("heading", { level: 2 })
+                ? "bg-green-500 text-white shadow-md"
+                : "bg-gray-700 text-gray-200 hover:bg-gray-600"
             }`}
             title="Heading 2"
           >
@@ -150,8 +162,10 @@ export default function RichTextEditor({
           <button
             type="button"
             onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-            className={`px-2 py-1 rounded hover:bg-gray-700 transition text-sm ${
-              editor.isActive("heading", { level: 3 }) ? "bg-gray-700 text-green-400" : "text-gray-400"
+            className={`px-3 py-2 rounded-lg font-semibold text-sm transition-all ${
+              editor.isActive("heading", { level: 3 })
+                ? "bg-green-500 text-white shadow-md"
+                : "bg-gray-700 text-gray-200 hover:bg-gray-600"
             }`}
             title="Heading 3"
           >
@@ -160,12 +174,14 @@ export default function RichTextEditor({
         </div>
 
         {/* Lists */}
-        <div className="flex gap-1 border-r border-gray-700 pr-2">
+        <div className="flex gap-1 border-r border-gray-700 pr-3 mr-1">
           <button
             type="button"
             onClick={() => editor.chain().focus().toggleBulletList().run()}
-            className={`p-2 rounded hover:bg-gray-700 transition text-sm ${
-              editor.isActive("bulletList") ? "bg-gray-700 text-green-400" : "text-gray-400"
+            className={`px-3 py-2 rounded-lg text-sm transition-all ${
+              editor.isActive("bulletList")
+                ? "bg-green-500 text-white shadow-md"
+                : "bg-gray-700 text-gray-200 hover:bg-gray-600"
             }`}
             title="Bullet List"
           >
@@ -174,8 +190,10 @@ export default function RichTextEditor({
           <button
             type="button"
             onClick={() => editor.chain().focus().toggleOrderedList().run()}
-            className={`p-2 rounded hover:bg-gray-700 transition text-sm ${
-              editor.isActive("orderedList") ? "bg-gray-700 text-green-400" : "text-gray-400"
+            className={`px-3 py-2 rounded-lg text-sm transition-all ${
+              editor.isActive("orderedList")
+                ? "bg-green-500 text-white shadow-md"
+                : "bg-gray-700 text-gray-200 hover:bg-gray-600"
             }`}
             title="Numbered List"
           >
@@ -184,12 +202,14 @@ export default function RichTextEditor({
         </div>
 
         {/* Alignment */}
-        <div className="flex gap-1 border-r border-gray-700 pr-2">
+        <div className="flex gap-1 border-r border-gray-700 pr-3 mr-1">
           <button
             type="button"
             onClick={() => editor.chain().focus().setTextAlign("left").run()}
-            className={`p-2 rounded hover:bg-gray-700 transition text-sm ${
-              editor.isActive({ textAlign: "left" }) ? "bg-gray-700 text-green-400" : "text-gray-400"
+            className={`px-3 py-2 rounded-lg text-sm transition-all ${
+              editor.isActive({ textAlign: "left" })
+                ? "bg-green-500 text-white shadow-md"
+                : "bg-gray-700 text-gray-200 hover:bg-gray-600"
             }`}
             title="Align Left"
           >
@@ -198,8 +218,10 @@ export default function RichTextEditor({
           <button
             type="button"
             onClick={() => editor.chain().focus().setTextAlign("center").run()}
-            className={`p-2 rounded hover:bg-gray-700 transition text-sm ${
-              editor.isActive({ textAlign: "center" }) ? "bg-gray-700 text-green-400" : "text-gray-400"
+            className={`px-3 py-2 rounded-lg text-sm transition-all ${
+              editor.isActive({ textAlign: "center" })
+                ? "bg-green-500 text-white shadow-md"
+                : "bg-gray-700 text-gray-200 hover:bg-gray-600"
             }`}
             title="Align Center"
           >
@@ -208,8 +230,10 @@ export default function RichTextEditor({
           <button
             type="button"
             onClick={() => editor.chain().focus().setTextAlign("right").run()}
-            className={`p-2 rounded hover:bg-gray-700 transition text-sm ${
-              editor.isActive({ textAlign: "right" }) ? "bg-gray-700 text-green-400" : "text-gray-400"
+            className={`px-3 py-2 rounded-lg text-sm transition-all ${
+              editor.isActive({ textAlign: "right" })
+                ? "bg-green-500 text-white shadow-md"
+                : "bg-gray-700 text-gray-200 hover:bg-gray-600"
             }`}
             title="Align Right"
           >
@@ -222,8 +246,10 @@ export default function RichTextEditor({
           <button
             type="button"
             onClick={setLink}
-            className={`px-2 py-1 rounded hover:bg-gray-700 transition text-sm ${
-              editor.isActive("link") ? "bg-gray-700 text-green-400" : "text-gray-400"
+            className={`px-3 py-2 rounded-lg text-sm transition-all ${
+              editor.isActive("link")
+                ? "bg-green-500 text-white shadow-md"
+                : "bg-gray-700 text-gray-200 hover:bg-gray-600"
             }`}
             title="Insert Link"
           >
@@ -232,7 +258,7 @@ export default function RichTextEditor({
           <button
             type="button"
             onClick={addImage}
-            className="px-2 py-1 rounded hover:bg-gray-700 transition text-sm text-gray-400"
+            className="px-3 py-2 rounded-lg text-sm bg-gray-700 text-gray-200 hover:bg-gray-600 transition-all"
             title="Insert Image"
           >
             🖼️ Image
@@ -240,8 +266,10 @@ export default function RichTextEditor({
           <button
             type="button"
             onClick={() => editor.chain().focus().toggleBlockquote().run()}
-            className={`px-2 py-1 rounded hover:bg-gray-700 transition text-sm ${
-              editor.isActive("blockquote") ? "bg-gray-700 text-green-400" : "text-gray-400"
+            className={`px-3 py-2 rounded-lg text-sm transition-all ${
+              editor.isActive("blockquote")
+                ? "bg-green-500 text-white shadow-md"
+                : "bg-gray-700 text-gray-200 hover:bg-gray-600"
             }`}
             title="Quote"
           >
