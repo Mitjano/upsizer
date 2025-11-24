@@ -87,8 +87,7 @@ export async function GET(
     const filePath = path.join(process.cwd(), 'public', image.processedPath)
 
     try {
-      let fileBuffer = await readFile(filePath)
-      let processedBuffer: Buffer = fileBuffer
+      const fileBuffer = await readFile(filePath)
 
       // Determine target resolution
       let targetWidth: number | null = null
@@ -118,20 +117,19 @@ export async function GET(
         })
       }
 
-      // Convert format
+      // Convert format and get buffer
+      let processedBuffer: Buffer
       if (format === 'jpg') {
         // Convert to JPEG with white background (since JPG doesn't support transparency)
-        const jpgBuffer = await sharpInstance
+        processedBuffer = await sharpInstance
           .flatten({ background: '#ffffff' })
           .jpeg({ quality: 90 })
           .toBuffer()
-        processedBuffer = Buffer.from(jpgBuffer)
       } else {
         // Keep as PNG with transparency
-        const pngBuffer = await sharpInstance
+        processedBuffer = await sharpInstance
           .png({ compressionLevel: 9 })
           .toBuffer()
-        processedBuffer = Buffer.from(pngBuffer)
       }
 
       // Generate filename
