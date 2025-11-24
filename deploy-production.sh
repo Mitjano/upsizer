@@ -49,8 +49,16 @@ else
 fi
 ENDSSH
 
-echo -e "${BLUE}🔄 Step 5: Restarting PM2 process...${NC}"
-sshpass -p "$REMOTE_PASSWORD" ssh -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST "pm2 restart pixelift-web"
+echo -e "${BLUE}🔄 Step 5: Restarting PM2 process from standalone directory...${NC}"
+sshpass -p "$REMOTE_PASSWORD" ssh -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST << 'ENDSSH'
+# Stop current PM2 process
+pm2 delete pixelift-web 2>/dev/null || true
+
+# Start from standalone directory (CRITICAL for serving static files)
+cd /root/upsizer/.next/standalone
+pm2 start server.js --name pixelift-web
+pm2 save
+ENDSSH
 
 echo -e "${BLUE}⏳ Step 6: Waiting for app to start...${NC}"
 sleep 3
