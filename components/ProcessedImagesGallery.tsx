@@ -78,7 +78,7 @@ export function ProcessedImagesGallery() {
           >
             {image.isProcessed && image.processedPath ? (
               <Image
-                src={image.processedPath}
+                src={`/api/processed-images/${image.id}/view`}
                 alt={image.originalFilename}
                 fill
                 className="object-contain p-4 group-hover:scale-105 transition-transform duration-300"

@@ -149,8 +149,8 @@ export async function POST(request: NextRequest) {
         success: true,
         image: {
           id: imageRecord.id,
-          originalUrl: originalPath,
-          processedUrl: processedPath,
+          originalUrl: `/api/processed-images/${imageRecord.id}/view?type=original`,
+          processedUrl: `/api/processed-images/${imageRecord.id}/view?type=processed`,
           filename: file.name,
           creditsRemaining: newCredits
         }
