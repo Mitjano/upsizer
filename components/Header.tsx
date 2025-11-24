@@ -81,12 +81,12 @@ export default function Header() {
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="font-semibold text-gray-400">Face Restoration</span>
-                        <span className="px-2 py-0.5 text-xs bg-gray-600 text-gray-300 rounded-full">
+                        <span className="font-semibold text-white">Face Restoration</span>
+                        <span className="px-2 py-0.5 text-xs bg-gray-600 text-white rounded-full">
                           SOON
                         </span>
                       </div>
-                      <div className="text-sm text-gray-500">Restore and enhance face photos</div>
+                      <div className="text-sm text-gray-300">Restore and enhance face photos</div>
                     </div>
                   </div>
                 </div>
