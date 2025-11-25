@@ -165,9 +165,11 @@ export function updateUserLogin(email: string): void {
   const index = users.findIndex(u => u.email === email);
 
   if (index !== -1) {
+    console.log(`[updateUserLogin] Updating login for ${email}, credits: ${users[index].credits}`);
     users[index].lastLoginAt = new Date().toISOString();
     users[index].updatedAt = new Date().toISOString();
     writeJSON(USERS_FILE, users);
+    console.log(`[updateUserLogin] Login updated, credits unchanged: ${users[index].credits}`);
   }
 }
 

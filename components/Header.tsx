@@ -89,6 +89,23 @@ export default function Header() {
                     </div>
                   </Link>
 
+                  {/* Image Compressor */}
+                  <Link
+                    href="/tools/image-compressor"
+                    onClick={() => setShowToolsDropdown(false)}
+                    className="flex items-start gap-3 px-4 py-3 hover:bg-gray-700 transition-colors"
+                  >
+                    <div className="mt-1 text-cyan-400">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="font-semibold text-white">Image Compressor</div>
+                      <div className="text-sm text-gray-400">Reduce file size with smart compression</div>
+                    </div>
+                  </Link>
+
                   {/* Coming Soon - Face Restoration */}
                   <div className="flex items-start gap-3 px-4 py-3 opacity-50 cursor-not-allowed">
                     <div className="mt-1 text-green-400">
@@ -247,6 +264,13 @@ export default function Header() {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Background Remover
+              </Link>
+              <Link
+                href="/tools/image-compressor"
+                className="block py-2 text-white hover:text-green-400 transition"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Image Compressor
               </Link>
             </div>
 
