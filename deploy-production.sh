@@ -77,8 +77,13 @@ pm2 delete pixelift-web 2>/dev/null || true
 # Start from standalone directory (CRITICAL for serving static files)
 cd /root/upsizer/.next/standalone
 
-# Load environment variables from .env.local and start
-pm2 start server.js --name pixelift-web --env-file .env.local
+# Export environment variables from .env.local
+set -a  # Mark variables for export
+source .env.local
+set +a  # Unmark
+
+# Start PM2 with environment variables loaded
+pm2 start server.js --name pixelift-web
 pm2 save
 ENDSSH
 
