@@ -111,14 +111,18 @@ async function generatePackshot(imageBuffer: Buffer, backgroundColor: string): P
 
   console.log('[Packshot] Step 5: Calling OpenAI DALL-E 2 Edit...')
 
-  // Create File objects for OpenAI API
-  const imageFile = new File([resizedOriginal], 'product.png', { type: 'image/png' })
-  const maskFile = new File([resizedMask], 'mask.png', { type: 'image/png' })
+  // Create Blob objects for OpenAI API (File extends Blob)
+  const imageBlob = new Blob([resizedOriginal], { type: 'image/png' }) as any
+  const maskBlob = new Blob([resizedMask], { type: 'image/png' }) as any
+
+  // Add filename property for OpenAI API
+  Object.defineProperty(imageBlob, 'name', { value: 'product.png' })
+  Object.defineProperty(maskBlob, 'name', { value: 'mask.png' })
 
   // Call DALL-E 2 Edit
   const response = await openai.images.edit({
-    image: imageFile,
-    mask: maskFile,
+    image: imageBlob,
+    mask: maskBlob,
     prompt: `Professional product packshot photography on ${bgDescription} background, studio lighting, centered composition, clean presentation with natural shadows, high-end e-commerce style, Amazon listing quality, commercial photography`,
     n: 1,
     size: '1024x1024',
