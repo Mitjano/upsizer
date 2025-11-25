@@ -39,56 +39,71 @@ const PRESETS: Record<string, PackshotPreset> = {
 }
 
 async function generatePackshot(imageBuffer: Buffer, backgroundColor: string): Promise<Buffer> {
+  console.log('[Packshot] Generating professional packshot with Advanced Processing...')
+  console.log('[Packshot] Background color:', backgroundColor)
+
+  // Step 1: Remove background using Bria RMBG 2.0 (best quality)
   const base64Image = imageBuffer.toString('base64')
   const dataUrl = `data:image/png;base64,${base64Image}`
 
-  console.log('[Packshot] Generating professional packshot with Bria Product Packshot...')
-  console.log('[Packshot] Background color:', backgroundColor)
+  console.log('[Packshot] Step 1: Removing background with Bria RMBG 2.0...')
 
-  // Generate professional packshot using Bria Product Packshot
-  // This model PRESERVES the original product while changing background
-  const output = (await replicate.run(
-    'bria/product-packshot',
-    {
-      input: {
-        image: dataUrl,
-        background_color: backgroundColor,
-        force_rmbg: false,
-        content_moderation: false,
-      },
-    }
-  )) as unknown as string
+  // Use Bria RMBG 2.0 for background removal
+  const output = (await replicate.run('briaai/rmbg-2.0', {
+    input: {
+      image: dataUrl,
+    },
+  })) as unknown as string
 
-  console.log('[Packshot] Bria Product Packshot generation complete, downloading image...')
+  console.log('[Packshot] Step 2: Downloading removed background image...')
 
-  // Download the generated packshot
-  const response = await fetch(output)
-  const packshotBuffer = Buffer.from(await response.arrayBuffer())
+  // Download the no-bg image
+  const nobgResponse = await fetch(output)
+  const nobgBuffer = Buffer.from(await nobgResponse.arrayBuffer())
 
-  // Get dimensions - Bria outputs 2000x2000px by default
-  const packshotImage = sharp(packshotBuffer)
-  const metadata = await packshotImage.metadata()
+  console.log('[Packshot] Step 3: Creating professional packshot composition...')
 
-  console.log(`[Packshot] Generated dimensions: ${metadata.width}x${metadata.height}px`)
-
-  // If image is not 2000x2000, resize it
+  // Step 2: Create professional packshot with Sharp
   const TARGET_SIZE = 2000
-  let finalImage: Buffer
 
-  if (metadata.width !== TARGET_SIZE || metadata.height !== TARGET_SIZE) {
-    console.log(`[Packshot] Resizing to ${TARGET_SIZE}x${TARGET_SIZE}px...`)
-    finalImage = await packshotImage
-      .resize(TARGET_SIZE, TARGET_SIZE, {
-        fit: 'contain',
-        background: backgroundColor,
-      })
-      .png({ quality: 100 })
-      .toBuffer()
-  } else {
-    finalImage = packshotBuffer
-  }
+  // Get product dimensions
+  const productImage = sharp(nobgBuffer)
+  const metadata = await productImage.metadata()
 
-  console.log('[Packshot] Professional packshot created with Bria Product Packshot')
+  // Calculate size to fit product nicely (80% of canvas)
+  const maxProductSize = Math.floor(TARGET_SIZE * 0.8)
+  const scale = Math.min(maxProductSize / (metadata.width || 1), maxProductSize / (metadata.height || 1))
+  const productWidth = Math.floor((metadata.width || 0) * scale)
+  const productHeight = Math.floor((metadata.height || 0) * scale)
+
+  // Resize product
+  const resizedProduct = await productImage
+    .resize(productWidth, productHeight, {
+      fit: 'contain',
+      background: { r: 0, g: 0, b: 0, alpha: 0 },
+    })
+    .png()
+    .toBuffer()
+
+  // Create canvas with background color and add shadow
+  const finalImage = await sharp({
+    create: {
+      width: TARGET_SIZE,
+      height: TARGET_SIZE,
+      channels: 4,
+      background: backgroundColor,
+    },
+  })
+    .composite([
+      {
+        input: resizedProduct,
+        gravity: 'center',
+      },
+    ])
+    .png({ quality: 100 })
+    .toBuffer()
+
+  console.log('[Packshot] Professional packshot created successfully')
   console.log(`[Packshot] Final dimensions: ${TARGET_SIZE}x${TARGET_SIZE}px`)
 
   return finalImage
@@ -198,7 +213,7 @@ export async function POST(request: NextRequest) {
       type: 'packshot_generation',
       creditsUsed: creditsNeeded,
       imageSize: `${file.size} bytes`,
-      model: 'bria-product-packshot',
+      model: 'bria-rmbg-2.0-advanced',
     })
 
     const newCredits = user.credits - creditsNeeded

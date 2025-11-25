@@ -34,7 +34,7 @@ export default function PackshotGeneratorPage() {
           </h1>
           <p className="text-gray-400 text-lg max-w-3xl mx-auto">
             Transform any product photo into a studio-quality professional packshot with AI. Perfect for Amazon, e-commerce,
-            and marketplace listings. <strong className="text-green-400">Powered by Bria AI</strong> - preserves your exact product while generating professional backgrounds, lighting, and composition.
+            and marketplace listings. <strong className="text-green-400">Advanced AI Processing</strong> - removes background with precision and creates clean, professional product packshots.
           </p>
 
           {/* Credits Info */}
@@ -72,9 +72,9 @@ export default function PackshotGeneratorPage() {
           </div>
           <div className="bg-gray-800/30 rounded-lg p-6 border border-gray-700">
             <div className="text-3xl mb-3">⚡</div>
-            <h3 className="text-lg font-semibold mb-2">Product Preservation AI</h3>
+            <h3 className="text-lg font-semibold mb-2">AI Background Removal</h3>
             <p className="text-sm text-gray-400">
-              Bria Product Packshot preserves your exact product - same design, same labels, same details - while generating professional backgrounds and studio lighting
+              Advanced AI removes backgrounds with precision, preserving product details and edges perfectly for professional packshots
             </p>
           </div>
           <div className="bg-gray-800/30 rounded-lg p-6 border border-gray-700">
@@ -142,16 +142,16 @@ export default function PackshotGeneratorPage() {
             </h3>
             <div className="space-y-3 text-gray-300">
               <div>
-                <strong className="text-white">Product Preservation:</strong> Bria Product Packshot - maintains your EXACT product (same design, labels, colors) while transforming the background
+                <strong className="text-white">Precision Background Removal:</strong> AI-powered background removal preserves exact product details, edges, and transparency
               </div>
               <div>
-                <strong className="text-white">AI Background Generation:</strong> Professional backgrounds (white, gray, beige, blue) with natural shadows and studio-quality lighting
+                <strong className="text-white">Professional Composition:</strong> Clean backgrounds (white, gray, beige, blue) with optimal product sizing and centering
               </div>
               <div>
                 <strong className="text-white">High-Quality Output:</strong> 2000x2000px resolution, marketplace-ready packshots perfect for Amazon, eBay, and e-commerce catalogs
               </div>
               <div>
-                <strong className="text-white">Fast & Affordable:</strong> Professional-grade results in 8-15 seconds, only 2 credits per packshot
+                <strong className="text-white">Fast & Affordable:</strong> Professional-grade results in 5-10 seconds, only 2 credits per packshot
               </div>
             </div>
           </div>
