@@ -57,12 +57,15 @@ async function removeBackground(imageBuffer: Buffer): Promise<Buffer> {
   const base64Image = imageBuffer.toString('base64')
   const dataUrl = `data:image/png;base64,${base64Image}`
 
-  const output = await replicate.run('briaai/rmbg-2.0:a1cebbff94f78c39c5cf3a1a464efb2a7c9e5fc04f0c4b3aaef2ec71fa3e66f9', {
-    input: {
-      image: dataUrl,
-      output_format: 'png',
-    },
-  }) as string
+  const output = (await replicate.run(
+    'briaai/rmbg-2.0:a1cebbff94f78c39c5cf3a1a464efb2a7c9e5fc04f0c4b3aaef2ec71fa3e66f9',
+    {
+      input: {
+        image: dataUrl,
+        output_format: 'png',
+      },
+    }
+  )) as unknown as string
 
   // Download the result
   const response = await fetch(output)
