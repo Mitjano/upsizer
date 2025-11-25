@@ -298,12 +298,12 @@ export async function POST(request: NextRequest) {
     // Apply upscaling if needed
     if (upscaleCredits === 2) {
       console.log('[Packshot] Image too small, applying 4x AI upscaling...')
-      buffer = await upscaleImage(buffer, 4)
+      buffer = Buffer.from(await upscaleImage(buffer, 4))
       const upscaledMetadata = await sharp(buffer).metadata()
       console.log('[Packshot] After upscale:', upscaledMetadata.width, 'x', upscaledMetadata.height)
     } else if (upscaleCredits === 1) {
       console.log('[Packshot] Premium preset: applying 2x AI upscaling...')
-      buffer = await upscaleImage(buffer, 2)
+      buffer = Buffer.from(await upscaleImage(buffer, 2))
       const upscaledMetadata = await sharp(buffer).metadata()
       console.log('[Packshot] After upscale:', upscaledMetadata.width, 'x', upscaledMetadata.height)
     }
