@@ -51,10 +51,10 @@ async function generatePackshot(imageBuffer: Buffer, backgroundColor: string): P
   const base64Image = imageBuffer.toString('base64')
   const dataUrl = `data:image/png;base64,${base64Image}`
 
-  console.log('[Packshot] Step 1: Removing background with Bria RMBG 2.0 to create mask...')
+  console.log('[Packshot] Step 1: Removing background to create mask...')
 
-  // Use Bria RMBG 2.0 for background removal to create mask
-  const rmbgOutput = (await replicate.run('briaai/rmbg-2.0', {
+  // Use background removal model to create mask
+  const rmbgOutput = (await replicate.run('lucataco/remove-bg:95fcc2a26d3899cd6c2691c900465aaeff466285a65c14638cc5f36f34befaf1', {
     input: {
       image: dataUrl,
     },
