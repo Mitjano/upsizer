@@ -150,7 +150,7 @@ export function BackgroundRemover({ userRole = 'user' }: BackgroundRemoverProps)
             transition-all duration-300 ease-in-out
             ${isDragActive
               ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 scale-[1.02]'
-              : 'border-gray-300 dark:border-gray-700 hover:border-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800/50'
+              : 'border-gray-300 dark:border-gray-700 hover:border-blue-400 dark:hover:bg-gray-800/50'
             }
             ${processing ? 'opacity-50 cursor-not-allowed' : ''}
           `}
@@ -231,14 +231,7 @@ export function BackgroundRemover({ userRole = 'user' }: BackgroundRemoverProps)
                 <span className="w-2 h-2 bg-green-500 rounded-full"></span>
                 Background Removed
               </h4>
-              <div
-                className="relative aspect-square rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700"
-                style={{
-                  backgroundImage: 'linear-gradient(45deg, #e5e7eb 25%, transparent 25%), linear-gradient(-45deg, #e5e7eb 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #e5e7eb 75%), linear-gradient(-45deg, transparent 75%, #e5e7eb 75%)',
-                  backgroundSize: '20px 20px',
-                  backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px'
-                }}
-              >
+              <div className="relative aspect-square rounded-xl overflow-hidden bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
                 <Image
                   src={result.processedUrl}
                   alt="Processed"

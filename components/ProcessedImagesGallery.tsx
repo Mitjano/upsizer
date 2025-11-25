@@ -21,6 +21,7 @@ export function ProcessedImagesGallery({ userRole = 'user' }: ProcessedImagesGal
   const [images, setImages] = useState<ProcessedImage[]>([])
   const [loading, setLoading] = useState(true)
   const [downloadModalImage, setDownloadModalImage] = useState<ProcessedImage | null>(null)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
 
   useEffect(() => {
     async function loadImages() {
@@ -39,6 +40,30 @@ export function ProcessedImagesGallery({ userRole = 'user' }: ProcessedImagesGal
 
     loadImages()
   }, [])
+
+  const handleDelete = async (imageId: string) => {
+    if (!confirm('Are you sure you want to delete this image?')) {
+      return
+    }
+
+    setDeletingId(imageId)
+    try {
+      const response = await fetch(`/api/processed-images/${imageId}`, {
+        method: 'DELETE'
+      })
+
+      if (response.ok) {
+        setImages(images.filter(img => img.id !== imageId))
+      } else {
+        alert('Failed to delete image')
+      }
+    } catch (error) {
+      console.error('Failed to delete image:', error)
+      alert('Failed to delete image')
+    } finally {
+      setDeletingId(null)
+    }
+  }
 
   if (loading) {
     return (
@@ -73,15 +98,8 @@ export function ProcessedImagesGallery({ userRole = 'user' }: ProcessedImagesGal
           key={image.id}
           className="group border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden bg-white dark:bg-gray-800 hover:shadow-xl transition-shadow duration-300"
         >
-          {/* Image Preview with Checkered Background */}
-          <div
-            className="relative aspect-square overflow-hidden"
-            style={{
-              backgroundImage: 'linear-gradient(45deg, #e5e7eb 25%, transparent 25%), linear-gradient(-45deg, #e5e7eb 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #e5e7eb 75%), linear-gradient(-45deg, transparent 75%, #e5e7eb 75%)',
-              backgroundSize: '20px 20px',
-              backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px'
-            }}
-          >
+          {/* Image Preview with White Background */}
+          <div className="relative aspect-square overflow-hidden bg-white dark:bg-gray-900">
             {image.isProcessed && image.processedPath ? (
               <Image
                 src={`/api/processed-images/${image.id}/view`}
@@ -140,6 +158,23 @@ export function ProcessedImagesGallery({ userRole = 'user' }: ProcessedImagesGal
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                   </svg>
                 </a>
+                <button
+                  onClick={() => handleDelete(image.id)}
+                  disabled={deletingId === image.id}
+                  className="inline-flex items-center justify-center bg-red-100 dark:bg-red-900/30 hover:bg-red-200 dark:hover:bg-red-900/50 text-red-600 dark:text-red-400 p-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  title="Delete Image"
+                >
+                  {deletingId === image.id ? (
+                    <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                  ) : (
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  )}
+                </button>
               </div>
             )}
           </div>
