@@ -64,7 +64,7 @@ async function generatePackshot(imageBuffer: Buffer, backgroundColor: string): P
 
   // Step 2: Compose professional packshot with custom background
   const TARGET_SIZE = 2000
-  const PADDING_PERCENT = 0.05 // 5% padding on each side for maximum product visibility
+  const PADDING_PERCENT = 0.025 // 2.5% padding (50px) for maximum product visibility
 
   // Load the transparent image
   const transparentImage = sharp(transparentBuffer)
@@ -74,7 +74,7 @@ async function generatePackshot(imageBuffer: Buffer, backgroundColor: string): P
     throw new Error('Failed to get image dimensions')
   }
 
-  // Calculate scaling to fit within padded area
+  // Calculate scaling to fit within padded area - maximize product size
   const maxProductSize = TARGET_SIZE * (1 - 2 * PADDING_PERCENT)
   const scale = Math.min(
     maxProductSize / metadata.width,

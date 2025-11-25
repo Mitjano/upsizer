@@ -148,7 +148,7 @@ export default function PackshotGeneratorPage() {
                 <strong className="text-white">Premium Edge Detection:</strong> 256 levels of alpha transparency for pixel-perfect cutouts and natural edges
               </div>
               <div>
-                <strong className="text-white">Professional Composition:</strong> Smart centering with 5% padding, maximum product size, perfect 2000x2000px marketplace-ready output
+                <strong className="text-white">Professional Composition:</strong> Smart centering with minimal padding, maximum product visibility, perfect 2000x2000px marketplace-ready output
               </div>
               <div>
                 <strong className="text-white">Commercial-Safe:</strong> Trained on 15,000+ licensed images, fast processing in 5-10 seconds
