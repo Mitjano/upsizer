@@ -42,49 +42,90 @@ async function generatePackshot(imageBuffer: Buffer, backgroundColor: string): P
   const base64Image = imageBuffer.toString('base64')
   const dataUrl = `data:image/png;base64,${base64Image}`
 
-  console.log('[Packshot] Generating professional packshot with FLUX 1.1 Pro...')
+  console.log('[Packshot] Step 1: Removing background with Bria RMBG 2.0...')
 
-  // Map background colors to descriptive terms for better AI understanding
-  const backgroundDescriptions: Record<string, string> = {
-    '#FFFFFF': 'pure white',
-    '#F5F5F5': 'light gray',
-    '#F5E6D3': 'warm beige',
-    '#E3F2FD': 'light blue',
-  }
-
-  const bgDescription = backgroundDescriptions[backgroundColor] || 'white'
-
-  // Generate professional packshot using FLUX 1.1 Pro
-  const prompt = `Professional product packshot photography, studio lighting, ${bgDescription} background, centered composition, commercial photography, high resolution, sharp focus, professional e-commerce photo, clean and minimal, product fills frame, 8K quality`
-
-  console.log('[Packshot] Prompt:', prompt)
-
+  // Step 1: Remove background using Bria RMBG 2.0
   const output = (await replicate.run(
-    'black-forest-labs/flux-1.1-pro',
+    'bria/remove-background',
     {
       input: {
-        prompt,
-        image_prompt: dataUrl,
-        aspect_ratio: '1:1',
-        output_format: 'png',
-        prompt_upsampling: true,
+        image: dataUrl,
       },
     }
   )) as unknown as string
 
-  console.log('[Packshot] Downloading generated packshot...')
+  console.log('[Packshot] Step 2: Downloading transparent image...')
 
-  // Download the generated packshot
+  // Download the transparent PNG
   const response = await fetch(output)
-  const packshotBuffer = Buffer.from(await response.arrayBuffer())
+  const transparentBuffer = Buffer.from(await response.arrayBuffer())
 
-  console.log('[Packshot] Professional packshot generated successfully')
+  console.log('[Packshot] Step 3: Creating professional packshot with maximum product size...')
 
-  // Get final image dimensions
-  const metadata = await sharp(packshotBuffer).metadata()
-  console.log(`[Packshot] Final dimensions: ${metadata.width}x${metadata.height}px`)
+  // Step 2: Compose packshot - MAXIMIZE product size (no padding)
+  const TARGET_SIZE = 2000
 
-  return packshotBuffer
+  // Load transparent image
+  const transparentImage = sharp(transparentBuffer)
+  const metadata = await transparentImage.metadata()
+
+  if (!metadata.width || !metadata.height) {
+    throw new Error('Failed to get image dimensions')
+  }
+
+  // Scale to fill entire canvas - product at maximum size
+  const scale = Math.max(
+    TARGET_SIZE / metadata.width,
+    TARGET_SIZE / metadata.height
+  )
+
+  const scaledWidth = Math.round(metadata.width * scale)
+  const scaledHeight = Math.round(metadata.height * scale)
+
+  // Resize product to maximum size
+  const resizedProduct = await transparentImage
+    .resize(scaledWidth, scaledHeight, {
+      fit: 'outside',
+      withoutEnlargement: false,
+    })
+    .toBuffer()
+
+  // Create background canvas
+  const canvas = sharp({
+    create: {
+      width: TARGET_SIZE,
+      height: TARGET_SIZE,
+      channels: 4,
+      background: backgroundColor,
+    },
+  })
+
+  // Center the oversized product (it will be cropped to fit)
+  const offsetX = Math.round((TARGET_SIZE - scaledWidth) / 2)
+  const offsetY = Math.round((TARGET_SIZE - scaledHeight) / 2)
+
+  // Composite and extract center
+  const finalImage = await canvas
+    .composite([
+      {
+        input: resizedProduct,
+        top: offsetY,
+        left: offsetX,
+      },
+    ])
+    .extract({
+      left: 0,
+      top: 0,
+      width: TARGET_SIZE,
+      height: TARGET_SIZE,
+    })
+    .png({ quality: 100 })
+    .toBuffer()
+
+  console.log('[Packshot] Professional packshot created - product fills frame')
+  console.log(`[Packshot] Final dimensions: ${TARGET_SIZE}x${TARGET_SIZE}px`)
+
+  return finalImage
 }
 
 export async function POST(request: NextRequest) {
@@ -182,8 +223,8 @@ export async function POST(request: NextRequest) {
 
     // 7. GET IMAGE DIMENSIONS
     const metadata = await sharp(finalImage).metadata()
-    const width = metadata.width || 1440
-    const height = metadata.height || 1440
+    const width = metadata.width || 2000
+    const height = metadata.height || 2000
 
     // 8. DEDUCT CREDITS & LOG USAGE
     createUsage({
@@ -191,7 +232,7 @@ export async function POST(request: NextRequest) {
       type: 'packshot_generation',
       creditsUsed: creditsNeeded,
       imageSize: `${file.size} bytes`,
-      model: 'flux-1.1-pro',
+      model: 'bria-rmbg-2.0',
     })
 
     const newCredits = user.credits - creditsNeeded
