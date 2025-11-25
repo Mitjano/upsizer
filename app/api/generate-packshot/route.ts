@@ -86,7 +86,10 @@ async function createGradientBackground(width: number, height: number): Promise<
       <rect width="${width}" height="${height}" fill="url(#grad)" />
     </svg>
   `
-  return Buffer.from(svgGradient)
+  // Convert SVG to PNG buffer using Sharp
+  return await sharp(Buffer.from(svgGradient))
+    .png()
+    .toBuffer()
 }
 
 async function addShadow(
@@ -251,9 +254,15 @@ export async function POST(request: NextRequest) {
     console.log('[Packshot] Removing background...')
     const noBgBuffer = await removeBackground(buffer)
 
+    // Validate and normalize the buffer to ensure it's a valid image
+    console.log('[Packshot] Validating buffer format...')
+    const normalizedBuffer = await sharp(noBgBuffer)
+      .png()
+      .toBuffer()
+
     // Step 2: Add shadow
     console.log('[Packshot] Adding shadow...')
-    const withShadowBuffer = await addShadow(noBgBuffer, preset.shadowType, preset.shadowIntensity)
+    const withShadowBuffer = await addShadow(normalizedBuffer, preset.shadowType, preset.shadowIntensity)
 
     // Step 3: Create background
     console.log('[Packshot] Creating background...')
