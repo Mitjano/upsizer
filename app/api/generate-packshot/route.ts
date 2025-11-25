@@ -226,8 +226,9 @@ export async function POST(request: NextRequest) {
     if (user.credits < creditsNeeded) {
       if (user.credits === 0) {
         sendCreditsDepletedEmail({
-          email: user.email,
-          name: user.name || 'User',
+          userEmail: user.email,
+          userName: user.name || 'User',
+          totalImagesProcessed: user.totalUsage || 0,
         }).catch(err => console.error('Failed to send credits depleted email:', err))
       }
       return NextResponse.json(
@@ -331,9 +332,10 @@ export async function POST(request: NextRequest) {
     // 8. SEND LOW CREDITS WARNING
     if (newCredits > 0 && newCredits <= 10) {
       sendCreditsLowEmail({
-        email: user.email,
-        name: user.name || 'User',
+        userEmail: user.email,
+        userName: user.name || 'User',
         creditsRemaining: newCredits,
+        totalUsed: user.totalUsage || 0,
       }).catch(err => console.error('Failed to send low credits email:', err))
     }
 
