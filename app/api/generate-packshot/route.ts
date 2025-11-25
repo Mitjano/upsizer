@@ -112,8 +112,9 @@ async function generatePackshot(imageBuffer: Buffer, backgroundColor: string): P
   console.log('[Packshot] Step 5: Calling OpenAI DALL-E 2 Edit...')
 
   // Create Blob objects for OpenAI API (File extends Blob)
-  const imageBlob = new Blob([resizedOriginal], { type: 'image/png' }) as any
-  const maskBlob = new Blob([resizedMask], { type: 'image/png' }) as any
+  // Convert Buffer to Uint8Array for Blob compatibility
+  const imageBlob = new Blob([new Uint8Array(resizedOriginal)], { type: 'image/png' }) as any
+  const maskBlob = new Blob([new Uint8Array(resizedMask)], { type: 'image/png' }) as any
 
   // Add filename property for OpenAI API
   Object.defineProperty(imageBlob, 'name', { value: 'product.png' })
