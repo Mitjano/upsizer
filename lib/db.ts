@@ -146,13 +146,17 @@ export function updateUser(id: string, updates: Partial<User>): User | null {
 
   if (index === -1) return null;
 
+  console.log(`[updateUser] Before update:`, { id, oldCredits: users[index].credits, newCredits: updates.credits });
+
   users[index] = {
     ...users[index],
     ...updates,
     updatedAt: new Date().toISOString(),
   };
 
+  console.log(`[updateUser] After update:`, { id, credits: users[index].credits });
   writeJSON(USERS_FILE, users);
+  console.log(`[updateUser] Written to disk, cache invalidated`);
   return users[index];
 }
 
@@ -256,10 +260,13 @@ export function createUsage(data: Omit<Usage, 'id' | 'createdAt'>): Usage {
 
   // Update user's total usage
   const user = getUserById(data.userId);
+  console.log(`[createUsage] User before update:`, { id: user?.id, credits: user?.credits, creditsUsed: data.creditsUsed });
   if (user) {
+    const newCredits = Math.max(0, user.credits - data.creditsUsed);
+    console.log(`[createUsage] Deducting ${data.creditsUsed} credits: ${user.credits} -> ${newCredits}`);
     updateUser(user.id, {
       totalUsage: user.totalUsage + 1,
-      credits: Math.max(0, user.credits - data.creditsUsed),
+      credits: newCredits,
     });
   }
 
