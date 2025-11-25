@@ -143,7 +143,7 @@ export default function ImageCompressorPage() {
               </h3>
               <div className="space-y-3 text-gray-300">
                 <div>
-                  <strong className="text-white">Input:</strong> JPG, PNG, WebP - up to 10MB per image
+                  <strong className="text-white">Input:</strong> JPG, PNG, WebP - up to 15MB per image
                 </div>
                 <div>
                   <strong className="text-white">Output:</strong> Choose between JPG, PNG, or WebP

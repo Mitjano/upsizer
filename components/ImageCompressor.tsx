@@ -42,8 +42,8 @@ export default function ImageCompressor() {
       return;
     }
 
-    if (file.size > 10 * 1024 * 1024) {
-      setError('File size must be less than 10MB');
+    if (file.size > 15 * 1024 * 1024) {
+      setError('File size must be less than 15MB');
       return;
     }
 
@@ -184,7 +184,7 @@ export default function ImageCompressor() {
             </svg>
           </div>
           <p className="text-lg font-medium mb-2">Click or drag image to compress</p>
-          <p className="text-sm text-gray-400">JPG, PNG, WebP up to 10MB</p>
+          <p className="text-sm text-gray-400">JPG, PNG, WebP up to 15MB</p>
         </div>
       ) : (
         <div>
