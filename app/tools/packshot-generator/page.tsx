@@ -34,7 +34,7 @@ export default function PackshotGeneratorPage() {
           </h1>
           <p className="text-gray-400 text-lg max-w-3xl mx-auto">
             Transform any product photo into a professional packshot with AI. Perfect for Amazon, Allegro, Instagram,
-            and e-commerce listings. Remove backgrounds, add shadows, and resize automatically.
+            and e-commerce listings. <strong className="text-green-400">Automatic AI upscaling</strong> for premium quality. Remove backgrounds, add shadows, and resize automatically.
           </p>
 
           {/* Credits Info */}

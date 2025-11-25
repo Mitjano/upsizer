@@ -53,6 +53,30 @@ const PRESETS: Record<string, PackshotPreset> = {
   },
 }
 
+async function upscaleImage(imageBuffer: Buffer, scale: number): Promise<Buffer> {
+  const base64Image = imageBuffer.toString('base64')
+  const dataUrl = `data:image/png;base64,${base64Image}`
+
+  console.log('[Packshot] AI Upscaling image', scale, 'x...')
+
+  const output = (await replicate.run(
+    'nightmareai/real-esrgan:f121d640bd286e1fdc67f9799164c1d5be36ff74576ee11c803ae5b665dd46aa',
+    {
+      input: {
+        image: dataUrl,
+        scale: scale,
+        face_enhance: false,
+      },
+    }
+  )) as unknown as string
+
+  const response = await fetch(output)
+  const resultBuffer = Buffer.from(await response.arrayBuffer())
+
+  console.log('[Packshot] Upscaling complete')
+  return resultBuffer
+}
+
 async function removeBackground(imageBuffer: Buffer): Promise<Buffer> {
   const base64Image = imageBuffer.toString('base64')
   const dataUrl = `data:image/png;base64,${base64Image}`
@@ -221,8 +245,34 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // 5. CHECK CREDITS
-    const creditsNeeded = presetName === 'premium' ? 2 : 1
+    // 5. CHECK IMAGE SIZE & CALCULATE CREDITS
+    console.log('[Packshot] Analyzing image...')
+    const arrayBuffer = await file.arrayBuffer()
+    let buffer = Buffer.from(arrayBuffer)
+
+    const originalMetadata = await sharp(buffer).metadata()
+    const originalWidth = originalMetadata.width || 0
+    const originalHeight = originalMetadata.height || 0
+    const minDimension = Math.min(originalWidth, originalHeight)
+
+    console.log('[Packshot] Original image size:', originalWidth, 'x', originalHeight)
+
+    // Calculate credits needed based on preset and image size
+    let baseCredits = presetName === 'premium' ? 2 : 1
+    let upscaleCredits = 0
+
+    // Determine if upscaling is needed
+    if (minDimension < 800) {
+      upscaleCredits = 2 // 4x upscale
+    } else if (minDimension < 1400 && presetName === 'premium') {
+      upscaleCredits = 1 // 2x upscale for premium
+    }
+
+    const creditsNeeded = baseCredits + upscaleCredits
+
+    console.log('[Packshot] Credits needed:', creditsNeeded, '(base:', baseCredits, '+ upscale:', upscaleCredits, ')')
+
+    // Check if user has enough credits
     if (user.credits < creditsNeeded) {
       if (user.credits === 0) {
         sendCreditsDepletedEmail({
@@ -236,6 +286,7 @@ export async function POST(request: NextRequest) {
           error: 'Insufficient credits',
           required: creditsNeeded,
           available: user.credits,
+          details: upscaleCredits > 0 ? `Includes ${upscaleCredits} credits for AI upscaling` : undefined,
         },
         { status: 402 }
       )
@@ -244,9 +295,18 @@ export async function POST(request: NextRequest) {
     // 6. PROCESS IMAGE
     console.log('[Packshot] Starting processing...')
 
-    // Convert file to buffer
-    const arrayBuffer = await file.arrayBuffer()
-    const buffer = Buffer.from(arrayBuffer)
+    // Apply upscaling if needed
+    if (upscaleCredits === 2) {
+      console.log('[Packshot] Image too small, applying 4x AI upscaling...')
+      buffer = await upscaleImage(buffer, 4)
+      const upscaledMetadata = await sharp(buffer).metadata()
+      console.log('[Packshot] After upscale:', upscaledMetadata.width, 'x', upscaledMetadata.height)
+    } else if (upscaleCredits === 1) {
+      console.log('[Packshot] Premium preset: applying 2x AI upscaling...')
+      buffer = await upscaleImage(buffer, 2)
+      const upscaledMetadata = await sharp(buffer).metadata()
+      console.log('[Packshot] After upscale:', upscaledMetadata.width, 'x', upscaledMetadata.height)
+    }
 
     // Step 1: Remove background
     console.log('[Packshot] Removing background...')
