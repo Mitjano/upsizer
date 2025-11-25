@@ -38,25 +38,36 @@ const PRESETS: Record<string, PackshotPreset> = {
   },
 }
 
-async function generatePackshot(imageBuffer: Buffer, backgroundColor: string): Promise<Buffer> {
+async function generatePackshot(imageBuffer: Buffer, backgroundColor: string, presetName: string): Promise<Buffer> {
   const base64Image = imageBuffer.toString('base64')
   const dataUrl = `data:image/png;base64,${base64Image}`
 
-  console.log('[Packshot] Generating packshot with Bria AI, background:', backgroundColor)
+  console.log('[Packshot] Generating packshot with Ideogram V3 Turbo, background:', backgroundColor)
+
+  // Map background colors to style descriptions
+  const backgroundDescriptions: Record<string, string> = {
+    '#FFFFFF': 'pure white',
+    '#F5F5F5': 'soft light gray',
+    '#F5E6D3': 'warm beige',
+    '#E3F2FD': 'soft light blue',
+  }
+
+  const bgDescription = backgroundDescriptions[backgroundColor] || 'clean white'
 
   const output = (await replicate.run(
-    'bria/product-packshot',
+    'ideogram-ai/ideogram-v3-turbo',
     {
       input: {
-        image: dataUrl,
-        background_color: backgroundColor,
-        force_rmbg: false,
-        content_moderation: false,
+        prompt: `Professional product photography packshot. High-end commercial studio shot of the product on a ${bgDescription} background. Clean, minimalist composition with soft studio lighting. Sharp focus on product details. Commercial e-commerce quality. High resolution 4K image.`,
+        aspect_ratio: '1:1',
+        magic_prompt_option: 'Auto',
+        style_type: 'Design',
+        negative_prompt: 'blurry, low quality, amateur, shadows, cluttered, messy background, text, watermark',
       },
     }
   )) as unknown as string
 
-  console.log('[Packshot] Bria AI response:', output)
+  console.log('[Packshot] Ideogram V3 response:', output)
 
   // Download the result
   const response = await fetch(output)
@@ -153,7 +164,7 @@ export async function POST(request: NextRequest) {
     const arrayBuffer = await file.arrayBuffer()
     const buffer = Buffer.from(arrayBuffer)
 
-    const finalImage = await generatePackshot(buffer, preset.backgroundColor)
+    const finalImage = await generatePackshot(buffer, preset.backgroundColor, presetName)
 
     // Convert to data URL
     const base64 = finalImage.toString('base64')
@@ -170,7 +181,7 @@ export async function POST(request: NextRequest) {
       type: 'packshot_generation',
       creditsUsed: creditsNeeded,
       imageSize: `${file.size} bytes`,
-      model: 'bria-product-packshot-v1',
+      model: 'ideogram-v3-turbo',
     })
 
     const newCredits = user.credits - creditsNeeded
