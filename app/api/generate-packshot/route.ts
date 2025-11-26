@@ -163,8 +163,8 @@ STRICT: No additional objects, no stands, no boxes, no props, no decorations, no
 Only the product on a ${bgDescription} background. If you add anything else, the result is invalid.
 `.trim())
 
-  formData.append('image', new Blob([imagePng], { type: 'image/png' }), 'image.png')
-  formData.append('mask', new Blob([maskPng], { type: 'image/png' }), 'mask.png')
+  formData.append('image', new Blob([new Uint8Array(imagePng)], { type: 'image/png' }), 'image.png')
+  formData.append('mask', new Blob([new Uint8Array(maskPng)], { type: 'image/png' }), 'mask.png')
 
   const openaiResponse = await fetch('https://api.openai.com/v1/images/edits', {
     method: 'POST',
