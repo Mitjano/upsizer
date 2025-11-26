@@ -57,9 +57,9 @@ async function expandImage(
   const mimeType = metadata.format === 'png' ? 'image/png' : 'image/jpeg'
   const dataUrl = `data:${mimeType};base64,${base64Image}`
 
-  // Default prompt - describe what to generate in the expanded area
-  // Higher guidance = more faithful to original image context
-  const expandPrompt = prompt || 'Seamlessly extend the scene, matching the existing background, lighting, colors and style exactly'
+  // Default prompt - simple description works best for outpainting
+  // The model uses this to understand what to generate in expanded areas
+  const expandPrompt = prompt || 'natural continuation of the scene'
 
   // Get the outpaint mode string
   const outpaintMode = EXPAND_MODE_MAP[expandMode]
@@ -71,7 +71,8 @@ async function expandImage(
   console.log('[Expand] Prompt:', expandPrompt)
 
   // Call Replicate API
-  // guidance: 60 (default) ensures consistency with original image
+  // guidance: 3 (LOW) - allows creative freedom for natural expansion
+  // Higher guidance makes the model too rigid and causes artifacts
   const output = (await replicate.run(
     'black-forest-labs/flux-fill-pro',
     {
@@ -80,7 +81,7 @@ async function expandImage(
         prompt: expandPrompt,
         outpaint: outpaintMode,
         steps: 50,
-        guidance: 60,
+        guidance: 3,
         output_format: 'png',
         safety_tolerance: 2,
       },
