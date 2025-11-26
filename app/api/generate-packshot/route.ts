@@ -65,41 +65,39 @@ async function generatePackshot(imageBuffer: Buffer, backgroundColor: string): P
   const nobgResponse = await fetch(rmbgOutput)
   const nobgBuffer = Buffer.from(await nobgResponse.arrayBuffer())
 
-  console.log('[Packshot] Step 3: Using remove-bg result as mask for DALL-E 2...')
+  console.log('[Packshot] Step 3: Building mask from remove-bg alpha channel...')
 
-  // IMPORTANT: nobgBuffer from remove-bg already has correct alpha channel:
-  // - Product pixels: alpha > 0 (opaque) = PRESERVE
-  // - Background pixels: alpha = 0 (transparent) = EDIT
-  // This is exactly what OpenAI expects - no negation needed!
-  // Previously we were negating which told the model to edit the PRODUCT instead of background.
-  const mask = await sharp(nobgBuffer)
-    .ensureAlpha()
-    .png()
-    .toBuffer()
+  // nobgBuffer from remove-bg has:
+  // - Product: visible pixels with alpha > 0
+  // - Background: transparent pixels with alpha = 0
+  // This is EXACTLY what OpenAI mask needs:
+  // - Opaque (alpha > 0) = PRESERVE (don't edit)
+  // - Transparent (alpha = 0) = EDIT
 
   console.log('[Packshot] Step 4: Preparing images for DALL-E 2 Edit...')
 
-  // Resize original image to 1024x1024 (DALL-E 2 requirement)
-  // DALL-E 2 Edit requires RGBA PNG format and max 4MB
+  // IMAGE: Original photo resized with WHITE OPAQUE background
+  // This gives DALL-E the full context of the original image
   const resizedOriginal = await sharp(imageBuffer)
     .resize(1024, 1024, {
       fit: 'contain',
-      background: { r: 255, g: 255, b: 255, alpha: 0 },
-    })
-    .ensureAlpha() // Ensure alpha channel exists
-    .toColorspace('srgb')
-    .png({ compressionLevel: 9, force: true }) // Max compression to stay under 4MB
-    .toBuffer()
-
-  // Resize mask to 1024x1024
-  // IMPORTANT: background must be transparent (alpha: 0) so those areas get edited
-  const resizedMask = await sharp(mask)
-    .resize(1024, 1024, {
-      fit: 'contain',
-      background: { r: 0, g: 0, b: 0, alpha: 0 }, // Transparent = area to edit
+      background: { r: 255, g: 255, b: 255, alpha: 1 }, // WHITE OPAQUE - not transparent!
     })
     .ensureAlpha()
-    .png({ compressionLevel: 9, force: true }) // Max compression to stay under 4MB
+    .toColorspace('srgb')
+    .png({ compressionLevel: 9, force: true })
+    .toBuffer()
+
+  // MASK: Use nobgBuffer directly - it already has correct alpha!
+  // Product = opaque (alpha 255) = PRESERVE
+  // Background = transparent (alpha 0) = EDIT
+  const resizedMask = await sharp(nobgBuffer)
+    .resize(1024, 1024, {
+      fit: 'contain',
+      background: { r: 0, g: 0, b: 0, alpha: 0 }, // Transparent padding = editable
+    })
+    .ensureAlpha()
+    .png({ compressionLevel: 9, force: true })
     .toBuffer()
 
   // Map background color to description
@@ -123,11 +121,11 @@ async function generatePackshot(imageBuffer: Buffer, backgroundColor: string): P
   Object.defineProperty(imageBlob, 'name', { value: 'product.png' })
   Object.defineProperty(maskBlob, 'name', { value: 'mask.png' })
 
-  // Call DALL-E 2 Edit
+  // Call DALL-E 2 Edit with strict prompt to prevent extra objects
   const response = await openai.images.edit({
     image: imageBlob,
     mask: maskBlob,
-    prompt: `Professional product packshot on ${bgDescription} studio background. Keep the product EXACTLY as it is - same shape, colors, labels, logos. Only change the background to ${bgDescription} with soft professional studio lighting and subtle natural shadow beneath the product. Clean e-commerce style, centered composition.`,
+    prompt: `Professional ecommerce packshot. Keep the product EXACTLY as it is: same shape, text, connectors, colors, labels, logos. Do NOT modify the product at all. Edit ONLY the background. Make a clean, flat ${bgDescription} studio background (${backgroundColor}) with a very subtle soft shadow under the product. IMPORTANT: No additional objects, no tools, no stands, no boxes, no props, no decorations, no text overlays. Only the product on a plain ${bgDescription} background. Nothing else.`,
     n: 1,
     size: '1024x1024',
   })
