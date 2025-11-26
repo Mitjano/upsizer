@@ -44,62 +44,8 @@ const PRESETS: Record<string, PackshotPreset> = {
 }
 
 async function generatePackshot(imageBuffer: Buffer, backgroundColor: string): Promise<Buffer> {
-  console.log('[Packshot] Generating professional packshot with OpenAI DALL-E 2 Edit...')
+  console.log('[Packshot] Generating professional packshot with OpenAI DALL-E 3...')
   console.log('[Packshot] Background color:', backgroundColor)
-
-  // Step 1: Remove background to get mask
-  const base64Image = imageBuffer.toString('base64')
-  const dataUrl = `data:image/png;base64,${base64Image}`
-
-  console.log('[Packshot] Step 1: Removing background to create mask...')
-
-  // Use background removal model to create mask
-  const rmbgOutput = (await replicate.run('lucataco/remove-bg:95fcc2a26d3899cd6c2691c900465aaeff466285a65c14638cc5f36f34befaf1', {
-    input: {
-      image: dataUrl,
-    },
-  })) as unknown as string
-
-  console.log('[Packshot] Step 2: Downloading removed background image...')
-
-  const nobgResponse = await fetch(rmbgOutput)
-  const nobgBuffer = Buffer.from(await nobgResponse.arrayBuffer())
-
-  console.log('[Packshot] Step 3: Creating transparency mask for DALL-E 2...')
-
-  // Create mask: transparent areas (background) = white, opaque areas (product) = black
-  const maskImage = await sharp(nobgBuffer)
-    .ensureAlpha()
-    .extractChannel(3) // Extract alpha channel
-    .negate() // Invert: transparent becomes white (area to edit)
-    .toBuffer()
-
-  // Convert to PNG with alpha
-  const mask = await sharp(maskImage)
-    .toFormat('png')
-    .toBuffer()
-
-  console.log('[Packshot] Step 4: Preparing images for DALL-E 2 Edit...')
-
-  // Resize original image to 1024x1024 (DALL-E 2 requirement)
-  // DALL-E 2 Edit requires RGBA format
-  const resizedOriginal = await sharp(imageBuffer)
-    .ensureAlpha() // Ensure alpha channel exists
-    .resize(1024, 1024, {
-      fit: 'contain',
-      background: { r: 255, g: 255, b: 255, alpha: 0 },
-    })
-    .png()
-    .toBuffer()
-
-  // Resize mask to 1024x1024
-  const resizedMask = await sharp(mask)
-    .resize(1024, 1024, {
-      fit: 'contain',
-      background: { r: 255, g: 255, b: 255, alpha: 1 },
-    })
-    .png()
-    .toBuffer()
 
   // Map background color to description
   const backgroundDescriptions: Record<string, string> = {
@@ -111,32 +57,58 @@ async function generatePackshot(imageBuffer: Buffer, backgroundColor: string): P
 
   const bgDescription = backgroundDescriptions[backgroundColor] || 'white'
 
-  console.log('[Packshot] Step 5: Calling OpenAI DALL-E 2 Edit...')
+  console.log('[Packshot] Step 1: Converting image to base64...')
+  const base64Image = imageBuffer.toString('base64')
+  const mimeType = 'image/png'
+  const dataUrl = `data:${mimeType};base64,${base64Image}`
 
-  // Create Blob objects for OpenAI API (File extends Blob)
-  // Convert Buffer to Uint8Array for Blob compatibility
-  const imageBlob = new Blob([new Uint8Array(resizedOriginal)], { type: 'image/png' }) as any
-  const maskBlob = new Blob([new Uint8Array(resizedMask)], { type: 'image/png' }) as any
+  console.log('[Packshot] Step 2: Analyzing product with GPT-4 Vision...')
 
-  // Add filename property for OpenAI API
-  Object.defineProperty(imageBlob, 'name', { value: 'product.png' })
-  Object.defineProperty(maskBlob, 'name', { value: 'mask.png' })
-
-  // Call DALL-E 2 Edit
-  const response = await openai.images.edit({
-    image: imageBlob,
-    mask: maskBlob,
-    prompt: `Professional product packshot photography on ${bgDescription} background, studio lighting, centered composition, clean presentation with natural shadows, high-end e-commerce style, Amazon listing quality, commercial photography`,
-    n: 1,
-    size: '1024x1024',
+  // Use GPT-4 Vision to analyze the product
+  const visionResponse = await openai.chat.completions.create({
+    model: 'gpt-4o',
+    messages: [
+      {
+        role: 'user',
+        content: [
+          {
+            type: 'text',
+            text: 'Describe this product in detail for creating a professional packshot. Focus on the product type, key features, and important details that should be preserved. Be concise but specific.',
+          },
+          {
+            type: 'image_url',
+            image_url: {
+              url: dataUrl,
+            },
+          },
+        ],
+      },
+    ],
+    max_tokens: 300,
   })
 
-  const generatedImageUrl = response.data?.[0]?.url
+  const productDescription = visionResponse.choices[0]?.message?.content || 'product'
+  console.log('[Packshot] Product identified:', productDescription)
+
+  console.log('[Packshot] Step 3: Generating professional packshot with DALL-E 3...')
+
+  // Generate packshot with DALL-E 3
+  const prompt = `Professional product photography of ${productDescription} on a clean ${bgDescription} background. Studio lighting with soft shadows, centered composition, high-end e-commerce style, sharp focus, commercial quality, perfect for Amazon or online marketplace listing. The product should be the main focus with clean, minimal background.`
+
+  const dalleResponse = await openai.images.generate({
+    model: 'dall-e-3',
+    prompt: prompt,
+    n: 1,
+    size: '1024x1024',
+    quality: 'hd',
+  })
+
+  const generatedImageUrl = dalleResponse.data?.[0]?.url
   if (!generatedImageUrl) {
-    throw new Error('Failed to generate packshot with OpenAI DALL-E 2')
+    throw new Error('Failed to generate packshot with OpenAI DALL-E 3')
   }
 
-  console.log('[Packshot] Step 6: Downloading generated packshot...')
+  console.log('[Packshot] Step 4: Downloading generated packshot...')
 
   // Download generated image
   const generatedResponse = await fetch(generatedImageUrl)
@@ -144,7 +116,7 @@ async function generatePackshot(imageBuffer: Buffer, backgroundColor: string): P
 
   // Upscale to 2000x2000
   const TARGET_SIZE = 2000
-  console.log(`[Packshot] Step 7: Upscaling to ${TARGET_SIZE}x${TARGET_SIZE}px...`)
+  console.log(`[Packshot] Step 5: Upscaling to ${TARGET_SIZE}x${TARGET_SIZE}px...`)
 
   const finalImage = await sharp(generatedBuffer)
     .resize(TARGET_SIZE, TARGET_SIZE, {
@@ -154,7 +126,7 @@ async function generatePackshot(imageBuffer: Buffer, backgroundColor: string): P
     .png({ quality: 100 })
     .toBuffer()
 
-  console.log('[Packshot] Professional packshot created successfully with OpenAI DALL-E 2')
+  console.log('[Packshot] Professional packshot created successfully with OpenAI DALL-E 3')
   console.log(`[Packshot] Final dimensions: ${TARGET_SIZE}x${TARGET_SIZE}px`)
 
   return finalImage
@@ -264,7 +236,7 @@ export async function POST(request: NextRequest) {
       type: 'packshot_generation',
       creditsUsed: creditsNeeded,
       imageSize: `${file.size} bytes`,
-      model: 'openai-dalle-2-edit',
+      model: 'openai-dalle-3-hd',
     })
 
     const newCredits = user.credits - creditsNeeded
