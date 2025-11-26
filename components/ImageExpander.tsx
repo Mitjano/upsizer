@@ -26,6 +26,7 @@ interface ExpandPreset {
   name: string
   description: string
   icon: string
+  credits: number
 }
 
 const EXPAND_PRESETS: ExpandPreset[] = [
@@ -34,46 +35,58 @@ const EXPAND_PRESETS: ExpandPreset[] = [
     name: 'Zoom Out 1.5x',
     description: 'Expand canvas by 50%',
     icon: '🔍',
+    credits: 2,
   },
   {
     id: 'zoom_2x',
     name: 'Zoom Out 2x',
     description: 'Double the canvas size',
     icon: '🔎',
+    credits: 2,
   },
   {
     id: 'make_square',
     name: 'Make Square',
     description: 'Convert to square format',
     icon: '⬜',
+    credits: 2,
+  },
+  {
+    id: 'expand_horizontal',
+    name: 'Expand Left & Right',
+    description: 'Extend both sides',
+    icon: '↔️',
+    credits: 4,
   },
   {
     id: 'expand_left',
     name: 'Expand Left',
     description: 'Extend image to the left',
     icon: '⬅️',
+    credits: 2,
   },
   {
     id: 'expand_right',
     name: 'Expand Right',
     description: 'Extend image to the right',
     icon: '➡️',
+    credits: 2,
   },
   {
     id: 'expand_up',
     name: 'Expand Up',
     description: 'Extend image upward',
     icon: '⬆️',
+    credits: 2,
   },
   {
     id: 'expand_down',
     name: 'Expand Down',
     description: 'Extend image downward',
     icon: '⬇️',
+    credits: 2,
   },
 ]
-
-const CREDITS_PER_EXPAND = 2
 
 export function ImageExpander({ userRole = 'user' }: ImageExpanderProps) {
   const { data: session } = useSession()
@@ -229,6 +242,7 @@ export function ImageExpander({ userRole = 'user' }: ImageExpanderProps) {
                 <div className="text-2xl mb-2">{preset.icon}</div>
                 <h4 className="font-semibold text-white text-sm mb-1">{preset.name}</h4>
                 <p className="text-xs text-gray-400">{preset.description}</p>
+                <p className="text-xs text-purple-400 mt-1">{preset.credits} credits</p>
                 {selectedPreset === preset.id && (
                   <div className="absolute top-2 right-2 w-5 h-5 bg-purple-500 rounded-full flex items-center justify-center">
                     <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -310,7 +324,7 @@ export function ImageExpander({ userRole = 'user' }: ImageExpanderProps) {
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400">or click to browse</p>
                 <p className="text-sm text-gray-500 dark:text-gray-500">
-                  Supports JPG, PNG, WEBP • Max 30MB • {CREDITS_PER_EXPAND} credits
+                  Supports JPG, PNG, WEBP • Max 30MB • {EXPAND_PRESETS.find(p => p.id === selectedPreset)?.credits || 2} credits
                 </p>
               </>
             )}

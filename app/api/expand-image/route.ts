@@ -18,18 +18,66 @@ type ExpandMode =
   | 'expand_right'
   | 'expand_up'
   | 'expand_down'
+  | 'expand_horizontal'  // Left + Right (two API calls)
 
-const EXPAND_MODE_MAP: Record<ExpandMode, string> = {
+// Single direction modes map directly to FLUX API outpaint values
+const EXPAND_MODE_MAP: Record<string, string> = {
   'zoom_1.5x': 'Zoom out 1.5x',
   'zoom_2x': 'Zoom out 2x',
   'make_square': 'Make square',
-  'expand_left': 'Left',
-  'expand_right': 'Right',
-  'expand_up': 'Top',
-  'expand_down': 'Bottom',
+  'expand_left': 'Left outpaint',
+  'expand_right': 'Right outpaint',
+  'expand_up': 'Top outpaint',
+  'expand_down': 'Bottom outpaint',
 }
 
 const CREDITS_PER_EXPAND = 2
+const CREDITS_PER_HORIZONTAL = 4  // Two API calls for left+right
+
+// Helper to call FLUX API for single direction
+async function callFluxFillPro(
+  dataUrl: string,
+  outpaintMode: string,
+  prompt: string
+): Promise<Buffer> {
+  console.log('[Expand] Calling FLUX.1 Fill [pro] with outpaint:', outpaintMode)
+
+  const output = await replicate.run(
+    'black-forest-labs/flux-fill-pro',
+    {
+      input: {
+        image: dataUrl,
+        prompt: prompt,
+        outpaint: outpaintMode,
+        steps: 50,
+        guidance: 30,
+        output_format: 'png',
+        safety_tolerance: 2,
+      },
+    }
+  ) as unknown
+
+  // Handle output - could be string URL or FileOutput object
+  let resultUrl: string
+  if (typeof output === 'string') {
+    resultUrl = output
+  } else if (output && typeof output === 'object' && 'url' in output) {
+    resultUrl = (output as { url: string }).url
+  } else if (Array.isArray(output) && output.length > 0) {
+    resultUrl = typeof output[0] === 'string' ? output[0] : (output[0] as { url: string }).url
+  } else {
+    throw new Error('Unexpected output format from FLUX.1 Fill [pro]')
+  }
+
+  console.log('[Expand] Downloading result from:', resultUrl)
+
+  const response = await fetch(resultUrl)
+  if (!response.ok) {
+    throw new Error(`Failed to download expanded image: ${response.status}`)
+  }
+
+  return Buffer.from(await response.arrayBuffer())
+}
 
 async function expandImage(
   imageBuffer: Buffer,
@@ -54,51 +102,34 @@ async function expandImage(
   // Convert to base64 data URL
   const base64Image = processedBuffer.toString('base64')
   const mimeType = metadata.format === 'png' ? 'image/png' : 'image/jpeg'
-  const dataUrl = `data:${mimeType};base64,${base64Image}`
+  let dataUrl = `data:${mimeType};base64,${base64Image}`
 
   // Default prompt if not provided
   const expandPrompt = prompt || 'Continue the image naturally, maintaining consistent style, lighting, and content'
 
-  console.log('[Expand] Calling FLUX.1 Fill [pro] API...')
-  console.log('[Expand] Outpaint mode:', EXPAND_MODE_MAP[expandMode])
+  // Handle horizontal expansion (left + right) - requires two API calls
+  if (expandMode === 'expand_horizontal') {
+    console.log('[Expand] Horizontal expansion - Step 1: Expand Left')
+    const leftExpanded = await callFluxFillPro(dataUrl, 'Left outpaint', expandPrompt)
 
-  // Call FLUX.1 Fill [pro] with outpaint parameter
-  const output = await replicate.run(
-    'black-forest-labs/flux-fill-pro',
-    {
-      input: {
-        image: dataUrl,
-        prompt: expandPrompt,
-        outpaint: EXPAND_MODE_MAP[expandMode],
-        steps: 50,
-        guidance: 30,
-        output_format: 'png',
-        safety_tolerance: 2,
-      },
-    }
-  ) as unknown
+    // Convert result to data URL for second call
+    const leftBase64 = leftExpanded.toString('base64')
+    const leftDataUrl = `data:image/png;base64,${leftBase64}`
 
-  // Handle output - could be string URL or FileOutput object
-  let resultUrl: string
-  if (typeof output === 'string') {
-    resultUrl = output
-  } else if (output && typeof output === 'object' && 'url' in output) {
-    resultUrl = (output as { url: string }).url
-  } else if (Array.isArray(output) && output.length > 0) {
-    resultUrl = typeof output[0] === 'string' ? output[0] : (output[0] as { url: string }).url
-  } else {
-    throw new Error('Unexpected output format from FLUX.1 Fill [pro]')
+    console.log('[Expand] Horizontal expansion - Step 2: Expand Right')
+    const finalResult = await callFluxFillPro(leftDataUrl, 'Right outpaint', expandPrompt)
+
+    console.log('[Expand] Horizontal expansion completed successfully')
+    return finalResult
   }
 
-  console.log('[Expand] Downloading result from:', resultUrl)
-
-  // Download the result
-  const response = await fetch(resultUrl)
-  if (!response.ok) {
-    throw new Error(`Failed to download expanded image: ${response.status}`)
+  // Single direction expansion
+  const outpaintMode = EXPAND_MODE_MAP[expandMode]
+  if (!outpaintMode) {
+    throw new Error(`Invalid expand mode: ${expandMode}`)
   }
 
-  const resultBuffer = Buffer.from(await response.arrayBuffer())
+  const resultBuffer = await callFluxFillPro(dataUrl, outpaintMode, expandPrompt)
 
   console.log('[Expand] Image expansion completed successfully')
   return resultBuffer
@@ -155,15 +186,19 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate expand mode
-    if (!Object.keys(EXPAND_MODE_MAP).includes(expandMode)) {
+    const validModes = [...Object.keys(EXPAND_MODE_MAP), 'expand_horizontal']
+    if (!validModes.includes(expandMode)) {
       return NextResponse.json(
         { error: 'Invalid expand mode' },
         { status: 400 }
       )
     }
 
+    // Calculate credits needed (horizontal = 4, others = 2)
+    const creditsNeeded = expandMode === 'expand_horizontal' ? CREDITS_PER_HORIZONTAL : CREDITS_PER_EXPAND
+
     // 5. CHECK CREDITS
-    if (user.credits < CREDITS_PER_EXPAND) {
+    if (user.credits < creditsNeeded) {
       if (user.credits === 0) {
         sendCreditsDepletedEmail({
           userEmail: user.email,
@@ -174,7 +209,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           error: 'Insufficient credits',
-          required: CREDITS_PER_EXPAND,
+          required: creditsNeeded,
           available: user.credits,
         },
         { status: 402 }
@@ -200,13 +235,13 @@ export async function POST(request: NextRequest) {
     // 8. DEDUCT CREDITS & LOG USAGE
     createUsage({
       userId: user.id,
-      type: 'image_expand',
-      creditsUsed: CREDITS_PER_EXPAND,
+      type: expandMode === 'expand_horizontal' ? 'image_expand_horizontal' : 'image_expand',
+      creditsUsed: creditsNeeded,
       imageSize: `${file.size} bytes`,
       model: 'flux-fill-pro',
     })
 
-    const newCredits = user.credits - CREDITS_PER_EXPAND
+    const newCredits = user.credits - creditsNeeded
 
     // 9. SEND LOW CREDITS WARNING
     if (newCredits > 0 && newCredits <= 10) {
@@ -228,7 +263,7 @@ export async function POST(request: NextRequest) {
         width,
         height,
       },
-      creditsUsed: CREDITS_PER_EXPAND,
+      creditsUsed: creditsNeeded,
       creditsRemaining: newCredits,
     })
   } catch (error: unknown) {
