@@ -118,6 +118,30 @@ export default function Header() {
                     </div>
                   </Link>
 
+                  {/* Packshot Generator */}
+                  <Link
+                    href="/tools/packshot-generator"
+                    onClick={() => setShowToolsDropdown(false)}
+                    className={`flex items-start gap-3 px-4 py-3 hover:bg-gray-700 transition-colors ${
+                      pathname === '/tools/packshot-generator' ? 'bg-gray-700/50' : ''
+                    }`}
+                  >
+                    <div className="mt-1 text-pink-400">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold text-white">Packshot Generator</span>
+                        <span className="px-2 py-0.5 text-xs bg-pink-500 text-white rounded-full">
+                          NEW
+                        </span>
+                      </div>
+                      <div className="text-sm text-gray-400">Generate professional product packshots</div>
+                    </div>
+                  </Link>
+
                   {/* Coming Soon - Face Restoration */}
                   <div className="flex items-start gap-3 px-4 py-3 opacity-50 cursor-not-allowed">
                     <div className="mt-1 text-green-400">
@@ -283,6 +307,13 @@ export default function Header() {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Image Compressor
+              </Link>
+              <Link
+                href="/tools/packshot-generator"
+                className="block py-2 text-white hover:text-green-400 transition"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Packshot Generator <span className="text-xs bg-pink-500 px-2 py-0.5 rounded-full ml-2">NEW</span>
               </Link>
             </div>
 
