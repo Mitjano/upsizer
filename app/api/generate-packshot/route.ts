@@ -44,78 +44,77 @@ const PRESETS: Record<string, PackshotPreset> = {
 }
 
 async function generatePackshot(imageBuffer: Buffer, backgroundColor: string): Promise<Buffer> {
-  console.log('[Packshot] HYBRID MODE: AI background + original product overlay')
+  console.log('[Packshot] Generating professional packshot with OpenAI gpt-image-1...')
   console.log('[Packshot] Background color:', backgroundColor)
 
-  const PROCESS_SIZE = 1024 // Size for API calls
-  const TARGET_SIZE = 2000  // Final output size
+  // Step 1: Resize original image to 1024x1024 for remove-bg
+  console.log('[Packshot] Step 1: Preparing image for background removal...')
 
-  // Step 1: Resize original image to 1024x1024 for processing
-  console.log('[Packshot] Step 1: Preparing image for processing...')
-
-  const resizedOriginal = await sharp(imageBuffer)
-    .resize(PROCESS_SIZE, PROCESS_SIZE, {
+  const resizedForRemoveBg = await sharp(imageBuffer)
+    .resize(1024, 1024, {
       fit: 'contain',
       background: { r: 255, g: 255, b: 255, alpha: 1 },
     })
     .png()
     .toBuffer()
 
-  const base64Image = resizedOriginal.toString('base64')
+  const base64Image = resizedForRemoveBg.toString('base64')
   const dataUrl = `data:image/png;base64,${base64Image}`
 
-  // Step 2: Remove background - this gives us the ORIGINAL product with transparency
-  console.log('[Packshot] Step 2: Removing background (product will be preserved 1:1)...')
+  console.log('[Packshot] Step 2: Removing background to create mask...')
 
+  // Use background removal model
   const rmbgOutput = (await replicate.run('lucataco/remove-bg:95fcc2a26d3899cd6c2691c900465aaeff466285a65c14638cc5f36f34befaf1', {
     input: {
       image: dataUrl,
     },
   })) as unknown as string
 
-  console.log('[Packshot] Step 3: Downloading product with transparent background...')
+  console.log('[Packshot] Step 3: Downloading removed background image...')
 
   const nobgResponse = await fetch(rmbgOutput)
-  const productPngBuffer = Buffer.from(await nobgResponse.arrayBuffer())
+  const nobgBuffer = Buffer.from(await nobgResponse.arrayBuffer())
 
-  // Resize product to exact size and ensure alpha
-  const productResized = await sharp(productPngBuffer)
-    .resize(PROCESS_SIZE, PROCESS_SIZE, {
+  console.log('[Packshot] Step 4: Building WHITE binary mask from alpha channel...')
+
+  // Resize nobgBuffer to exactly 1024x1024 first
+  const nobgResized = await sharp(nobgBuffer)
+    .resize(1024, 1024, {
       fit: 'contain',
       background: { r: 0, g: 0, b: 0, alpha: 0 },
     })
     .ensureAlpha()
-    .png()
     .toBuffer()
 
-  // Step 4: Build mask from product alpha channel
-  console.log('[Packshot] Step 4: Building mask from alpha channel...')
-
-  const alphaChannel = await sharp(productResized)
-    .extractChannel(3)
-    .threshold(1)
+  // Extract alpha channel and make it binary (0 or 255)
+  const alphaChannel = await sharp(nobgResized)
+    .extractChannel(3)  // Get alpha channel
+    .threshold(1)       // Binary: product = 255, background = 0
     .toBuffer()
 
-  // Mask: product = opaque (KEEP), background = transparent (EDIT)
+  // Build proper WHITE mask with alpha from the extracted channel
+  // Product = white with alpha 255 (PRESERVE)
+  // Background = transparent with alpha 0 (EDIT)
   const maskPng = await sharp({
     create: {
-      width: PROCESS_SIZE,
-      height: PROCESS_SIZE,
+      width: 1024,
+      height: 1024,
       channels: 4,
-      background: { r: 255, g: 255, b: 255, alpha: 0 },
+      background: { r: 255, g: 255, b: 255, alpha: 0 }, // Start fully transparent (editable)
     },
   })
     .composite([
       {
+        // Overlay white where product is (alpha > 0)
         input: await sharp({
           create: {
-            width: PROCESS_SIZE,
-            height: PROCESS_SIZE,
+            width: 1024,
+            height: 1024,
             channels: 3,
             background: { r: 255, g: 255, b: 255 },
           },
         })
-          .joinChannel(alphaChannel)
+          .joinChannel(alphaChannel) // Add alpha channel: 255 where product, 0 where bg
           .png()
           .toBuffer(),
         blend: 'over',
@@ -124,11 +123,11 @@ async function generatePackshot(imageBuffer: Buffer, backgroundColor: string): P
     .png({ compressionLevel: 9 })
     .toBuffer()
 
-  // Step 5: Prepare image for OpenAI (original with white background)
-  console.log('[Packshot] Step 5: Preparing image for AI background generation...')
+  console.log('[Packshot] Step 5: Preparing original image with white background...')
 
+  // IMAGE: Original photo resized with WHITE OPAQUE background
   const imagePng = await sharp(imageBuffer)
-    .resize(PROCESS_SIZE, PROCESS_SIZE, {
+    .resize(1024, 1024, {
       fit: 'contain',
       background: { r: 255, g: 255, b: 255, alpha: 1 },
     })
@@ -137,6 +136,7 @@ async function generatePackshot(imageBuffer: Buffer, backgroundColor: string): P
     .png({ compressionLevel: 9, force: true })
     .toBuffer()
 
+  // Map background color to description
   const backgroundDescriptions: Record<string, string> = {
     '#FFFFFF': 'pure white',
     '#F5F5F5': 'light gray',
@@ -146,20 +146,21 @@ async function generatePackshot(imageBuffer: Buffer, backgroundColor: string): P
 
   const bgDescription = backgroundDescriptions[backgroundColor] || 'white'
 
-  // Step 6: Call OpenAI to generate professional background + shadow
-  console.log('[Packshot] Step 6: Calling OpenAI gpt-image-1 for background + shadow...')
+  console.log('[Packshot] Step 6: Calling OpenAI gpt-image-1 Edit API...')
 
+  // Use raw fetch for gpt-image-1 (not available in openai SDK yet for edits)
   const formData = new FormData()
   formData.append('model', 'gpt-image-1')
   formData.append('size', '1024x1024')
   formData.append('n', '1')
   formData.append('prompt', `
-Professional ecommerce packshot studio background.
-Create a perfectly flat ${bgDescription} (${backgroundColor}) studio backdrop.
-Add a soft, realistic, neutral gray shadow under the product shape.
-The shadow should look natural like studio photography lighting.
-Keep the product area exactly as it is - only edit the background.
-No additional objects, no stands, no props, no decorations.
+Professional ecommerce packshot of the SAME product.
+Keep the product EXACTLY as it is: same shape, text, connectors, colors, labels, logos.
+Edit ONLY the background pixels.
+The background must be a perfectly flat ${bgDescription} (${backgroundColor}) studio backdrop
+with only a tiny, soft, neutral gray shadow under the product.
+STRICT: No additional objects, no stands, no boxes, no props, no decorations, no text overlays.
+Only the product on a ${bgDescription} background. If you add anything else, the result is invalid.
 `.trim())
 
   formData.append('image', new Blob([new Uint8Array(imagePng)], { type: 'image/png' }), 'image.png')
@@ -181,53 +182,32 @@ No additional objects, no stands, no props, no decorations.
 
   const result = await openaiResponse.json() as { data: Array<{ b64_json?: string; url?: string }> }
 
-  let aiBackgroundBuffer: Buffer
+  // gpt-image-1 returns base64 by default
+  let generatedBuffer: Buffer
   if (result.data?.[0]?.b64_json) {
-    aiBackgroundBuffer = Buffer.from(result.data[0].b64_json, 'base64')
+    generatedBuffer = Buffer.from(result.data[0].b64_json, 'base64')
   } else if (result.data?.[0]?.url) {
     const imgResponse = await fetch(result.data[0].url)
-    aiBackgroundBuffer = Buffer.from(await imgResponse.arrayBuffer())
+    generatedBuffer = Buffer.from(await imgResponse.arrayBuffer())
   } else {
     throw new Error('Failed to get image from OpenAI response')
   }
 
-  console.log('[Packshot] Step 7: AI background generated (product from AI will be discarded)')
+  console.log('[Packshot] Step 7: Downloading generated packshot...')
 
-  // Step 8: HYBRID COMPOSITE - AI background + original product on top
-  console.log('[Packshot] Step 8: Compositing AI background + ORIGINAL product...')
+  // Upscale to 2000x2000
+  const TARGET_SIZE = 2000
+  console.log(`[Packshot] Step 8: Upscaling to ${TARGET_SIZE}x${TARGET_SIZE}px...`)
 
-  // Scale both to target size
-  const backgroundScaled = await sharp(aiBackgroundBuffer)
+  const finalImage = await sharp(generatedBuffer)
     .resize(TARGET_SIZE, TARGET_SIZE, {
       fit: 'contain',
       background: backgroundColor,
     })
-    .png()
-    .toBuffer()
-
-  const productScaled = await sharp(productResized)
-    .resize(TARGET_SIZE, TARGET_SIZE, {
-      fit: 'contain',
-      background: { r: 0, g: 0, b: 0, alpha: 0 },
-    })
-    .png()
-    .toBuffer()
-
-  // Final composite: AI background + original product overlay
-  const finalImage = await sharp(backgroundScaled)
-    .composite([
-      {
-        input: productScaled,
-        blend: 'over',
-        gravity: 'center',
-      },
-    ])
     .png({ quality: 100 })
     .toBuffer()
 
-  console.log('[Packshot] HYBRID packshot created successfully!')
-  console.log('[Packshot] - Background + shadow: from gpt-image-1')
-  console.log('[Packshot] - Product (100% original): from remove-bg')
+  console.log('[Packshot] Professional packshot created successfully with gpt-image-1')
   console.log(`[Packshot] Final dimensions: ${TARGET_SIZE}x${TARGET_SIZE}px`)
 
   return finalImage
@@ -337,7 +317,7 @@ export async function POST(request: NextRequest) {
       type: 'packshot_generation',
       creditsUsed: creditsNeeded,
       imageSize: `${file.size} bytes`,
-      model: 'hybrid-gpt-image-1-rmbg',
+      model: 'openai-gpt-image-1',
     })
 
     const newCredits = user.credits - creditsNeeded
