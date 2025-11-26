@@ -5,30 +5,59 @@ import { FaCheck, FaDatabase, FaDownload, FaEnvelope, FaQuoteLeft, FaCog } from 
 
 export default function PricingPage() {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
-  const [selectedSubscription, setSelectedSubscription] = useState("plan-10000");
-  const [selectedOneTime, setSelectedOneTime] = useState(2); // Index 2 = 500 credits
+  const [selectedSubscription, setSelectedSubscription] = useState("plan-500");
+  const [selectedOneTime, setSelectedOneTime] = useState(3); // Index 3 = 100 credits
 
   // Subscription Plans - ceny są PER MONTH (miesięczne rozliczenie)
   // Yearly daje 70% zniżki
-  // Deep-Image.ai: 3000/$269 ($0.09), 10000/$649 ($0.065), 30000/$1200 ($0.04)
-  // Nasze ceny trochę niższe
+  // Deep-Image.ai prices for reference
   const subscriptionPlans = [
     {
-      id: "plan-3000",
-      credits: 3000,
-      priceMonthly: 249.99, // $0.083/credit monthly vs Deep-Image $0.09
+      id: "plan-100",
+      credits: 100,
+      priceMonthly: 7.99, // vs Deep-Image $9.00
+      selected: false
+    },
+    {
+      id: "plan-300",
+      credits: 300,
+      priceMonthly: 21.99, // vs Deep-Image $24.00
+      selected: false
+    },
+    {
+      id: "plan-500",
+      credits: 500,
+      priceMonthly: 34.99, // vs Deep-Image $39.00
+      selected: true // Default selected
+    },
+    {
+      id: "plan-1000",
+      credits: 1000,
+      priceMonthly: 59.99, // vs Deep-Image $69.00
+      selected: false
+    },
+    {
+      id: "plan-2500",
+      credits: 2500,
+      priceMonthly: 134.99, // vs Deep-Image $150.00
+      selected: false
+    },
+    {
+      id: "plan-5000",
+      credits: 5000,
+      priceMonthly: 249.99, // vs Deep-Image $270.00
       selected: false
     },
     {
       id: "plan-10000",
       credits: 10000,
-      priceMonthly: 599.99, // $0.06/credit monthly vs Deep-Image $0.065
-      selected: true // Default selected
+      priceMonthly: 449.99, // vs Deep-Image $480.00
+      selected: false
     },
     {
       id: "plan-30000",
       credits: 30000,
-      priceMonthly: 1099.99, // $0.037/credit monthly vs Deep-Image $0.04
+      priceMonthly: 1099.99, // vs Deep-Image $1200.00
       selected: false
     }
   ];
@@ -50,30 +79,44 @@ export default function PricingPage() {
     ? (selectedPlan.priceMonthly * 0.3 * 12).toFixed(2)
     : undefined;
 
-  // One-time payment plans
-  // Deep-Image.ai: 100/$24.99 ($0.25), 500/$84.99 ($0.17), 2000/$249.99 ($0.125), 5000/$529.99 ($0.106)
-  // Nasze ceny trochę niższe
+  // One-time payment plans (Pay As You Go)
+  // Deep-Image.ai prices for reference
   const oneTimePlans = [
     {
+      credits: 15,
+      price: 6.99,
+      pricePerCredit: 0.47 // vs Deep-Image $0.53
+    },
+    {
+      credits: 25,
+      price: 8.99,
+      pricePerCredit: 0.36 // vs Deep-Image $0.40
+    },
+    {
+      credits: 50,
+      price: 13.99,
+      pricePerCredit: 0.28 // vs Deep-Image $0.32
+    },
+    {
       credits: 100,
-      price: 22.99,
-      pricePerCredit: 0.23
-    },
-    {
-      credits: 500,
-      price: 79.99,
-      pricePerCredit: 0.16
-    },
-    {
-      credits: 2000,
-      price: 229.99,
-      pricePerCredit: 0.115,
+      price: 21.99,
+      pricePerCredit: 0.22, // vs Deep-Image $0.25
       selected: true // Most popular
     },
     {
-      credits: 5000,
-      price: 489.99,
-      pricePerCredit: 0.098
+      credits: 200,
+      price: 39.99,
+      pricePerCredit: 0.20 // vs Deep-Image $0.23
+    },
+    {
+      credits: 500,
+      price: 89.99,
+      pricePerCredit: 0.18 // vs Deep-Image $0.20
+    },
+    {
+      credits: 1000,
+      price: 149.99,
+      pricePerCredit: 0.15 // vs Deep-Image $0.17
     }
   ];
 
