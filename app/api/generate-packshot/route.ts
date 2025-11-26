@@ -84,12 +84,13 @@ async function generatePackshot(imageBuffer: Buffer, backgroundColor: string): P
   // Resize original image to 1024x1024 (DALL-E 2 requirement)
   // DALL-E 2 Edit requires RGBA format
   const resizedOriginal = await sharp(imageBuffer)
-    .ensureAlpha() // Ensure alpha channel exists
     .resize(1024, 1024, {
       fit: 'contain',
       background: { r: 255, g: 255, b: 255, alpha: 0 },
     })
-    .png()
+    .ensureAlpha() // Ensure alpha channel exists
+    .toColorspace('srgb')
+    .png({ compressionLevel: 0, force: true })
     .toBuffer()
 
   // Resize mask to 1024x1024
@@ -98,7 +99,8 @@ async function generatePackshot(imageBuffer: Buffer, backgroundColor: string): P
       fit: 'contain',
       background: { r: 255, g: 255, b: 255, alpha: 1 },
     })
-    .png()
+    .toColorspace('srgb')
+    .png({ compressionLevel: 0, force: true })
     .toBuffer()
 
   // Map background color to description
