@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Replicate from 'replicate'
+import OpenAI from 'openai'
 import sharp from 'sharp'
 import { auth } from '@/lib/auth'
 import { getUserByEmail, createUsage } from '@/lib/db'
@@ -7,6 +8,10 @@ import { sendCreditsLowEmail, sendCreditsDepletedEmail } from '@/lib/email'
 
 const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN!,
+})
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY!,
 })
 
 interface PackshotPreset {
@@ -38,33 +43,15 @@ const PRESETS: Record<string, PackshotPreset> = {
   },
 }
 
-// Parse hex color to RGB
-function hexToRgb(hex: string): { r: number; g: number; b: number } {
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
-  if (!result) {
-    return { r: 255, g: 255, b: 255 } // Default to white
-  }
-  return {
-    r: parseInt(result[1], 16),
-    g: parseInt(result[2], 16),
-    b: parseInt(result[3], 16),
-  }
-}
-
 async function generatePackshot(imageBuffer: Buffer, backgroundColor: string): Promise<Buffer> {
-  console.log('[Packshot] Generating DETERMINISTIC packshot (100% faithful product)...')
+  console.log('[Packshot] Generating professional packshot with OpenAI gpt-image-1...')
   console.log('[Packshot] Background color:', backgroundColor)
 
-  const TARGET_SIZE = 2000
-  const PROCESS_SIZE = 1024 // Size for background removal
-  const PRODUCT_SIZE = Math.round(TARGET_SIZE * 0.70) // Product takes 70% of canvas (leaves 15% margin each side)
-  const MARGIN = Math.round((TARGET_SIZE - PRODUCT_SIZE) / 2) // Center margin
-
-  // Step 1: Resize original image for background removal
+  // Step 1: Resize original image to 1024x1024 for remove-bg
   console.log('[Packshot] Step 1: Preparing image for background removal...')
 
   const resizedForRemoveBg = await sharp(imageBuffer)
-    .resize(PROCESS_SIZE, PROCESS_SIZE, {
+    .resize(1024, 1024, {
       fit: 'contain',
       background: { r: 255, g: 255, b: 255, alpha: 1 },
     })
@@ -74,122 +61,154 @@ async function generatePackshot(imageBuffer: Buffer, backgroundColor: string): P
   const base64Image = resizedForRemoveBg.toString('base64')
   const dataUrl = `data:image/png;base64,${base64Image}`
 
-  // Step 2: Remove background using Replicate
-  console.log('[Packshot] Step 2: Removing background with AI...')
+  console.log('[Packshot] Step 2: Removing background to create mask...')
 
+  // Use background removal model
   const rmbgOutput = (await replicate.run('lucataco/remove-bg:95fcc2a26d3899cd6c2691c900465aaeff466285a65c14638cc5f36f34befaf1', {
     input: {
       image: dataUrl,
     },
   })) as unknown as string
 
-  console.log('[Packshot] Step 3: Downloading product with transparent background...')
+  console.log('[Packshot] Step 3: Downloading removed background image...')
 
   const nobgResponse = await fetch(rmbgOutput)
   const nobgBuffer = Buffer.from(await nobgResponse.arrayBuffer())
 
-  // Step 4: Resize product to 70% of canvas (with margins for packshot look)
-  console.log(`[Packshot] Step 4: Resizing product to ${PRODUCT_SIZE}x${PRODUCT_SIZE}px (70% of canvas)...`)
+  console.log('[Packshot] Step 4: Building WHITE binary mask from alpha channel...')
 
-  const productResized = await sharp(nobgBuffer)
-    .resize(PRODUCT_SIZE, PRODUCT_SIZE, {
+  // Resize nobgBuffer to exactly 1024x1024 first
+  const nobgResized = await sharp(nobgBuffer)
+    .resize(1024, 1024, {
       fit: 'contain',
-      background: { r: 0, g: 0, b: 0, alpha: 0 }, // Transparent background
+      background: { r: 0, g: 0, b: 0, alpha: 0 },
     })
     .ensureAlpha()
-    .png()
     .toBuffer()
 
-  // Step 5: Extract alpha channel for shadow generation
-  console.log('[Packshot] Step 5: Extracting alpha channel for shadow...')
-
-  const alphaChannel = await sharp(productResized)
-    .extractChannel(3) // Get alpha channel (0 = transparent, 255 = opaque)
+  // Extract alpha channel and make it binary (0 or 255)
+  const alphaChannel = await sharp(nobgResized)
+    .extractChannel(3)  // Get alpha channel
+    .threshold(1)       // Binary: product = 255, background = 0
     .toBuffer()
 
-  // Step 6: Create professional floor shadow
-  console.log('[Packshot] Step 6: Creating professional floor shadow...')
-
-  // Create a shadow that appears under the product (floor reflection style)
-  // First blur vertically more than horizontally for floor effect
-  const blurredAlpha = await sharp(alphaChannel)
-    .blur(25) // Soft blur for shadow
-    .toBuffer()
-
-  // Create shadow layer - positioned below the product
-  const shadowLayer = await sharp({
+  // Build proper WHITE mask with alpha from the extracted channel
+  // Product = white with alpha 255 (PRESERVE)
+  // Background = transparent with alpha 0 (EDIT)
+  const maskPng = await sharp({
     create: {
-      width: PRODUCT_SIZE,
-      height: PRODUCT_SIZE,
+      width: 1024,
+      height: 1024,
       channels: 4,
-      background: { r: 0, g: 0, b: 0, alpha: 0 },
+      background: { r: 255, g: 255, b: 255, alpha: 0 }, // Start fully transparent (editable)
     },
   })
     .composite([
       {
+        // Overlay white where product is (alpha > 0)
         input: await sharp({
           create: {
-            width: PRODUCT_SIZE,
-            height: PRODUCT_SIZE,
+            width: 1024,
+            height: 1024,
             channels: 3,
-            background: { r: 60, g: 60, b: 60 }, // Shadow color
+            background: { r: 255, g: 255, b: 255 },
           },
         })
-          .joinChannel(blurredAlpha)
+          .joinChannel(alphaChannel) // Add alpha channel: 255 where product, 0 where bg
           .png()
           .toBuffer(),
         blend: 'over',
-        top: 0,
-        left: 0,
       },
     ])
-    .png()
+    .png({ compressionLevel: 9 })
     .toBuffer()
 
-  // Step 7: Create background layer with chosen color
-  console.log('[Packshot] Step 7: Creating background layer...')
+  console.log('[Packshot] Step 5: Preparing original image with white background...')
 
-  const bgColor = hexToRgb(backgroundColor)
+  // IMAGE: Original photo resized with WHITE OPAQUE background
+  const imagePng = await sharp(imageBuffer)
+    .resize(1024, 1024, {
+      fit: 'contain',
+      background: { r: 255, g: 255, b: 255, alpha: 1 },
+    })
+    .ensureAlpha()
+    .toColorspace('srgb')
+    .png({ compressionLevel: 9, force: true })
+    .toBuffer()
 
-  const backgroundLayer = await sharp({
-    create: {
-      width: TARGET_SIZE,
-      height: TARGET_SIZE,
-      channels: 4,
-      background: { r: bgColor.r, g: bgColor.g, b: bgColor.b, alpha: 255 },
+  // Map background color to description
+  const backgroundDescriptions: Record<string, string> = {
+    '#FFFFFF': 'pure white',
+    '#F5F5F5': 'light gray',
+    '#F5E6D3': 'warm beige',
+    '#E3F2FD': 'light blue',
+  }
+
+  const bgDescription = backgroundDescriptions[backgroundColor] || 'white'
+
+  console.log('[Packshot] Step 6: Calling OpenAI gpt-image-1 Edit API...')
+
+  // Use raw fetch for gpt-image-1 (not available in openai SDK yet for edits)
+  const formData = new FormData()
+  formData.append('model', 'gpt-image-1')
+  formData.append('size', '1024x1024')
+  formData.append('n', '1')
+  formData.append('prompt', `
+Professional ecommerce packshot of the SAME product.
+Keep the product EXACTLY as it is: same shape, text, connectors, colors, labels, logos.
+Edit ONLY the background pixels.
+The background must be a perfectly flat ${bgDescription} (${backgroundColor}) studio backdrop
+with only a tiny, soft, neutral gray shadow under the product.
+STRICT: No additional objects, no stands, no boxes, no props, no decorations, no text overlays.
+Only the product on a ${bgDescription} background. If you add anything else, the result is invalid.
+`.trim())
+
+  formData.append('image', new Blob([imagePng], { type: 'image/png' }), 'image.png')
+  formData.append('mask', new Blob([maskPng], { type: 'image/png' }), 'mask.png')
+
+  const openaiResponse = await fetch('https://api.openai.com/v1/images/edits', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
     },
+    body: formData,
   })
-    .png()
-    .toBuffer()
 
-  // Step 8: Composite all layers: background + shadow (offset down) + product (centered)
-  console.log('[Packshot] Step 8: Compositing final packshot with centered product...')
+  if (!openaiResponse.ok) {
+    const errorText = await openaiResponse.text()
+    console.error('[Packshot] OpenAI API error:', errorText)
+    throw new Error(`OpenAI API error: ${openaiResponse.status} - ${errorText}`)
+  }
 
-  // Shadow offset: slightly down and centered
-  const shadowOffsetY = 30 // Shadow appears below product
+  const result = await openaiResponse.json() as { data: Array<{ b64_json?: string; url?: string }> }
 
-  const finalImage = await sharp(backgroundLayer)
-    .composite([
-      {
-        input: shadowLayer,
-        blend: 'multiply', // Shadow blends naturally with background
-        top: MARGIN + shadowOffsetY,
-        left: MARGIN,
-      },
-      {
-        input: productResized,
-        blend: 'over', // Product on top, centered
-        top: MARGIN,
-        left: MARGIN,
-      },
-    ])
+  // gpt-image-1 returns base64 by default
+  let generatedBuffer: Buffer
+  if (result.data?.[0]?.b64_json) {
+    generatedBuffer = Buffer.from(result.data[0].b64_json, 'base64')
+  } else if (result.data?.[0]?.url) {
+    const imgResponse = await fetch(result.data[0].url)
+    generatedBuffer = Buffer.from(await imgResponse.arrayBuffer())
+  } else {
+    throw new Error('Failed to get image from OpenAI response')
+  }
+
+  console.log('[Packshot] Step 7: Downloading generated packshot...')
+
+  // Upscale to 2000x2000
+  const TARGET_SIZE = 2000
+  console.log(`[Packshot] Step 8: Upscaling to ${TARGET_SIZE}x${TARGET_SIZE}px...`)
+
+  const finalImage = await sharp(generatedBuffer)
+    .resize(TARGET_SIZE, TARGET_SIZE, {
+      fit: 'contain',
+      background: backgroundColor,
+    })
     .png({ quality: 100 })
     .toBuffer()
 
-  console.log('[Packshot] DETERMINISTIC packshot created successfully!')
+  console.log('[Packshot] Professional packshot created successfully with gpt-image-1')
   console.log(`[Packshot] Final dimensions: ${TARGET_SIZE}x${TARGET_SIZE}px`)
-  console.log(`[Packshot] Product size: ${PRODUCT_SIZE}x${PRODUCT_SIZE}px (centered with ${MARGIN}px margins)`)
-  console.log('[Packshot] Product is 100% preserved - no AI modifications to product pixels')
 
   return finalImage
 }
@@ -298,7 +317,7 @@ export async function POST(request: NextRequest) {
       type: 'packshot_generation',
       creditsUsed: creditsNeeded,
       imageSize: `${file.size} bytes`,
-      model: 'deterministic-packshot',
+      model: 'openai-gpt-image-1',
     })
 
     const newCredits = user.credits - creditsNeeded
