@@ -65,18 +65,16 @@ async function generatePackshot(imageBuffer: Buffer, backgroundColor: string): P
   const nobgResponse = await fetch(rmbgOutput)
   const nobgBuffer = Buffer.from(await nobgResponse.arrayBuffer())
 
-  console.log('[Packshot] Step 3: Creating transparency mask for DALL-E 2...')
+  console.log('[Packshot] Step 3: Using remove-bg result as mask for DALL-E 2...')
 
-  // Create mask: transparent areas (background) = white, opaque areas (product) = black
-  const maskImage = await sharp(nobgBuffer)
+  // IMPORTANT: nobgBuffer from remove-bg already has correct alpha channel:
+  // - Product pixels: alpha > 0 (opaque) = PRESERVE
+  // - Background pixels: alpha = 0 (transparent) = EDIT
+  // This is exactly what OpenAI expects - no negation needed!
+  // Previously we were negating which told the model to edit the PRODUCT instead of background.
+  const mask = await sharp(nobgBuffer)
     .ensureAlpha()
-    .extractChannel(3) // Extract alpha channel
-    .negate() // Invert: transparent becomes white (area to edit)
-    .toBuffer()
-
-  // Convert to PNG with alpha
-  const mask = await sharp(maskImage)
-    .toFormat('png')
+    .png()
     .toBuffer()
 
   console.log('[Packshot] Step 4: Preparing images for DALL-E 2 Edit...')
@@ -94,12 +92,13 @@ async function generatePackshot(imageBuffer: Buffer, backgroundColor: string): P
     .toBuffer()
 
   // Resize mask to 1024x1024
+  // IMPORTANT: background must be transparent (alpha: 0) so those areas get edited
   const resizedMask = await sharp(mask)
     .resize(1024, 1024, {
       fit: 'contain',
-      background: { r: 255, g: 255, b: 255, alpha: 1 },
+      background: { r: 0, g: 0, b: 0, alpha: 0 }, // Transparent = area to edit
     })
-    .toColorspace('srgb')
+    .ensureAlpha()
     .png({ compressionLevel: 0, force: true })
     .toBuffer()
 
@@ -128,7 +127,7 @@ async function generatePackshot(imageBuffer: Buffer, backgroundColor: string): P
   const response = await openai.images.edit({
     image: imageBlob,
     mask: maskBlob,
-    prompt: `Professional product packshot photography on ${bgDescription} background, studio lighting, centered composition, clean presentation with natural shadows, high-end e-commerce style, Amazon listing quality, commercial photography`,
+    prompt: `Professional product packshot on ${bgDescription} studio background. Keep the product EXACTLY as it is - same shape, colors, labels, logos. Only change the background to ${bgDescription} with soft professional studio lighting and subtle natural shadow beneath the product. Clean e-commerce style, centered composition.`,
     n: 1,
     size: '1024x1024',
   })
