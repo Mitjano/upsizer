@@ -44,15 +44,16 @@ const PRESETS: Record<string, PackshotPreset> = {
 }
 
 async function generatePackshot(imageBuffer: Buffer, backgroundColor: string): Promise<Buffer> {
-  console.log('[Packshot] Generating professional packshot...')
+  console.log('[Packshot] Generating professional packshot with OpenAI DALL-E 2 Edit...')
   console.log('[Packshot] Background color:', backgroundColor)
 
+  // Step 1: Remove background to get mask
   const base64Image = imageBuffer.toString('base64')
   const dataUrl = `data:image/png;base64,${base64Image}`
 
-  console.log('[Packshot] Step 1: Removing background with Replicate...')
+  console.log('[Packshot] Step 1: Removing background to create mask...')
 
-  // Use background removal model
+  // Use background removal model to create mask
   const rmbgOutput = (await replicate.run('lucataco/remove-bg:95fcc2a26d3899cd6c2691c900465aaeff466285a65c14638cc5f36f34befaf1', {
     input: {
       image: dataUrl,
@@ -64,72 +65,96 @@ async function generatePackshot(imageBuffer: Buffer, backgroundColor: string): P
   const nobgResponse = await fetch(rmbgOutput)
   const nobgBuffer = Buffer.from(await nobgResponse.arrayBuffer())
 
-  console.log('[Packshot] Step 3: Creating professional packshot composition...')
+  console.log('[Packshot] Step 3: Creating transparency mask for DALL-E 2...')
 
-  // Get dimensions of the product
-  const productMeta = await sharp(nobgBuffer).metadata()
-  const productWidth = productMeta.width || 1024
-  const productHeight = productMeta.height || 1024
-
-  // Calculate canvas size (add padding)
-  const TARGET_SIZE = 2000
-  const padding = 200
-  const maxProductSize = TARGET_SIZE - (padding * 2)
-
-  // Calculate scaling to fit product in canvas with padding
-  const scale = Math.min(maxProductSize / productWidth, maxProductSize / productHeight)
-  const scaledWidth = Math.round(productWidth * scale)
-  const scaledHeight = Math.round(productHeight * scale)
-
-  // Center the product
-  const left = Math.round((TARGET_SIZE - scaledWidth) / 2)
-  const top = Math.round((TARGET_SIZE - scaledHeight) / 2)
-
-  // Resize product
-  const resizedProduct = await sharp(nobgBuffer)
-    .resize(scaledWidth, scaledHeight, {
-      fit: 'contain',
-      background: { r: 0, g: 0, b: 0, alpha: 0 },
-    })
+  // Create mask: transparent areas (background) = white, opaque areas (product) = black
+  const maskImage = await sharp(nobgBuffer)
+    .ensureAlpha()
+    .extractChannel(3) // Extract alpha channel
+    .negate() // Invert: transparent becomes white (area to edit)
     .toBuffer()
 
-  // Parse background color
-  const hexToRgb = (hex: string) => {
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
-    return result ? {
-      r: parseInt(result[1], 16),
-      g: parseInt(result[2], 16),
-      b: parseInt(result[3], 16),
-    } : { r: 255, g: 255, b: 255 }
-  }
+  // Convert to PNG with alpha
+  const mask = await sharp(maskImage)
+    .toFormat('png')
+    .toBuffer()
 
-  const bgColor = hexToRgb(backgroundColor)
+  console.log('[Packshot] Step 4: Preparing images for DALL-E 2 Edit...')
 
-  // Create canvas with background color
-  const canvas = await sharp({
-    create: {
-      width: TARGET_SIZE,
-      height: TARGET_SIZE,
-      channels: 4,
-      background: bgColor,
-    }
-  })
+  // Resize original image to 1024x1024 (DALL-E 2 requirement)
+  // DALL-E 2 Edit requires RGBA format
+  const resizedOriginal = await sharp(imageBuffer)
+    .ensureAlpha() // Ensure alpha channel exists
+    .resize(1024, 1024, {
+      fit: 'contain',
+      background: { r: 255, g: 255, b: 255, alpha: 0 },
+    })
     .png()
     .toBuffer()
 
-  // Composite product on canvas
-  const finalImage = await sharp(canvas)
-    .composite([
-      {
-        input: resizedProduct,
-        top: top,
-        left: left,
-      }
-    ])
+  // Resize mask to 1024x1024
+  const resizedMask = await sharp(mask)
+    .resize(1024, 1024, {
+      fit: 'contain',
+      background: { r: 255, g: 255, b: 255, alpha: 1 },
+    })
+    .png()
+    .toBuffer()
+
+  // Map background color to description
+  const backgroundDescriptions: Record<string, string> = {
+    '#FFFFFF': 'pure white',
+    '#F5F5F5': 'light gray',
+    '#F5E6D3': 'warm beige',
+    '#E3F2FD': 'light blue',
+  }
+
+  const bgDescription = backgroundDescriptions[backgroundColor] || 'white'
+
+  console.log('[Packshot] Step 5: Calling OpenAI DALL-E 2 Edit...')
+
+  // Create Blob objects for OpenAI API (File extends Blob)
+  // Convert Buffer to Uint8Array for Blob compatibility
+  const imageBlob = new Blob([new Uint8Array(resizedOriginal)], { type: 'image/png' }) as any
+  const maskBlob = new Blob([new Uint8Array(resizedMask)], { type: 'image/png' }) as any
+
+  // Add filename property for OpenAI API
+  Object.defineProperty(imageBlob, 'name', { value: 'product.png' })
+  Object.defineProperty(maskBlob, 'name', { value: 'mask.png' })
+
+  // Call DALL-E 2 Edit
+  const response = await openai.images.edit({
+    image: imageBlob,
+    mask: maskBlob,
+    prompt: `Professional product packshot photography on ${bgDescription} background, studio lighting, centered composition, clean presentation with natural shadows, high-end e-commerce style, Amazon listing quality, commercial photography`,
+    n: 1,
+    size: '1024x1024',
+  })
+
+  const generatedImageUrl = response.data?.[0]?.url
+  if (!generatedImageUrl) {
+    throw new Error('Failed to generate packshot with OpenAI DALL-E 2')
+  }
+
+  console.log('[Packshot] Step 6: Downloading generated packshot...')
+
+  // Download generated image
+  const generatedResponse = await fetch(generatedImageUrl)
+  const generatedBuffer = Buffer.from(await generatedResponse.arrayBuffer())
+
+  // Upscale to 2000x2000
+  const TARGET_SIZE = 2000
+  console.log(`[Packshot] Step 7: Upscaling to ${TARGET_SIZE}x${TARGET_SIZE}px...`)
+
+  const finalImage = await sharp(generatedBuffer)
+    .resize(TARGET_SIZE, TARGET_SIZE, {
+      fit: 'contain',
+      background: backgroundColor,
+    })
     .png({ quality: 100 })
     .toBuffer()
 
-  console.log('[Packshot] Professional packshot created successfully')
+  console.log('[Packshot] Professional packshot created successfully with OpenAI DALL-E 2')
   console.log(`[Packshot] Final dimensions: ${TARGET_SIZE}x${TARGET_SIZE}px`)
 
   return finalImage
@@ -239,7 +264,7 @@ export async function POST(request: NextRequest) {
       type: 'packshot_generation',
       creditsUsed: creditsNeeded,
       imageSize: `${file.size} bytes`,
-      model: 'lucataco-remove-bg-sharp',
+      model: 'openai-dalle-2-edit',
     })
 
     const newCredits = user.credits - creditsNeeded
