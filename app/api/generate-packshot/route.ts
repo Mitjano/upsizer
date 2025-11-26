@@ -57,6 +57,8 @@ async function generatePackshot(imageBuffer: Buffer, backgroundColor: string): P
 
   const TARGET_SIZE = 2000
   const PROCESS_SIZE = 1024 // Size for background removal
+  const PRODUCT_SIZE = Math.round(TARGET_SIZE * 0.70) // Product takes 70% of canvas (leaves 15% margin each side)
+  const MARGIN = Math.round((TARGET_SIZE - PRODUCT_SIZE) / 2) // Center margin
 
   // Step 1: Resize original image for background removal
   console.log('[Packshot] Step 1: Preparing image for background removal...')
@@ -86,11 +88,11 @@ async function generatePackshot(imageBuffer: Buffer, backgroundColor: string): P
   const nobgResponse = await fetch(rmbgOutput)
   const nobgBuffer = Buffer.from(await nobgResponse.arrayBuffer())
 
-  // Step 4: Resize product with transparent background to target size
-  console.log(`[Packshot] Step 4: Resizing product to ${TARGET_SIZE}x${TARGET_SIZE}px...`)
+  // Step 4: Resize product to 70% of canvas (with margins for packshot look)
+  console.log(`[Packshot] Step 4: Resizing product to ${PRODUCT_SIZE}x${PRODUCT_SIZE}px (70% of canvas)...`)
 
   const productResized = await sharp(nobgBuffer)
-    .resize(TARGET_SIZE, TARGET_SIZE, {
+    .resize(PRODUCT_SIZE, PRODUCT_SIZE, {
       fit: 'contain',
       background: { r: 0, g: 0, b: 0, alpha: 0 }, // Transparent background
     })
@@ -105,20 +107,20 @@ async function generatePackshot(imageBuffer: Buffer, backgroundColor: string): P
     .extractChannel(3) // Get alpha channel (0 = transparent, 255 = opaque)
     .toBuffer()
 
-  // Step 6: Create soft shadow from alpha channel
-  console.log('[Packshot] Step 6: Creating soft shadow...')
+  // Step 6: Create professional floor shadow
+  console.log('[Packshot] Step 6: Creating professional floor shadow...')
 
-  // Create shadow: blur the alpha, make it semi-transparent gray
+  // Create a shadow that appears under the product (floor reflection style)
+  // First blur vertically more than horizontally for floor effect
   const blurredAlpha = await sharp(alphaChannel)
-    .blur(30) // Soft blur for shadow
+    .blur(25) // Soft blur for shadow
     .toBuffer()
 
-  // Create shadow layer (dark gray, semi-transparent based on blurred alpha)
-  // Shadow is offset slightly down and to the right
+  // Create shadow layer - positioned below the product
   const shadowLayer = await sharp({
     create: {
-      width: TARGET_SIZE,
-      height: TARGET_SIZE,
+      width: PRODUCT_SIZE,
+      height: PRODUCT_SIZE,
       channels: 4,
       background: { r: 0, g: 0, b: 0, alpha: 0 },
     },
@@ -127,18 +129,18 @@ async function generatePackshot(imageBuffer: Buffer, backgroundColor: string): P
       {
         input: await sharp({
           create: {
-            width: TARGET_SIZE,
-            height: TARGET_SIZE,
+            width: PRODUCT_SIZE,
+            height: PRODUCT_SIZE,
             channels: 3,
-            background: { r: 80, g: 80, b: 80 }, // Dark gray shadow color
+            background: { r: 60, g: 60, b: 60 }, // Shadow color
           },
         })
           .joinChannel(blurredAlpha)
           .png()
           .toBuffer(),
         blend: 'over',
-        top: 15, // Shadow offset down
-        left: 10, // Shadow offset right
+        top: 0,
+        left: 0,
       },
     ])
     .png()
@@ -160,22 +162,25 @@ async function generatePackshot(imageBuffer: Buffer, backgroundColor: string): P
     .png()
     .toBuffer()
 
-  // Step 8: Composite all layers: background + shadow + product
-  console.log('[Packshot] Step 8: Compositing final packshot...')
+  // Step 8: Composite all layers: background + shadow (offset down) + product (centered)
+  console.log('[Packshot] Step 8: Compositing final packshot with centered product...')
+
+  // Shadow offset: slightly down and centered
+  const shadowOffsetY = 30 // Shadow appears below product
 
   const finalImage = await sharp(backgroundLayer)
     .composite([
       {
         input: shadowLayer,
         blend: 'multiply', // Shadow blends naturally with background
-        top: 0,
-        left: 0,
+        top: MARGIN + shadowOffsetY,
+        left: MARGIN,
       },
       {
         input: productResized,
-        blend: 'over', // Product on top
-        top: 0,
-        left: 0,
+        blend: 'over', // Product on top, centered
+        top: MARGIN,
+        left: MARGIN,
       },
     ])
     .png({ quality: 100 })
@@ -183,6 +188,7 @@ async function generatePackshot(imageBuffer: Buffer, backgroundColor: string): P
 
   console.log('[Packshot] DETERMINISTIC packshot created successfully!')
   console.log(`[Packshot] Final dimensions: ${TARGET_SIZE}x${TARGET_SIZE}px`)
+  console.log(`[Packshot] Product size: ${PRODUCT_SIZE}x${PRODUCT_SIZE}px (centered with ${MARGIN}px margins)`)
   console.log('[Packshot] Product is 100% preserved - no AI modifications to product pixels')
 
   return finalImage
