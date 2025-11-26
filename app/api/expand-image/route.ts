@@ -18,7 +18,6 @@ type ExpandMode =
   | 'expand_right'
   | 'expand_up'
   | 'expand_down'
-  | 'expand_horizontal'  // Left + Right (two API calls)
 
 // Single direction modes map directly to FLUX API outpaint values
 const EXPAND_MODE_MAP: Record<string, string> = {
@@ -32,52 +31,6 @@ const EXPAND_MODE_MAP: Record<string, string> = {
 }
 
 const CREDITS_PER_EXPAND = 2
-const CREDITS_PER_HORIZONTAL = 4  // Two API calls for left+right
-
-// Helper to call FLUX API for single direction
-async function callFluxFillPro(
-  dataUrl: string,
-  outpaintMode: string,
-  prompt: string
-): Promise<Buffer> {
-  console.log('[Expand] Calling FLUX.1 Fill [pro] with outpaint:', outpaintMode)
-
-  const output = await replicate.run(
-    'black-forest-labs/flux-fill-pro',
-    {
-      input: {
-        image: dataUrl,
-        prompt: prompt,
-        outpaint: outpaintMode,
-        steps: 50,
-        guidance: 30,
-        output_format: 'png',
-        safety_tolerance: 2,
-      },
-    }
-  ) as unknown
-
-  // Handle output - could be string URL or FileOutput object
-  let resultUrl: string
-  if (typeof output === 'string') {
-    resultUrl = output
-  } else if (output && typeof output === 'object' && 'url' in output) {
-    resultUrl = (output as { url: string }).url
-  } else if (Array.isArray(output) && output.length > 0) {
-    resultUrl = typeof output[0] === 'string' ? output[0] : (output[0] as { url: string }).url
-  } else {
-    throw new Error('Unexpected output format from FLUX.1 Fill [pro]')
-  }
-
-  console.log('[Expand] Downloading result from:', resultUrl)
-
-  const response = await fetch(resultUrl)
-  if (!response.ok) {
-    throw new Error(`Failed to download expanded image: ${response.status}`)
-  }
-
-  return Buffer.from(await response.arrayBuffer())
-}
 
 async function expandImage(
   imageBuffer: Buffer,
@@ -102,35 +55,92 @@ async function expandImage(
   // Convert to base64 data URL
   const base64Image = processedBuffer.toString('base64')
   const mimeType = metadata.format === 'png' ? 'image/png' : 'image/jpeg'
-  let dataUrl = `data:${mimeType};base64,${base64Image}`
+  const dataUrl = `data:${mimeType};base64,${base64Image}`
 
   // Default prompt if not provided
   const expandPrompt = prompt || 'Continue the image naturally, maintaining consistent style, lighting, and content'
 
-  // Handle horizontal expansion (left + right) - requires two API calls
-  if (expandMode === 'expand_horizontal') {
-    console.log('[Expand] Horizontal expansion - Step 1: Expand Left')
-    const leftExpanded = await callFluxFillPro(dataUrl, 'Left outpaint', expandPrompt)
-
-    // Convert result to data URL for second call
-    const leftBase64 = leftExpanded.toString('base64')
-    const leftDataUrl = `data:image/png;base64,${leftBase64}`
-
-    console.log('[Expand] Horizontal expansion - Step 2: Expand Right')
-    const finalResult = await callFluxFillPro(leftDataUrl, 'Right outpaint', expandPrompt)
-
-    console.log('[Expand] Horizontal expansion completed successfully')
-    return finalResult
-  }
-
-  // Single direction expansion
+  // Get the outpaint mode string
   const outpaintMode = EXPAND_MODE_MAP[expandMode]
   if (!outpaintMode) {
     throw new Error(`Invalid expand mode: ${expandMode}`)
   }
 
-  const resultBuffer = await callFluxFillPro(dataUrl, outpaintMode, expandPrompt)
+  console.log('[Expand] Calling FLUX.1 Fill [pro] with outpaint:', outpaintMode)
 
+  // Call Replicate API - cast output to string (URL) like packshot does
+  const output = (await replicate.run(
+    'black-forest-labs/flux-fill-pro',
+    {
+      input: {
+        image: dataUrl,
+        prompt: expandPrompt,
+        outpaint: outpaintMode,
+        steps: 50,
+        guidance: 30,
+        output_format: 'png',
+        safety_tolerance: 2,
+      },
+    }
+  )) as unknown
+
+  // Handle output - the API returns a FileOutput object with url() method or a string
+  let resultUrl: string
+
+  console.log('[Expand] Raw output type:', typeof output)
+  console.log('[Expand] Raw output:', JSON.stringify(output, null, 2))
+
+  if (typeof output === 'string') {
+    resultUrl = output
+  } else if (output && typeof output === 'object') {
+    // FileOutput object - try to get URL
+    const outputObj = output as Record<string, unknown>
+    if (typeof outputObj.url === 'function') {
+      // It's a FileOutput with url() method
+      resultUrl = (outputObj as { url: () => { href: string } }).url().href
+    } else if (typeof outputObj.url === 'string') {
+      resultUrl = outputObj.url
+    } else if (typeof outputObj.href === 'string') {
+      resultUrl = outputObj.href
+    } else if (Array.isArray(output) && output.length > 0) {
+      const first = output[0]
+      if (typeof first === 'string') {
+        resultUrl = first
+      } else if (first && typeof first === 'object') {
+        const firstObj = first as Record<string, unknown>
+        if (typeof firstObj.url === 'function') {
+          resultUrl = (firstObj as { url: () => { href: string } }).url().href
+        } else if (typeof firstObj.url === 'string') {
+          resultUrl = firstObj.url
+        } else if (typeof firstObj.href === 'string') {
+          resultUrl = firstObj.href
+        } else {
+          throw new Error(`Cannot extract URL from array element: ${JSON.stringify(first)}`)
+        }
+      } else {
+        throw new Error(`Unexpected array element type: ${typeof first}`)
+      }
+    } else {
+      // Try to stringify and check if it looks like a URL
+      const stringified = String(output)
+      if (stringified.startsWith('http')) {
+        resultUrl = stringified
+      } else {
+        throw new Error(`Cannot extract URL from output: ${JSON.stringify(output)}`)
+      }
+    }
+  } else {
+    throw new Error(`Unexpected output type: ${typeof output}`)
+  }
+
+  console.log('[Expand] Downloading result from:', resultUrl)
+
+  const response = await fetch(resultUrl)
+  if (!response.ok) {
+    throw new Error(`Failed to download expanded image: ${response.status}`)
+  }
+
+  const resultBuffer = Buffer.from(await response.arrayBuffer())
   console.log('[Expand] Image expansion completed successfully')
   return resultBuffer
 }
@@ -186,7 +196,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate expand mode
-    const validModes = [...Object.keys(EXPAND_MODE_MAP), 'expand_horizontal']
+    const validModes = Object.keys(EXPAND_MODE_MAP)
     if (!validModes.includes(expandMode)) {
       return NextResponse.json(
         { error: 'Invalid expand mode' },
@@ -194,11 +204,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Calculate credits needed (horizontal = 4, others = 2)
-    const creditsNeeded = expandMode === 'expand_horizontal' ? CREDITS_PER_HORIZONTAL : CREDITS_PER_EXPAND
-
     // 5. CHECK CREDITS
-    if (user.credits < creditsNeeded) {
+    if (user.credits < CREDITS_PER_EXPAND) {
       if (user.credits === 0) {
         sendCreditsDepletedEmail({
           userEmail: user.email,
@@ -209,7 +216,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           error: 'Insufficient credits',
-          required: creditsNeeded,
+          required: CREDITS_PER_EXPAND,
           available: user.credits,
         },
         { status: 402 }
@@ -235,13 +242,13 @@ export async function POST(request: NextRequest) {
     // 8. DEDUCT CREDITS & LOG USAGE
     createUsage({
       userId: user.id,
-      type: expandMode === 'expand_horizontal' ? 'image_expand_horizontal' : 'image_expand',
-      creditsUsed: creditsNeeded,
+      type: 'image_expand',
+      creditsUsed: CREDITS_PER_EXPAND,
       imageSize: `${file.size} bytes`,
       model: 'flux-fill-pro',
     })
 
-    const newCredits = user.credits - creditsNeeded
+    const newCredits = user.credits - CREDITS_PER_EXPAND
 
     // 9. SEND LOW CREDITS WARNING
     if (newCredits > 0 && newCredits <= 10) {
@@ -263,7 +270,7 @@ export async function POST(request: NextRequest) {
         width,
         height,
       },
-      creditsUsed: creditsNeeded,
+      creditsUsed: CREDITS_PER_EXPAND,
       creditsRemaining: newCredits,
     })
   } catch (error: unknown) {
