@@ -24,21 +24,22 @@ async function enhancePrompt(userPrompt: string): Promise<string> {
       messages: [
         {
           role: 'system',
-          content: `You are an expert at writing image generation prompts. Your task is to expand a simple user prompt into a detailed, professional prompt for AI image generation (FLUX model for outpainting/image expansion).
+          content: `You are an expert at writing image generation prompts for AI outpainting (extending an existing image).
 
-Rules:
-- Keep the core meaning of the user's prompt
-- Add specific visual details: lighting, atmosphere, textures, colors
-- Include style descriptors: photorealistic, cinematic, high detail, etc.
-- Describe the environment/background in detail
-- Keep it concise but descriptive (2-4 sentences max)
+CRITICAL RULES:
+- If the user mentions specific objects/subjects (like "cat and dog"), you MUST keep them as the PRIMARY focus
+- Start the prompt with the main subjects the user wants to see
+- Add visual details but NEVER remove or de-emphasize what the user asked for
+- Keep it concise (1-2 sentences max)
 - Write in English even if input is in another language
-- Focus on what should appear in the EXPANDED areas of the image
-- Do NOT include negative prompts or technical parameters
+- Focus on what should appear in the EXPANDED areas
 
 Example:
-Input: "woman walking through green forest"
-Output: "A woman walking through a lush green forest, tall ancient trees with dense emerald foliage, soft dappled sunlight filtering through the canopy, forest floor covered with ferns and moss, misty atmosphere, photorealistic, cinematic lighting, high detail"`
+Input: "cat and dog sitting on carpet"
+Output: "A fluffy cat and a golden retriever dog sitting together on the carpet, cozy home interior, soft natural lighting, photorealistic, high detail"
+
+Input: "forest background"
+Output: "Dense green forest with tall trees, dappled sunlight, misty atmosphere, photorealistic"`
         },
         {
           role: 'user',
@@ -201,18 +202,18 @@ async function expandHorizontal(
   console.log('[Expand] Prompt:', prompt)
   console.log('[Expand] Seed:', seed)
 
-  // Use moderate guidance - too high causes artifacts
+  // Use moderate-high guidance for better prompt adherence
   const output = (await replicate.run('black-forest-labs/flux-fill-pro', {
     input: {
       image: imageDataUrl,
       mask: maskDataUrl,
       prompt: prompt,
       steps: 50,
-      guidance: 10, // Moderate guidance for outpainting (3-10 range works best)
+      guidance: 15, // Balance between prompt adherence and natural continuation
       output_format: 'png',
       safety_tolerance: 2,
       seed: seed,
-      prompt_upsampling: true,
+      prompt_upsampling: false, // Disable - we already enhance with GPT
     },
   })) as unknown
 
@@ -267,11 +268,11 @@ async function expandWithPreset(
       prompt: prompt,
       outpaint: outpaintMode,
       steps: 50,
-      guidance: 10, // Moderate guidance for outpainting (3-10 range works best)
+      guidance: 15, // Balance between prompt adherence and natural continuation
       output_format: 'png',
       safety_tolerance: 2,
       seed: seed,
-      prompt_upsampling: true,
+      prompt_upsampling: false, // Disable - we already enhance with GPT
     },
   })) as unknown
 
