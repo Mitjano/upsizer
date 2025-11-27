@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import WelcomeModal from "@/components/WelcomeModal";
 
 interface DashboardStats {
   totalImages: number;
@@ -26,6 +27,8 @@ export default function DashboardPage() {
   const router = useRouter();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
+  const [isNewUser, setIsNewUser] = useState(false);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -46,6 +49,21 @@ export default function DashboardPage() {
           console.error('Error fetching dashboard stats:', err);
           setLoading(false);
         });
+
+      // Check if new user and show welcome modal
+      const welcomeShown = localStorage.getItem('pixelift_welcome_shown');
+      if (!welcomeShown) {
+        fetch('/api/user/welcome', { method: 'POST' })
+          .then(res => res.json())
+          .then(data => {
+            if (data.emailSent) {
+              setIsNewUser(true);
+              setShowWelcomeModal(true);
+              localStorage.setItem('pixelift_welcome_shown', 'true');
+            }
+          })
+          .catch(err => console.error('Welcome check error:', err));
+      }
     }
   }, [session]);
 
@@ -89,6 +107,15 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
+      {/* Welcome Modal for new users */}
+      {showWelcomeModal && session?.user?.name && (
+        <WelcomeModal
+          userName={session.user.name}
+          credits={stats?.credits || 3}
+          onClose={() => setShowWelcomeModal(false)}
+        />
+      )}
+
       <div className="container mx-auto px-4 py-8">
         {/* Welcome Section */}
         <div className="mb-8">
