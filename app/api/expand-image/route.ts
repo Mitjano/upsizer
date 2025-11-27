@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Replicate from 'replicate'
+import OpenAI from 'openai'
 import sharp from 'sharp'
 import { auth } from '@/lib/auth'
 import { getUserByEmail, createUsage } from '@/lib/db'
@@ -8,6 +9,59 @@ import { sendCreditsLowEmail, sendCreditsDepletedEmail } from '@/lib/email'
 const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN!,
 })
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY!,
+})
+
+// Enhance user's simple prompt into a detailed image generation prompt
+async function enhancePrompt(userPrompt: string): Promise<string> {
+  console.log('[Expand] Enhancing prompt:', userPrompt)
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        {
+          role: 'system',
+          content: `You are an expert at writing image generation prompts. Your task is to expand a simple user prompt into a detailed, professional prompt for AI image generation (FLUX model for outpainting/image expansion).
+
+Rules:
+- Keep the core meaning of the user's prompt
+- Add specific visual details: lighting, atmosphere, textures, colors
+- Include style descriptors: photorealistic, cinematic, high detail, etc.
+- Describe the environment/background in detail
+- Keep it concise but descriptive (2-4 sentences max)
+- Write in English even if input is in another language
+- Focus on what should appear in the EXPANDED areas of the image
+- Do NOT include negative prompts or technical parameters
+
+Example:
+Input: "woman walking through green forest"
+Output: "A woman walking through a lush green forest, tall ancient trees with dense emerald foliage, soft dappled sunlight filtering through the canopy, forest floor covered with ferns and moss, misty atmosphere, photorealistic, cinematic lighting, high detail"`
+        },
+        {
+          role: 'user',
+          content: userPrompt
+        }
+      ],
+      max_tokens: 200,
+      temperature: 0.7,
+    })
+
+    const enhancedPrompt = response.choices[0]?.message?.content?.trim()
+
+    if (enhancedPrompt) {
+      console.log('[Expand] Enhanced prompt:', enhancedPrompt)
+      return enhancedPrompt
+    }
+
+    return userPrompt
+  } catch (error) {
+    console.error('[Expand] Prompt enhancement failed, using original:', error)
+    return userPrompt
+  }
+}
 
 // Expand mode presets matching FLUX.1 Fill [pro] outpaint parameter
 type ExpandMode =
@@ -309,8 +363,15 @@ export async function POST(request: NextRequest) {
     const arrayBuffer = await file.arrayBuffer()
     const buffer = Buffer.from(arrayBuffer)
 
-    // Default prompt
-    const expandPrompt = prompt || 'natural continuation of the scene'
+    // Enhance user prompt with AI (or use default)
+    let expandPrompt: string
+    if (prompt && prompt.trim()) {
+      // User provided a prompt - enhance it with GPT
+      expandPrompt = await enhancePrompt(prompt.trim())
+    } else {
+      // No prompt - use a good default
+      expandPrompt = 'natural seamless continuation of the scene, matching style and lighting, photorealistic, high detail'
+    }
 
     let expandedImage: Buffer
     if (expandMode === 'expand_horizontal') {
