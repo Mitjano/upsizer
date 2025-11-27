@@ -32,8 +32,6 @@ export async function POST(request: NextRequest) {
     const mimeType = image.type;
     const dataUrl = `data:${mimeType};base64,${base64}`;
 
-    console.log(`Generating FREE preview: Scale ${scale}x, Quality Boost: ${qualityBoost}`);
-
     // Use Replicate HTTP API directly
     const version = qualityBoost
       ? "9283608cc6b7be6b65a8e44983db012355fde4132009bf99d976b2f0896856a3" // GFPGAN (Premium)
@@ -50,8 +48,6 @@ export async function POST(request: NextRequest) {
           scale: scale,
           face_enhance: false,
         };
-
-    console.log("Creating Replicate prediction...");
 
     // Create prediction
     const createResponse = await fetch("https://api.replicate.com/v1/predictions", {
@@ -73,7 +69,6 @@ export async function POST(request: NextRequest) {
     }
 
     const prediction = await createResponse.json();
-    console.log("Prediction created:", prediction.id, "status:", prediction.status);
 
     // Poll for completion
     let resultUrl: string | null = null;
@@ -88,7 +83,6 @@ export async function POST(request: NextRequest) {
       });
 
       const status = await pollResponse.json();
-      console.log(`Poll ${pollCount}: status=${status.status}`);
 
       if (status.status === "succeeded") {
         // Output is an array of URLs or a single URL
@@ -97,7 +91,6 @@ export async function POST(request: NextRequest) {
         } else if (typeof status.output === 'string') {
           resultUrl = status.output;
         }
-        console.log("Processing succeeded! URL:", resultUrl);
         break;
       } else if (status.status === "failed" || status.status === "canceled") {
         throw new Error(`Replicate processing failed: ${status.error || 'Unknown error'}`);
@@ -119,16 +112,14 @@ export async function POST(request: NextRequest) {
       message: "This is a 200x200px preview. Full image processing will use 1 credit.",
     };
 
-    console.log("Preview API returning:", JSON.stringify(responseData));
-
     return NextResponse.json(responseData);
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error generating preview:", error);
     return NextResponse.json(
       {
         error: "Failed to generate preview",
-        details: error.message
+        details: error instanceof Error ? error.message : 'Unknown error'
       },
       { status: 500 }
     );

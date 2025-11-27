@@ -16,8 +16,6 @@ const openai = new OpenAI({
 
 // Analyze image and generate appropriate expansion prompt using GPT-4o Vision
 async function analyzeImageForExpansion(imageBase64: string, mimeType: string): Promise<string> {
-  console.log('[Expand] Analyzing image with GPT-4o Vision...')
-
   try {
     const response = await openai.chat.completions.create({
       model: 'gpt-4o',
@@ -63,13 +61,11 @@ Write 1 short sentence describing ONLY the background/environment to generate.`
     const generatedPrompt = response.choices[0]?.message?.content?.trim()
 
     if (generatedPrompt) {
-      console.log('[Expand] Generated prompt from image analysis:', generatedPrompt)
       return generatedPrompt
     }
 
     return 'seamless continuation of the background, matching style and lighting'
-  } catch (error) {
-    console.error('[Expand] Image analysis failed:', error)
+  } catch {
     return 'seamless continuation of the background, matching style and lighting'
   }
 }
@@ -135,7 +131,6 @@ async function expandHorizontal(
   prompt: string,
   seed: number
 ): Promise<{ buffer: Buffer; seed: number }> {
-  console.log('[Expand] Starting horizontal expansion with custom mask...')
 
   // First, ensure image is in a format we can work with
   const processedImage = await sharp(imageBuffer)
@@ -150,9 +145,6 @@ async function expandHorizontal(
   // Calculate new dimensions - add 50% on each side (total 2x width)
   const expandAmount = Math.round(origWidth * 0.5)
   const newWidth = origWidth + expandAmount * 2
-
-  console.log('[Expand] Original:', origWidth, 'x', origHeight)
-  console.log('[Expand] New width:', newWidth, '(+', expandAmount, 'each side)')
 
   // Create expanded canvas with original image centered
   const expandedImage = await sharp({
@@ -204,10 +196,6 @@ async function expandHorizontal(
   const imageDataUrl = `data:image/jpeg;base64,${expandedImage.toString('base64')}`
   const maskDataUrl = `data:image/png;base64,${maskBuffer.toString('base64')}`
 
-  console.log('[Expand] Calling FLUX.1 Fill [pro] with custom mask...')
-  console.log('[Expand] Prompt:', prompt)
-  console.log('[Expand] Seed:', seed)
-
   const output = (await replicate.run('black-forest-labs/flux-fill-pro', {
     input: {
       image: imageDataUrl,
@@ -223,7 +211,6 @@ async function expandHorizontal(
   })) as unknown
 
   const resultUrl = extractResultUrl(output)
-  console.log('[Expand] Downloading result from:', resultUrl)
 
   const response = await fetch(resultUrl)
   if (!response.ok) {
@@ -231,7 +218,6 @@ async function expandHorizontal(
   }
 
   const resultBuffer = Buffer.from(await response.arrayBuffer())
-  console.log('[Expand] Horizontal expansion completed successfully')
   return { buffer: resultBuffer, seed }
 }
 
@@ -242,14 +228,12 @@ async function expandWithPreset(
   prompt: string,
   seed: number
 ): Promise<{ buffer: Buffer; seed: number }> {
-  console.log('[Expand] Starting expansion with preset:', expandMode)
 
   const metadata = await sharp(imageBuffer).metadata()
   const maxDimension = Math.max(metadata.width || 0, metadata.height || 0)
 
   let processedBuffer = imageBuffer
   if (maxDimension > 2048) {
-    console.log('[Expand] Resizing large image from', maxDimension, 'to 2048px')
     processedBuffer = await sharp(imageBuffer)
       .resize(2048, 2048, { fit: 'inside', withoutEnlargement: true })
       .toBuffer()
@@ -260,10 +244,6 @@ async function expandWithPreset(
   const dataUrl = `data:${mimeType};base64,${base64Image}`
 
   const outpaintMode = EXPAND_MODE_MAP[expandMode]
-
-  console.log('[Expand] Calling FLUX.1 Fill [pro] with outpaint:', outpaintMode)
-  console.log('[Expand] Prompt:', prompt)
-  console.log('[Expand] Seed:', seed)
 
   const output = (await replicate.run('black-forest-labs/flux-fill-pro', {
     input: {
@@ -280,7 +260,6 @@ async function expandWithPreset(
   })) as unknown
 
   const resultUrl = extractResultUrl(output)
-  console.log('[Expand] Downloading result from:', resultUrl)
 
   const response = await fetch(resultUrl)
   if (!response.ok) {
@@ -288,7 +267,6 @@ async function expandWithPreset(
   }
 
   const resultBuffer = Buffer.from(await response.arrayBuffer())
-  console.log('[Expand] Expansion completed successfully')
   return { buffer: resultBuffer, seed }
 }
 
@@ -372,7 +350,6 @@ export async function POST(request: NextRequest) {
     }
 
     // 6. PROCESS IMAGE
-    console.log('[Expand] Starting processing...')
     const arrayBuffer = await file.arrayBuffer()
     const buffer = Buffer.from(arrayBuffer)
 
@@ -420,7 +397,6 @@ export async function POST(request: NextRequest) {
     }
 
     // 10. RETURN SUCCESS
-    console.log('[Expand] Processing complete!')
     return NextResponse.json({
       success: true,
       expandedImage: dataUrl,

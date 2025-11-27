@@ -15,7 +15,6 @@ export class ImageProcessor {
    */
   static async removeBackground(dataUrl: string): Promise<string> {
     try {
-      console.log('Starting background removal with Replicate...')
 
       // Call Replicate API with rembg model
       const output = await this.replicate.run(
@@ -30,7 +29,6 @@ export class ImageProcessor {
       // Output should be a string (URL to processed image)
       const resultUrl = typeof output === 'string' ? output : String(output)
 
-      console.log('Background removal completed successfully')
       return resultUrl
     } catch (error) {
       console.error('Background removal failed:', error)
@@ -102,7 +100,6 @@ export class ImageProcessor {
 
       // Return relative path (for use with /uploads/)
       const relativePath = `/uploads/${subfolder}/${uniqueFilename}`
-      console.log('File saved:', relativePath)
       return relativePath
     } catch (error) {
       console.error('Error saving file:', error)

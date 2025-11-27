@@ -44,11 +44,8 @@ const PRESETS: Record<string, PackshotPreset> = {
 }
 
 async function generatePackshot(imageBuffer: Buffer, backgroundColor: string): Promise<Buffer> {
-  console.log('[Packshot] Generating professional packshot with OpenAI gpt-image-1...')
-  console.log('[Packshot] Background color:', backgroundColor)
 
   // Step 1: Resize original image to 1024x1024 for remove-bg
-  console.log('[Packshot] Step 1: Preparing image for background removal...')
 
   const resizedForRemoveBg = await sharp(imageBuffer)
     .resize(1024, 1024, {
@@ -61,7 +58,6 @@ async function generatePackshot(imageBuffer: Buffer, backgroundColor: string): P
   const base64Image = resizedForRemoveBg.toString('base64')
   const dataUrl = `data:image/png;base64,${base64Image}`
 
-  console.log('[Packshot] Step 2: Removing background to create mask...')
 
   // Use background removal model
   const rmbgOutput = (await replicate.run('lucataco/remove-bg:95fcc2a26d3899cd6c2691c900465aaeff466285a65c14638cc5f36f34befaf1', {
@@ -70,12 +66,10 @@ async function generatePackshot(imageBuffer: Buffer, backgroundColor: string): P
     },
   })) as unknown as string
 
-  console.log('[Packshot] Step 3: Downloading removed background image...')
 
   const nobgResponse = await fetch(rmbgOutput)
   const nobgBuffer = Buffer.from(await nobgResponse.arrayBuffer())
 
-  console.log('[Packshot] Step 4: Building WHITE binary mask from alpha channel...')
 
   // Resize nobgBuffer to exactly 1024x1024 first
   const nobgResized = await sharp(nobgBuffer)
@@ -123,7 +117,6 @@ async function generatePackshot(imageBuffer: Buffer, backgroundColor: string): P
     .png({ compressionLevel: 9 })
     .toBuffer()
 
-  console.log('[Packshot] Step 5: Preparing original image with white background...')
 
   // IMAGE: Original photo resized with WHITE OPAQUE background
   const imagePng = await sharp(imageBuffer)
@@ -146,7 +139,6 @@ async function generatePackshot(imageBuffer: Buffer, backgroundColor: string): P
 
   const bgDescription = backgroundDescriptions[backgroundColor] || 'white'
 
-  console.log('[Packshot] Step 6: Calling OpenAI gpt-image-1 Edit API...')
 
   // Use raw fetch for gpt-image-1 (not available in openai SDK yet for edits)
   const formData = new FormData()
@@ -193,11 +185,9 @@ Only the product on a ${bgDescription} background. If you add anything else, the
     throw new Error('Failed to get image from OpenAI response')
   }
 
-  console.log('[Packshot] Step 7: Downloading generated packshot...')
 
   // Upscale to 2000x2000
   const TARGET_SIZE = 2000
-  console.log(`[Packshot] Step 8: Upscaling to ${TARGET_SIZE}x${TARGET_SIZE}px...`)
 
   const finalImage = await sharp(generatedBuffer)
     .resize(TARGET_SIZE, TARGET_SIZE, {
@@ -207,8 +197,6 @@ Only the product on a ${bgDescription} background. If you add anything else, the
     .png({ quality: 100 })
     .toBuffer()
 
-  console.log('[Packshot] Professional packshot created successfully with gpt-image-1')
-  console.log(`[Packshot] Final dimensions: ${TARGET_SIZE}x${TARGET_SIZE}px`)
 
   return finalImage
 }
@@ -274,7 +262,6 @@ export async function POST(request: NextRequest) {
     // 5. CHECK CREDITS
     const creditsNeeded = preset.credits
 
-    console.log('[Packshot] Credits needed:', creditsNeeded)
 
     // Check if user has enough credits
     if (user.credits < creditsNeeded) {
@@ -296,7 +283,6 @@ export async function POST(request: NextRequest) {
     }
 
     // 6. PROCESS IMAGE WITH BRIA AI
-    console.log('[Packshot] Starting processing...')
     const arrayBuffer = await file.arrayBuffer()
     const buffer = Buffer.from(arrayBuffer)
 
@@ -333,7 +319,6 @@ export async function POST(request: NextRequest) {
     }
 
     // 10. RETURN SUCCESS
-    console.log('[Packshot] Processing complete!')
     return NextResponse.json({
       success: true,
       packshot: dataUrl,

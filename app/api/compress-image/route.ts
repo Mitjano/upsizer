@@ -74,7 +74,6 @@ export async function POST(request: NextRequest) {
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
 
-    console.log(`[compress-image] Processing: ${file.name}, original size: ${file.size} bytes, quality: ${quality}, format: ${format}`)
 
     // 8. Get original image metadata
     const metadata = await sharp(buffer).metadata()
@@ -129,7 +128,6 @@ export async function POST(request: NextRequest) {
     const compressedSize = compressedBuffer.length
     const compressionRatio = ((originalSize - compressedSize) / originalSize * 100).toFixed(1)
 
-    console.log(`[compress-image] Compressed: ${originalSize} → ${compressedSize} bytes (${compressionRatio}% reduction)`)
 
     // 11. Deduct credits and log usage
     createUsage({

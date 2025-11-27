@@ -21,6 +21,7 @@
   "license": "ISC",
   "description": "AI-powered image upscaling with Real-ESRGAN and GFPGAN",
   "dependencies": {
+    "@sentry/nextjs": "^10.27.0",
     "@tailwindcss/typography": "^0.5.19",
     "@tiptap/extension-image": "^3.11.0",
     "@tiptap/extension-link": "^3.11.0",

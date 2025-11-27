@@ -68,8 +68,6 @@ export async function POST(request: NextRequest) {
     const mimeType = image.type;
     const dataUrl = `data:${mimeType};base64,${base64}`;
 
-    console.log(`Processing image: ${image.name}, Scale: ${scale}x, Quality Boost: ${qualityBoost}`);
-
     // Use Replicate HTTP API directly
     // Quality Boost ON = GFPGAN (premium model with face enhancement + quality boost)
     // Quality Boost OFF = Real-ESRGAN (standard fast model)
@@ -88,8 +86,6 @@ export async function POST(request: NextRequest) {
           scale: scale,
           face_enhance: false,
         };
-
-    console.log("Creating Replicate prediction...");
 
     // Create prediction
     const createResponse = await fetch("https://api.replicate.com/v1/predictions", {
@@ -111,7 +107,6 @@ export async function POST(request: NextRequest) {
     }
 
     const prediction = await createResponse.json();
-    console.log("Prediction created:", prediction.id, "status:", prediction.status);
 
     // Poll for completion
     let resultUrl: string | null = null;
@@ -126,7 +121,6 @@ export async function POST(request: NextRequest) {
       });
 
       const status = await pollResponse.json();
-      console.log(`Poll ${pollCount}: status=${status.status}`);
 
       if (status.status === "succeeded") {
         // Output is an array of URLs or a single URL
@@ -135,7 +129,6 @@ export async function POST(request: NextRequest) {
         } else if (typeof status.output === 'string') {
           resultUrl = status.output;
         }
-        console.log("Processing succeeded! URL:", resultUrl);
         break;
       } else if (status.status === "failed" || status.status === "canceled") {
         throw new Error(`Replicate processing failed: ${status.error || 'Unknown error'}`);
@@ -199,8 +192,6 @@ export async function POST(request: NextRequest) {
       creditsUsed: creditsNeeded,
       creditsRemaining: updatedUser?.credits || 0,
     };
-
-    console.log("Upscale API returning:", JSON.stringify(responseData));
 
     return NextResponse.json(responseData);
 

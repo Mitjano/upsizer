@@ -14,7 +14,6 @@ interface CompressionStats {
 }
 
 export default function ImageCompressor() {
-  console.log('[ImageCompressor] Component mounted/rendered');
   const { data: session } = useSession();
   const [originalImage, setOriginalImage] = useState<string | null>(null);
   const [compressedImage, setCompressedImage] = useState<string | null>(null);
@@ -28,12 +27,9 @@ export default function ImageCompressor() {
   const [format, setFormat] = useState('auto'); // 'auto', 'jpg', 'png', 'webp'
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('[ImageCompressor] handleFileSelect called');
     const file = e.target.files?.[0];
-    console.log('[ImageCompressor] File from input:', file);
 
     if (!file) {
-      console.log('[ImageCompressor] No file selected');
       return;
     }
 
@@ -45,34 +41,25 @@ export default function ImageCompressor() {
     // Validate file
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
     if (!allowedTypes.includes(file.type)) {
-      console.log('[ImageCompressor] Invalid file type:', file.type);
       setError('Please upload a JPG, PNG, or WebP image');
       return;
     }
 
     if (file.size > 20 * 1024 * 1024) {
-      console.log('[ImageCompressor] File too large:', file.size);
       setError('File size must be less than 20MB');
       return;
     }
 
-    console.log('[ImageCompressor] File validated, starting to read:', file.name, file.type, file.size);
-
     // Show original image
     const reader = new FileReader();
     reader.onload = (event) => {
-      console.log('[ImageCompressor] FileReader onload triggered');
       const result = event.target?.result as string;
-      console.log('[ImageCompressor] Image loaded, length:', result?.length);
       setOriginalImage(result);
-      console.log('[ImageCompressor] setOriginalImage called with data');
     };
-    reader.onerror = (error) => {
-      console.error('[ImageCompressor] FileReader error:', error);
+    reader.onerror = () => {
       setError('Failed to read image file');
     };
     reader.readAsDataURL(file);
-    console.log('[ImageCompressor] FileReader.readAsDataURL called');
   };
 
   const handleCompress = async () => {
@@ -110,7 +97,6 @@ export default function ImageCompressor() {
       setProgress('');
 
     } catch (err) {
-      console.error('Compression error:', err);
       setError(err instanceof Error ? err.message : 'Failed to compress image');
       setProgress('');
     } finally {
@@ -188,8 +174,6 @@ export default function ImageCompressor() {
     );
   }
 
-  console.log('[ImageCompressor] Rendering, originalImage:', originalImage ? 'HAS IMAGE' : 'NO IMAGE', 'session:', session ? 'LOGGED IN' : 'NOT LOGGED IN');
-
   return (
     <div className="max-w-6xl mx-auto">
       {!originalImage ? (
@@ -197,10 +181,7 @@ export default function ImageCompressor() {
           <input
             type="file"
             accept="image/jpeg,image/jpg,image/png,image/webp"
-            onChange={(e) => {
-              console.log('[ImageCompressor] Input onChange triggered!', e.target.files);
-              handleFileSelect(e);
-            }}
+            onChange={handleFileSelect}
             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
           />
           <div className="mb-4">

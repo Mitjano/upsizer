@@ -184,7 +184,6 @@ export default function EnhancedImageUploader() {
       }
 
       const data = await response.json();
-      console.log("Upscale API response:", data);
 
       if (data.success && data.imageUrl) {
         setProgress("Processing complete!");

@@ -145,8 +145,6 @@ export async function GET(
       // Encode filename for Content-Disposition header (RFC 5987)
       const encodedFilename = encodeURIComponent(filename)
 
-      console.log('Download filename generated:', filename)
-      console.log('Encoded filename:', encodedFilename)
 
       // Determine content type
       const contentType = format === 'png' ? 'image/png' : 'image/jpeg'

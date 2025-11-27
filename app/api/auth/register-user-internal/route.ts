@@ -21,7 +21,6 @@ export async function POST(request: NextRequest) {
       // Create new user
       const isAdmin = email === 'admin@pixelift.pl' || email === 'michalchmielarz00@gmail.com';
 
-      console.log(`[register-user-internal] Creating new user: ${email}`);
       user = createUser({
         email,
         name: name || undefined,
@@ -32,7 +31,6 @@ export async function POST(request: NextRequest) {
         totalUsage: 0,
         lastLoginAt: new Date().toISOString(),
       });
-      console.log(`[register-user-internal] User created with ID: ${user.id}, role: ${user.role}`);
 
       // Create notification for new user registration
       createNotification({
@@ -44,7 +42,6 @@ export async function POST(request: NextRequest) {
       });
 
       // Send welcome email for new users
-      console.log(`[register-user-internal] Sending welcome email to: ${email}`);
       sendWelcomeEmail({
         userName: name || 'User',
         userEmail: email,
@@ -52,7 +49,6 @@ export async function POST(request: NextRequest) {
       }).catch(err => console.error('[register-user-internal] Welcome email failed:', err));
     } else {
       // Update last login
-      console.log(`[register-user-internal] Existing user login: ${email}, role: ${user.role}`);
       updateUserLogin(email);
     }
 

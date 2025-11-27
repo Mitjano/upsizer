@@ -77,7 +77,6 @@ export async function POST(request: NextRequest) {
     const mimeType = file.type
     const dataUrl = `data:${mimeType};base64,${base64}`
 
-    console.log(`Removing background from: ${file.name}`)
 
     // 7. Get image dimensions
     const dimensions = await ImageProcessor.getImageDimensions(buffer)
@@ -142,7 +141,6 @@ export async function POST(request: NextRequest) {
         }).catch(err => console.error('Credits low email failed:', err))
       }
 
-      console.log(`Background removal completed: ${imageRecord.id}`)
 
       // 12. Return success
       return NextResponse.json({

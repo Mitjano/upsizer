@@ -54,7 +54,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             // Don't block login if registration fails
           } else {
             const data = await response.json();
-            console.log(`[auth] User registration successful: ${user.email}, isNewUser: ${data.isNewUser}`);
           }
         } catch (error) {
           console.error('[auth] Error during user registration:', error);

@@ -23,7 +23,6 @@ export async function POST(request: NextRequest) {
       // Create new user
       const isAdmin = email === 'admin@pixelift.pl' || email === 'michalchmielarz00@gmail.com';
 
-      console.log(`[register-user] Creating new user: ${email}`);
       user = createUser({
         email,
         name: name || undefined,
@@ -34,7 +33,6 @@ export async function POST(request: NextRequest) {
         totalUsage: 0,
         lastLoginAt: new Date().toISOString(),
       });
-      console.log(`[register-user] User created with ID: ${user.id}`);
 
       // Create notification for new user registration
       createNotification({
@@ -46,7 +44,6 @@ export async function POST(request: NextRequest) {
       });
 
       // Send welcome email for new users
-      console.log(`[register-user] Sending welcome email to: ${email}`);
       sendWelcomeEmail({
         userName: name || 'User',
         userEmail: email,
