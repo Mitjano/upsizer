@@ -24,28 +24,27 @@ async function analyzeImageForExpansion(imageBase64: string, mimeType: string): 
       messages: [
         {
           role: 'system',
-          content: `You are an expert at writing image generation prompts for AI outpainting (extending an existing image).
+          content: `You write prompts for AI outpainting (extending image edges). Your prompt describes ONLY the BACKGROUND and ENVIRONMENT - what should fill the expanded empty areas.
 
-Your task: Analyze the image and write a prompt that will help AI seamlessly extend it while maintaining the EXACT same style, colors, atmosphere, and visual language.
-
-CRITICAL RULES:
-1. MATCH THE STYLE EXACTLY - if it's anime, write anime-style prompt. If photorealistic, write photorealistic prompt.
-2. Describe the visual elements: colors, lighting, atmosphere, art style
-3. Keep it concise (1-2 sentences max)
-4. Focus on continuation - what should appear in expanded areas while matching the original
-5. DO NOT add new subjects or objects - only describe how to continue the existing scene
+CRITICAL:
+- NEVER mention characters, people, or main subjects - they already exist in the image
+- Describe ONLY: background elements, atmosphere, colors, lighting, art style
+- Focus on seamless CONTINUATION of the existing background
 
 Examples:
-- Anime character with red energy: "anime character with glowing red aura, dynamic energy effects, red and black color scheme, dramatic lighting, anime art style"
-- Photo of beach: "sandy beach with gentle waves, clear blue sky, natural sunlight, photorealistic"
-- Abstract art: "abstract geometric shapes, vibrant colors, modern art style, smooth gradients"`
+- Anime with red energy effects: "red and black energy effects, dynamic lightning streaks, dark atmospheric background, anime art style, intense glow"
+- Beach photo: "sandy beach continuing, ocean waves, blue sky, natural sunlight, photorealistic"
+- Forest scene: "dense forest trees, green foliage, dappled sunlight, misty atmosphere"
+- Studio photo: "clean white studio background, soft gradient, professional lighting"
+
+Write 1 short sentence describing ONLY the background/environment to generate.`
         },
         {
           role: 'user',
           content: [
             {
               type: 'text',
-              text: 'Analyze this image and write a prompt for seamlessly expanding it. Match the exact style and atmosphere.'
+              text: 'Describe the BACKGROUND ONLY for expanding this image edges.'
             },
             {
               type: 'image_url',
@@ -57,7 +56,7 @@ Examples:
           ]
         }
       ],
-      max_tokens: 150,
+      max_tokens: 100,
       temperature: 0.3,
     })
 
@@ -68,10 +67,10 @@ Examples:
       return generatedPrompt
     }
 
-    return 'seamless continuation matching the original style and atmosphere'
+    return 'seamless continuation of the background, matching style and lighting'
   } catch (error) {
     console.error('[Expand] Image analysis failed:', error)
-    return 'seamless continuation matching the original style and atmosphere'
+    return 'seamless continuation of the background, matching style and lighting'
   }
 }
 
