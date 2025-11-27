@@ -1,11 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isAdmin } from "@/lib/auth";
 import { getPostById, updatePost, deletePost } from "@/lib/blog";
+import { apiLimiter, getClientIdentifier, rateLimitResponse } from "@/lib/rate-limit";
+import { updateBlogPostSchema, validateRequest, formatZodErrors } from "@/lib/validation";
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const identifier = getClientIdentifier(request);
+  const { allowed, resetAt } = apiLimiter.check(identifier);
+  if (!allowed) {
+    return rateLimitResponse(resetAt);
+  }
+
   if (!(await isAdmin())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -23,6 +31,12 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const identifier = getClientIdentifier(request);
+  const { allowed, resetAt } = apiLimiter.check(identifier);
+  if (!allowed) {
+    return rateLimitResponse(resetAt);
+  }
+
   if (!(await isAdmin())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -30,7 +44,17 @@ export async function PUT(
   try {
     const { id } = await params;
     const body = await request.json();
-    const post = await updatePost(id, body);
+
+    // Validate request
+    const validation = validateRequest(updateBlogPostSchema, body);
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: 'Validation failed', details: formatZodErrors(validation.errors) },
+        { status: 400 }
+      );
+    }
+
+    const post = await updatePost(id, validation.data);
 
     if (!post) {
       return NextResponse.json({ error: "Post not found" }, { status: 404 });
@@ -46,6 +70,12 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const identifier = getClientIdentifier(request);
+  const { allowed, resetAt } = apiLimiter.check(identifier);
+  if (!allowed) {
+    return rateLimitResponse(resetAt);
+  }
+
   if (!(await isAdmin())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

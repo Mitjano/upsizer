@@ -3,6 +3,7 @@ import { auth } from '@/lib/auth';
 import { getAllUsers, updateUser } from '@/lib/db';
 import { apiLimiter, getClientIdentifier, rateLimitResponse } from '@/lib/rate-limit';
 import { updateUserSchema, validateRequest, formatZodErrors } from '@/lib/validation';
+import { handleApiError, parsePaginationParams, paginate } from '@/lib/api-utils';
 
 export async function GET(request: NextRequest) {
   try {
@@ -21,10 +22,16 @@ export async function GET(request: NextRequest) {
 
     const users = getAllUsers();
 
-    return NextResponse.json({ users });
+    // Parse pagination params
+    const url = new URL(request.url);
+    const paginationParams = parsePaginationParams(url);
+
+    // Apply pagination
+    const paginatedUsers = paginate(users, paginationParams);
+
+    return NextResponse.json(paginatedUsers);
   } catch (error) {
-    console.error('Users fetch error:', error);
-    return NextResponse.json({ error: 'Failed to fetch users' }, { status: 500 });
+    return handleApiError(error, 'admin/users:GET', 'Failed to fetch users');
   }
 }
 
@@ -66,7 +73,6 @@ export async function PATCH(request: NextRequest) {
 
     return NextResponse.json({ success: true, user: updatedUser });
   } catch (error) {
-    console.error('User update error:', error);
-    return NextResponse.json({ error: 'Failed to update user' }, { status: 500 });
+    return handleApiError(error, 'admin/users:PATCH', 'Failed to update user');
   }
 }

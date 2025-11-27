@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { createWebhook, updateWebhook, deleteWebhook, triggerWebhook } from '@/lib/db';
 import { apiLimiter, getClientIdentifier, rateLimitResponse } from '@/lib/rate-limit';
+import { createWebhookSchema, updateWebhookSchema, validateRequest, formatZodErrors } from '@/lib/validation';
 
 export async function POST(request: NextRequest) {
   try {
@@ -29,16 +30,21 @@ export async function POST(request: NextRequest) {
     // Handle create webhook
     const { name, url, events, enabled, secret, headers, retryAttempts } = body;
 
-    if (!name || !url || !events) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    // Validate request (partial - allow extra fields like headers, retryAttempts)
+    const validation = validateRequest(createWebhookSchema, { name, url, events, secret, enabled });
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: 'Validation failed', details: formatZodErrors(validation.errors) },
+        { status: 400 }
+      );
     }
 
     const webhook = createWebhook({
-      name,
-      url,
-      events: Array.isArray(events) ? events : events.split(',').map((e: string) => e.trim()).filter((e: string) => e),
-      enabled: enabled ?? true,
-      secret,
+      name: validation.data.name,
+      url: validation.data.url,
+      events: validation.data.events,
+      enabled: validation.data.enabled ?? true,
+      secret: validation.data.secret,
       headers: headers || {},
       retryAttempts: retryAttempts ?? 3,
     });

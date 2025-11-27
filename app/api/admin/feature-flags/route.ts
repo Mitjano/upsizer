@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { createFeatureFlag, updateFeatureFlag, deleteFeatureFlag } from '@/lib/db';
 import { apiLimiter, getClientIdentifier, rateLimitResponse } from '@/lib/rate-limit';
+import { createFeatureFlagSchema, updateFeatureFlagSchema, validateRequest, formatZodErrors } from '@/lib/validation';
 
 export async function POST(request: NextRequest) {
   try {
@@ -18,11 +19,17 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { name, key, description, enabled, rolloutPercentage } = body;
 
-    if (!name || !key) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    // Validate request
+    const validation = validateRequest(createFeatureFlagSchema, body);
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: 'Validation failed', details: formatZodErrors(validation.errors) },
+        { status: 400 }
+      );
     }
+
+    const { name, key, description, enabled, rolloutPercentage } = validation.data;
 
     const flag = createFeatureFlag({
       name,
@@ -54,12 +61,17 @@ export async function PATCH(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { id, updates } = body;
 
-    if (!id || !updates) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    // Validate request
+    const validation = validateRequest(updateFeatureFlagSchema, body);
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: 'Validation failed', details: formatZodErrors(validation.errors) },
+        { status: 400 }
+      );
     }
 
+    const { id, updates } = validation.data;
     const flag = updateFeatureFlag(id, updates);
 
     if (!flag) {

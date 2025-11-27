@@ -149,6 +149,55 @@ export const createBackupSchema = z.object({
   description: z.string().max(500).optional(),
 });
 
+// Blog schemas
+export const createBlogPostSchema = z.object({
+  title: z.string().min(5).max(200),
+  slug: z.string().min(3).max(200).regex(/^[a-z0-9-]+$/, 'Slug must be lowercase with hyphens only').optional(),
+  content: z.string().min(50),
+  excerpt: z.string().max(500).default(''),
+  categories: z.array(z.string().max(50)).default([]),
+  tags: z.array(z.string().max(30)).default([]),
+  status: z.enum(['draft', 'published']).default('draft'),
+  featuredImage: z.string().url().optional().or(z.literal('')),
+  author: z.object({
+    name: z.string().min(2).max(100),
+    email: z.string().email(),
+  }).optional(),
+});
+
+export const updateBlogPostSchema = createBlogPostSchema.partial().refine(
+  data => Object.keys(data).length > 0,
+  { message: 'At least one field must be provided' }
+);
+
+// Update Feature Flag schema (for PATCH)
+export const updateFeatureFlagSchema = z.object({
+  id: z.string().min(1),
+  updates: z.object({
+    name: z.string().min(3).max(100).optional(),
+    key: z.string().min(3).max(50).regex(/^[a-z0-9_]+$/, 'Key must be lowercase snake_case').optional(),
+    description: z.string().max(500).optional(),
+    enabled: z.boolean().optional(),
+    rolloutPercentage: z.number().min(0).max(100).optional(),
+  }).refine(data => Object.keys(data).length > 0, {
+    message: 'At least one field must be provided',
+  }),
+});
+
+// Update Webhook schema (for PATCH)
+export const updateWebhookSchema = z.object({
+  id: z.string().min(1),
+  updates: z.object({
+    name: z.string().min(3).max(100).optional(),
+    url: urlSchema.optional(),
+    events: z.array(z.string()).min(1).optional(),
+    secret: z.string().min(16).optional(),
+    enabled: z.boolean().optional(),
+  }).refine(data => Object.keys(data).length > 0, {
+    message: 'At least one field must be provided',
+  }),
+});
+
 // API Key schemas
 export const createApiKeySchema = z.object({
   name: z.string().min(3).max(100),

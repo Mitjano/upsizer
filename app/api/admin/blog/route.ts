@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { isAdmin } from "@/lib/auth";
+import { isAdmin, auth } from "@/lib/auth";
 import { getAllPosts, createPost, generateSlug } from "@/lib/blog";
 import { apiLimiter, getClientIdentifier, rateLimitResponse } from '@/lib/rate-limit';
+import { createBlogPostSchema, validateRequest, formatZodErrors } from '@/lib/validation';
 
 export async function GET(request: NextRequest) {
   // Rate limiting
@@ -33,11 +34,30 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const slug = body.slug || generateSlug(body.title);
+
+    // Validate request
+    const validation = validateRequest(createBlogPostSchema, body);
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: 'Validation failed', details: formatZodErrors(validation.errors) },
+        { status: 400 }
+      );
+    }
+
+    const validatedData = validation.data;
+    const slug = validatedData.slug || generateSlug(validatedData.title);
+
+    // Get current user for author
+    const session = await auth();
+    const author = validatedData.author || {
+      name: session?.user?.name || 'Admin',
+      email: session?.user?.email || 'admin@pixelift.pl',
+    };
 
     const post = await createPost({
-      ...body,
+      ...validatedData,
       slug,
+      author,
     });
 
     return NextResponse.json(post, { status: 201 });
