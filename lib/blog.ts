@@ -54,6 +54,34 @@ export async function getPublishedPosts(): Promise<BlogPost[]> {
   return posts.filter((post) => post.status === "published");
 }
 
+export async function getPostsByTag(tag: string): Promise<BlogPost[]> {
+  const posts = await getPublishedPosts();
+  return posts.filter((post) =>
+    post.tags.some(t => t.toLowerCase() === tag.toLowerCase())
+  );
+}
+
+export async function getPostsByCategory(category: string): Promise<BlogPost[]> {
+  const posts = await getPublishedPosts();
+  return posts.filter((post) =>
+    post.categories.some(c => c.toLowerCase() === category.toLowerCase())
+  );
+}
+
+export async function getAllTags(): Promise<string[]> {
+  const posts = await getPublishedPosts();
+  const tagsSet = new Set<string>();
+  posts.forEach(post => post.tags.forEach(tag => tagsSet.add(tag)));
+  return Array.from(tagsSet).sort();
+}
+
+export async function getAllCategories(): Promise<string[]> {
+  const posts = await getPublishedPosts();
+  const categoriesSet = new Set<string>();
+  posts.forEach(post => post.categories.forEach(cat => categoriesSet.add(cat)));
+  return Array.from(categoriesSet).sort();
+}
+
 export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
   await ensureBlogDir();
   try {

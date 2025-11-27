@@ -49,12 +49,13 @@ export default async function BlogPostPage({ params }: PageProps) {
           {post.categories.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-4">
               {post.categories.map((category) => (
-                <span
+                <Link
                   key={category}
-                  className="text-sm px-3 py-1 bg-green-500/20 text-green-400 rounded-full"
+                  href={`/blog/category/${encodeURIComponent(category)}`}
+                  className="text-sm px-3 py-1 bg-green-500/20 text-green-400 rounded-full hover:bg-green-500/30 transition-colors"
                 >
                   {category}
-                </span>
+                </Link>
               ))}
             </div>
           )}
@@ -127,12 +128,13 @@ export default async function BlogPostPage({ params }: PageProps) {
           <h3 className="text-sm font-semibold text-gray-400 mb-4">TAGS</h3>
           <div className="flex flex-wrap gap-2">
             {post.tags.map((tag) => (
-              <span
+              <Link
                 key={tag}
-                className="px-3 py-1 bg-gray-800 border border-gray-700 text-gray-300 rounded-lg text-sm hover:border-green-500 transition-colors"
+                href={`/blog/tag/${encodeURIComponent(tag)}`}
+                className="px-3 py-1 bg-gray-800 border border-gray-700 text-gray-300 rounded-lg text-sm hover:border-green-500 hover:text-green-400 transition-colors"
               >
                 #{tag}
-              </span>
+              </Link>
             ))}
           </div>
         </div>
