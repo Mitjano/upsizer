@@ -4,6 +4,7 @@ import "./globals.css";
 import Providers from "@/components/Providers";
 import LayoutWrapper from "@/components/LayoutWrapper";
 import StructuredData from "@/components/StructuredData";
+import Analytics from "@/components/Analytics";
 import { Toaster } from 'react-hot-toast';
 
 const inter = Inter({ subsets: ["latin"] });
@@ -86,6 +87,7 @@ export default function RootLayout({
         <StructuredData />
       </head>
       <body className={inter.className}>
+        <Analytics />
         <Providers>
           <LayoutWrapper>{children}</LayoutWrapper>
           <Toaster
