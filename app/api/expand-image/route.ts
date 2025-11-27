@@ -14,52 +14,64 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
 })
 
-// Enhance user's simple prompt into a detailed image generation prompt
-async function enhancePrompt(userPrompt: string): Promise<string> {
-  console.log('[Expand] Enhancing prompt:', userPrompt)
+// Analyze image and generate appropriate expansion prompt using GPT-4o Vision
+async function analyzeImageForExpansion(imageBase64: string, mimeType: string): Promise<string> {
+  console.log('[Expand] Analyzing image with GPT-4o Vision...')
 
   try {
     const response = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
+      model: 'gpt-4o',
       messages: [
         {
           role: 'system',
           content: `You are an expert at writing image generation prompts for AI outpainting (extending an existing image).
 
-CRITICAL RULES:
-- If the user mentions specific objects/subjects (like "cat and dog"), you MUST keep them as the PRIMARY focus
-- Start the prompt with the main subjects the user wants to see
-- Add visual details but NEVER remove or de-emphasize what the user asked for
-- Keep it concise (1-2 sentences max)
-- Write in English even if input is in another language
-- Focus on what should appear in the EXPANDED areas
-Example:
-Input: "cat and dog sitting on carpet"
-Output: "A fluffy cat and a golden retriever dog sitting together on the carpet, cozy home interior, soft natural lighting, photorealistic, high detail"
+Your task: Analyze the image and write a prompt that will help AI seamlessly extend it while maintaining the EXACT same style, colors, atmosphere, and visual language.
 
-Input: "forest background"
-Output: "Dense green forest with tall trees, dappled sunlight, misty atmosphere, photorealistic"`
+CRITICAL RULES:
+1. MATCH THE STYLE EXACTLY - if it's anime, write anime-style prompt. If photorealistic, write photorealistic prompt.
+2. Describe the visual elements: colors, lighting, atmosphere, art style
+3. Keep it concise (1-2 sentences max)
+4. Focus on continuation - what should appear in expanded areas while matching the original
+5. DO NOT add new subjects or objects - only describe how to continue the existing scene
+
+Examples:
+- Anime character with red energy: "anime character with glowing red aura, dynamic energy effects, red and black color scheme, dramatic lighting, anime art style"
+- Photo of beach: "sandy beach with gentle waves, clear blue sky, natural sunlight, photorealistic"
+- Abstract art: "abstract geometric shapes, vibrant colors, modern art style, smooth gradients"`
         },
         {
           role: 'user',
-          content: userPrompt
+          content: [
+            {
+              type: 'text',
+              text: 'Analyze this image and write a prompt for seamlessly expanding it. Match the exact style and atmosphere.'
+            },
+            {
+              type: 'image_url',
+              image_url: {
+                url: `data:${mimeType};base64,${imageBase64}`,
+                detail: 'low'
+              }
+            }
+          ]
         }
       ],
-      max_tokens: 200,
-      temperature: 0.7,
+      max_tokens: 150,
+      temperature: 0.3,
     })
 
-    const enhancedPrompt = response.choices[0]?.message?.content?.trim()
+    const generatedPrompt = response.choices[0]?.message?.content?.trim()
 
-    if (enhancedPrompt) {
-      console.log('[Expand] Enhanced prompt:', enhancedPrompt)
-      return enhancedPrompt
+    if (generatedPrompt) {
+      console.log('[Expand] Generated prompt from image analysis:', generatedPrompt)
+      return generatedPrompt
     }
 
-    return userPrompt
+    return 'seamless continuation matching the original style and atmosphere'
   } catch (error) {
-    console.error('[Expand] Prompt enhancement failed, using original:', error)
-    return userPrompt
+    console.error('[Expand] Image analysis failed:', error)
+    return 'seamless continuation matching the original style and atmosphere'
   }
 }
 
@@ -305,7 +317,6 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData()
     const file = formData.get('file') as File
     const expandMode = (formData.get('expandMode') as ExpandMode) || 'zoom_1.5x'
-    const prompt = formData.get('prompt') as string | null
     const seedParam = formData.get('seed') as string | null
     const seed = seedParam ? parseInt(seedParam, 10) : Math.floor(Math.random() * 2147483647)
 
@@ -366,14 +377,11 @@ export async function POST(request: NextRequest) {
     const arrayBuffer = await file.arrayBuffer()
     const buffer = Buffer.from(arrayBuffer)
 
-    // Enhance user prompt with AI (or use default)
-    let expandPrompt: string
-    if (prompt && prompt.trim()) {
-      expandPrompt = await enhancePrompt(prompt.trim())
-    } else {
-      // Default prompt - simple and focused on continuation
-      expandPrompt = 'natural seamless continuation of the scene, matching style and lighting, photorealistic, high detail'
-    }
+    // Analyze image with GPT-4o Vision to generate appropriate prompt
+    const metadata = await sharp(buffer).metadata()
+    const mimeType = metadata.format === 'png' ? 'image/png' : 'image/jpeg'
+    const imageBase64 = buffer.toString('base64')
+    const expandPrompt = await analyzeImageForExpansion(imageBase64, mimeType)
 
     let expandResult: { buffer: Buffer; seed: number }
     if (expandMode === 'expand_horizontal') {
