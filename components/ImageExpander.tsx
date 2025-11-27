@@ -93,8 +93,9 @@ export function ImageExpander({ userRole = 'user' }: ImageExpanderProps) {
   const [processing, setProcessing] = useState(false)
   const [result, setResult] = useState<ExpandResult | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [selectedPreset, setSelectedPreset] = useState<string>('zoom_1.5x')
+  const [selectedPreset, setSelectedPreset] = useState<string>('expand_horizontal')
   const [originalImage, setOriginalImage] = useState<string | null>(null)
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [prompt, setPrompt] = useState<string>('')
 
   const onDrop = useCallback(
@@ -104,6 +105,7 @@ export function ImageExpander({ userRole = 'user' }: ImageExpanderProps) {
       const file = acceptedFiles[0]
       setError(null)
       setResult(null)
+      setSelectedFile(file)
 
       // Show preview of original image
       const reader = new FileReader()
@@ -111,42 +113,47 @@ export function ImageExpander({ userRole = 'user' }: ImageExpanderProps) {
         setOriginalImage(e.target?.result as string)
       }
       reader.readAsDataURL(file)
-
-      setProcessing(true)
-
-      try {
-        const formData = new FormData()
-        formData.append('file', file)
-        formData.append('expandMode', selectedPreset)
-        if (prompt.trim()) {
-          formData.append('prompt', prompt.trim())
-        }
-
-        toast.loading('Expanding image...', { id: 'expand' })
-
-        const response = await fetch('/api/expand-image', {
-          method: 'POST',
-          body: formData,
-        })
-
-        if (!response.ok) {
-          const errorData = await response.json()
-          throw new Error(errorData.error || 'Failed to expand image')
-        }
-
-        const data = await response.json()
-        setResult(data)
-        toast.success('Image expanded successfully!', { id: 'expand' })
-      } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'An error occurred'
-        setError(errorMessage)
-        toast.error(errorMessage, { id: 'expand' })
-      } finally {
-        setProcessing(false)
-      }
     },
-    [selectedPreset, prompt]
+    []
   )
+
+  const handleExpand = async () => {
+    if (!selectedFile) return
+
+    setProcessing(true)
+    setError(null)
+
+    try {
+      const formData = new FormData()
+      formData.append('file', selectedFile)
+      formData.append('expandMode', selectedPreset)
+      if (prompt.trim()) {
+        formData.append('prompt', prompt.trim())
+      }
+
+      toast.loading('Expanding image...', { id: 'expand' })
+
+      const response = await fetch('/api/expand-image', {
+        method: 'POST',
+        body: formData,
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to expand image')
+      }
+
+      const data = await response.json()
+      setResult(data)
+      toast.success('Image expanded successfully!', { id: 'expand' })
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred'
+      setError(errorMessage)
+      toast.error(errorMessage, { id: 'expand' })
+    } finally {
+      setProcessing(false)
+    }
+  }
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -219,8 +226,8 @@ export function ImageExpander({ userRole = 'user' }: ImageExpanderProps) {
 
   return (
     <div className="w-full max-w-5xl mx-auto space-y-8">
-      {/* Preset Selection */}
-      {!result && (
+      {/* Preset Selection - show when no result yet */}
+      {!result && !processing && (
         <div>
           <h3 className="text-xl font-semibold mb-4 text-white">Choose Expand Mode</h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
@@ -256,8 +263,8 @@ export function ImageExpander({ userRole = 'user' }: ImageExpanderProps) {
         </div>
       )}
 
-      {/* Optional Prompt */}
-      {!result && (
+      {/* Optional Prompt - show when no result yet */}
+      {!result && !processing && (
         <div>
           <label className="block text-sm font-medium text-gray-300 mb-2">
             Custom Prompt (optional)
@@ -276,8 +283,8 @@ export function ImageExpander({ userRole = 'user' }: ImageExpanderProps) {
         </div>
       )}
 
-      {/* Upload Area */}
-      {!result && (
+      {/* Upload Area - only show if no image selected and no result */}
+      {!result && !originalImage && (
         <div
           {...getRootProps()}
           className={`
@@ -288,7 +295,6 @@ export function ImageExpander({ userRole = 'user' }: ImageExpanderProps) {
                 ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20 scale-[1.02]'
                 : 'border-gray-300 dark:border-gray-700 hover:border-purple-400 dark:hover:bg-gray-800/50'
             }
-            ${processing ? 'opacity-50 cursor-not-allowed' : ''}
           `}
         >
           <input {...getInputProps()} />
@@ -309,25 +315,71 @@ export function ImageExpander({ userRole = 'user' }: ImageExpanderProps) {
             </div>
 
             {/* Text */}
-            {processing ? (
-              <>
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Expanding image...</h3>
-                <div className="flex justify-center">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
-                </div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">This may take 10-20 seconds</p>
-              </>
-            ) : (
-              <>
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {isDragActive ? 'Drop your image here!' : 'Drag & drop your image'}
-                </h3>
-                <p className="text-gray-600 dark:text-gray-400">or click to browse</p>
-                <p className="text-sm text-gray-500 dark:text-gray-500">
-                  Supports JPG, PNG, WEBP • Max 30MB • {EXPAND_PRESETS.find(p => p.id === selectedPreset)?.credits || 2} credits
-                </p>
-              </>
-            )}
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+              {isDragActive ? 'Drop your image here!' : 'Drag & drop your image'}
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400">or click to browse</p>
+            <p className="text-sm text-gray-500 dark:text-gray-500">
+              Supports JPG, PNG, WEBP • Max 30MB • {EXPAND_PRESETS.find(p => p.id === selectedPreset)?.credits || 2} credits
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Image Preview with Expand Button - show after image selected but before result */}
+      {!result && originalImage && (
+        <div className="space-y-6">
+          {/* Image Preview */}
+          <div className="relative">
+            <div className="relative aspect-video max-h-[400px] rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+              <Image src={originalImage} alt="Selected image" fill className="object-contain" />
+            </div>
+            {/* Change Image Button */}
+            <button
+              onClick={() => {
+                setOriginalImage(null)
+                setSelectedFile(null)
+              }}
+              disabled={processing}
+              className="absolute top-3 right-3 bg-gray-900/70 hover:bg-gray-900/90 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition disabled:opacity-50"
+            >
+              Change Image
+            </button>
+          </div>
+
+          {/* Expand Button */}
+          <div className="flex justify-center">
+            <button
+              onClick={handleExpand}
+              disabled={processing}
+              className={`
+                inline-flex items-center justify-center gap-3 px-8 py-4 rounded-xl font-semibold text-lg transition-all
+                ${processing
+                  ? 'bg-gray-600 cursor-not-allowed'
+                  : 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 shadow-lg hover:shadow-xl hover:scale-[1.02]'
+                }
+                text-white
+              `}
+            >
+              {processing ? (
+                <>
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                  Expanding... (10-20 sec)
+                </>
+              ) : (
+                <>
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"
+                    />
+                  </svg>
+                  Expand Image ({EXPAND_PRESETS.find(p => p.id === selectedPreset)?.credits || 2} credits)
+                </>
+              )}
+            </button>
           </div>
         </div>
       )}
@@ -395,6 +447,7 @@ export function ImageExpander({ userRole = 'user' }: ImageExpanderProps) {
               onClick={() => {
                 setResult(null)
                 setOriginalImage(null)
+                setSelectedFile(null)
                 setPrompt('')
               }}
               className="inline-flex items-center justify-center gap-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-white px-6 py-3 rounded-lg font-medium transition-colors"
