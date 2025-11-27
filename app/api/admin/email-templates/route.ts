@@ -3,6 +3,7 @@ import { auth } from '@/lib/auth';
 import { createEmailTemplate, updateEmailTemplate, deleteEmailTemplate } from '@/lib/db';
 import { apiLimiter, getClientIdentifier, rateLimitResponse } from '@/lib/rate-limit';
 import { handleApiError } from '@/lib/api-utils';
+import { createEmailTemplateSchema, updateEmailTemplateSchema, validateRequest, formatZodErrors } from '@/lib/validation';
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,28 +20,28 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { name, slug, subject, htmlContent, textContent, variables, category, status } = body;
 
-    if (!name || !slug || !subject) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    // Validate request
+    const validation = validateRequest(createEmailTemplateSchema, body);
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: 'Validation failed', details: formatZodErrors(validation.errors) },
+        { status: 400 }
+      );
     }
 
-    try {
-      const template = createEmailTemplate({
-        name,
-        slug,
-        subject,
-        htmlContent: htmlContent || '',
-        textContent: textContent || '',
-        variables: variables || [],
-        category: category || 'transactional',
-        status: status || 'draft',
-      });
+    const template = createEmailTemplate({
+      name: validation.data.name,
+      slug: validation.data.slug,
+      subject: validation.data.subject,
+      htmlContent: validation.data.htmlContent || '',
+      textContent: validation.data.textContent || '',
+      variables: validation.data.variables || [],
+      category: validation.data.category,
+      status: validation.data.status,
+    });
 
-      return NextResponse.json({ success: true, template });
-    } catch (error: any) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
-    }
+    return NextResponse.json({ success: true, template });
   } catch (error) {
     return handleApiError(error, 'admin/email-template-creation', 'Failed to create email template');
   }
@@ -61,13 +62,17 @@ export async function PATCH(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { id, updates } = body;
 
-    if (!id || !updates) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    // Validate request
+    const validation = validateRequest(updateEmailTemplateSchema, body);
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: 'Validation failed', details: formatZodErrors(validation.errors) },
+        { status: 400 }
+      );
     }
 
-    const template = updateEmailTemplate(id, updates);
+    const template = updateEmailTemplate(validation.data.id, validation.data.updates);
 
     if (!template) {
       return NextResponse.json({ error: 'Email template not found' }, { status: 404 });

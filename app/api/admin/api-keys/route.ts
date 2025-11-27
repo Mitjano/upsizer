@@ -3,6 +3,7 @@ import { auth } from '@/lib/auth';
 import { createApiKey, revokeApiKey, deleteApiKey } from '@/lib/db';
 import { apiLimiter, getClientIdentifier, rateLimitResponse } from '@/lib/rate-limit';
 import { handleApiError } from '@/lib/api-utils';
+import { createApiKeySchema, apiKeyActionSchema, validateRequest, formatZodErrors } from '@/lib/validation';
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,17 +20,21 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { userId, name, rateLimit, status } = body;
 
-    if (!userId || !name) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    // Validate request
+    const validation = validateRequest(createApiKeySchema, body);
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: 'Validation failed', details: formatZodErrors(validation.errors) },
+        { status: 400 }
+      );
     }
 
     const apiKey = createApiKey({
-      userId,
-      name,
-      status,
-      rateLimit: rateLimit || 100,
+      userId: validation.data.userId,
+      name: validation.data.name,
+      status: validation.data.status,
+      rateLimit: validation.data.rateLimit,
     });
 
     return NextResponse.json({ success: true, apiKey });
@@ -53,14 +58,18 @@ export async function PATCH(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { id, action } = body;
 
-    if (!id || !action) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    // Validate request
+    const validation = validateRequest(apiKeyActionSchema, body);
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: 'Validation failed', details: formatZodErrors(validation.errors) },
+        { status: 400 }
+      );
     }
 
-    if (action === 'revoke') {
-      const success = revokeApiKey(id);
+    if (validation.data.action === 'revoke') {
+      const success = revokeApiKey(validation.data.id);
       return NextResponse.json({ success });
     }
 

@@ -3,6 +3,7 @@ import { auth } from '@/lib/auth';
 import { createReport, deleteReport, getAllReports, trackReportDownload, generateReportData, type Report } from '@/lib/db';
 import { apiLimiter, getClientIdentifier, rateLimitResponse } from '@/lib/rate-limit';
 import { handleApiError } from '@/lib/api-utils';
+import { createReportSchema, validateRequest, formatZodErrors } from '@/lib/validation';
 
 export async function GET(request: NextRequest) {
   try {
@@ -80,18 +81,22 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { name, type, format, dateRange, filters } = body;
 
-    if (!name || !type || !format || !dateRange) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    // Validate request
+    const validation = validateRequest(createReportSchema, body);
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: 'Validation failed', details: formatZodErrors(validation.errors) },
+        { status: 400 }
+      );
     }
 
     const report = createReport({
-      name,
-      type,
-      format,
-      dateRange,
-      filters: filters || {},
+      name: validation.data.name,
+      type: validation.data.type,
+      format: validation.data.format,
+      dateRange: validation.data.dateRange,
+      filters: validation.data.filters || {},
       createdBy: session.user.email || 'Unknown',
     });
 

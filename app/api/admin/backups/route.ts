@@ -3,6 +3,7 @@ import { auth } from '@/lib/auth';
 import { createBackup, deleteBackup, restoreFromBackup, downloadBackup } from '@/lib/db';
 import { apiLimiter, getClientIdentifier, rateLimitResponse } from '@/lib/rate-limit';
 import { handleApiError } from '@/lib/api-utils';
+import { backupActionSchema, validateRequest, formatZodErrors } from '@/lib/validation';
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,16 +20,20 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { action, name, description, backupId } = body;
 
-    if (action === 'create') {
-      if (!name) {
-        return NextResponse.json({ error: 'Name is required' }, { status: 400 });
-      }
+    // Validate request
+    const validation = validateRequest(backupActionSchema, body);
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: 'Validation failed', details: formatZodErrors(validation.errors) },
+        { status: 400 }
+      );
+    }
 
+    if (validation.data.action === 'create') {
       const backup = createBackup(
-        name,
-        description || '',
+        validation.data.name,
+        validation.data.description || '',
         session.user.email || 'Unknown',
         'manual'
       );
@@ -47,12 +52,8 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    if (action === 'restore') {
-      if (!backupId) {
-        return NextResponse.json({ error: 'Backup ID is required' }, { status: 400 });
-      }
-
-      const success = restoreFromBackup(backupId);
+    if (validation.data.action === 'restore') {
+      const success = restoreFromBackup(validation.data.backupId);
 
       if (!success) {
         return NextResponse.json({ error: 'Failed to restore backup' }, { status: 500 });
@@ -61,12 +62,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: true, message: 'Backup restored successfully' });
     }
 
-    if (action === 'download') {
-      if (!backupId) {
-        return NextResponse.json({ error: 'Backup ID is required' }, { status: 400 });
-      }
-
-      const data = downloadBackup(backupId);
+    if (validation.data.action === 'download') {
+      const data = downloadBackup(validation.data.backupId);
 
       if (!data) {
         return NextResponse.json({ error: 'Backup not found' }, { status: 404 });
@@ -75,7 +72,7 @@ export async function POST(request: NextRequest) {
       return new NextResponse(data.toString(), {
         headers: {
           'Content-Type': 'application/json',
-          'Content-Disposition': `attachment; filename="backup-${backupId}.json"`,
+          'Content-Disposition': `attachment; filename="backup-${validation.data.backupId}.json"`,
         },
       });
     }

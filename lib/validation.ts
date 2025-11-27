@@ -126,27 +126,92 @@ export const testWebhookSchema = z.object({
 export const createABTestSchema = z.object({
   name: z.string().min(3).max(100),
   description: z.string().max(500).optional(),
+  type: z.enum(['page', 'feature', 'email', 'cta', 'custom']),
   variants: z.array(z.object({
-    id: z.string(),
-    name: z.string(),
-    weight: z.number().min(0).max(100),
+    id: z.string().optional(),
+    name: z.string().min(1).max(50),
+    description: z.string().max(200).optional(),
+    traffic: z.number().min(0).max(100).optional(),
   })).min(2, 'At least 2 variants required'),
-  status: z.enum(['draft', 'running', 'paused', 'completed']).default('draft'),
+  targetMetric: z.string().max(50).optional(),
+  targetUrl: z.string().url().optional(),
 });
+
+export const abTestActionSchema = z.object({
+  action: z.enum(['calculate_winner', 'record_event']),
+  testId: z.string().min(1),
+  variantId: z.string().optional(),
+  eventType: z.enum(['visitor', 'conversion']).optional(),
+}).refine(
+  data => {
+    if (data.action === 'record_event') {
+      return data.variantId && data.eventType;
+    }
+    return true;
+  },
+  { message: 'variantId and eventType required for record_event action' }
+);
 
 // Email Template schemas
 export const createEmailTemplateSchema = z.object({
   name: z.string().min(3).max(100),
+  slug: z.string().min(3).max(50).regex(/^[a-z0-9-]+$/, 'Slug must be lowercase with hyphens'),
   subject: z.string().min(3).max(200),
-  htmlContent: z.string().min(10),
+  htmlContent: z.string().optional(),
   textContent: z.string().optional(),
   variables: z.array(z.string()).optional(),
+  category: z.enum(['transactional', 'marketing', 'system']).default('transactional'),
+  status: z.enum(['draft', 'active']).default('draft'),
+});
+
+export const updateEmailTemplateSchema = z.object({
+  id: z.string().min(1),
+  updates: z.object({
+    name: z.string().min(3).max(100).optional(),
+    subject: z.string().min(3).max(200).optional(),
+    htmlContent: z.string().optional(),
+    textContent: z.string().optional(),
+    variables: z.array(z.string()).optional(),
+    category: z.enum(['transactional', 'marketing', 'system']).optional(),
+    status: z.enum(['draft', 'active']).optional(),
+  }).refine(data => Object.keys(data).length > 0, {
+    message: 'At least one field must be provided',
+  }),
 });
 
 // Backup schemas
 export const createBackupSchema = z.object({
-  name: z.string().min(3).max(100).optional(),
+  action: z.literal('create'),
+  name: z.string().min(3).max(100),
   description: z.string().max(500).optional(),
+});
+
+export const backupActionSchema = z.discriminatedUnion('action', [
+  z.object({
+    action: z.literal('create'),
+    name: z.string().min(3).max(100),
+    description: z.string().max(500).optional(),
+  }),
+  z.object({
+    action: z.literal('restore'),
+    backupId: z.string().min(1),
+  }),
+  z.object({
+    action: z.literal('download'),
+    backupId: z.string().min(1),
+  }),
+]);
+
+// Report schemas
+export const createReportSchema = z.object({
+  name: z.string().min(3).max(100),
+  type: z.enum(['users', 'usage', 'revenue', 'campaigns', 'custom']),
+  format: z.enum(['pdf', 'csv', 'json']),
+  dateRange: z.object({
+    start: z.string(),
+    end: z.string(),
+  }),
+  filters: z.record(z.string(), z.unknown()).optional(),
 });
 
 // Blog schemas
@@ -200,9 +265,15 @@ export const updateWebhookSchema = z.object({
 
 // API Key schemas
 export const createApiKeySchema = z.object({
+  userId: z.string().min(1),
   name: z.string().min(3).max(100),
-  permissions: z.array(z.string()).min(1, 'At least one permission required'),
-  expiresAt: z.string().datetime().optional(),
+  rateLimit: z.number().int().min(1).max(10000).default(100),
+  status: z.enum(['active', 'revoked']).default('active'),
+});
+
+export const apiKeyActionSchema = z.object({
+  id: z.string().min(1),
+  action: z.enum(['revoke']),
 });
 
 // Image processing schemas

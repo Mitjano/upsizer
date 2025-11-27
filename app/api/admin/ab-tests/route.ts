@@ -4,6 +4,7 @@ import { createABTest, updateABTest, deleteABTest, recordABTestEvent, calculateA
 import { nanoid } from 'nanoid';
 import { apiLimiter, getClientIdentifier, rateLimitResponse } from '@/lib/rate-limit';
 import { handleApiError } from '@/lib/api-utils';
+import { createABTestSchema, abTestActionSchema, validateRequest, formatZodErrors } from '@/lib/validation';
 
 export async function POST(request: NextRequest) {
   try {
@@ -20,36 +21,48 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { action, testId, variantId, eventType } = body;
+    const { action } = body;
 
-    // Handle calculate winner action
-    if (action === 'calculate_winner' && testId) {
-      const result = calculateABTestWinner(testId);
-      if (!result) {
-        return NextResponse.json({ error: 'Cannot calculate winner' }, { status: 400 });
+    // Handle actions (calculate_winner, record_event)
+    if (action) {
+      const actionValidation = validateRequest(abTestActionSchema, body);
+      if (!actionValidation.success) {
+        return NextResponse.json(
+          { error: 'Validation failed', details: formatZodErrors(actionValidation.errors) },
+          { status: 400 }
+        );
       }
 
-      // Update test with winner
-      updateABTest(testId, { winner: result.winner, confidence: result.confidence });
+      if (actionValidation.data.action === 'calculate_winner') {
+        const result = calculateABTestWinner(actionValidation.data.testId);
+        if (!result) {
+          return NextResponse.json({ error: 'Cannot calculate winner' }, { status: 400 });
+        }
+        updateABTest(actionValidation.data.testId, { winner: result.winner, confidence: result.confidence });
+        return NextResponse.json({ success: true, ...result });
+      }
 
-      return NextResponse.json({ success: true, ...result });
+      if (actionValidation.data.action === 'record_event') {
+        recordABTestEvent(
+          actionValidation.data.testId,
+          actionValidation.data.variantId!,
+          actionValidation.data.eventType!
+        );
+        return NextResponse.json({ success: true });
+      }
     }
 
-    // Handle record event action
-    if (action === 'record_event' && testId && variantId && eventType) {
-      recordABTestEvent(testId, variantId, eventType);
-      return NextResponse.json({ success: true });
-    }
-
-    // Handle create test
-    const { name, description, type, variants, targetMetric, targetUrl } = body;
-
-    if (!name || !type || !variants || variants.length < 2) {
-      return NextResponse.json({ error: 'Missing required fields or insufficient variants' }, { status: 400 });
+    // Handle create test - validate with createABTestSchema
+    const validation = validateRequest(createABTestSchema, body);
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: 'Validation failed', details: formatZodErrors(validation.errors) },
+        { status: 400 }
+      );
     }
 
     // Ensure all variants have required fields and IDs
-    const processedVariants = variants.map((v: any) => ({
+    const processedVariants = validation.data.variants.map((v) => ({
       id: v.id || nanoid(),
       name: v.name,
       description: v.description || '',
@@ -59,13 +72,13 @@ export async function POST(request: NextRequest) {
     }));
 
     const test = createABTest({
-      name,
-      description: description || '',
-      type,
+      name: validation.data.name,
+      description: validation.data.description || '',
+      type: validation.data.type,
       status: 'draft',
       variants: processedVariants,
-      targetMetric: targetMetric || 'conversions',
-      targetUrl,
+      targetMetric: validation.data.targetMetric || 'conversions',
+      targetUrl: validation.data.targetUrl,
       createdBy: session.user.email || 'Unknown',
     });
 
