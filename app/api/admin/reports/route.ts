@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { createReport, deleteReport, getAllReports, trackReportDownload, generateReportData, type Report } from '@/lib/db';
 import { apiLimiter, getClientIdentifier, rateLimitResponse } from '@/lib/rate-limit';
+import { handleApiError } from '@/lib/api-utils';
 
 export async function GET(request: NextRequest) {
   try {
@@ -60,8 +61,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
   } catch (error) {
-    console.error('Report generation error:', error);
-    return NextResponse.json({ error: 'Failed to generate report' }, { status: 500 });
+    return handleApiError(error, 'admin/report-generation', 'Failed to generate report');
   }
 }
 
@@ -97,8 +97,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, report });
   } catch (error) {
-    console.error('Report creation error:', error);
-    return NextResponse.json({ error: 'Failed to create report' }, { status: 500 });
+    return handleApiError(error, 'admin/report-creation', 'Failed to create report');
   }
 }
 
@@ -126,8 +125,7 @@ export async function DELETE(request: NextRequest) {
     const success = deleteReport(id);
     return NextResponse.json({ success });
   } catch (error) {
-    console.error('Report delete error:', error);
-    return NextResponse.json({ error: 'Failed to delete report' }, { status: 500 });
+    return handleApiError(error, 'admin/report-delete', 'Failed to delete report');
   }
 }
 

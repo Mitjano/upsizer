@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { getAnalyticsStats, getRealTimeStats } from '@/lib/analytics';
 import { apiLimiter, getClientIdentifier, rateLimitResponse } from '@/lib/rate-limit';
+import { handleApiError } from '@/lib/api-utils';
 
 export async function GET(request: NextRequest) {
   try {
@@ -30,7 +31,6 @@ export async function GET(request: NextRequest) {
     const stats = await getAnalyticsStats(days);
     return NextResponse.json(stats);
   } catch (error) {
-    console.error('Analytics error:', error);
-    return NextResponse.json({ error: 'Failed to fetch analytics' }, { status: 500 });
+    return handleApiError(error, 'admin/analytics:GET', 'Failed to fetch analytics');
   }
 }

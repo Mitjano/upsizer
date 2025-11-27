@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { createBackup, deleteBackup, restoreFromBackup, downloadBackup } from '@/lib/db';
 import { apiLimiter, getClientIdentifier, rateLimitResponse } from '@/lib/rate-limit';
+import { handleApiError } from '@/lib/api-utils';
 
 export async function POST(request: NextRequest) {
   try {
@@ -81,8 +82,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
   } catch (error) {
-    console.error('Backup operation error:', error);
-    return NextResponse.json({ error: 'Failed to perform backup operation' }, { status: 500 });
+    return handleApiError(error, 'admin/backup-operation', 'Failed to perform backup operation');
   }
 }
 
@@ -110,7 +110,6 @@ export async function DELETE(request: NextRequest) {
     const success = deleteBackup(id);
     return NextResponse.json({ success });
   } catch (error) {
-    console.error('Backup delete error:', error);
-    return NextResponse.json({ error: 'Failed to delete backup' }, { status: 500 });
+    return handleApiError(error, 'admin/backup-delete', 'Failed to delete backup');
   }
 }

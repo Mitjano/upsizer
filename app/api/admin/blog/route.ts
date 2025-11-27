@@ -3,6 +3,7 @@ import { isAdmin, auth } from "@/lib/auth";
 import { getAllPosts, createPost, generateSlug } from "@/lib/blog";
 import { apiLimiter, getClientIdentifier, rateLimitResponse } from '@/lib/rate-limit';
 import { createBlogPostSchema, validateRequest, formatZodErrors } from '@/lib/validation';
+import { parsePaginationParams, paginate, handleApiError } from '@/lib/api-utils';
 
 export async function GET(request: NextRequest) {
   // Rate limiting
@@ -16,8 +17,20 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const posts = await getAllPosts();
-  return NextResponse.json(posts);
+  try {
+    const posts = await getAllPosts();
+
+    // Parse pagination params
+    const url = new URL(request.url);
+    const paginationParams = parsePaginationParams(url);
+
+    // Apply pagination
+    const paginatedPosts = paginate(posts, paginationParams);
+
+    return NextResponse.json(paginatedPosts);
+  } catch (error) {
+    return handleApiError(error, 'admin/blog:GET', 'Failed to fetch posts');
+  }
 }
 
 export async function POST(request: NextRequest) {
@@ -62,6 +75,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(post, { status: 201 });
   } catch (error) {
-    return NextResponse.json({ error: "Failed to create post" }, { status: 500 });
+    return handleApiError(error, 'admin/blog:POST', 'Failed to create post');
   }
 }

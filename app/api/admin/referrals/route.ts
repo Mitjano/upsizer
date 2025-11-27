@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { createReferral, updateReferral, deleteReferral, trackReferralClick } from '@/lib/db';
 import { apiLimiter, getClientIdentifier, rateLimitResponse } from '@/lib/rate-limit';
+import { handleApiError } from '@/lib/api-utils';
 import { createReferralSchema, trackReferralSchema, validateRequest, formatZodErrors } from '@/lib/validation';
 
 export async function POST(request: NextRequest) {
@@ -61,8 +62,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, referral });
   } catch (error) {
-    console.error('Referral creation error:', error);
-    return NextResponse.json({ error: 'Failed to create referral' }, { status: 500 });
+    return handleApiError(error, 'admin/referral-creation', 'Failed to create referral');
   }
 }
 
@@ -95,8 +95,7 @@ export async function PATCH(request: NextRequest) {
 
     return NextResponse.json({ success: true, referral });
   } catch (error) {
-    console.error('Referral update error:', error);
-    return NextResponse.json({ error: 'Failed to update referral' }, { status: 500 });
+    return handleApiError(error, 'admin/referral-update', 'Failed to update referral');
   }
 }
 
@@ -124,7 +123,6 @@ export async function DELETE(request: NextRequest) {
     const success = deleteReferral(id);
     return NextResponse.json({ success });
   } catch (error) {
-    console.error('Referral delete error:', error);
-    return NextResponse.json({ error: 'Failed to delete referral' }, { status: 500 });
+    return handleApiError(error, 'admin/referral-delete', 'Failed to delete referral');
   }
 }

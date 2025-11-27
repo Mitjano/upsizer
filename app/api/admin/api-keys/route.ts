@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { createApiKey, revokeApiKey, deleteApiKey } from '@/lib/db';
 import { apiLimiter, getClientIdentifier, rateLimitResponse } from '@/lib/rate-limit';
+import { handleApiError } from '@/lib/api-utils';
 
 export async function POST(request: NextRequest) {
   try {
@@ -33,8 +34,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, apiKey });
   } catch (error) {
-    console.error('API key creation error:', error);
-    return NextResponse.json({ error: 'Failed to create API key' }, { status: 500 });
+    return handleApiError(error, 'admin/api-key-creation', 'Failed to create API key');
   }
 }
 
@@ -66,8 +66,7 @@ export async function PATCH(request: NextRequest) {
 
     return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
   } catch (error) {
-    console.error('API key update error:', error);
-    return NextResponse.json({ error: 'Failed to update API key' }, { status: 500 });
+    return handleApiError(error, 'admin/api-key-update', 'Failed to update API key');
   }
 }
 
@@ -95,7 +94,6 @@ export async function DELETE(request: NextRequest) {
     const success = deleteApiKey(id);
     return NextResponse.json({ success });
   } catch (error) {
-    console.error('API key delete error:', error);
-    return NextResponse.json({ error: 'Failed to delete API key' }, { status: 500 });
+    return handleApiError(error, 'admin/api-key-delete', 'Failed to delete API key');
   }
 }

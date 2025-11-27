@@ -3,6 +3,7 @@ import { auth } from '@/lib/auth';
 import { createABTest, updateABTest, deleteABTest, recordABTestEvent, calculateABTestWinner, type ABTest } from '@/lib/db';
 import { nanoid } from 'nanoid';
 import { apiLimiter, getClientIdentifier, rateLimitResponse } from '@/lib/rate-limit';
+import { handleApiError } from '@/lib/api-utils';
 
 export async function POST(request: NextRequest) {
   try {
@@ -70,8 +71,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, test });
   } catch (error) {
-    console.error('A/B test creation error:', error);
-    return NextResponse.json({ error: 'Failed to create A/B test' }, { status: 500 });
+    return handleApiError(error, 'admin/a/b-test-creation', 'Failed to create A/B test');
   }
 }
 
@@ -104,8 +104,7 @@ export async function PATCH(request: NextRequest) {
 
     return NextResponse.json({ success: true, test });
   } catch (error) {
-    console.error('A/B test update error:', error);
-    return NextResponse.json({ error: 'Failed to update A/B test' }, { status: 500 });
+    return handleApiError(error, 'admin/a/b-test-update', 'Failed to update A/B test');
   }
 }
 
@@ -133,7 +132,6 @@ export async function DELETE(request: NextRequest) {
     const success = deleteABTest(id);
     return NextResponse.json({ success });
   } catch (error) {
-    console.error('A/B test delete error:', error);
-    return NextResponse.json({ error: 'Failed to delete A/B test' }, { status: 500 });
+    return handleApiError(error, 'admin/a/b-test-delete', 'Failed to delete A/B test');
   }
 }

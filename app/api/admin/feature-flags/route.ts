@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { createFeatureFlag, updateFeatureFlag, deleteFeatureFlag } from '@/lib/db';
 import { apiLimiter, getClientIdentifier, rateLimitResponse } from '@/lib/rate-limit';
+import { handleApiError } from '@/lib/api-utils';
 import { createFeatureFlagSchema, updateFeatureFlagSchema, validateRequest, formatZodErrors } from '@/lib/validation';
 
 export async function POST(request: NextRequest) {
@@ -41,8 +42,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, flag });
   } catch (error) {
-    console.error('Feature flag creation error:', error);
-    return NextResponse.json({ error: 'Failed to create feature flag' }, { status: 500 });
+    return handleApiError(error, 'admin/feature-flag-creation', 'Failed to create feature flag');
   }
 }
 
@@ -80,8 +80,7 @@ export async function PATCH(request: NextRequest) {
 
     return NextResponse.json({ success: true, flag });
   } catch (error) {
-    console.error('Feature flag update error:', error);
-    return NextResponse.json({ error: 'Failed to update feature flag' }, { status: 500 });
+    return handleApiError(error, 'admin/feature-flag-update', 'Failed to update feature flag');
   }
 }
 
@@ -109,7 +108,6 @@ export async function DELETE(request: NextRequest) {
     const success = deleteFeatureFlag(id);
     return NextResponse.json({ success });
   } catch (error) {
-    console.error('Feature flag delete error:', error);
-    return NextResponse.json({ error: 'Failed to delete feature flag' }, { status: 500 });
+    return handleApiError(error, 'admin/feature-flag-delete', 'Failed to delete feature flag');
   }
 }

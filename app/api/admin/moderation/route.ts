@@ -9,6 +9,7 @@ import {
   moderateContent,
 } from '@/lib/db';
 import { apiLimiter, getClientIdentifier, rateLimitResponse } from '@/lib/rate-limit';
+import { handleApiError } from '@/lib/api-utils';
 import { createModerationRuleSchema, reviewModerationQueueSchema, validateRequest, formatZodErrors } from '@/lib/validation';
 
 export async function POST(request: NextRequest) {
@@ -85,8 +86,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, rule });
   } catch (error) {
-    console.error('Moderation operation error:', error);
-    return NextResponse.json({ error: 'Failed to perform moderation operation' }, { status: 500 });
+    return handleApiError(error, 'admin/moderation-operation', 'Failed to perform moderation operation');
   }
 }
 
@@ -124,8 +124,7 @@ export async function PATCH(request: NextRequest) {
 
     return NextResponse.json({ success: true, rule });
   } catch (error) {
-    console.error('Moderation update error:', error);
-    return NextResponse.json({ error: 'Failed to update moderation rule' }, { status: 500 });
+    return handleApiError(error, 'admin/moderation-update', 'Failed to update moderation rule');
   }
 }
 
@@ -160,7 +159,6 @@ export async function DELETE(request: NextRequest) {
 
     return NextResponse.json({ success });
   } catch (error) {
-    console.error('Moderation delete error:', error);
-    return NextResponse.json({ error: 'Failed to delete' }, { status: 500 });
+    return handleApiError(error, 'admin/moderation-delete', 'Failed to delete');
   }
 }

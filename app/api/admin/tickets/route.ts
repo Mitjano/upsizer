@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { createTicket, updateTicket, deleteTicket, addTicketMessage, getTicketById } from '@/lib/db';
 import { apiLimiter, getClientIdentifier, rateLimitResponse } from '@/lib/rate-limit';
+import { handleApiError } from '@/lib/api-utils';
 import { createTicketSchema, addTicketMessageSchema, updateTicketSchema, validateRequest, formatZodErrors } from '@/lib/validation';
 import { sendTicketReplyEmail } from '@/lib/email';
 
@@ -71,8 +72,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, ticket });
   } catch (error) {
-    console.error('Ticket creation error:', error);
-    return NextResponse.json({ error: 'Failed to create ticket' }, { status: 500 });
+    return handleApiError(error, 'admin/ticket-creation', 'Failed to create ticket');
   }
 }
 
@@ -113,8 +113,7 @@ export async function PATCH(request: NextRequest) {
 
     return NextResponse.json({ success: true, ticket });
   } catch (error) {
-    console.error('Ticket update error:', error);
-    return NextResponse.json({ error: 'Failed to update ticket' }, { status: 500 });
+    return handleApiError(error, 'admin/ticket-update', 'Failed to update ticket');
   }
 }
 
@@ -142,7 +141,6 @@ export async function DELETE(request: NextRequest) {
     const success = deleteTicket(id);
     return NextResponse.json({ success });
   } catch (error) {
-    console.error('Ticket delete error:', error);
-    return NextResponse.json({ error: 'Failed to delete ticket' }, { status: 500 });
+    return handleApiError(error, 'admin/ticket-delete', 'Failed to delete ticket');
   }
 }

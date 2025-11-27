@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { createWebhook, updateWebhook, deleteWebhook, triggerWebhook } from '@/lib/db';
 import { apiLimiter, getClientIdentifier, rateLimitResponse } from '@/lib/rate-limit';
+import { handleApiError } from '@/lib/api-utils';
 import { createWebhookSchema, updateWebhookSchema, validateRequest, formatZodErrors } from '@/lib/validation';
 
 export async function POST(request: NextRequest) {
@@ -51,8 +52,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, webhook });
   } catch (error) {
-    console.error('Webhook creation error:', error);
-    return NextResponse.json({ error: 'Failed to create webhook' }, { status: 500 });
+    return handleApiError(error, 'admin/webhook-creation', 'Failed to create webhook');
   }
 }
 
@@ -90,8 +90,7 @@ export async function PATCH(request: NextRequest) {
 
     return NextResponse.json({ success: true, webhook });
   } catch (error) {
-    console.error('Webhook update error:', error);
-    return NextResponse.json({ error: 'Failed to update webhook' }, { status: 500 });
+    return handleApiError(error, 'admin/webhook-update', 'Failed to update webhook');
   }
 }
 
@@ -119,7 +118,6 @@ export async function DELETE(request: NextRequest) {
     const success = deleteWebhook(id);
     return NextResponse.json({ success });
   } catch (error) {
-    console.error('Webhook delete error:', error);
-    return NextResponse.json({ error: 'Failed to delete webhook' }, { status: 500 });
+    return handleApiError(error, 'admin/webhook-delete', 'Failed to delete webhook');
   }
 }

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { createEmailTemplate, updateEmailTemplate, deleteEmailTemplate } from '@/lib/db';
 import { apiLimiter, getClientIdentifier, rateLimitResponse } from '@/lib/rate-limit';
+import { handleApiError } from '@/lib/api-utils';
 
 export async function POST(request: NextRequest) {
   try {
@@ -41,8 +42,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 400 });
     }
   } catch (error) {
-    console.error('Email template creation error:', error);
-    return NextResponse.json({ error: 'Failed to create email template' }, { status: 500 });
+    return handleApiError(error, 'admin/email-template-creation', 'Failed to create email template');
   }
 }
 
@@ -75,8 +75,7 @@ export async function PATCH(request: NextRequest) {
 
     return NextResponse.json({ success: true, template });
   } catch (error) {
-    console.error('Email template update error:', error);
-    return NextResponse.json({ error: 'Failed to update email template' }, { status: 500 });
+    return handleApiError(error, 'admin/email-template-update', 'Failed to update email template');
   }
 }
 
@@ -104,7 +103,6 @@ export async function DELETE(request: NextRequest) {
     const success = deleteEmailTemplate(id);
     return NextResponse.json({ success });
   } catch (error) {
-    console.error('Email template delete error:', error);
-    return NextResponse.json({ error: 'Failed to delete email template' }, { status: 500 });
+    return handleApiError(error, 'admin/email-template-delete', 'Failed to delete email template');
   }
 }

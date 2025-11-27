@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { markNotificationAsRead, markAllNotificationsAsRead, deleteNotification } from '@/lib/db';
 import { apiLimiter, getClientIdentifier, rateLimitResponse } from '@/lib/rate-limit';
+import { handleApiError } from '@/lib/api-utils';
 
 export async function PATCH(request: NextRequest) {
   try {
@@ -32,8 +33,7 @@ export async function PATCH(request: NextRequest) {
 
     return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
   } catch (error) {
-    console.error('Notification update error:', error);
-    return NextResponse.json({ error: 'Failed to update notification' }, { status: 500 });
+    return handleApiError(error, 'admin/notification-update', 'Failed to update notification');
   }
 }
 
@@ -61,7 +61,6 @@ export async function DELETE(request: NextRequest) {
     const success = deleteNotification(id);
     return NextResponse.json({ success });
   } catch (error) {
-    console.error('Notification delete error:', error);
-    return NextResponse.json({ error: 'Failed to delete notification' }, { status: 500 });
+    return handleApiError(error, 'admin/notification-delete', 'Failed to delete notification');
   }
 }
