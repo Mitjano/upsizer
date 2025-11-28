@@ -1,9 +1,22 @@
 'use client'
 
+import dynamic from 'next/dynamic'
 import { useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
 import ToolsLayout from '@/components/ToolsLayout'
-import { PackshotGenerator } from '@/components/PackshotGenerator'
+
+// Lazy load heavy component
+const PackshotGenerator = dynamic(
+  () => import('@/components/PackshotGenerator').then((mod) => ({ default: mod.PackshotGenerator })),
+  {
+    loading: () => (
+      <div className="flex items-center justify-center p-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500"></div>
+      </div>
+    ),
+    ssr: false,
+  }
+)
 
 export default function PackshotGeneratorPage() {
   const { data: session } = useSession()

@@ -1,8 +1,21 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { useSession } from 'next-auth/react';
 import ToolsLayout from '@/components/ToolsLayout';
-import ImageCompressor from '@/components/ImageCompressor';
+
+// Lazy load heavy component
+const ImageCompressor = dynamic(
+  () => import('@/components/ImageCompressor'),
+  {
+    loading: () => (
+      <div className="flex items-center justify-center p-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+      </div>
+    ),
+    ssr: false,
+  }
+);
 
 export default function ImageCompressorPage() {
   const { data: session, status } = useSession();

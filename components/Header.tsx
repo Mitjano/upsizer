@@ -189,6 +189,15 @@ export default function Header() {
             </div>
           </div>
 
+          <Link
+            href="/ai-image"
+            className={`flex items-center gap-1 transition font-medium ${
+              pathname === '/ai-image' ? 'text-purple-400' : 'text-white hover:text-purple-400'
+            }`}
+          >
+            <span className="text-sm">✨</span>
+            AI Image
+          </Link>
           <Link href="/#use-cases" className="text-white hover:text-green-400 transition">
             Use Cases
           </Link>
@@ -324,6 +333,13 @@ export default function Header() {
               ))}
             </div>
 
+            <Link
+              href="/ai-image"
+              className="block py-2 text-purple-400 hover:text-purple-300 transition font-medium"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              ✨ AI Image Generator
+            </Link>
             <Link
               href="/#use-cases"
               className="block py-2 text-white hover:text-green-400 transition"

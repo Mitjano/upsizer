@@ -1,9 +1,22 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import ToolsLayout from '@/components/ToolsLayout';
-import ObjectRemover from '@/components/ObjectRemover';
+
+// Lazy load heavy component
+const ObjectRemover = dynamic(
+  () => import('@/components/ObjectRemover'),
+  {
+    loading: () => (
+      <div className="flex items-center justify-center p-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
+      </div>
+    ),
+    ssr: false,
+  }
+);
 
 export default function ObjectRemovalPage() {
   const { data: session } = useSession();

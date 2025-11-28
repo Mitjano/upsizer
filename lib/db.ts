@@ -167,6 +167,16 @@ export function updateUserLogin(email: string): void {
   }
 }
 
+export function deleteUser(id: string): boolean {
+  const users = getAllUsers();
+  const filtered = users.filter(u => u.id !== id);
+
+  if (filtered.length === users.length) return false;
+
+  writeJSON(USERS_FILE, filtered);
+  return true;
+}
+
 // Transactions
 export interface Transaction {
   id: string;
@@ -221,6 +231,16 @@ export function updateTransaction(id: string, updates: Partial<Transaction>): Tr
   return transactions[index];
 }
 
+export function deleteTransaction(id: string): boolean {
+  const transactions = getAllTransactions();
+  const filtered = transactions.filter(t => t.id !== id);
+
+  if (filtered.length === transactions.length) return false;
+
+  writeJSON(TRANSACTIONS_FILE, filtered);
+  return true;
+}
+
 // Usage tracking
 export interface Usage {
   id: string;
@@ -265,6 +285,16 @@ export function createUsage(data: Omit<Usage, 'id' | 'createdAt'>): Usage {
   }
 
   return newUsage;
+}
+
+export function deleteUsage(id: string): boolean {
+  const usage = getAllUsage();
+  const filtered = usage.filter(u => u.id !== id);
+
+  if (filtered.length === usage.length) return false;
+
+  writeJSON(USAGE_FILE, filtered);
+  return true;
 }
 
 // Campaigns

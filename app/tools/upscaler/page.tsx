@@ -1,8 +1,21 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { useSession } from 'next-auth/react';
 import ToolsLayout from '@/components/ToolsLayout';
-import EnhancedImageUploader from '@/components/EnhancedImageUploader';
+
+// Lazy load heavy component
+const EnhancedImageUploader = dynamic(
+  () => import('@/components/EnhancedImageUploader'),
+  {
+    loading: () => (
+      <div className="flex items-center justify-center p-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
+      </div>
+    ),
+    ssr: false,
+  }
+);
 
 export default function UpscalerPage() {
   const { data: session, status } = useSession();

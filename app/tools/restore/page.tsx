@@ -1,9 +1,22 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import ToolsLayout from '@/components/ToolsLayout';
-import ImageDenoiser from '@/components/ImageDenoiser';
+
+// Lazy load heavy component
+const ImageDenoiser = dynamic(
+  () => import('@/components/ImageDenoiser'),
+  {
+    loading: () => (
+      <div className="flex items-center justify-center p-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-500"></div>
+      </div>
+    ),
+    ssr: false,
+  }
+);
 
 export default function RestorePage() {
   const { data: session } = useSession();

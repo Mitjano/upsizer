@@ -740,3 +740,382 @@ export async function sendPurchaseConfirmationEmail(data: PurchaseConfirmationEm
     return false;
   }
 }
+
+export interface PaymentFailedEmailData {
+  userName: string;
+  userEmail: string;
+  planName: string;
+  amount: number;
+  currency: string;
+  attemptCount: number;
+  nextRetryDate?: string;
+}
+
+/**
+ * Send notification when payment fails
+ */
+export async function sendPaymentFailedEmail(data: PaymentFailedEmailData): Promise<boolean> {
+  const resend = getResend();
+  if (!resend) {
+    console.warn('RESEND_API_KEY not configured - skipping email');
+    return false;
+  }
+
+  try {
+    await resend.emails.send({
+      from: 'Pixelift <support@pixelift.pl>',
+      to: [data.userEmail],
+      replyTo: 'support@pixelift.pl',
+      subject: 'Payment Failed - Action Required',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff;">
+          <!-- Header -->
+          <div style="background: linear-gradient(to right, #ef4444, #f97316); padding: 30px; text-align: center;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 28px;">Pixelift</h1>
+          </div>
+
+          <!-- Content -->
+          <div style="padding: 40px 30px;">
+            <div style="text-align: center; font-size: 60px; margin-bottom: 20px;">⚠️</div>
+
+            <h2 style="color: #1f2937; margin-top: 0; text-align: center;">Payment Failed</h2>
+
+            <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">
+              Hi ${data.userName},
+            </p>
+
+            <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">
+              We were unable to process your payment for your Pixelift subscription.
+            </p>
+
+            <div style="background: #fef2f2; border-left: 4px solid #ef4444; padding: 20px; margin: 30px 0; border-radius: 4px;">
+              <p style="color: #991b1b; margin: 0; font-size: 16px;">
+                <strong>Plan:</strong> ${data.planName}<br />
+                <strong>Amount:</strong> ${data.currency}${data.amount.toFixed(2)}<br />
+                <strong>Attempt:</strong> ${data.attemptCount} of 3
+              </p>
+            </div>
+
+            ${data.nextRetryDate ? `
+            <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">
+              We'll automatically retry the payment on <strong>${data.nextRetryDate}</strong>.
+            </p>
+            ` : ''}
+
+            <h3 style="color: #1f2937; margin-top: 30px;">What you can do:</h3>
+            <ul style="color: #4b5563; line-height: 1.8;">
+              <li>Update your payment method in the billing portal</li>
+              <li>Ensure your card has sufficient funds</li>
+              <li>Contact your bank if the issue persists</li>
+            </ul>
+
+            <div style="text-align: center; margin: 40px 0;">
+              <a href="https://pixelift.pl/dashboard/settings"
+                 style="display: inline-block; background: linear-gradient(to right, #10b981, #3b82f6);
+                        color: white; padding: 16px 32px; text-decoration: none;
+                        border-radius: 8px; font-weight: 600; font-size: 16px;">
+                Update Payment Method →
+              </a>
+            </div>
+
+            <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
+              If your payment continues to fail, your subscription will be cancelled and you'll lose access to premium features.
+              Need help? Contact us at <a href="mailto:support@pixelift.pl" style="color: #10b981;">support@pixelift.pl</a>
+            </p>
+          </div>
+
+          <!-- Footer -->
+          <div style="background: #f3f4f6; padding: 30px; text-align: center; color: #6b7280; font-size: 14px;">
+            <p style="margin: 0 0 10px 0;">Pixelift - AI Image Processing</p>
+            <p style="margin: 0;">
+              <a href="https://pixelift.pl" style="color: #10b981; text-decoration: none;">Website</a> •
+              <a href="https://pixelift.pl/pricing" style="color: #10b981; text-decoration: none;">Pricing</a> •
+              <a href="https://pixelift.pl/support" style="color: #10b981; text-decoration: none;">Support</a>
+            </p>
+          </div>
+        </div>
+      `,
+    });
+
+    console.log(`Payment failed email sent to ${data.userEmail}`);
+    return true;
+  } catch (error) {
+    console.error('Failed to send payment failed email:', error);
+    return false;
+  }
+}
+
+export interface SubscriptionCancelledEmailData {
+  userName: string;
+  userEmail: string;
+  planName: string;
+  endDate: string;
+  creditsRemaining: number;
+}
+
+/**
+ * Send notification when subscription is cancelled
+ */
+export async function sendSubscriptionCancelledEmail(data: SubscriptionCancelledEmailData): Promise<boolean> {
+  const resend = getResend();
+  if (!resend) {
+    console.warn('RESEND_API_KEY not configured - skipping email');
+    return false;
+  }
+
+  try {
+    await resend.emails.send({
+      from: 'Pixelift <support@pixelift.pl>',
+      to: [data.userEmail],
+      replyTo: 'support@pixelift.pl',
+      subject: 'Your Pixelift Subscription Has Been Cancelled',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff;">
+          <!-- Header -->
+          <div style="background: linear-gradient(to right, #6b7280, #9ca3af); padding: 30px; text-align: center;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 28px;">Pixelift</h1>
+          </div>
+
+          <!-- Content -->
+          <div style="padding: 40px 30px;">
+            <h2 style="color: #1f2937; margin-top: 0;">Subscription Cancelled</h2>
+
+            <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">
+              Hi ${data.userName},
+            </p>
+
+            <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">
+              Your <strong>${data.planName}</strong> subscription has been cancelled.
+            </p>
+
+            <div style="background: #f3f4f6; padding: 25px; border-radius: 8px; margin: 30px 0;">
+              <h3 style="color: #1f2937; margin: 0 0 15px 0; font-size: 18px;">What happens now?</h3>
+              <ul style="color: #4b5563; margin: 0; padding-left: 20px; line-height: 1.8;">
+                <li>Your premium access ends on <strong>${data.endDate}</strong></li>
+                <li>You still have <strong>${data.creditsRemaining} credits</strong> to use</li>
+                <li>Your unused credits will remain available</li>
+                <li>You can resubscribe anytime to get premium features back</li>
+              </ul>
+            </div>
+
+            <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 20px; margin: 30px 0; border-radius: 4px;">
+              <p style="color: #1e40af; margin: 0; font-size: 15px;">
+                <strong>Changed your mind?</strong> You can reactivate your subscription anytime from your dashboard.
+              </p>
+            </div>
+
+            <div style="text-align: center; margin: 40px 0;">
+              <a href="https://pixelift.pl/pricing"
+                 style="display: inline-block; background: linear-gradient(to right, #10b981, #3b82f6);
+                        color: white; padding: 16px 32px; text-decoration: none;
+                        border-radius: 8px; font-weight: 600; font-size: 16px;">
+                View Plans →
+              </a>
+            </div>
+
+            <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
+              We'd love to hear why you cancelled. Reply to this email with your feedback - it helps us improve!
+            </p>
+          </div>
+
+          <!-- Footer -->
+          <div style="background: #f3f4f6; padding: 30px; text-align: center; color: #6b7280; font-size: 14px;">
+            <p style="margin: 0 0 10px 0;">Pixelift - AI Image Processing</p>
+            <p style="margin: 0;">
+              <a href="https://pixelift.pl" style="color: #10b981; text-decoration: none;">Website</a> •
+              <a href="https://pixelift.pl/pricing" style="color: #10b981; text-decoration: none;">Pricing</a> •
+              <a href="https://pixelift.pl/support" style="color: #10b981; text-decoration: none;">Support</a>
+            </p>
+          </div>
+        </div>
+      `,
+    });
+
+    console.log(`Subscription cancelled email sent to ${data.userEmail}`);
+    return true;
+  } catch (error) {
+    console.error('Failed to send subscription cancelled email:', error);
+    return false;
+  }
+}
+
+export interface TicketConfirmationEmailData {
+  ticketId: string;
+  subject: string;
+  userName: string;
+  userEmail: string;
+  category: string;
+}
+
+/**
+ * Send confirmation email to user when they create a ticket
+ */
+export async function sendTicketConfirmationEmail(data: TicketConfirmationEmailData): Promise<boolean> {
+  const resend = getResend();
+  if (!resend) {
+    console.warn('RESEND_API_KEY not configured - skipping email');
+    return false;
+  }
+
+  try {
+    await resend.emails.send({
+      from: 'Pixelift Support <support@pixelift.pl>',
+      to: [data.userEmail],
+      replyTo: 'support@pixelift.pl',
+      subject: `We received your request [Ticket #${data.ticketId}]`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff;">
+          <!-- Header -->
+          <div style="background: linear-gradient(to right, #10b981, #3b82f6); padding: 30px; text-align: center;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 28px;">Pixelift Support</h1>
+          </div>
+
+          <!-- Content -->
+          <div style="padding: 40px 30px;">
+            <div style="text-align: center; font-size: 60px; margin-bottom: 20px;">📨</div>
+
+            <h2 style="color: #1f2937; margin-top: 0; text-align: center;">We Got Your Message!</h2>
+
+            <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">
+              Hi ${data.userName},
+            </p>
+
+            <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">
+              Thank you for contacting Pixelift support. We've received your request and our team will get back to you as soon as possible.
+            </p>
+
+            <div style="background: #f0fdf4; border-left: 4px solid #10b981; padding: 20px; margin: 30px 0; border-radius: 4px;">
+              <p style="color: #065f46; margin: 0; font-size: 15px;">
+                <strong>Ticket ID:</strong> #${data.ticketId}<br />
+                <strong>Subject:</strong> ${data.subject}<br />
+                <strong>Category:</strong> ${data.category}
+              </p>
+            </div>
+
+            <div style="background: #f3f4f6; padding: 25px; border-radius: 8px; margin: 30px 0;">
+              <h3 style="color: #1f2937; margin: 0 0 15px 0; font-size: 18px;">⏱️ What to expect</h3>
+              <ul style="color: #4b5563; margin: 0; padding-left: 20px; line-height: 1.8;">
+                <li>Response time: Usually within 24 hours</li>
+                <li>You'll receive an email when we reply</li>
+                <li>Track your tickets at <a href="https://pixelift.pl/support/tickets" style="color: #10b981;">pixelift.pl/support/tickets</a></li>
+              </ul>
+            </div>
+
+            <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
+              Please keep this email for your records. You can reply directly to this email to add more information to your ticket.
+            </p>
+          </div>
+
+          <!-- Footer -->
+          <div style="background: #f3f4f6; padding: 30px; text-align: center; color: #6b7280; font-size: 14px;">
+            <p style="margin: 0 0 10px 0;">Pixelift - AI Image Processing</p>
+            <p style="margin: 0;">
+              <a href="https://pixelift.pl" style="color: #10b981; text-decoration: none;">Website</a> •
+              <a href="https://pixelift.pl/support/tickets" style="color: #10b981; text-decoration: none;">My Tickets</a> •
+              <a href="https://pixelift.pl/support" style="color: #10b981; text-decoration: none;">Help Center</a>
+            </p>
+          </div>
+        </div>
+      `,
+    });
+
+    console.log(`Ticket confirmation email sent to ${data.userEmail} for ticket ${data.ticketId}`);
+    return true;
+  } catch (error) {
+    console.error('Failed to send ticket confirmation email:', error);
+    return false;
+  }
+}
+
+export interface AccountDeletedEmailData {
+  userName: string;
+  userEmail: string;
+  deletionDate: string;
+}
+
+/**
+ * Send confirmation email when account is permanently deleted (GDPR)
+ */
+export async function sendAccountDeletedEmail(data: AccountDeletedEmailData): Promise<boolean> {
+  const resend = getResend();
+  if (!resend) {
+    console.warn('RESEND_API_KEY not configured - skipping email');
+    return false;
+  }
+
+  try {
+    const deletionDateFormatted = new Date(data.deletionDate).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+
+    await resend.emails.send({
+      from: 'Pixelift <noreply@pixelift.pl>',
+      to: [data.userEmail],
+      subject: 'Your Pixelift Account Has Been Deleted',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff;">
+          <!-- Header -->
+          <div style="background: linear-gradient(to right, #6b7280, #374151); padding: 30px; text-align: center;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 28px;">Account Deleted</h1>
+          </div>
+
+          <!-- Content -->
+          <div style="padding: 40px 30px;">
+            <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">
+              Hi ${data.userName},
+            </p>
+
+            <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">
+              As per your request, your Pixelift account and all associated data have been permanently deleted.
+            </p>
+
+            <div style="background: #f3f4f6; border-left: 4px solid #6b7280; padding: 20px; margin: 30px 0; border-radius: 4px;">
+              <p style="color: #374151; margin: 0; font-size: 15px;">
+                <strong>Deletion completed:</strong> ${deletionDateFormatted}
+              </p>
+            </div>
+
+            <h3 style="color: #1f2937; margin: 30px 0 15px 0; font-size: 18px;">What was deleted:</h3>
+            <ul style="color: #4b5563; margin: 0; padding-left: 20px; line-height: 1.8;">
+              <li>Your account information and profile</li>
+              <li>All processed images</li>
+              <li>Transaction and payment history</li>
+              <li>Usage history and statistics</li>
+              <li>Support tickets and conversations</li>
+            </ul>
+
+            <p style="color: #4b5563; line-height: 1.6; font-size: 16px; margin-top: 30px;">
+              This action is irreversible and your data cannot be recovered. If you wish to use Pixelift again in the future, you'll need to create a new account.
+            </p>
+
+            <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">
+              We're sorry to see you go. If you have any feedback about your experience with Pixelift, we'd love to hear from you at <a href="mailto:feedback@pixelift.pl" style="color: #3b82f6;">feedback@pixelift.pl</a>.
+            </p>
+
+            <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
+              Thank you for using Pixelift.
+            </p>
+          </div>
+
+          <!-- Footer -->
+          <div style="background: #f3f4f6; padding: 30px; text-align: center; color: #6b7280; font-size: 14px;">
+            <p style="margin: 0 0 10px 0;">Pixelift - AI Image Processing</p>
+            <p style="margin: 0;">
+              <a href="https://pixelift.pl" style="color: #6b7280; text-decoration: none;">Visit Pixelift</a>
+            </p>
+          </div>
+        </div>
+      `,
+    });
+
+    console.log(`Account deletion confirmation sent to ${data.userEmail}`);
+    return true;
+  } catch (error) {
+    console.error('Failed to send account deletion email:', error);
+    return false;
+  }
+}

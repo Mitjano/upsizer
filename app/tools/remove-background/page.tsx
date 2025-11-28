@@ -1,10 +1,34 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import ToolsLayout from '@/components/ToolsLayout';
-import { BackgroundRemover } from '@/components/BackgroundRemover';
-import { ProcessedImagesGallery } from '@/components/ProcessedImagesGallery';
+
+// Lazy load heavy components
+const BackgroundRemover = dynamic(
+  () => import('@/components/BackgroundRemover').then((mod) => ({ default: mod.BackgroundRemover })),
+  {
+    loading: () => (
+      <div className="flex items-center justify-center p-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+      </div>
+    ),
+    ssr: false,
+  }
+);
+
+const ProcessedImagesGallery = dynamic(
+  () => import('@/components/ProcessedImagesGallery').then((mod) => ({ default: mod.ProcessedImagesGallery })),
+  {
+    loading: () => (
+      <div className="flex items-center justify-center p-8">
+        <div className="animate-pulse text-gray-400">Loading gallery...</div>
+      </div>
+    ),
+    ssr: false,
+  }
+);
 
 export default function RemoveBackgroundPage() {
   const { data: session, status } = useSession();

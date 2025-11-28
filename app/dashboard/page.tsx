@@ -382,15 +382,37 @@ export default function DashboardPage() {
         {/* Quick Actions */}
         <div>
           <h2 className="text-2xl font-bold mb-6">Quick Actions</h2>
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-3 lg:grid-cols-6 gap-4">
+            <Link
+              href="/dashboard/images"
+              className="bg-gradient-to-br from-indigo-900/20 to-blue-900/20 rounded-xl border border-indigo-700/50 p-6 hover:border-indigo-500 transition group"
+            >
+              <div className="text-3xl mb-3 group-hover:scale-110 transition">🖼️</div>
+              <h3 className="text-lg font-semibold mb-2">Image History</h3>
+              <p className="text-gray-400 text-sm">
+                View all processed images
+              </p>
+            </Link>
+
+            <Link
+              href="/dashboard/billing"
+              className="bg-gradient-to-br from-yellow-900/20 to-orange-900/20 rounded-xl border border-yellow-700/50 p-6 hover:border-yellow-500 transition group"
+            >
+              <div className="text-3xl mb-3 group-hover:scale-110 transition">💰</div>
+              <h3 className="text-lg font-semibold mb-2">Billing</h3>
+              <p className="text-gray-400 text-sm">
+                Transactions & payments
+              </p>
+            </Link>
+
             <Link
               href="/pricing"
               className="bg-gradient-to-br from-green-900/20 to-emerald-900/20 rounded-xl border border-green-700/50 p-6 hover:border-green-500 transition group"
             >
-              <div className="text-3xl mb-3 group-hover:scale-110 transition">💳</div>
-              <h3 className="text-xl font-semibold mb-2">Upgrade Plan</h3>
+              <div className="text-3xl mb-3 group-hover:scale-110 transition">💎</div>
+              <h3 className="text-lg font-semibold mb-2">Upgrade</h3>
               <p className="text-gray-400 text-sm">
-                Get more credits and unlock premium features
+                Get more credits
               </p>
             </Link>
 
@@ -399,9 +421,20 @@ export default function DashboardPage() {
               className="bg-gradient-to-br from-blue-900/20 to-cyan-900/20 rounded-xl border border-blue-700/50 p-6 hover:border-blue-500 transition group"
             >
               <div className="text-3xl mb-3 group-hover:scale-110 transition">🔑</div>
-              <h3 className="text-xl font-semibold mb-2">API Keys</h3>
+              <h3 className="text-lg font-semibold mb-2">API Keys</h3>
               <p className="text-gray-400 text-sm">
-                Integrate Pixelift into your applications
+                For developers
+              </p>
+            </Link>
+
+            <Link
+              href="/support/tickets"
+              className="bg-gradient-to-br from-pink-900/20 to-rose-900/20 rounded-xl border border-pink-700/50 p-6 hover:border-pink-500 transition group"
+            >
+              <div className="text-3xl mb-3 group-hover:scale-110 transition">🎫</div>
+              <h3 className="text-lg font-semibold mb-2">My Tickets</h3>
+              <p className="text-gray-400 text-sm">
+                Support requests
               </p>
             </Link>
 
@@ -410,9 +443,9 @@ export default function DashboardPage() {
               className="bg-gradient-to-br from-purple-900/20 to-pink-900/20 rounded-xl border border-purple-700/50 p-6 hover:border-purple-500 transition group"
             >
               <div className="text-3xl mb-3 group-hover:scale-110 transition">⚙️</div>
-              <h3 className="text-xl font-semibold mb-2">Settings</h3>
+              <h3 className="text-lg font-semibold mb-2">Settings</h3>
               <p className="text-gray-400 text-sm">
-                Manage your account preferences
+                Account preferences
               </p>
             </Link>
           </div>

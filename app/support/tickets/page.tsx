@@ -2,8 +2,9 @@
 
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
+import toast from "react-hot-toast";
 
 interface TicketReply {
   id: string;
@@ -24,21 +25,24 @@ interface Ticket {
   replies?: TicketReply[];
 }
 
+interface ReplyFormState {
+  ticketId: string | null;
+  message: string;
+  sending: boolean;
+}
+
 export default function MyTicketsPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
+  const [replyForm, setReplyForm] = useState<ReplyFormState>({
+    ticketId: null,
+    message: '',
+    sending: false,
+  });
 
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/auth/signin");
-    } else if (status === "authenticated") {
-      fetchMyTickets();
-    }
-  }, [status, router]);
-
-  const fetchMyTickets = async () => {
+  const fetchMyTickets = useCallback(async () => {
     try {
       const response = await fetch('/api/user/tickets');
       if (response.ok) {
@@ -49,6 +53,52 @@ export default function MyTicketsPage() {
       console.error('Failed to fetch tickets:', error);
     } finally {
       setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/auth/signin");
+    } else if (status === "authenticated") {
+      fetchMyTickets();
+    }
+  }, [status, router, fetchMyTickets]);
+
+  const handleReplySubmit = async (ticketId: string) => {
+    if (!replyForm.message.trim()) {
+      toast.error('Please enter a message');
+      return;
+    }
+
+    if (replyForm.message.length < 5) {
+      toast.error('Message must be at least 5 characters');
+      return;
+    }
+
+    setReplyForm(prev => ({ ...prev, sending: true }));
+
+    try {
+      const response = await fetch('/api/user/tickets/reply', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ticketId,
+          message: replyForm.message,
+        }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to send reply');
+      }
+
+      toast.success('Reply sent successfully!');
+      setReplyForm({ ticketId: null, message: '', sending: false });
+      fetchMyTickets(); // Refresh tickets
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to send reply';
+      toast.error(errorMessage);
+      setReplyForm(prev => ({ ...prev, sending: false }));
     }
   };
 
@@ -176,15 +226,52 @@ export default function MyTicketsPage() {
                 {/* Reply Form for Open Tickets */}
                 {(ticket.status === 'open' || ticket.status === 'in-progress') && (
                   <div className="mt-4 border-t border-gray-700 pt-4">
-                    <button
-                      onClick={() => {
-                        // TODO: Add reply functionality
-                        alert('Reply functionality coming soon!');
-                      }}
-                      className="text-sm text-green-400 hover:text-green-300 font-medium"
-                    >
-                      + Add a reply
-                    </button>
+                    {replyForm.ticketId === ticket.id ? (
+                      <div className="space-y-3">
+                        <textarea
+                          value={replyForm.message}
+                          onChange={(e) => setReplyForm(prev => ({ ...prev, message: e.target.value }))}
+                          placeholder="Write your reply..."
+                          className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
+                          rows={3}
+                          disabled={replyForm.sending}
+                        />
+                        <div className="flex gap-3">
+                          <button
+                            onClick={() => handleReplySubmit(ticket.id)}
+                            disabled={replyForm.sending || !replyForm.message.trim()}
+                            className="px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-lg text-sm font-medium transition"
+                          >
+                            {replyForm.sending ? (
+                              <span className="flex items-center gap-2">
+                                <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                </svg>
+                                Sending...
+                              </span>
+                            ) : 'Send Reply'}
+                          </button>
+                          <button
+                            onClick={() => setReplyForm({ ticketId: null, message: '', sending: false })}
+                            disabled={replyForm.sending}
+                            className="px-4 py-2 bg-gray-600 hover:bg-gray-500 rounded-lg text-sm font-medium transition"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => setReplyForm(prev => ({ ...prev, ticketId: ticket.id }))}
+                        className="text-sm text-green-400 hover:text-green-300 font-medium flex items-center gap-1"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                        </svg>
+                        Add a reply
+                      </button>
+                    )}
                   </div>
                 )}
               </div>

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createTicket } from '@/lib/db';
 import { apiLimiter, getClientIdentifier, rateLimitResponse } from '@/lib/rate-limit';
-import { sendTicketCreatedEmail } from '@/lib/email';
+import { sendTicketCreatedEmail, sendTicketConfirmationEmail } from '@/lib/email';
 
 export async function POST(request: NextRequest) {
   try {
@@ -64,7 +64,16 @@ export async function POST(request: NextRequest) {
       userName: ticket.userName,
       userEmail: ticket.userEmail,
       createdAt: ticket.createdAt,
-    }).catch(err => console.error('Email notification failed:', err));
+    }).catch(err => console.error('Admin email notification failed:', err));
+
+    // Send confirmation email to user (non-blocking)
+    sendTicketConfirmationEmail({
+      ticketId: ticket.id,
+      subject: ticket.subject,
+      userName: ticket.userName,
+      userEmail: ticket.userEmail,
+      category: ticket.category,
+    }).catch(err => console.error('User confirmation email failed:', err));
 
     return NextResponse.json({
       success: true,

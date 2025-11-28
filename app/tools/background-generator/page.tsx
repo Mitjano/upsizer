@@ -1,9 +1,22 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import ToolsLayout from '@/components/ToolsLayout';
-import BackgroundGenerator from '@/components/BackgroundGenerator';
+
+// Lazy load heavy component
+const BackgroundGenerator = dynamic(
+  () => import('@/components/BackgroundGenerator'),
+  {
+    loading: () => (
+      <div className="flex items-center justify-center p-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500"></div>
+      </div>
+    ),
+    ssr: false,
+  }
+);
 
 export default function BackgroundGeneratorPage() {
   const { data: session } = useSession();

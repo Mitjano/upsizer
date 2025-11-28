@@ -5,6 +5,13 @@ import { useSession } from 'next-auth/react'
 import { useDropzone } from 'react-dropzone'
 import Image from 'next/image'
 import toast from 'react-hot-toast'
+import {
+  LoginPrompt,
+  ImageComparison,
+  CreditsInfo,
+  ErrorMessage,
+  ActionButton,
+} from './shared'
 
 interface ExpandResult {
   expandedImage: string
@@ -184,45 +191,13 @@ export function ImageExpander({ userRole = 'user' }: ImageExpanderProps) {
   // Show login prompt for unauthenticated users
   if (!session) {
     return (
-      <div className="w-full max-w-5xl mx-auto">
-        <div className="relative border-2 border-dashed border-gray-600 rounded-2xl p-12 bg-gray-800/30">
-          <div className="text-center">
-            <div className="mb-6">
-              <svg
-                className="mx-auto h-16 w-16 text-gray-500"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                />
-              </svg>
-            </div>
-            <h3 className="text-2xl font-bold mb-3">Sign in to Expand Images</h3>
-            <p className="text-gray-400 mb-6 max-w-md mx-auto">
-              Create a free account to start expanding your images with AI. Get 3 free credits!
-            </p>
-            <div className="flex gap-4 justify-center">
-              <a
-                href="/auth/signin?callbackUrl=/tools/image-expand"
-                className="inline-block px-8 py-3 bg-purple-500 hover:bg-purple-600 rounded-lg font-medium transition"
-              >
-                Sign In
-              </a>
-              <a
-                href="/auth/signup"
-                className="inline-block px-8 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg font-medium transition"
-              >
-                Sign Up Free
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
+      <LoginPrompt
+        title="Sign in to Expand Images"
+        description="Create a free account to start expanding your images with AI. Get 3 free credits!"
+        callbackUrl="/tools/image-expand"
+        accentColor="purple"
+        features={["3 Free Credits", "No Credit Card", "AI Outpainting"]}
+      />
     )
   }
 
@@ -367,126 +342,74 @@ export function ImageExpander({ userRole = 'user' }: ImageExpanderProps) {
       )}
 
       {/* Error */}
-      {error && (
-        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
-          <p className="text-red-800 dark:text-red-300">{error}</p>
-        </div>
-      )}
+      {error && <ErrorMessage message={error} />}
 
       {/* Result */}
       {result && originalImage && (
         <div className="space-y-6">
           {/* Before/After Comparison */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Original */}
-            <div className="space-y-3">
-              <h4 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                <span className="w-2 h-2 bg-gray-400 rounded-full"></span>
-                Original
-              </h4>
-              <div className="relative aspect-video rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-                <Image src={originalImage} alt="Original" fill className="object-contain" />
-              </div>
-            </div>
-
-            {/* Expanded */}
-            <div className="space-y-3">
-              <h4 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                <span className="w-2 h-2 bg-purple-500 rounded-full"></span>
-                Expanded ({EXPAND_PRESETS.find(p => p.id === result.expandMode)?.name})
-              </h4>
-              <div className="relative aspect-video rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-                <Image src={result.expandedImage} alt="Expanded" fill className="object-contain" />
-              </div>
-            </div>
-          </div>
+          <ImageComparison
+            originalUrl={originalImage}
+            processedUrl={result.expandedImage}
+            originalLabel="Original"
+            processedLabel={`Expanded (${EXPAND_PRESETS.find(p => p.id === result.expandMode)?.name})`}
+            accentColor="purple"
+            aspectRatio="video"
+          />
 
           {/* Info */}
-          <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg p-4">
-            <p className="text-purple-800 dark:text-purple-300 text-sm">
-              ✨ Image expanded successfully! {result.dimensions.width}x{result.dimensions.height}px • You have{' '}
-              <strong>{result.creditsRemaining} credits</strong> remaining.
-            </p>
-            {result.seed && (
-              <p className="text-purple-600 dark:text-purple-400 text-xs mt-1">
-                Seed: {result.seed}
-              </p>
-            )}
-          </div>
+          <CreditsInfo
+            message={`Image expanded successfully! ${result.dimensions.width}x${result.dimensions.height}px.`}
+            creditsRemaining={result.creditsRemaining}
+            extraInfo={result.seed ? `Seed: ${result.seed}` : undefined}
+            accentColor="purple"
+          />
 
           {/* Actions */}
           <div className="flex flex-col sm:flex-row gap-3 justify-center flex-wrap">
-            <button
+            <ActionButton
               onClick={handleDownload}
-              className="inline-flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-medium transition-colors shadow-lg hover:shadow-xl"
+              icon="download"
+              accentColor="purple"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                />
-              </svg>
               Download
-            </button>
-            {/* Regenerate with same seed */}
-            <button
+            </ActionButton>
+            <ActionButton
               onClick={() => {
                 setResult(null)
                 handleExpand(lastSeed || undefined)
               }}
               disabled={processing}
-              className="inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium transition-colors disabled:opacity-50"
+              icon="refresh"
+              accentColor="purple"
+              variant="secondary"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                />
-              </svg>
               Same Result (2 cr)
-            </button>
-            {/* Try different variation */}
-            <button
+            </ActionButton>
+            <ActionButton
               onClick={() => {
                 setResult(null)
                 handleExpand()
               }}
               disabled={processing}
-              className="inline-flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors disabled:opacity-50"
+              icon="lightning"
+              accentColor="green"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M13 10V3L4 14h7v7l9-11h-7z"
-                />
-              </svg>
               Try Different (2 cr)
-            </button>
-            <button
+            </ActionButton>
+            <ActionButton
               onClick={() => {
                 setResult(null)
                 setOriginalImage(null)
                 setSelectedFile(null)
                 setLastSeed(null)
               }}
-              className="inline-flex items-center justify-center gap-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-white px-6 py-3 rounded-lg font-medium transition-colors"
+              icon="upload"
+              variant="secondary"
+              accentColor="gray"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
-                />
-              </svg>
               New Image
-            </button>
+            </ActionButton>
           </div>
         </div>
       )}

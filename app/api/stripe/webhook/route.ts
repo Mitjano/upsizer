@@ -19,6 +19,11 @@ import {
   type User,
   type Transaction,
 } from '@/lib/db';
+import {
+  sendPurchaseConfirmationEmail,
+  sendPaymentFailedEmail,
+  sendSubscriptionCancelledEmail,
+} from '@/lib/email';
 
 // Disable body parsing - we need the raw body for signature verification
 export const dynamic = 'force-dynamic';
@@ -136,6 +141,17 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       }),
     });
 
+    // Send purchase confirmation email
+    sendPurchaseConfirmationEmail({
+      userName: user.name || 'User',
+      userEmail: user.email,
+      planName: metadata.packageId || 'Credit Pack',
+      creditsAdded: credits,
+      amountPaid: (session.amount_total || 0) / 100,
+      currency: session.currency?.toUpperCase() === 'PLN' ? 'zł' : '$',
+      transactionId: session.id,
+    }).catch(err => console.error('Purchase confirmation email failed:', err));
+
     console.log(`Added ${credits} credits to user ${user.email}`);
   } else if (type === 'subscription') {
     // Credits will be added on invoice.payment_succeeded
@@ -201,6 +217,31 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
     updateUser(user.id, {
       role: 'user',
     });
+
+    // Get plan info from subscription items
+    const priceId = subscription.items?.data?.[0]?.price?.id;
+    const planInfo = priceId ? getPlanByPriceId(priceId) : null;
+
+    // Calculate end date - cast to any for flexible Stripe API version
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const subData = subscription as any;
+    const endDate = subData.current_period_end
+      ? new Date(subData.current_period_end * 1000).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        })
+      : 'immediately';
+
+    // Send subscription cancelled email
+    sendSubscriptionCancelledEmail({
+      userName: user.name || 'User',
+      userEmail: user.email,
+      planName: planInfo?.plan.name || 'Premium Subscription',
+      endDate,
+      creditsRemaining: user.credits || 0,
+    }).catch(err => console.error('Subscription cancelled email error:', err));
+
     console.log(`Downgraded user ${user.email} to free tier`);
   }
 }
@@ -266,6 +307,22 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
     }),
   });
 
+  // Calculate next billing date (approximately 1 month)
+  const nextBillingDate = new Date();
+  nextBillingDate.setMonth(nextBillingDate.getMonth() + 1);
+
+  // Send purchase confirmation email for subscription renewal
+  sendPurchaseConfirmationEmail({
+    userName: user.name || 'User',
+    userEmail: user.email,
+    planName: planInfo.plan.name || planInfo.plan.id,
+    creditsAdded: credits,
+    amountPaid: (invoiceData.amount_paid || 0) / 100,
+    currency: invoice.currency?.toUpperCase() === 'PLN' ? 'zł' : '$',
+    transactionId: invoice.id,
+    nextBillingDate: nextBillingDate.toISOString(),
+  }).catch(err => console.error('Subscription confirmation email failed:', err));
+
   console.log(`Added ${credits} credits to user ${user.email} for subscription`);
 }
 
@@ -302,6 +359,28 @@ async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
     }),
   });
 
-  // TODO: Send notification email about failed payment
+  // Get plan info for email
+  const lineItem = invoiceData.lines?.data?.[0];
+  const planInfo = lineItem?.price?.id ? getPlanByPriceId(lineItem.price.id) : null;
+
+  // Calculate next retry date (Stripe retries after ~3 days)
+  const nextRetryDate = new Date();
+  nextRetryDate.setDate(nextRetryDate.getDate() + 3);
+
+  // Send payment failed email
+  sendPaymentFailedEmail({
+    userName: user.name || 'User',
+    userEmail: user.email,
+    planName: planInfo?.plan.name || 'Subscription',
+    amount: (invoiceData.amount_due || 0) / 100,
+    currency: invoice.currency?.toUpperCase() === 'PLN' ? 'zł' : '$',
+    attemptCount: invoiceData.attempt_count || 1,
+    nextRetryDate: invoiceData.attempt_count < 3 ? nextRetryDate.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    }) : undefined,
+  }).catch(err => console.error('Payment failed email error:', err));
+
   console.log(`Payment failed for user ${user.email}`);
 }
