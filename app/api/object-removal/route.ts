@@ -120,7 +120,7 @@ export async function POST(request: NextRequest) {
           mask: maskDataUrl,
         }
       }
-    ) as string
+    ) as unknown as string
 
     // 8. DOWNLOAD RESULT AND CONVERT TO BASE64
     const resultResponse = await fetch(output)

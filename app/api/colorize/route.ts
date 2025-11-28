@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
           model_size: "large", // 'tiny', 'small', 'medium', 'large'
         }
       }
-    ) as string
+    ) as unknown as string
 
     // 8. DOWNLOAD RESULT AND CONVERT TO BASE64
     const resultResponse = await fetch(output)

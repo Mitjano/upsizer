@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
           refine_prompt: refinePrompt,
         }
       }
-    ) as string
+    ) as unknown as string
 
     // 8. DOWNLOAD RESULT AND CONVERT TO BASE64
     const resultResponse = await fetch(output)

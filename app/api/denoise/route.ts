@@ -111,7 +111,7 @@ export async function POST(request: NextRequest) {
           task_type: task, // real_sr, denoise, jpeg_car
         }
       }
-    ) as string
+    ) as unknown as string
 
     // 8. DOWNLOAD RESULT AND CONVERT TO BASE64
     const resultResponse = await fetch(output)
