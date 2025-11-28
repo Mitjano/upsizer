@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
-import { getUserByEmail, updateUser, createUsage } from '@/lib/db';
+import { getUserByEmail, updateUser, createUsage, createUser } from '@/lib/db';
 import { generateImage, generateMultipleImages } from '@/lib/ai-image/generate';
 import { createGeneratedImage } from '@/lib/ai-image/db';
 import {
@@ -22,12 +22,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const user = getUserByEmail(session.user.email);
+    // Get or create user
+    let user = getUserByEmail(session.user.email);
     if (!user) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
-      );
+      // Auto-create user from session data
+      user = createUser({
+        email: session.user.email,
+        name: session.user.name || undefined,
+        image: session.user.image || undefined,
+        role: 'user',
+        status: 'active',
+        credits: 3, // Default starting credits
+        totalUsage: 0,
+      });
     }
 
     const body = await request.json();
