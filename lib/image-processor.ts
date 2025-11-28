@@ -11,14 +11,13 @@ export class ImageProcessor {
 
   /**
    * Remove background from image using Replicate API
-   * Uses the same pattern as upscale route
+   * Uses BRIA RMBG 2.0 - professional quality background removal
    */
   static async removeBackground(dataUrl: string): Promise<string> {
     try {
-
-      // Call Replicate API with rembg model
+      // Call Replicate API with BRIA RMBG 2.0 model (better quality than rembg)
       const output = await this.replicate.run(
-        "cjwbw/rembg:fb8af171cfa1616ddcf1242c093f9c46bcada5ad4cf6f2fbe8b81b330ec5c003",
+        "bria-ai/bria-rmbg:d27e6dbcdae5e4d009ca4f7360f1fdbe7af1f07a3b0aa2f8a1e35e40f2eb9c99",
         {
           input: {
             image: dataUrl

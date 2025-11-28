@@ -32,6 +32,58 @@ const tools = [
     bgColor: 'bg-blue-500/10',
   },
   {
+    name: 'Photo Colorizer',
+    href: '/tools/colorize',
+    description: 'Colorize B&W photos',
+    badge: 'NEW',
+    icon: (
+      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+      </svg>
+    ),
+    color: 'from-violet-500 to-purple-600',
+    bgColor: 'bg-violet-500/10',
+  },
+  {
+    name: 'Image Restore',
+    href: '/tools/restore',
+    description: 'Denoise & artifact removal',
+    badge: 'NEW',
+    icon: (
+      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+      </svg>
+    ),
+    color: 'from-cyan-500 to-blue-600',
+    bgColor: 'bg-cyan-500/10',
+  },
+  {
+    name: 'Object Removal',
+    href: '/tools/object-removal',
+    description: 'Remove unwanted objects',
+    badge: 'NEW',
+    icon: (
+      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+      </svg>
+    ),
+    color: 'from-orange-500 to-red-600',
+    bgColor: 'bg-orange-500/10',
+  },
+  {
+    name: 'Background Generator',
+    href: '/tools/background-generator',
+    description: 'Generate AI backgrounds',
+    badge: 'NEW',
+    icon: (
+      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+      </svg>
+    ),
+    color: 'from-pink-500 to-rose-600',
+    bgColor: 'bg-pink-500/10',
+  },
+  {
     name: 'Image Compressor',
     href: '/tools/image-compressor',
     description: 'Reduce file size smartly',
@@ -40,8 +92,8 @@ const tools = [
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
       </svg>
     ),
-    color: 'from-cyan-500 to-cyan-600',
-    bgColor: 'bg-cyan-500/10',
+    color: 'from-teal-500 to-cyan-600',
+    bgColor: 'bg-teal-500/10',
   },
   {
     name: 'Packshot Generator',
@@ -52,14 +104,13 @@ const tools = [
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
       </svg>
     ),
-    color: 'from-pink-500 to-pink-600',
-    bgColor: 'bg-pink-500/10',
+    color: 'from-amber-500 to-orange-600',
+    bgColor: 'bg-amber-500/10',
   },
   {
     name: 'Image Expand',
     href: '/tools/image-expand',
     description: 'Extend images with AI',
-    badge: 'NEW',
     icon: (
       <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
@@ -107,8 +158,8 @@ export default function Header() {
             </button>
 
             {/* Dropdown Menu - Grid layout like Deep Image */}
-            <div className="absolute left-1/2 -translate-x-1/2 mt-2 w-[500px] bg-gray-800 border border-gray-700 rounded-2xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 p-4">
-              <div className="grid grid-cols-2 gap-2">
+            <div className="absolute left-1/2 -translate-x-1/2 mt-2 w-[600px] bg-gray-800 border border-gray-700 rounded-2xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 p-4 max-h-[500px] overflow-y-auto">
+              <div className="grid grid-cols-3 gap-2">
                 {tools.map((tool) => (
                   <Link
                     key={tool.href}
@@ -134,23 +185,6 @@ export default function Header() {
                   </Link>
                 ))}
 
-                {/* Coming Soon - Face Restoration */}
-                <div className="flex items-start gap-3 p-3 rounded-xl opacity-50 cursor-not-allowed">
-                  <div className="p-2 rounded-lg bg-gradient-to-br from-green-500 to-green-600 text-white shrink-0">
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </div>
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="font-semibold text-white text-sm">Face Restoration</span>
-                      <span className="px-1.5 py-0.5 text-[10px] bg-gray-600 text-white rounded-full font-medium">
-                        SOON
-                      </span>
-                    </div>
-                    <div className="text-xs text-gray-400 mt-0.5">Restore and enhance faces</div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
@@ -278,41 +312,16 @@ export default function Header() {
             {/* Tools Section */}
             <div className="border-b border-gray-800 pb-3 mb-3">
               <div className="text-xs font-semibold text-gray-500 uppercase mb-2">Tools</div>
-              <Link
-                href="/tools/upscaler"
-                className="block py-2 text-white hover:text-green-400 transition"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Image Upscaler
-              </Link>
-              <Link
-                href="/tools/remove-background"
-                className="block py-2 text-white hover:text-green-400 transition"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Background Remover
-              </Link>
-              <Link
-                href="/tools/image-compressor"
-                className="block py-2 text-white hover:text-green-400 transition"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Image Compressor
-              </Link>
-              <Link
-                href="/tools/packshot-generator"
-                className="block py-2 text-white hover:text-green-400 transition"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Packshot Generator
-              </Link>
-              <Link
-                href="/tools/image-expand"
-                className="block py-2 text-white hover:text-green-400 transition"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Image Expand <span className="text-xs bg-indigo-500 px-2 py-0.5 rounded-full ml-2">NEW</span>
-              </Link>
+              {tools.map((tool) => (
+                <Link
+                  key={tool.href}
+                  href={tool.href}
+                  className="block py-2 text-white hover:text-green-400 transition"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {tool.name} {tool.badge && <span className="text-xs bg-green-500 px-2 py-0.5 rounded-full ml-2">{tool.badge}</span>}
+                </Link>
+              ))}
             </div>
 
             <Link
