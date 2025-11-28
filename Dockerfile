@@ -16,6 +16,8 @@ WORKDIR /app
 COPY package.json package-lock.json* ./
 COPY prisma ./prisma/
 COPY prisma.config.ts ./
+# Set dummy DATABASE_URL for prisma generate during build (not used at runtime)
+ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
 RUN npm ci
 
 # Rebuild the source code only when needed
@@ -24,6 +26,8 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+# Set dummy DATABASE_URL for prisma generate during build
+ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
 # Generate Prisma client and build Next.js with increased memory limit
 ENV NODE_OPTIONS="--max-old-space-size=2048"
 RUN npx prisma generate && npm run build
