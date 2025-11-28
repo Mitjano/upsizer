@@ -11,6 +11,7 @@
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:ui": "vitest --ui",
+    "analyze": "ANALYZE=true next build",
     "worker": "tsx worker.ts",
     "worker:prod": "node worker.js"
   },
@@ -56,6 +57,7 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^16.0.5",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
     "@types/ioredis": "^4.28.10",
