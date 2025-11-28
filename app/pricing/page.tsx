@@ -6,58 +6,33 @@ import { FaCheck, FaDatabase, FaDownload, FaEnvelope, FaQuoteLeft, FaCog } from 
 export default function PricingPage() {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
   const [selectedSubscription, setSelectedSubscription] = useState("plan-500");
-  const [selectedOneTime, setSelectedOneTime] = useState(3); // Index 3 = 100 credits
+  const [selectedOneTime, setSelectedOneTime] = useState(2); // Index 2 = 100 credits
 
-  // Subscription Plans - ceny są PER MONTH (miesięczne rozliczenie)
-  // Yearly daje 70% zniżki
-  // Deep-Image.ai prices for reference
+  // Subscription Plans - simplified to 4 options
+  // Yearly gives 70% discount
   const subscriptionPlans = [
     {
       id: "plan-100",
       credits: 100,
-      priceMonthly: 7.99, // vs Deep-Image $9.00
+      priceMonthly: 7.99,
       selected: false
     },
     {
       id: "plan-300",
       credits: 300,
-      priceMonthly: 21.99, // vs Deep-Image $24.00
+      priceMonthly: 21.99,
       selected: false
     },
     {
       id: "plan-500",
       credits: 500,
-      priceMonthly: 34.99, // vs Deep-Image $39.00
+      priceMonthly: 34.99,
       selected: true // Default selected
     },
     {
       id: "plan-1000",
       credits: 1000,
-      priceMonthly: 59.99, // vs Deep-Image $69.00
-      selected: false
-    },
-    {
-      id: "plan-2500",
-      credits: 2500,
-      priceMonthly: 134.99, // vs Deep-Image $150.00
-      selected: false
-    },
-    {
-      id: "plan-5000",
-      credits: 5000,
-      priceMonthly: 249.99, // vs Deep-Image $270.00
-      selected: false
-    },
-    {
-      id: "plan-10000",
-      credits: 10000,
-      priceMonthly: 449.99, // vs Deep-Image $480.00
-      selected: false
-    },
-    {
-      id: "plan-30000",
-      credits: 30000,
-      priceMonthly: 1099.99, // vs Deep-Image $1200.00
+      priceMonthly: 59.99,
       selected: false
     }
   ];
@@ -79,44 +54,28 @@ export default function PricingPage() {
     ? (selectedPlan.priceMonthly * 0.3 * 12).toFixed(2)
     : undefined;
 
-  // One-time payment plans (Pay As You Go)
-  // Deep-Image.ai prices for reference
+  // One-time payment plans - simplified to 4 options
   const oneTimePlans = [
-    {
-      credits: 15,
-      price: 6.99,
-      pricePerCredit: 0.47 // vs Deep-Image $0.53
-    },
     {
       credits: 25,
       price: 8.99,
-      pricePerCredit: 0.36 // vs Deep-Image $0.40
+      pricePerCredit: 0.36
     },
     {
       credits: 50,
       price: 13.99,
-      pricePerCredit: 0.28 // vs Deep-Image $0.32
+      pricePerCredit: 0.28
     },
     {
       credits: 100,
       price: 21.99,
-      pricePerCredit: 0.22, // vs Deep-Image $0.25
+      pricePerCredit: 0.22,
       selected: true // Most popular
     },
     {
       credits: 200,
       price: 39.99,
-      pricePerCredit: 0.20 // vs Deep-Image $0.23
-    },
-    {
-      credits: 500,
-      price: 89.99,
-      pricePerCredit: 0.18 // vs Deep-Image $0.20
-    },
-    {
-      credits: 1000,
-      price: 149.99,
-      pricePerCredit: 0.15 // vs Deep-Image $0.17
+      pricePerCredit: 0.20
     }
   ];
 
