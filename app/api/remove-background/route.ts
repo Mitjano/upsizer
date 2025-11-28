@@ -4,9 +4,17 @@ import { getUserByEmail, updateUser } from '@/lib/db'
 import { ImageProcessor } from '@/lib/image-processor'
 import { ProcessedImagesDB } from '@/lib/processed-images-db'
 import { sendCreditsLowEmail, sendCreditsDepletedEmail } from '@/lib/email'
+import { imageProcessingLimiter, getClientIdentifier, rateLimitResponse } from '@/lib/rate-limit'
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limiting
+    const identifier = getClientIdentifier(request)
+    const { allowed, resetAt } = imageProcessingLimiter.check(identifier)
+    if (!allowed) {
+      return rateLimitResponse(resetAt)
+    }
+
     // 1. Check authentication (same pattern as upscale)
     const session = await auth()
 

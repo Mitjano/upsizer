@@ -2,9 +2,17 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { getUserByEmail, createUsage } from '@/lib/db'
 import sharp from 'sharp'
+import { imageProcessingLimiter, getClientIdentifier, rateLimitResponse } from '@/lib/rate-limit'
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limiting
+    const identifier = getClientIdentifier(request)
+    const { allowed, resetAt } = imageProcessingLimiter.check(identifier)
+    if (!allowed) {
+      return rateLimitResponse(resetAt)
+    }
+
     // 1. Check authentication
     const session = await auth()
 

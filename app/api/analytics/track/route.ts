@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { trackVisitor, trackPageView, trackEvent } from '@/lib/analytics';
+import { analyticsLimiter, getClientIdentifier, rateLimitResponse } from '@/lib/rate-limit';
 
 // Helper to parse user agent
 function parseUserAgent(ua: string) {
@@ -25,6 +26,13 @@ function parseUserAgent(ua: string) {
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limiting
+    const identifier = getClientIdentifier(request);
+    const { allowed, resetAt } = analyticsLimiter.check(identifier);
+    if (!allowed) {
+      return rateLimitResponse(resetAt);
+    }
+
     const body = await request.json();
     const { type, data } = body;
 

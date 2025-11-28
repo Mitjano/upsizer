@@ -5,6 +5,7 @@ import sharp from 'sharp'
 import { auth } from '@/lib/auth'
 import { getUserByEmail, createUsage } from '@/lib/db'
 import { sendCreditsLowEmail, sendCreditsDepletedEmail } from '@/lib/email'
+import { imageProcessingLimiter, getClientIdentifier, rateLimitResponse } from '@/lib/rate-limit'
 
 const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN!,
@@ -272,6 +273,13 @@ async function expandWithPreset(
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limiting
+    const identifier = getClientIdentifier(request)
+    const { allowed, resetAt } = imageProcessingLimiter.check(identifier)
+    if (!allowed) {
+      return rateLimitResponse(resetAt)
+    }
+
     // 1. AUTHENTICATION
     const session = await auth()
     if (!session?.user?.email) {

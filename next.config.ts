@@ -8,9 +8,33 @@ const nextConfig: NextConfig = {
   },
   images: {
     remotePatterns: [
+      // Replicate API (for AI-generated images)
       {
         protocol: "https",
-        hostname: "**",
+        hostname: "replicate.delivery",
+      },
+      {
+        protocol: "https",
+        hostname: "pbxt.replicate.delivery",
+      },
+      // Firebase Storage
+      {
+        protocol: "https",
+        hostname: "firebasestorage.googleapis.com",
+      },
+      // Google user avatars
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+      },
+      // Pixelift domain
+      {
+        protocol: "https",
+        hostname: "pixelift.pl",
+      },
+      {
+        protocol: "https",
+        hostname: "www.pixelift.pl",
       },
     ],
   },

@@ -34,6 +34,7 @@
     "bullmq": "^5.63.2",
     "date-fns": "^4.1.0",
     "ioredis": "^5.8.2",
+    "isomorphic-dompurify": "^2.33.0",
     "nanoid": "^5.1.6",
     "next": "15.1.6",
     "next-auth": "^5.0.0-beta.30",

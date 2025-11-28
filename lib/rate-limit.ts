@@ -97,6 +97,12 @@ export const apiLimiter = new RateLimiter(15 * 60 * 1000, 100); // 100 req per 1
 export const authLimiter = new RateLimiter(15 * 60 * 1000, 5);   // 5 req per 15 min (login attempts)
 export const strictLimiter = new RateLimiter(60 * 1000, 10);     // 10 req per minute
 
+// Heavy operations limiter (image processing) - 20 per 15 min per IP
+export const imageProcessingLimiter = new RateLimiter(15 * 60 * 1000, 20);
+
+// Analytics tracking - 60 per minute (page views etc)
+export const analyticsLimiter = new RateLimiter(60 * 1000, 60);
+
 /**
  * Get client identifier from request
  * Uses IP address or fallback to a header

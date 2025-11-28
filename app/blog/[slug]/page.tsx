@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import BlogViewTracker from "@/components/BlogViewTracker";
+import SafeHTML from "@/components/SafeHTML";
 
 export const dynamic = 'force-dynamic';
 
@@ -92,7 +93,8 @@ export default async function BlogPostPage({ params }: PageProps) {
 
       {/* Content */}
       <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div
+        <SafeHTML
+          html={post.content}
           className="prose prose-invert prose-lg max-w-none
             prose-headings:text-white prose-headings:font-bold
             prose-h1:text-4xl prose-h1:mb-6
@@ -110,7 +112,6 @@ export default async function BlogPostPage({ params }: PageProps) {
             prose-code:rounded prose-code:text-green-400 prose-code:font-mono prose-code:before:content-none prose-code:after:content-none
             prose-pre:bg-gray-800 prose-pre:border prose-pre:border-gray-700 prose-pre:text-gray-200
             prose-img:rounded-lg prose-img:shadow-lg"
-          dangerouslySetInnerHTML={{ __html: post.content }}
         />
       </article>
 

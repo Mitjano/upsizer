@@ -2,9 +2,18 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { getUserByEmail, updateUser, createUsage } from "@/lib/db";
 import { sendCreditsLowEmail, sendCreditsDepletedEmail, sendFirstUploadEmail } from "@/lib/email";
+import { imageProcessingLimiter, getClientIdentifier, rateLimitResponse } from "@/lib/rate-limit";
+import { validateFileSize, validateFileType, MAX_FILE_SIZE, ACCEPTED_IMAGE_TYPES } from "@/lib/validation";
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limiting
+    const identifier = getClientIdentifier(request);
+    const { allowed, resetAt } = imageProcessingLimiter.check(identifier);
+    if (!allowed) {
+      return rateLimitResponse(resetAt);
+    }
+
     // Get authenticated user
     const session = await auth();
 
@@ -33,6 +42,29 @@ export async function POST(request: NextRequest) {
     if (!image) {
       return NextResponse.json(
         { error: "No image provided" },
+        { status: 400 }
+      );
+    }
+
+    // Validate file
+    if (!validateFileSize(image.size)) {
+      return NextResponse.json(
+        { error: `File too large. Maximum size is ${MAX_FILE_SIZE / 1024 / 1024}MB` },
+        { status: 400 }
+      );
+    }
+
+    if (!validateFileType(image.type)) {
+      return NextResponse.json(
+        { error: `Invalid file type. Accepted: ${ACCEPTED_IMAGE_TYPES.join(', ')}` },
+        { status: 400 }
+      );
+    }
+
+    // Validate scale
+    if (![2, 4, 8].includes(scale)) {
+      return NextResponse.json(
+        { error: "Invalid scale. Must be 2, 4, or 8" },
         { status: 400 }
       );
     }
