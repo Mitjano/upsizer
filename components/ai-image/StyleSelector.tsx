@@ -8,26 +8,10 @@ interface StyleSelectorProps {
   onChange: (styleId: string) => void;
 }
 
-// Group styles by category
-const STYLE_CATEGORIES = [
-  { id: 'general', name: 'General', icon: '🎯', styles: ['none'] },
-  { id: 'photography', name: 'Photography', icon: '📷', styles: ['photorealistic', 'cinematic', 'portrait', 'product'] },
-  { id: 'artistic', name: 'Artistic', icon: '🎨', styles: ['digital-art', 'anime', 'manga', '3d-render', 'pixel-art', 'watercolor', 'oil-painting', 'sketch', 'pop-art'] },
-  { id: 'special', name: 'Special', icon: '✨', styles: ['fantasy', 'sci-fi', 'vintage', 'minimalist', 'dark-moody', 'neon', 'isometric', 'sticker', 'logo'] },
-];
-
 export default function StyleSelector({ value, onChange }: StyleSelectorProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [activeCategory, setActiveCategory] = useState<string>('photography');
   const dropdownRef = useRef<HTMLDivElement>(null);
   const selectedStyle = IMAGE_STYLES.find(s => s.id === value) || IMAGE_STYLES[0];
-
-  // Get styles for active category
-  const getStylesForCategory = (categoryId: string) => {
-    const category = STYLE_CATEGORIES.find(c => c.id === categoryId);
-    if (!category) return [];
-    return IMAGE_STYLES.filter(s => category.styles.includes(s.id));
-  };
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -84,76 +68,26 @@ export default function StyleSelector({ value, onChange }: StyleSelectorProps) {
         </p>
       )}
 
-      {/* Dropdown */}
+      {/* Dropdown - All styles in a simple list */}
       {isOpen && (
-        <div className="absolute z-50 w-full mt-2 bg-gray-800 rounded-xl shadow-2xl border border-gray-700 overflow-hidden">
-          {/* Category Tabs */}
-          <div className="flex overflow-x-auto border-b border-gray-700 bg-gray-800/95">
-            {STYLE_CATEGORIES.map((cat) => (
+        <div className="absolute z-50 w-full mt-2 bg-gray-800 rounded-xl shadow-2xl border border-gray-700 overflow-visible">
+          <div className="max-h-[60vh] overflow-y-auto p-2">
+            {IMAGE_STYLES.map((style) => (
               <button
-                key={cat.id}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setActiveCategory(cat.id);
-                }}
-                className={`flex items-center gap-1.5 px-3 py-2 text-sm font-medium transition whitespace-nowrap ${
-                  activeCategory === cat.id
-                    ? 'text-orange-400 border-b-2 border-orange-500 bg-gray-700/50'
-                    : 'text-gray-400 hover:text-white hover:bg-gray-700/30'
+                key={style.id}
+                onClick={() => handleStyleSelect(style.id)}
+                className={`w-full p-3 rounded-lg text-left transition mb-1 last:mb-0 ${
+                  value === style.id
+                    ? 'bg-orange-600/20 border border-orange-500'
+                    : 'bg-gray-700/30 border border-transparent hover:bg-gray-700 hover:border-gray-600'
                 }`}
               >
-                <span>{cat.icon}</span>
-                <span>{cat.name}</span>
-                <span className="text-[10px] bg-gray-600 px-1 py-0.5 rounded">
-                  {getStylesForCategory(cat.id).length}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">{style.icon}</span>
+                  <span className="font-semibold text-white text-sm">{style.name}</span>
+                </div>
               </button>
             ))}
-          </div>
-
-          {/* Styles Grid */}
-          <div className="max-h-80 overflow-y-auto p-2">
-            <div className="grid grid-cols-2 gap-2">
-              {getStylesForCategory(activeCategory).map((style) => (
-                <button
-                  key={style.id}
-                  onClick={() => handleStyleSelect(style.id)}
-                  className={`p-3 rounded-lg text-left transition border ${
-                    value === style.id
-                      ? 'bg-orange-600/20 border-orange-500'
-                      : 'bg-gray-700/30 border-transparent hover:bg-gray-700 hover:border-gray-600'
-                  }`}
-                >
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-lg">{style.icon}</span>
-                    <span className="font-semibold text-white text-sm">{style.name}</span>
-                  </div>
-                  <p className="text-xs text-gray-400 line-clamp-1">
-                    {style.description}
-                  </p>
-                </button>
-              ))}
-            </div>
-
-            {/* No Style Option - Always visible at bottom if not in general */}
-            {activeCategory !== 'general' && (
-              <div className="mt-2 pt-2 border-t border-gray-700">
-                <button
-                  onClick={() => handleStyleSelect('none')}
-                  className={`w-full p-3 rounded-lg text-left transition border flex items-center gap-2 ${
-                    value === 'none'
-                      ? 'bg-gray-600/30 border-gray-500'
-                      : 'bg-gray-700/30 border-transparent hover:bg-gray-700'
-                  }`}
-                >
-                  <span className="text-lg">🎯</span>
-                  <div>
-                    <span className="font-semibold text-white text-sm">None</span>
-                    <p className="text-xs text-gray-400">Use prompt as-is</p>
-                  </div>
-                </button>
-              </div>
-            )}
           </div>
         </div>
       )}
