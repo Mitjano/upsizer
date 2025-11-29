@@ -15,8 +15,7 @@ const ALLOWED_ORIGINS = [
 const intlMiddleware = createIntlMiddleware({
   locales,
   defaultLocale,
-  localePrefix: 'as-needed', // EN without prefix, others with prefix
-  localeDetection: false // Disable automatic detection to prevent redirect loops
+  localePrefix: 'always' // All locales have prefix (/en, /pl, /es, /fr)
 });
 
 export default auth((req) => {

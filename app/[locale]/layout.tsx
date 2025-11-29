@@ -107,11 +107,11 @@ export default async function LocaleLayout({
       <head>
         <StructuredData />
         {/* Hreflang tags for SEO */}
-        <link rel="alternate" hrefLang="en" href="https://pixelift.pl" />
+        <link rel="alternate" hrefLang="en" href="https://pixelift.pl/en" />
         <link rel="alternate" hrefLang="pl" href="https://pixelift.pl/pl" />
         <link rel="alternate" hrefLang="es" href="https://pixelift.pl/es" />
         <link rel="alternate" hrefLang="fr" href="https://pixelift.pl/fr" />
-        <link rel="alternate" hrefLang="x-default" href="https://pixelift.pl" />
+        <link rel="alternate" hrefLang="x-default" href="https://pixelift.pl/en" />
       </head>
       <body className={inter.className}>
         <Analytics />
