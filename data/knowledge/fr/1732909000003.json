@@ -1,0 +1,20 @@
+{
+  "id": "1732909000003",
+  "title": "Ingénierie des invites - Terme du glossaire",
+  "slug": "prompt-engineering",
+  "excerpt": "L'ingénierie des invites est l'art et la science de créer des textes d'invite efficaces pour guider les modèles de génération d'images IA vers les résultats souhaités.",
+  "content": "<h2>Définition</h2><p><strong>Ingénierie des Invites</strong> est la pratique de concevoir et d'optimiser des entrées textuelles (invites) pour obtenir des résultats spécifiques et souhaités des modèles IA. Dans le contexte de la génération d'images, cela implique de créer des descriptions qui communiquent efficacement des concepts visuels aux systèmes IA.</p><h2>Pourquoi l'Ingénierie des Invites est Importante</h2><p>La qualité de votre invite impacte directement la qualité des images générées. Une invite bien conçue peut :</p><ul><li>Produire des résultats plus précis dès le premier essai</li><li>Réduire le besoin de multiples tentatives de génération</li><li>Économiser des crédits et du temps</li><li>Débloquer des capacités que vous ne saviez pas que le modèle possédait</li></ul><h2>Éléments Clés des Invites Efficaces</h2><h3>Sujet</h3><p>Définissez clairement ce que vous voulez voir : \"un golden retriever\", \"un château médiéval\", \"une femme d'affaires\"</p><h3>Style</h3><p>Spécifiez le style artistique : \"photoréaliste\", \"peinture à l'aquarelle\", \"rendu 3D\", \"style anime\"</p><h3>Composition</h3><p>Décrivez la mise en page : \"portrait en gros plan\", \"photo de paysage large\", \"vue aérienne\"</p><h3>Éclairage</h3><p>Détaillez l'ambiance : \"éclairage de l'heure dorée\", \"ombres dramatiques\", \"lumière douce et diffuse\"</p><h3>Modificateurs de Qualité</h3><p>Ajoutez des termes d'amélioration : \"très détaillé\", \"résolution 8K\", \"photographie professionnelle\"</p><h2>Techniques Courantes</h2><ul><li><strong>Termes pondérés :</strong> Certains modèles supportent (parenthèses) ou [crochets] pour accentuer ou désaccentuer des éléments</li><li><strong>Invites négatives :</strong> Précisez ce que vous ne voulez pas voir</li><li><strong>Références de style :</strong> Référez-vous à des artistes ou mouvements artistiques connus</li><li><strong>Termes techniques :</strong> Utilisez la terminologie photographique ou artistique pour un contrôle précis</li></ul><h2>Exemples</h2><p><strong>Invite de base :</strong> \"un chat assis sur un rebord de fenêtre\"</p><p><strong>Invite améliorée :</strong> \"un chat tigré orange duveteux assis sur un rebord de fenêtre en bois rustique, lumière dorée filtrant à travers des rideaux en dentelle, photoréaliste, faible profondeur de champ, palette de couleurs chaudes, qualité 8K\"</p>",
+  "category": "glossary",
+  "tags": [
+    "prompt-engineering",
+    "prompts",
+    "ai-basics",
+    "image-generation"
+  ],
+  "status": "published",
+  "createdAt": "2024-11-29T11:00:00.000Z",
+  "updatedAt": "2025-11-30T17:54:13.226Z",
+  "publishedAt": "2024-11-29T11:00:00.000Z",
+  "metaTitle": "Ingénierie des Invites - Glossaire de la Génération d'Images IA | Pixelift",
+  "metaDescription": "Découvrez l'ingénierie des invites - l'art de créer des textes d'invite efficaces pour la génération d'images IA. Conseils, techniques et exemples."
+}

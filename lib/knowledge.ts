@@ -74,7 +74,11 @@ export async function getAllArticles(locale: SupportedLocale = "en"): Promise<Kn
 }
 
 export async function getPublishedArticles(locale: SupportedLocale = "en"): Promise<KnowledgeArticle[]> {
-  const articles = await getAllArticles(locale);
+  let articles = await getAllArticles(locale);
+  // Fallback to English if no articles found for the requested locale
+  if (articles.length === 0 && locale !== "en") {
+    articles = await getAllArticles("en");
+  }
   return articles.filter((article) => article.status === "published");
 }
 

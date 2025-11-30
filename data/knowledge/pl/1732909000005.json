@@ -1,0 +1,20 @@
+{
+  "id": "1732909000005",
+  "title": "Outpainting - Rozszerzanie Obrazów Poza Ich Granice",
+  "slug": "outpainting-technique",
+  "excerpt": "Dowiedz się o outpaintingu, technice AI, która rozszerza obrazy poza ich pierwotne granice, zachowując spójność wizualną.",
+  "content": "<h2>Co to jest Outpainting?</h2><p>Outpainting to technika edycji obrazów wykorzystująca AI, która rozszerza obraz poza jego pierwotne granice. W przeciwieństwie do przycinania (które usuwa zawartość), outpainting generuje nową zawartość, która płynnie miesza się z istniejącym obrazem.</p><h2>Jak działa Outpainting</h2><p>Modele AI do outpaintingu analizują istniejący obraz, aby zrozumieć:</p><ul><li>Ogólny styl i estetykę</li><li>Paletę kolorów i oświetlenie</li><li>Tematy i kontekst</li><li>Perspektywę i kompozycję</li></ul><p>Korzystając z tego zrozumienia, AI generuje nową zawartość dla rozszerzonych obszarów, która naturalnie kontynuuje scenę.</p><h2>Typowe Zastosowania</h2><h3>Konwersja Współczynnika Kształtu</h3><p>Konwersja zdjęcia z portretowego na krajobrazowe (lub odwrotnie) dla różnych platform:</p><ul><li>Zdjęcie kwadratowe na Instagramie na miniaturę YouTube</li><li>Zdjęcie portretowe na tapetę pulpitu</li><li>Zdjęcie produktu na format banera</li></ul><h3>Poprawa Kompozycji</h3><p>Poprawa obrazów, gdzie temat jest zbyt blisko krawędzi:</p><ul><li>Dodaj przestrzeń wokół tematów</li><li>Twórz miejsce na nakładki tekstowe</li><li>Popraw pozycjonowanie według zasady trójpodziału</li></ul><h3>Kreatywne Rozszerzenie</h3><p>Odkryj, co jest \"poza kadrem\":</p><ul><li>Rozszerz krajobrazy do panoramicznych widoków</li><li>Dodaj kontekst środowiskowy do portretów</li><li>Twórz szersze sceny do opowiadania historii</li></ul><h2>Najlepsze Praktyki</h2><ol><li><strong>Zacznij od małych kroków:</strong> Rozszerzaj stopniowo, zamiast od razu w całości</li><li><strong>Weź pod uwagę kontekst:</strong> Zastanów się, co logicznie powinno znajdować się poza kadrem</li><li><strong>Dopasuj oświetlenie:</strong> Upewnij się, że rozszerzone obszary zachowują spójne oświetlenie</li><li><strong>Sprawdź krawędzie:</strong> Przyjrzyj się szwom lub niespójnościom na granicach</li></ol><h2>Outpainting vs Inpainting</h2><p><strong>Outpainting:</strong> Generuje treści poza granicami obrazu</p><p><strong>Inpainting:</strong> Zastępuje lub generuje treści wewnątrz granic obrazu</p><p>Obie techniki korzystają z podobnej technologii AI, ale służą różnym celom.</p><h2>Narzędzia do Outpaintingu</h2><p>W Pixelift, nasze narzędzie Image Expander korzysta z zaawansowanych modeli AI, takich jak FLUX Fill, aby zapewnić wysokiej jakości outpainting. Wystarczy przesłać obraz, wybrać kierunek rozszerzenia i pozwolić AI zrobić resztę.</p>",
+  "category": "techniques",
+  "tags": [
+    "outpainting",
+    "image-expansion",
+    "composition",
+    "aspect-ratio"
+  ],
+  "status": "published",
+  "createdAt": "2024-11-29T12:00:00.000Z",
+  "updatedAt": "2025-11-30T17:14:25.533Z",
+  "publishedAt": "2024-11-29T12:00:00.000Z",
+  "metaTitle": "Outpainting - Technika Rozszerzania Obrazów za Pomocą AI | Pixelift",
+  "metaDescription": "Dowiedz się o outpaintingu, technice AI, która rozszerza obrazy poza ich granice. Idealne do konwersji współczynnika kształtu i poprawy kompozycji."
+}
