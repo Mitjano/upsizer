@@ -3,6 +3,7 @@
 import dynamic from 'next/dynamic';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import ToolsLayout from '@/components/ToolsLayout';
 
@@ -35,6 +36,7 @@ export default function RemoveBackgroundPage() {
   const { data: session, status } = useSession();
   const [userRole, setUserRole] = useState<'user' | 'premium' | 'admin'>('user');
   const [credits, setCredits] = useState(0);
+  const t = useTranslations('removeBackgroundPage');
 
   useEffect(() => {
     if (session?.user?.email) {
@@ -66,35 +68,34 @@ export default function RemoveBackgroundPage() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
               </span>
-              <span className="text-blue-300">Powered by BRIA RMBG 2.0 AI</span>
+              <span className="text-blue-300">{t('badge')}</span>
             </div>
 
             {/* Headline */}
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-              <span className="text-white">AI </span>
+              <span className="text-white">{t('titlePrefix')}</span>
               <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-teal-400 bg-clip-text text-transparent">
-                Background Remover
+                {t('title')}
               </span>
             </h1>
 
             <p className="text-xl text-gray-400 mb-8 max-w-2xl mx-auto">
-              Remove backgrounds from images instantly with advanced AI technology.
-              Perfect for product photos, portraits, and e-commerce.
+              {t('subtitle')}
             </p>
 
             {/* Stats */}
             <div className="grid grid-cols-3 gap-8 max-w-lg mx-auto">
               <div className="text-center">
                 <div className="text-3xl md:text-4xl font-bold text-white">5s</div>
-                <div className="text-gray-400 text-sm mt-1">Processing</div>
+                <div className="text-gray-400 text-sm mt-1">{t('stats.processing')}</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl md:text-4xl font-bold text-white">256</div>
-                <div className="text-gray-400 text-sm mt-1">Alpha Levels</div>
+                <div className="text-gray-400 text-sm mt-1">{t('stats.alphaLevels')}</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl md:text-4xl font-bold text-white">1</div>
-                <div className="text-gray-400 text-sm mt-1">Credit/Image</div>
+                <div className="text-gray-400 text-sm mt-1">{t('stats.creditPerImage')}</div>
               </div>
             </div>
           </div>
@@ -106,7 +107,7 @@ export default function RemoveBackgroundPage() {
         <div className="bg-gray-800/50 rounded-xl border border-gray-700 p-6">
           <BackgroundRemover userRole={userRole} />
           <p className="text-sm text-gray-500 mt-4 text-center">
-            By uploading a file you agree to our Terms of Use and Privacy Policy.
+            {t('termsNotice')}
           </p>
         </div>
       </section>
@@ -117,20 +118,20 @@ export default function RemoveBackgroundPage() {
           {[
             {
               icon: '⚡',
-              title: 'Lightning Fast',
-              description: 'Remove backgrounds in 5-10 seconds with our optimized BRIA RMBG 2.0 AI model.',
+              titleKey: 'features.fast.title',
+              descKey: 'features.fast.description',
               gradient: 'from-yellow-500/20 to-orange-500/20',
             },
             {
               icon: '🎯',
-              title: 'Precise Edge Detection',
-              description: 'Advanced AI with 256 levels of transparency for perfect cutouts and natural edges.',
+              titleKey: 'features.precise.title',
+              descKey: 'features.precise.description',
               gradient: 'from-blue-500/20 to-cyan-500/20',
             },
             {
               icon: '🔒',
-              title: 'Secure & Private',
-              description: 'Your images are processed securely and automatically deleted after 24 hours.',
+              titleKey: 'features.secure.title',
+              descKey: 'features.secure.description',
               gradient: 'from-green-500/20 to-emerald-500/20',
             },
           ].map((feature, idx) => (
@@ -139,8 +140,8 @@ export default function RemoveBackgroundPage() {
               className={`bg-gradient-to-br ${feature.gradient} backdrop-blur-sm border border-gray-700 rounded-2xl p-6 hover:border-gray-600 transition`}
             >
               <div className="text-4xl mb-4">{feature.icon}</div>
-              <h3 className="text-xl font-semibold text-white mb-2">{feature.title}</h3>
-              <p className="text-gray-400">{feature.description}</p>
+              <h3 className="text-xl font-semibold text-white mb-2">{t(feature.titleKey)}</h3>
+              <p className="text-gray-400">{t(feature.descKey)}</p>
             </div>
           ))}
         </div>
@@ -150,11 +151,11 @@ export default function RemoveBackgroundPage() {
       <section className="max-w-7xl mx-auto px-6 py-12">
         <div className="text-center mb-8">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            <span className="text-white">Your </span>
-            <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">Processed Images</span>
+            <span className="text-white">{t('gallery.titlePrefix')}</span>
+            <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">{t('gallery.title')}</span>
           </h2>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-            Recent images with removed backgrounds. Available for 24 hours.
+            {t('gallery.subtitle')}
           </p>
         </div>
 
@@ -168,52 +169,46 @@ export default function RemoveBackgroundPage() {
         <div className="max-w-7xl mx-auto px-6 py-16">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              <span className="text-white">How It </span>
-              <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">Works</span>
+              <span className="text-white">{t('howItWorks.titlePrefix')}</span>
+              <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">{t('howItWorks.title')}</span>
             </h2>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">
             <div>
-              <h3 className="text-xl font-semibold mb-3 text-blue-400">BRIA RMBG 2.0 Technology</h3>
+              <h3 className="text-xl font-semibold mb-3 text-blue-400">{t('howItWorks.technology.title')}</h3>
               <p className="text-gray-400 mb-4">
-                Our background remover uses BRIA RMBG 2.0, an advanced AI model specifically trained for
-                background removal. It analyzes each pixel to determine which parts belong to the foreground
-                subject and which are background, creating perfect cutouts with natural edges.
+                {t('howItWorks.technology.description')}
               </p>
               <ul className="space-y-2 text-sm text-gray-400">
                 <li className="flex items-start gap-2">
                   <span className="text-green-400 mt-1">✓</span>
-                  <span>256 levels of alpha transparency for smooth, natural edges</span>
+                  <span>{t('howItWorks.technology.feature1')}</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-green-400 mt-1">✓</span>
-                  <span>Handles complex subjects like hair, fur, and fine details</span>
+                  <span>{t('howItWorks.technology.feature2')}</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-green-400 mt-1">✓</span>
-                  <span>Works with any type of background - solid, gradient, or complex</span>
+                  <span>{t('howItWorks.technology.feature3')}</span>
                 </li>
               </ul>
             </div>
             <div>
-              <h3 className="text-xl font-semibold mb-3 text-cyan-400">Perfect For</h3>
+              <h3 className="text-xl font-semibold mb-3 text-cyan-400">{t('howItWorks.perfectFor.title')}</h3>
               <div className="space-y-3 text-gray-400">
                 <div className="bg-gray-800/50 rounded-lg p-3">
-                  <strong className="text-white">🛍️ E-commerce:</strong> Create professional product photos
-                  with white or transparent backgrounds
+                  <strong className="text-white">🛍️ {t('howItWorks.perfectFor.ecommerce')}</strong> {t('howItWorks.perfectFor.ecommerceDesc')}
                 </div>
                 <div className="bg-gray-800/50 rounded-lg p-3">
-                  <strong className="text-white">📱 Social Media:</strong> Stand out with clean profile
-                  pictures and engaging posts
+                  <strong className="text-white">📱 {t('howItWorks.perfectFor.social')}</strong> {t('howItWorks.perfectFor.socialDesc')}
                 </div>
                 <div className="bg-gray-800/50 rounded-lg p-3">
-                  <strong className="text-white">🎨 Graphic Design:</strong> Isolate subjects for
-                  compositions, presentations, and marketing materials
+                  <strong className="text-white">🎨 {t('howItWorks.perfectFor.design')}</strong> {t('howItWorks.perfectFor.designDesc')}
                 </div>
                 <div className="bg-gray-800/50 rounded-lg p-3">
-                  <strong className="text-white">💼 Professional:</strong> Create polished headshots
-                  and portfolio images
+                  <strong className="text-white">💼 {t('howItWorks.perfectFor.professional')}</strong> {t('howItWorks.perfectFor.professionalDesc')}
                 </div>
               </div>
             </div>
@@ -225,7 +220,7 @@ export default function RemoveBackgroundPage() {
       <section className="max-w-7xl mx-auto px-6 py-16">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
-            Popular Use Cases
+            {t('useCases.title')}
           </h2>
         </div>
 
@@ -233,46 +228,46 @@ export default function RemoveBackgroundPage() {
           {[
             {
               icon: '🛒',
-              title: 'E-commerce Products',
-              description: 'Create consistent, professional product images for your online store.',
-              detail: 'Perfect for: Shopify, Amazon, eBay, Etsy',
+              titleKey: 'useCases.ecommerce.title',
+              descKey: 'useCases.ecommerce.description',
+              detailKey: 'useCases.ecommerce.detail',
             },
             {
               icon: '📸',
-              title: 'Profile Pictures',
-              description: 'Create professional headshots for LinkedIn, resumes, and business cards.',
-              detail: 'Perfect for: LinkedIn, CV, business profiles',
+              titleKey: 'useCases.profile.title',
+              descKey: 'useCases.profile.description',
+              detailKey: 'useCases.profile.detail',
             },
             {
               icon: '🎨',
-              title: 'Design Projects',
-              description: 'Isolate subjects for graphic design, create collages, or combine elements.',
-              detail: 'Perfect for: Photoshop, Canva, presentations',
+              titleKey: 'useCases.design.title',
+              descKey: 'useCases.design.description',
+              detailKey: 'useCases.design.detail',
             },
             {
               icon: '📱',
-              title: 'Social Media Content',
-              description: 'Create eye-catching posts, stories, and ads that stand out.',
-              detail: 'Perfect for: Instagram, Facebook, TikTok',
+              titleKey: 'useCases.social.title',
+              descKey: 'useCases.social.description',
+              detailKey: 'useCases.social.detail',
             },
             {
               icon: '🏠',
-              title: 'Real Estate',
-              description: 'Enhance property photos and create clean marketing materials.',
-              detail: 'Perfect for: Listings, brochures, staging',
+              titleKey: 'useCases.realEstate.title',
+              descKey: 'useCases.realEstate.description',
+              detailKey: 'useCases.realEstate.detail',
             },
             {
               icon: '💍',
-              title: 'Wedding & Events',
-              description: 'Isolate subjects from event photos for invitations and prints.',
-              detail: 'Perfect for: Invitations, albums, prints',
+              titleKey: 'useCases.wedding.title',
+              descKey: 'useCases.wedding.description',
+              detailKey: 'useCases.wedding.detail',
             },
           ].map((useCase, idx) => (
             <div key={idx} className="bg-gray-800/30 rounded-xl border border-gray-700 p-6 hover:border-blue-500/50 transition">
               <div className="text-3xl mb-3">{useCase.icon}</div>
-              <h3 className="text-lg font-semibold mb-2 text-white">{useCase.title}</h3>
-              <p className="text-sm text-gray-400 mb-3">{useCase.description}</p>
-              <div className="text-xs text-gray-500">{useCase.detail}</div>
+              <h3 className="text-lg font-semibold mb-2 text-white">{t(useCase.titleKey)}</h3>
+              <p className="text-sm text-gray-400 mb-3">{t(useCase.descKey)}</p>
+              <div className="text-xs text-gray-500">{t(useCase.detailKey)}</div>
             </div>
           ))}
         </div>
@@ -283,48 +278,40 @@ export default function RemoveBackgroundPage() {
         <div className="grid md:grid-cols-2 gap-6">
           <div className="bg-gradient-to-br from-blue-900/20 to-cyan-900/20 rounded-xl border border-blue-700/50 p-6">
             <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-              <span>🎯</span> Download Options
+              <span>🎯</span> {t('downloadOptions.title')}
             </h3>
             <div className="space-y-3 text-gray-300">
               <div>
-                <strong className="text-white">Low Resolution (512px):</strong> Perfect for web use,
-                social media, and quick previews - available for free users
+                <strong className="text-white">{t('downloadOptions.low')}</strong> {t('downloadOptions.lowDesc')}
               </div>
               <div>
-                <strong className="text-white">Medium Resolution (1024px):</strong> Great balance for
-                most professional uses - Premium only
+                <strong className="text-white">{t('downloadOptions.medium')}</strong> {t('downloadOptions.mediumDesc')}
               </div>
               <div>
-                <strong className="text-white">High Resolution (2048px):</strong> Excellent for printing
-                and large displays - Premium only
+                <strong className="text-white">{t('downloadOptions.high')}</strong> {t('downloadOptions.highDesc')}
               </div>
               <div>
-                <strong className="text-white">Original Resolution:</strong> Keep the exact dimensions
-                of your input image - Premium only
+                <strong className="text-white">{t('downloadOptions.original')}</strong> {t('downloadOptions.originalDesc')}
               </div>
             </div>
           </div>
 
           <div className="bg-gradient-to-br from-purple-900/20 to-pink-900/20 rounded-xl border border-purple-700/50 p-6">
             <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-              <span>📋</span> Format & Quality
+              <span>📋</span> {t('formatQuality.title')}
             </h3>
             <div className="space-y-3 text-gray-300">
               <div>
-                <strong className="text-white">PNG Format:</strong> Transparent background, perfect for
-                overlays and web graphics - available for all users
+                <strong className="text-white">{t('formatQuality.png')}</strong> {t('formatQuality.pngDesc')}
               </div>
               <div>
-                <strong className="text-white">JPG Format:</strong> White background, smaller file size,
-                great for e-commerce - Premium only
+                <strong className="text-white">{t('formatQuality.jpg')}</strong> {t('formatQuality.jpgDesc')}
               </div>
               <div>
-                <strong className="text-white">Processing Time:</strong> Most images processed in 5-10
-                seconds with enterprise-grade servers
+                <strong className="text-white">{t('formatQuality.processingTime')}</strong> {t('formatQuality.processingTimeDesc')}
               </div>
               <div>
-                <strong className="text-white">Credit Cost:</strong> 1 credit per image removal, includes
-                unlimited downloads in 24 hours
+                <strong className="text-white">{t('formatQuality.creditCost')}</strong> {t('formatQuality.creditCostDesc')}
               </div>
             </div>
           </div>
@@ -334,26 +321,26 @@ export default function RemoveBackgroundPage() {
       {/* Tips Section */}
       <section className="max-w-7xl mx-auto px-6 py-12">
         <div className="bg-gray-800/20 rounded-xl border border-gray-700 p-8">
-          <h2 className="text-2xl font-bold mb-6">💡 Tips for Perfect Background Removal</h2>
+          <h2 className="text-2xl font-bold mb-6">💡 {t('tips.title')}</h2>
           <div className="grid md:grid-cols-2 gap-6 text-gray-400">
             <div>
-              <h4 className="font-semibold text-white mb-2">✓ Best Practices:</h4>
+              <h4 className="font-semibold text-white mb-2">✓ {t('tips.bestPractices.title')}</h4>
               <ul className="space-y-2 text-sm">
-                <li>• Use well-lit photos with clear subject definition</li>
-                <li>• Ensure good contrast between subject and background</li>
-                <li>• Take photos with the subject in focus</li>
-                <li>• Avoid shadows that blend into the subject</li>
-                <li>• Use the highest resolution available for better results</li>
+                <li>• {t('tips.bestPractices.tip1')}</li>
+                <li>• {t('tips.bestPractices.tip2')}</li>
+                <li>• {t('tips.bestPractices.tip3')}</li>
+                <li>• {t('tips.bestPractices.tip4')}</li>
+                <li>• {t('tips.bestPractices.tip5')}</li>
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold text-white mb-2">⚡ Pro Tips:</h4>
+              <h4 className="font-semibold text-white mb-2">⚡ {t('tips.proTips.title')}</h4>
               <ul className="space-y-2 text-sm">
-                <li>• For hair and fur, use original resolution (Premium)</li>
-                <li>• PNG format preserves transparency for overlays</li>
-                <li>• JPG format with white background is great for print</li>
-                <li>• Download multiple resolutions for different uses</li>
-                <li>• Images remain available for 24 hours after processing</li>
+                <li>• {t('tips.proTips.tip1')}</li>
+                <li>• {t('tips.proTips.tip2')}</li>
+                <li>• {t('tips.proTips.tip3')}</li>
+                <li>• {t('tips.proTips.tip4')}</li>
+                <li>• {t('tips.proTips.tip5')}</li>
               </ul>
             </div>
           </div>
@@ -364,24 +351,24 @@ export default function RemoveBackgroundPage() {
       <section className="max-w-7xl mx-auto px-6 py-16">
         <div className="bg-gradient-to-r from-blue-900/50 to-cyan-900/50 border border-blue-500/30 rounded-2xl p-8 md:p-12 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
-            Ready to Remove Backgrounds?
+            {t('cta.title')}
           </h2>
           <p className="text-gray-300 text-lg max-w-2xl mx-auto mb-8">
-            Start with 3 free credits. No credit card required.
+            {t('cta.subtitle')}
           </p>
           {!session ? (
             <Link
               href="/auth/signin"
               className="inline-block px-8 py-4 bg-white text-gray-900 hover:bg-gray-100 rounded-xl font-semibold text-lg transition"
             >
-              Get Started Free
+              {t('cta.getStarted')}
             </Link>
           ) : (
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
               className="px-8 py-4 bg-white text-gray-900 hover:bg-gray-100 rounded-xl font-semibold text-lg transition"
             >
-              Start Removing Backgrounds
+              {t('cta.startRemoving')}
             </button>
           )}
         </div>

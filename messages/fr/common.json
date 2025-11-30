@@ -1358,5 +1358,138 @@
       "getCredits": "Obtenir des Crédits",
       "exploreTools": "Explorer Tous les Outils"
     }
+  },
+  "removeBackgroundPage": {
+    "badge": "Propulsé par BRIA RMBG 2.0 AI",
+    "title": "Suppression de Fond",
+    "titlePrefix": "IA ",
+    "subtitle": "Supprimez les fonds des images instantanément avec une technologie IA avancée. Parfait pour les photos de produits, portraits et e-commerce.",
+    "stats": {
+      "processing": "Traitement",
+      "alphaLevels": "Niveaux Alpha",
+      "creditPerImage": "Crédit/Image"
+    },
+    "termsNotice": "En téléchargeant un fichier, vous acceptez nos Conditions d'Utilisation et notre Politique de Confidentialité.",
+    "features": {
+      "fast": {
+        "title": "Ultra Rapide",
+        "description": "Supprimez les fonds en 5-10 secondes avec notre modèle BRIA RMBG 2.0 AI optimisé."
+      },
+      "precise": {
+        "title": "Détection Précise des Bords",
+        "description": "IA avancée avec 256 niveaux de transparence pour des découpes parfaites et des bords naturels."
+      },
+      "secure": {
+        "title": "Sécurisé et Privé",
+        "description": "Vos images sont traitées en toute sécurité et automatiquement supprimées après 24 heures."
+      }
+    },
+    "gallery": {
+      "title": "Images Traitées",
+      "titlePrefix": "Vos ",
+      "subtitle": "Images récentes avec fonds supprimés. Disponibles pendant 24 heures."
+    },
+    "howItWorks": {
+      "title": "Fonctionne",
+      "titlePrefix": "Comment Ça ",
+      "technology": {
+        "title": "Technologie BRIA RMBG 2.0",
+        "description": "Notre outil de suppression de fond utilise BRIA RMBG 2.0, un modèle IA avancé spécifiquement entraîné pour la suppression de fond. Il analyse chaque pixel pour déterminer quelles parties appartiennent au sujet au premier plan et lesquelles sont le fond, créant des découpes parfaites avec des bords naturels.",
+        "feature1": "256 niveaux de transparence alpha pour des bords lisses et naturels",
+        "feature2": "Gère les sujets complexes comme les cheveux, la fourrure et les détails fins",
+        "feature3": "Fonctionne avec tout type de fond - uni, dégradé ou complexe"
+      },
+      "perfectFor": {
+        "title": "Parfait Pour",
+        "ecommerce": "E-commerce:",
+        "ecommerceDesc": "Créez des photos de produits professionnelles avec des fonds blancs ou transparents",
+        "social": "Réseaux Sociaux:",
+        "socialDesc": "Démarquez-vous avec des photos de profil soignées et des publications engageantes",
+        "design": "Design Graphique:",
+        "designDesc": "Isolez des sujets pour des compositions, présentations et matériaux marketing",
+        "professional": "Professionnel:",
+        "professionalDesc": "Créez des portraits soignés et des images de portfolio"
+      }
+    },
+    "useCases": {
+      "title": "Cas d'Utilisation Populaires",
+      "ecommerce": {
+        "title": "Produits E-commerce",
+        "description": "Créez des images de produits cohérentes et professionnelles pour votre boutique en ligne.",
+        "detail": "Parfait pour: Shopify, Amazon, eBay, Etsy"
+      },
+      "profile": {
+        "title": "Photos de Profil",
+        "description": "Créez des portraits professionnels pour LinkedIn, CV et cartes de visite.",
+        "detail": "Parfait pour: LinkedIn, CV, profils professionnels"
+      },
+      "design": {
+        "title": "Projets de Design",
+        "description": "Isolez des sujets pour le design graphique, créez des collages ou combinez des éléments.",
+        "detail": "Parfait pour: Photoshop, Canva, présentations"
+      },
+      "social": {
+        "title": "Contenu Réseaux Sociaux",
+        "description": "Créez des publications, stories et annonces qui se démarquent.",
+        "detail": "Parfait pour: Instagram, Facebook, TikTok"
+      },
+      "realEstate": {
+        "title": "Immobilier",
+        "description": "Améliorez les photos de propriétés et créez des supports marketing soignés.",
+        "detail": "Parfait pour: Annonces, brochures, staging"
+      },
+      "wedding": {
+        "title": "Mariages et Événements",
+        "description": "Isolez des sujets de photos d'événements pour invitations et impressions.",
+        "detail": "Parfait pour: Invitations, albums, impressions"
+      }
+    },
+    "downloadOptions": {
+      "title": "Options de Téléchargement",
+      "low": "Basse Résolution (512px):",
+      "lowDesc": "Parfait pour le web, les réseaux sociaux et les aperçus rapides - disponible pour les utilisateurs gratuits",
+      "medium": "Résolution Moyenne (1024px):",
+      "mediumDesc": "Bon équilibre pour la plupart des usages professionnels - Premium uniquement",
+      "high": "Haute Résolution (2048px):",
+      "highDesc": "Excellent pour l'impression et les grands écrans - Premium uniquement",
+      "original": "Résolution Originale:",
+      "originalDesc": "Conservez les dimensions exactes de votre image d'entrée - Premium uniquement"
+    },
+    "formatQuality": {
+      "title": "Format et Qualité",
+      "png": "Format PNG:",
+      "pngDesc": "Fond transparent, parfait pour les superpositions et graphiques web - disponible pour tous les utilisateurs",
+      "jpg": "Format JPG:",
+      "jpgDesc": "Fond blanc, taille de fichier réduite, idéal pour l'e-commerce - Premium uniquement",
+      "processingTime": "Temps de Traitement:",
+      "processingTimeDesc": "La plupart des images traitées en 5-10 secondes avec des serveurs de niveau entreprise",
+      "creditCost": "Coût en Crédits:",
+      "creditCostDesc": "1 crédit par suppression d'image, téléchargements illimités inclus pendant 24 heures"
+    },
+    "tips": {
+      "title": "Conseils pour une Suppression de Fond Parfaite",
+      "bestPractices": {
+        "title": "Meilleures Pratiques:",
+        "tip1": "Utilisez des photos bien éclairées avec une définition claire du sujet",
+        "tip2": "Assurez un bon contraste entre le sujet et le fond",
+        "tip3": "Prenez des photos avec le sujet net",
+        "tip4": "Évitez les ombres qui se fondent dans le sujet",
+        "tip5": "Utilisez la plus haute résolution disponible pour de meilleurs résultats"
+      },
+      "proTips": {
+        "title": "Astuces Pro:",
+        "tip1": "Pour les cheveux et la fourrure, utilisez la résolution originale (Premium)",
+        "tip2": "Le format PNG préserve la transparence pour les superpositions",
+        "tip3": "Le format JPG avec fond blanc est idéal pour l'impression",
+        "tip4": "Téléchargez plusieurs résolutions pour différents usages",
+        "tip5": "Les images restent disponibles pendant 24 heures après le traitement"
+      }
+    },
+    "cta": {
+      "title": "Prêt à Supprimer les Fonds?",
+      "subtitle": "Commencez avec 3 crédits gratuits. Aucune carte de crédit requise.",
+      "getStarted": "Commencer Gratuitement",
+      "startRemoving": "Commencer à Supprimer les Fonds"
+    }
   }
 }

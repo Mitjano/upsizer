@@ -1275,5 +1275,138 @@
       "getCredits": "Get Credits",
       "exploreTools": "Explore All Tools"
     }
+  },
+  "removeBackgroundPage": {
+    "badge": "Powered by BRIA RMBG 2.0 AI",
+    "title": "Background Remover",
+    "titlePrefix": "AI ",
+    "subtitle": "Remove backgrounds from images instantly with advanced AI technology. Perfect for product photos, portraits, and e-commerce.",
+    "stats": {
+      "processing": "Processing",
+      "alphaLevels": "Alpha Levels",
+      "creditPerImage": "Credit/Image"
+    },
+    "termsNotice": "By uploading a file you agree to our Terms of Use and Privacy Policy.",
+    "features": {
+      "fast": {
+        "title": "Lightning Fast",
+        "description": "Remove backgrounds in 5-10 seconds with our optimized BRIA RMBG 2.0 AI model."
+      },
+      "precise": {
+        "title": "Precise Edge Detection",
+        "description": "Advanced AI with 256 levels of transparency for perfect cutouts and natural edges."
+      },
+      "secure": {
+        "title": "Secure & Private",
+        "description": "Your images are processed securely and automatically deleted after 24 hours."
+      }
+    },
+    "gallery": {
+      "title": "Processed Images",
+      "titlePrefix": "Your ",
+      "subtitle": "Recent images with removed backgrounds. Available for 24 hours."
+    },
+    "howItWorks": {
+      "title": "Works",
+      "titlePrefix": "How It ",
+      "technology": {
+        "title": "BRIA RMBG 2.0 Technology",
+        "description": "Our background remover uses BRIA RMBG 2.0, an advanced AI model specifically trained for background removal. It analyzes each pixel to determine which parts belong to the foreground subject and which are background, creating perfect cutouts with natural edges.",
+        "feature1": "256 levels of alpha transparency for smooth, natural edges",
+        "feature2": "Handles complex subjects like hair, fur, and fine details",
+        "feature3": "Works with any type of background - solid, gradient, or complex"
+      },
+      "perfectFor": {
+        "title": "Perfect For",
+        "ecommerce": "E-commerce:",
+        "ecommerceDesc": "Create professional product photos with white or transparent backgrounds",
+        "social": "Social Media:",
+        "socialDesc": "Stand out with clean profile pictures and engaging posts",
+        "design": "Graphic Design:",
+        "designDesc": "Isolate subjects for compositions, presentations, and marketing materials",
+        "professional": "Professional:",
+        "professionalDesc": "Create polished headshots and portfolio images"
+      }
+    },
+    "useCases": {
+      "title": "Popular Use Cases",
+      "ecommerce": {
+        "title": "E-commerce Products",
+        "description": "Create consistent, professional product images for your online store.",
+        "detail": "Perfect for: Shopify, Amazon, eBay, Etsy"
+      },
+      "profile": {
+        "title": "Profile Pictures",
+        "description": "Create professional headshots for LinkedIn, resumes, and business cards.",
+        "detail": "Perfect for: LinkedIn, CV, business profiles"
+      },
+      "design": {
+        "title": "Design Projects",
+        "description": "Isolate subjects for graphic design, create collages, or combine elements.",
+        "detail": "Perfect for: Photoshop, Canva, presentations"
+      },
+      "social": {
+        "title": "Social Media Content",
+        "description": "Create eye-catching posts, stories, and ads that stand out.",
+        "detail": "Perfect for: Instagram, Facebook, TikTok"
+      },
+      "realEstate": {
+        "title": "Real Estate",
+        "description": "Enhance property photos and create clean marketing materials.",
+        "detail": "Perfect for: Listings, brochures, staging"
+      },
+      "wedding": {
+        "title": "Wedding & Events",
+        "description": "Isolate subjects from event photos for invitations and prints.",
+        "detail": "Perfect for: Invitations, albums, prints"
+      }
+    },
+    "downloadOptions": {
+      "title": "Download Options",
+      "low": "Low Resolution (512px):",
+      "lowDesc": "Perfect for web use, social media, and quick previews - available for free users",
+      "medium": "Medium Resolution (1024px):",
+      "mediumDesc": "Great balance for most professional uses - Premium only",
+      "high": "High Resolution (2048px):",
+      "highDesc": "Excellent for printing and large displays - Premium only",
+      "original": "Original Resolution:",
+      "originalDesc": "Keep the exact dimensions of your input image - Premium only"
+    },
+    "formatQuality": {
+      "title": "Format & Quality",
+      "png": "PNG Format:",
+      "pngDesc": "Transparent background, perfect for overlays and web graphics - available for all users",
+      "jpg": "JPG Format:",
+      "jpgDesc": "White background, smaller file size, great for e-commerce - Premium only",
+      "processingTime": "Processing Time:",
+      "processingTimeDesc": "Most images processed in 5-10 seconds with enterprise-grade servers",
+      "creditCost": "Credit Cost:",
+      "creditCostDesc": "1 credit per image removal, includes unlimited downloads in 24 hours"
+    },
+    "tips": {
+      "title": "Tips for Perfect Background Removal",
+      "bestPractices": {
+        "title": "Best Practices:",
+        "tip1": "Use well-lit photos with clear subject definition",
+        "tip2": "Ensure good contrast between subject and background",
+        "tip3": "Take photos with the subject in focus",
+        "tip4": "Avoid shadows that blend into the subject",
+        "tip5": "Use the highest resolution available for better results"
+      },
+      "proTips": {
+        "title": "Pro Tips:",
+        "tip1": "For hair and fur, use original resolution (Premium)",
+        "tip2": "PNG format preserves transparency for overlays",
+        "tip3": "JPG format with white background is great for print",
+        "tip4": "Download multiple resolutions for different uses",
+        "tip5": "Images remain available for 24 hours after processing"
+      }
+    },
+    "cta": {
+      "title": "Ready to Remove Backgrounds?",
+      "subtitle": "Start with 3 free credits. No credit card required.",
+      "getStarted": "Get Started Free",
+      "startRemoving": "Start Removing Backgrounds"
+    }
   }
 }

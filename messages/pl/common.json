@@ -1275,5 +1275,138 @@
       "getCredits": "Zdobądź Kredyty",
       "exploreTools": "Odkryj Wszystkie Narzędzia"
     }
+  },
+  "removeBackgroundPage": {
+    "badge": "Napędzane przez BRIA RMBG 2.0 AI",
+    "title": "Usuwanie Tła",
+    "titlePrefix": "AI ",
+    "subtitle": "Usuń tła z obrazów natychmiast dzięki zaawansowanej technologii AI. Idealne do zdjęć produktów, portretów i e-commerce.",
+    "stats": {
+      "processing": "Przetwarzanie",
+      "alphaLevels": "Poziomy Alfa",
+      "creditPerImage": "Kredyt/Obraz"
+    },
+    "termsNotice": "Przesyłając plik, akceptujesz nasze Warunki Użytkowania i Politykę Prywatności.",
+    "features": {
+      "fast": {
+        "title": "Błyskawicznie",
+        "description": "Usuń tła w 5-10 sekund dzięki zoptymalizowanemu modelowi BRIA RMBG 2.0 AI."
+      },
+      "precise": {
+        "title": "Precyzyjne Wykrywanie Krawędzi",
+        "description": "Zaawansowane AI z 256 poziomami przezroczystości dla idealnych wycinków i naturalnych krawędzi."
+      },
+      "secure": {
+        "title": "Bezpieczne i Prywatne",
+        "description": "Twoje obrazy są przetwarzane bezpiecznie i automatycznie usuwane po 24 godzinach."
+      }
+    },
+    "gallery": {
+      "title": "Przetworzone Obrazy",
+      "titlePrefix": "Twoje ",
+      "subtitle": "Ostatnie obrazy z usuniętymi tłami. Dostępne przez 24 godziny."
+    },
+    "howItWorks": {
+      "title": "Działa",
+      "titlePrefix": "Jak To ",
+      "technology": {
+        "title": "Technologia BRIA RMBG 2.0",
+        "description": "Nasze narzędzie do usuwania tła wykorzystuje BRIA RMBG 2.0, zaawansowany model AI specjalnie wytrenowany do usuwania tła. Analizuje każdy piksel, aby określić, które części należą do obiektu na pierwszym planie, a które są tłem, tworząc idealne wycięcia z naturalnymi krawędziami.",
+        "feature1": "256 poziomów przezroczystości alfa dla gładkich, naturalnych krawędzi",
+        "feature2": "Obsługuje złożone obiekty jak włosy, futro i drobne detale",
+        "feature3": "Działa z każdym rodzajem tła - jednolitym, gradientowym lub złożonym"
+      },
+      "perfectFor": {
+        "title": "Idealne Dla",
+        "ecommerce": "E-commerce:",
+        "ecommerceDesc": "Twórz profesjonalne zdjęcia produktów z białym lub przezroczystym tłem",
+        "social": "Social Media:",
+        "socialDesc": "Wyróżnij się czystymi zdjęciami profilowymi i angażującymi postami",
+        "design": "Projektowanie Graficzne:",
+        "designDesc": "Izoluj obiekty do kompozycji, prezentacji i materiałów marketingowych",
+        "professional": "Profesjonalne:",
+        "professionalDesc": "Twórz dopracowane portrety i obrazy do portfolio"
+      }
+    },
+    "useCases": {
+      "title": "Popularne Zastosowania",
+      "ecommerce": {
+        "title": "Produkty E-commerce",
+        "description": "Twórz spójne, profesjonalne zdjęcia produktów dla swojego sklepu internetowego.",
+        "detail": "Idealne dla: Shopify, Amazon, eBay, Etsy"
+      },
+      "profile": {
+        "title": "Zdjęcia Profilowe",
+        "description": "Twórz profesjonalne portrety do LinkedIn, CV i wizytówek.",
+        "detail": "Idealne dla: LinkedIn, CV, profile biznesowe"
+      },
+      "design": {
+        "title": "Projekty Graficzne",
+        "description": "Izoluj obiekty do projektów graficznych, twórz kolaże lub łącz elementy.",
+        "detail": "Idealne dla: Photoshop, Canva, prezentacje"
+      },
+      "social": {
+        "title": "Treści Social Media",
+        "description": "Twórz przyciągające uwagę posty, stories i reklamy.",
+        "detail": "Idealne dla: Instagram, Facebook, TikTok"
+      },
+      "realEstate": {
+        "title": "Nieruchomości",
+        "description": "Ulepszaj zdjęcia nieruchomości i twórz czyste materiały marketingowe.",
+        "detail": "Idealne dla: Ogłoszenia, broszury, staging"
+      },
+      "wedding": {
+        "title": "Śluby i Wydarzenia",
+        "description": "Izoluj obiekty ze zdjęć eventowych do zaproszeń i wydruków.",
+        "detail": "Idealne dla: Zaproszenia, albumy, wydruki"
+      }
+    },
+    "downloadOptions": {
+      "title": "Opcje Pobierania",
+      "low": "Niska Rozdzielczość (512px):",
+      "lowDesc": "Idealna do użytku internetowego, mediów społecznościowych i szybkich podglądów - dostępna dla darmowych użytkowników",
+      "medium": "Średnia Rozdzielczość (1024px):",
+      "mediumDesc": "Dobry balans dla większości profesjonalnych zastosowań - tylko Premium",
+      "high": "Wysoka Rozdzielczość (2048px):",
+      "highDesc": "Doskonała do druku i dużych wyświetlaczy - tylko Premium",
+      "original": "Oryginalna Rozdzielczość:",
+      "originalDesc": "Zachowaj dokładne wymiary obrazu wejściowego - tylko Premium"
+    },
+    "formatQuality": {
+      "title": "Format i Jakość",
+      "png": "Format PNG:",
+      "pngDesc": "Przezroczyste tło, idealne do nakładek i grafik internetowych - dostępne dla wszystkich użytkowników",
+      "jpg": "Format JPG:",
+      "jpgDesc": "Białe tło, mniejszy rozmiar pliku, świetne do e-commerce - tylko Premium",
+      "processingTime": "Czas Przetwarzania:",
+      "processingTimeDesc": "Większość obrazów przetwarzana w 5-10 sekund na serwerach klasy enterprise",
+      "creditCost": "Koszt Kredytów:",
+      "creditCostDesc": "1 kredyt za usunięcie tła z obrazu, nielimitowane pobierania przez 24 godziny"
+    },
+    "tips": {
+      "title": "Wskazówki dla Idealnego Usunięcia Tła",
+      "bestPractices": {
+        "title": "Najlepsze Praktyki:",
+        "tip1": "Używaj dobrze oświetlonych zdjęć z wyraźnie zdefiniowanym obiektem",
+        "tip2": "Zapewnij dobry kontrast między obiektem a tłem",
+        "tip3": "Rób zdjęcia z obiektem w ostrości",
+        "tip4": "Unikaj cieni, które zlewają się z obiektem",
+        "tip5": "Używaj najwyższej dostępnej rozdzielczości dla lepszych rezultatów"
+      },
+      "proTips": {
+        "title": "Porady Pro:",
+        "tip1": "Dla włosów i futra używaj oryginalnej rozdzielczości (Premium)",
+        "tip2": "Format PNG zachowuje przezroczystość do nakładek",
+        "tip3": "Format JPG z białym tłem jest świetny do druku",
+        "tip4": "Pobieraj różne rozdzielczości do różnych zastosowań",
+        "tip5": "Obrazy pozostają dostępne przez 24 godziny po przetworzeniu"
+      }
+    },
+    "cta": {
+      "title": "Gotowy Usuwać Tła?",
+      "subtitle": "Zacznij z 3 darmowymi kredytami. Bez karty kredytowej.",
+      "getStarted": "Zacznij Za Darmo",
+      "startRemoving": "Zacznij Usuwać Tła"
+    }
   }
 }

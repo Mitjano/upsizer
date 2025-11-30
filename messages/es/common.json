@@ -1275,5 +1275,138 @@
       "getCredits": "Obtener Créditos",
       "exploreTools": "Explorar Todas las Herramientas"
     }
+  },
+  "removeBackgroundPage": {
+    "badge": "Impulsado por BRIA RMBG 2.0 AI",
+    "title": "Eliminador de Fondos",
+    "titlePrefix": "IA ",
+    "subtitle": "Elimina fondos de imágenes al instante con tecnología IA avanzada. Perfecto para fotos de productos, retratos y e-commerce.",
+    "stats": {
+      "processing": "Procesamiento",
+      "alphaLevels": "Niveles Alfa",
+      "creditPerImage": "Crédito/Imagen"
+    },
+    "termsNotice": "Al subir un archivo aceptas nuestros Términos de Uso y Política de Privacidad.",
+    "features": {
+      "fast": {
+        "title": "Ultra Rápido",
+        "description": "Elimina fondos en 5-10 segundos con nuestro modelo BRIA RMBG 2.0 AI optimizado."
+      },
+      "precise": {
+        "title": "Detección Precisa de Bordes",
+        "description": "IA avanzada con 256 niveles de transparencia para recortes perfectos y bordes naturales."
+      },
+      "secure": {
+        "title": "Seguro y Privado",
+        "description": "Tus imágenes se procesan de forma segura y se eliminan automáticamente después de 24 horas."
+      }
+    },
+    "gallery": {
+      "title": "Imágenes Procesadas",
+      "titlePrefix": "Tus ",
+      "subtitle": "Imágenes recientes con fondos eliminados. Disponibles por 24 horas."
+    },
+    "howItWorks": {
+      "title": "Funciona",
+      "titlePrefix": "Cómo ",
+      "technology": {
+        "title": "Tecnología BRIA RMBG 2.0",
+        "description": "Nuestro eliminador de fondos usa BRIA RMBG 2.0, un modelo IA avanzado específicamente entrenado para eliminación de fondos. Analiza cada píxel para determinar qué partes pertenecen al sujeto en primer plano y cuáles son fondo, creando recortes perfectos con bordes naturales.",
+        "feature1": "256 niveles de transparencia alfa para bordes suaves y naturales",
+        "feature2": "Maneja sujetos complejos como cabello, pelo y detalles finos",
+        "feature3": "Funciona con cualquier tipo de fondo - sólido, degradado o complejo"
+      },
+      "perfectFor": {
+        "title": "Perfecto Para",
+        "ecommerce": "E-commerce:",
+        "ecommerceDesc": "Crea fotos de productos profesionales con fondos blancos o transparentes",
+        "social": "Redes Sociales:",
+        "socialDesc": "Destaca con fotos de perfil limpias y publicaciones atractivas",
+        "design": "Diseño Gráfico:",
+        "designDesc": "Aísla sujetos para composiciones, presentaciones y materiales de marketing",
+        "professional": "Profesional:",
+        "professionalDesc": "Crea retratos pulidos e imágenes de portafolio"
+      }
+    },
+    "useCases": {
+      "title": "Casos de Uso Populares",
+      "ecommerce": {
+        "title": "Productos E-commerce",
+        "description": "Crea imágenes de productos consistentes y profesionales para tu tienda online.",
+        "detail": "Perfecto para: Shopify, Amazon, eBay, Etsy"
+      },
+      "profile": {
+        "title": "Fotos de Perfil",
+        "description": "Crea retratos profesionales para LinkedIn, currículum y tarjetas de presentación.",
+        "detail": "Perfecto para: LinkedIn, CV, perfiles de negocio"
+      },
+      "design": {
+        "title": "Proyectos de Diseño",
+        "description": "Aísla sujetos para diseño gráfico, crea collages o combina elementos.",
+        "detail": "Perfecto para: Photoshop, Canva, presentaciones"
+      },
+      "social": {
+        "title": "Contenido para Redes Sociales",
+        "description": "Crea publicaciones, historias y anuncios que destaquen.",
+        "detail": "Perfecto para: Instagram, Facebook, TikTok"
+      },
+      "realEstate": {
+        "title": "Bienes Raíces",
+        "description": "Mejora fotos de propiedades y crea materiales de marketing limpios.",
+        "detail": "Perfecto para: Listados, folletos, staging"
+      },
+      "wedding": {
+        "title": "Bodas y Eventos",
+        "description": "Aísla sujetos de fotos de eventos para invitaciones e impresiones.",
+        "detail": "Perfecto para: Invitaciones, álbumes, impresiones"
+      }
+    },
+    "downloadOptions": {
+      "title": "Opciones de Descarga",
+      "low": "Baja Resolución (512px):",
+      "lowDesc": "Perfecto para uso web, redes sociales y vistas previas rápidas - disponible para usuarios gratuitos",
+      "medium": "Resolución Media (1024px):",
+      "mediumDesc": "Buen equilibrio para la mayoría de usos profesionales - Solo Premium",
+      "high": "Alta Resolución (2048px):",
+      "highDesc": "Excelente para impresión y pantallas grandes - Solo Premium",
+      "original": "Resolución Original:",
+      "originalDesc": "Mantén las dimensiones exactas de tu imagen de entrada - Solo Premium"
+    },
+    "formatQuality": {
+      "title": "Formato y Calidad",
+      "png": "Formato PNG:",
+      "pngDesc": "Fondo transparente, perfecto para superposiciones y gráficos web - disponible para todos los usuarios",
+      "jpg": "Formato JPG:",
+      "jpgDesc": "Fondo blanco, tamaño de archivo menor, genial para e-commerce - Solo Premium",
+      "processingTime": "Tiempo de Procesamiento:",
+      "processingTimeDesc": "La mayoría de imágenes procesadas en 5-10 segundos con servidores de nivel empresarial",
+      "creditCost": "Costo de Créditos:",
+      "creditCostDesc": "1 crédito por eliminación de imagen, incluye descargas ilimitadas en 24 horas"
+    },
+    "tips": {
+      "title": "Consejos para Eliminación Perfecta de Fondos",
+      "bestPractices": {
+        "title": "Mejores Prácticas:",
+        "tip1": "Usa fotos bien iluminadas con definición clara del sujeto",
+        "tip2": "Asegura buen contraste entre sujeto y fondo",
+        "tip3": "Toma fotos con el sujeto enfocado",
+        "tip4": "Evita sombras que se mezclen con el sujeto",
+        "tip5": "Usa la mayor resolución disponible para mejores resultados"
+      },
+      "proTips": {
+        "title": "Consejos Pro:",
+        "tip1": "Para cabello y pelo, usa resolución original (Premium)",
+        "tip2": "El formato PNG preserva la transparencia para superposiciones",
+        "tip3": "El formato JPG con fondo blanco es genial para impresión",
+        "tip4": "Descarga múltiples resoluciones para diferentes usos",
+        "tip5": "Las imágenes permanecen disponibles por 24 horas después del procesamiento"
+      }
+    },
+    "cta": {
+      "title": "¿Listo para Eliminar Fondos?",
+      "subtitle": "Comienza con 3 créditos gratis. Sin tarjeta de crédito requerida.",
+      "getStarted": "Comenzar Gratis",
+      "startRemoving": "Empezar a Eliminar Fondos"
+    }
   }
 }
