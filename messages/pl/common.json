@@ -1925,5 +1925,107 @@
       "getCredits": "Kup Kredyty",
       "exploreTools": "Odkryj Wszystkie Narzędzia"
     }
+  },
+  "imageCompressorPage": {
+    "badge": "Napędzane przez Sharp AI",
+    "title": "Kompresor Obrazów AI",
+    "subtitle": "Zmniejsz rozmiar pliku zachowując wysoką jakość dzięki inteligentnej kompresji. Idealne do optymalizacji stron, załączników email i oszczędzania miejsca.",
+    "stats": {
+      "sizeReduction": "Do 80%",
+      "sizeReductionLabel": "Redukcja Rozmiaru",
+      "processing": "~3s",
+      "processingLabel": "Przetwarzanie",
+      "creditCost": "1 Kredyt",
+      "creditCostLabel": "Za Kompresję"
+    },
+    "termsNotice": "Przesyłając plik, zgadzasz się z naszymi Warunkami Użytkowania i Polityką Prywatności.",
+    "features": {
+      "smartCompression": {
+        "title": "Inteligentna Kompresja",
+        "description": "Kompresja napędzana AI redukuje rozmiar pliku do 80% zachowując jakość wizualną."
+      },
+      "lightningFast": {
+        "title": "Błyskawiczne",
+        "description": "Przetwarzaj obrazy w sekundy dzięki zoptymalizowanemu procesowi kompresji."
+      },
+      "multipleFormats": {
+        "title": "Wiele Formatów",
+        "description": "Wsparcie dla JPG, PNG i WebP z automatycznym wyborem formatu."
+      }
+    },
+    "howItWorks": {
+      "title": "Jak Działa Inteligentna Kompresja",
+      "advancedTechnology": {
+        "title": "Zaawansowana Technologia",
+        "description": "Nasz kompresor wykorzystuje zaawansowane algorytmy przetwarzania obrazu Sharp w połączeniu z optymalizacjami specyficznymi dla formatu. W przeciwieństwie do podstawowej kompresji, która tylko obniża jakość, nasz system napędzany AI inteligentnie usuwa zbędne dane zachowując jakość wizualną.",
+        "feature1": "Usuwa metadane i zbędne informacje",
+        "feature2": "Optymalizuje palety kolorów i kodowanie",
+        "feature3": "Progresywne ładowanie dla lepszej wydajności web"
+      },
+      "perfectFor": {
+        "title": "Idealne Dla",
+        "websites": "Strony WWW:",
+        "websitesDesc": "Zmniejsz czas ładowania i popraw SEO",
+        "mobileApps": "Aplikacje Mobilne:",
+        "mobileAppsDesc": "Oszczędzaj przepustowość i miejsce",
+        "email": "Email:",
+        "emailDesc": "Załączaj więcej obrazów bez limitu rozmiaru",
+        "cloudStorage": "Chmura:",
+        "cloudStorageDesc": "Przechowuj więcej obrazów w mniejszej przestrzeni"
+      }
+    },
+    "technicalDetails": {
+      "compressionSettings": {
+        "title": "Ustawienia Kompresji",
+        "qualityControl": "Kontrola Jakości:",
+        "qualityControlDesc": "Dostosuj od 10% do 100% aby zbalansować rozmiar i jakość",
+        "autoFormat": "Auto Format:",
+        "autoFormatDesc": "Automatycznie wybiera najlepszy format dla obrazu",
+        "jpg": "JPG:",
+        "jpgDesc": "Najlepszy do zdjęć i złożonych obrazów z wieloma kolorami",
+        "png": "PNG:",
+        "pngDesc": "Najlepszy do grafik z przezroczystością lub ostrymi krawędziami",
+        "webp": "WebP:",
+        "webpDesc": "Nowoczesny format z lepszą kompresją dla web"
+      },
+      "supportedFormats": {
+        "title": "Wspierane Formaty",
+        "input": "Wejście:",
+        "inputDesc": "JPG, PNG, WebP - do 20MB na obraz",
+        "output": "Wyjście:",
+        "outputDesc": "Wybierz między JPG, PNG lub WebP",
+        "compression": "Kompresja:",
+        "compressionDesc": "Redukcja rozmiaru o 30-80% w zależności od ustawień",
+        "processing": "Przetwarzanie:",
+        "processingDesc": "Każda kompresja kosztuje 1 kredyt, przetwarza w 2-5 sekund",
+        "download": "Pobieranie:",
+        "downloadDesc": "Natychmiastowe pobieranie skompresowanego obrazu"
+      }
+    },
+    "tips": {
+      "title": "Wskazówki dla Najlepszych Rezultatów",
+      "recommended": {
+        "title": "Zalecane",
+        "tip1": "Zacznij od 80% jakości dla dobrego balansu",
+        "tip2": "Użyj auto formatu dla najlepszego stopnia kompresji",
+        "tip3": "JPG działa najlepiej dla zdjęć i złożonych obrazów",
+        "tip4": "PNG jest lepsze dla grafik z przezroczystością",
+        "tip5": "WebP oferuje najlepszą kompresję dla nowoczesnych przeglądarek"
+      },
+      "keepInMind": {
+        "title": "Pamiętaj",
+        "tip1": "Niższa jakość = mniejszy plik ale widoczne artefakty",
+        "tip2": "Już skompresowane obrazy nie zmniejszą się znacząco",
+        "tip3": "Testuj różne ustawienia jakości dla twojego przypadku",
+        "tip4": "Zachowaj oryginalne pliki jako kopię zapasową",
+        "tip5": "Kompresja jest trwała - nie można jej cofnąć"
+      }
+    },
+    "cta": {
+      "title": "Gotowy Zoptymalizować Swoje Obrazy?",
+      "subtitle": "Drastycznie zmniejsz rozmiary plików zachowując jakość wizualną. Idealne dla web i mobile.",
+      "getCredits": "Kup Kredyty",
+      "exploreTools": "Odkryj Wszystkie Narzędzia"
+    }
   }
 }

@@ -1925,5 +1925,107 @@
       "getCredits": "Get Credits",
       "exploreTools": "Explore All Tools"
     }
+  },
+  "imageCompressorPage": {
+    "badge": "Powered by Sharp AI",
+    "title": "AI Image Compressor",
+    "subtitle": "Reduce file size while maintaining high quality with smart compression. Perfect for web optimization, email attachments, and storage savings.",
+    "stats": {
+      "sizeReduction": "Up to 80%",
+      "sizeReductionLabel": "Size Reduction",
+      "processing": "~3s",
+      "processingLabel": "Processing",
+      "creditCost": "1 Credit",
+      "creditCostLabel": "Per Compression"
+    },
+    "termsNotice": "By uploading a file you agree to our Terms of Use and Privacy Policy.",
+    "features": {
+      "smartCompression": {
+        "title": "Smart Compression",
+        "description": "AI-powered compression reduces file size by up to 80% while preserving visual quality."
+      },
+      "lightningFast": {
+        "title": "Lightning Fast",
+        "description": "Process images in seconds with our optimized compression pipeline."
+      },
+      "multipleFormats": {
+        "title": "Multiple Formats",
+        "description": "Support for JPG, PNG, and WebP with automatic format selection."
+      }
+    },
+    "howItWorks": {
+      "title": "How Smart Compression Works",
+      "advancedTechnology": {
+        "title": "Advanced Technology",
+        "description": "Our compressor uses Sharp's advanced image processing algorithms combined with format-specific optimizations. Unlike basic compression that just reduces quality, our AI-powered system intelligently removes unnecessary data while preserving visual quality.",
+        "feature1": "Removes metadata and unnecessary information",
+        "feature2": "Optimizes color palettes and encoding",
+        "feature3": "Progressive loading for better web performance"
+      },
+      "perfectFor": {
+        "title": "Perfect For",
+        "websites": "Websites:",
+        "websitesDesc": "Reduce page load times and improve SEO",
+        "mobileApps": "Mobile Apps:",
+        "mobileAppsDesc": "Save bandwidth and storage space",
+        "email": "Email:",
+        "emailDesc": "Attach more images without size limits",
+        "cloudStorage": "Cloud Storage:",
+        "cloudStorageDesc": "Store more images in less space"
+      }
+    },
+    "technicalDetails": {
+      "compressionSettings": {
+        "title": "Compression Settings",
+        "qualityControl": "Quality Control:",
+        "qualityControlDesc": "Adjust from 10% to 100% to balance file size vs quality",
+        "autoFormat": "Auto Format:",
+        "autoFormatDesc": "Automatically selects the best format for your image",
+        "jpg": "JPG:",
+        "jpgDesc": "Best for photos and complex images with many colors",
+        "png": "PNG:",
+        "pngDesc": "Best for graphics with transparency or sharp edges",
+        "webp": "WebP:",
+        "webpDesc": "Modern format with superior compression for web"
+      },
+      "supportedFormats": {
+        "title": "Supported Formats",
+        "input": "Input:",
+        "inputDesc": "JPG, PNG, WebP - up to 20MB per image",
+        "output": "Output:",
+        "outputDesc": "Choose between JPG, PNG, or WebP",
+        "compression": "Compression:",
+        "compressionDesc": "Reduce file size by 30-80% depending on settings",
+        "processing": "Processing:",
+        "processingDesc": "Each compression costs 1 credit, processed in 2-5 seconds",
+        "download": "Download:",
+        "downloadDesc": "Get instant download of compressed image"
+      }
+    },
+    "tips": {
+      "title": "Tips for Best Results",
+      "recommended": {
+        "title": "Recommended",
+        "tip1": "Start with 80% quality for a good balance",
+        "tip2": "Use auto format for best compression ratio",
+        "tip3": "JPG works best for photos and complex images",
+        "tip4": "PNG is better for graphics with transparency",
+        "tip5": "WebP offers best compression for modern browsers"
+      },
+      "keepInMind": {
+        "title": "Keep in Mind",
+        "tip1": "Lower quality = smaller file but visible artifacts",
+        "tip2": "Already compressed images won't reduce much more",
+        "tip3": "Test different quality settings for your use case",
+        "tip4": "Keep original files as backup before compressing",
+        "tip5": "Compression is permanent - cannot be reversed"
+      }
+    },
+    "cta": {
+      "title": "Ready to Optimize Your Images?",
+      "subtitle": "Reduce file sizes dramatically while maintaining visual quality. Perfect for web and mobile.",
+      "getCredits": "Get Credits",
+      "exploreTools": "Explore All Tools"
+    }
   }
 }
