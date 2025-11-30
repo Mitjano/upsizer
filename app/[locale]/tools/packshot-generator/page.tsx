@@ -3,6 +3,7 @@
 import dynamic from 'next/dynamic'
 import { useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
+import { useTranslations } from 'next-intl'
 import ToolsLayout from '@/components/ToolsLayout'
 import Link from 'next/link'
 
@@ -23,6 +24,7 @@ export default function PackshotGeneratorPage() {
   const { data: session } = useSession()
   const [userRole, setUserRole] = useState<'user' | 'premium' | 'admin'>('user')
   const [credits, setCredits] = useState(0)
+  const t = useTranslations('packshotGeneratorPage')
 
   useEffect(() => {
     if (session?.user?.email) {
@@ -53,32 +55,31 @@ export default function PackshotGeneratorPage() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
               </span>
-              <span className="text-green-300">Powered by OpenAI DALL-E 2</span>
+              <span className="text-green-300">{t('badge')}</span>
             </div>
 
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
               <span className="bg-gradient-to-r from-green-400 via-emerald-400 to-green-500 bg-clip-text text-transparent">
-                AI Product Packshot Generator
+                {t('title')}
               </span>
             </h1>
             <p className="text-gray-400 text-lg max-w-3xl mx-auto mb-8">
-              Transform any product photo into a studio-quality professional packshot with AI.
-              Perfect for Amazon, e-commerce, and marketplace listings.
+              {t('subtitle')}
             </p>
 
             {/* Stats */}
             <div className="flex flex-wrap justify-center gap-8 mb-8">
               <div className="text-center">
-                <div className="text-2xl font-bold text-green-400">2000×2000</div>
-                <div className="text-sm text-gray-500">Output Size</div>
+                <div className="text-2xl font-bold text-green-400">{t('stats.outputSize')}</div>
+                <div className="text-sm text-gray-500">{t('stats.outputSizeLabel')}</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-emerald-400">~15s</div>
-                <div className="text-sm text-gray-500">Processing</div>
+                <div className="text-2xl font-bold text-emerald-400">{t('stats.processing')}</div>
+                <div className="text-sm text-gray-500">{t('stats.processingLabel')}</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-green-400">2 Credits</div>
-                <div className="text-sm text-gray-500">Per Packshot</div>
+                <div className="text-2xl font-bold text-green-400">{t('stats.creditCost')}</div>
+                <div className="text-sm text-gray-500">{t('stats.creditCostLabel')}</div>
               </div>
             </div>
 
@@ -92,7 +93,7 @@ export default function PackshotGeneratorPage() {
                     clipRule="evenodd"
                   />
                 </svg>
-                <span className="text-sm font-medium text-green-200">{credits} credits remaining</span>
+                <span className="text-sm font-medium text-green-200">{t('creditsRemaining', { credits })}</span>
               </div>
             )}
           </div>
@@ -103,7 +104,7 @@ export default function PackshotGeneratorPage() {
           <div className="bg-gray-800/50 rounded-xl border border-gray-700 p-6">
             <PackshotGenerator userRole={userRole} />
             <p className="text-sm text-gray-500 mt-4 text-center">
-              By uploading a file you agree to our Terms of Use and Privacy Policy.
+              {t('termsNotice')}
             </p>
           </div>
         </section>
@@ -115,27 +116,27 @@ export default function PackshotGeneratorPage() {
               <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center mb-4">
                 <span className="text-2xl">🎯</span>
               </div>
-              <h3 className="text-lg font-semibold mb-2">Marketplace Ready</h3>
+              <h3 className="text-lg font-semibold mb-2">{t('features.marketplaceReady.title')}</h3>
               <p className="text-sm text-gray-400">
-                Generate packshots optimized for Amazon (2000x2000), Allegro (1600x1200), and Instagram (1080x1080).
+                {t('features.marketplaceReady.description')}
               </p>
             </div>
             <div className="bg-gradient-to-br from-emerald-900/20 to-green-900/20 rounded-xl border border-emerald-700/30 p-6">
               <div className="w-12 h-12 bg-emerald-500/20 rounded-lg flex items-center justify-center mb-4">
                 <span className="text-2xl">⚡</span>
               </div>
-              <h3 className="text-lg font-semibold mb-2">AI-Powered Editing</h3>
+              <h3 className="text-lg font-semibold mb-2">{t('features.aiPowered.title')}</h3>
               <p className="text-sm text-gray-400">
-                Intelligent image editing that transforms backgrounds while preserving your product's appearance.
+                {t('features.aiPowered.description')}
               </p>
             </div>
             <div className="bg-gradient-to-br from-green-900/20 to-emerald-900/20 rounded-xl border border-green-700/30 p-6">
               <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center mb-4">
                 <span className="text-2xl">💎</span>
               </div>
-              <h3 className="text-lg font-semibold mb-2">Professional Quality</h3>
+              <h3 className="text-lg font-semibold mb-2">{t('features.professional.title')}</h3>
               <p className="text-sm text-gray-400">
-                Studio-quality results without expensive equipment or photographers. Ready in seconds.
+                {t('features.professional.description')}
               </p>
             </div>
           </div>
@@ -144,35 +145,35 @@ export default function PackshotGeneratorPage() {
         {/* How It Works */}
         <section className="px-6 mb-16">
           <div className="bg-gray-800/30 rounded-2xl border border-gray-700 p-8">
-            <h2 className="text-2xl font-bold mb-8 text-center">How AI Packshot Generation Works</h2>
+            <h2 className="text-2xl font-bold mb-8 text-center">{t('howItWorks.title')}</h2>
             <div className="grid md:grid-cols-4 gap-6">
               <div className="text-center">
                 <div className="w-16 h-16 rounded-full bg-gradient-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center mx-auto mb-4 border border-green-500/30">
                   <span className="text-2xl">📤</span>
                 </div>
-                <h4 className="font-semibold mb-2">1. Upload</h4>
-                <p className="text-sm text-gray-400">Upload your product photo (even from a phone)</p>
+                <h4 className="font-semibold mb-2">{t('howItWorks.step1.title')}</h4>
+                <p className="text-sm text-gray-400">{t('howItWorks.step1.description')}</p>
               </div>
               <div className="text-center">
                 <div className="w-16 h-16 rounded-full bg-gradient-to-br from-emerald-500/20 to-green-500/20 flex items-center justify-center mx-auto mb-4 border border-emerald-500/30">
                   <span className="text-2xl">✂️</span>
                 </div>
-                <h4 className="font-semibold mb-2">2. Remove BG</h4>
-                <p className="text-sm text-gray-400">AI removes background with precision</p>
+                <h4 className="font-semibold mb-2">{t('howItWorks.step2.title')}</h4>
+                <p className="text-sm text-gray-400">{t('howItWorks.step2.description')}</p>
               </div>
               <div className="text-center">
                 <div className="w-16 h-16 rounded-full bg-gradient-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center mx-auto mb-4 border border-green-500/30">
                   <span className="text-2xl">🎨</span>
                 </div>
-                <h4 className="font-semibold mb-2">3. Add Polish</h4>
-                <p className="text-sm text-gray-400">Add background, shadow, crop & resize</p>
+                <h4 className="font-semibold mb-2">{t('howItWorks.step3.title')}</h4>
+                <p className="text-sm text-gray-400">{t('howItWorks.step3.description')}</p>
               </div>
               <div className="text-center">
                 <div className="w-16 h-16 rounded-full bg-gradient-to-br from-emerald-500/20 to-green-500/20 flex items-center justify-center mx-auto mb-4 border border-emerald-500/30">
                   <span className="text-2xl">💾</span>
                 </div>
-                <h4 className="font-semibold mb-2">4. Download</h4>
-                <p className="text-sm text-gray-400">Get marketplace-ready packshot</p>
+                <h4 className="font-semibold mb-2">{t('howItWorks.step4.title')}</h4>
+                <p className="text-sm text-gray-400">{t('howItWorks.step4.description')}</p>
               </div>
             </div>
           </div>
@@ -183,41 +184,40 @@ export default function PackshotGeneratorPage() {
           <div className="grid md:grid-cols-2 gap-6">
             <div className="bg-gradient-to-br from-green-900/20 to-emerald-900/20 rounded-xl border border-green-700/50 p-6">
               <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                <span>🎯</span> Background Options
+                <span>🎯</span> {t('backgroundOptions.title')}
               </h3>
               <div className="space-y-3 text-gray-300 text-sm">
                 <div>
-                  <strong className="text-white">White Background:</strong> Classic white 2000x2000px, perfect for
-                  Amazon listings and product catalogs
+                  <strong className="text-white">{t('backgroundOptions.white.title')}</strong> {t('backgroundOptions.white.description')}
                 </div>
                 <div>
-                  <strong className="text-white">Light Gray:</strong> Professional gray background, elegant and clean
+                  <strong className="text-white">{t('backgroundOptions.lightGray.title')}</strong> {t('backgroundOptions.lightGray.description')}
                 </div>
                 <div>
-                  <strong className="text-white">Beige:</strong> Warm, natural beige tone for organic products
+                  <strong className="text-white">{t('backgroundOptions.beige.title')}</strong> {t('backgroundOptions.beige.description')}
                 </div>
                 <div>
-                  <strong className="text-white">Light Blue:</strong> Fresh, modern blue background for tech products
+                  <strong className="text-white">{t('backgroundOptions.lightBlue.title')}</strong> {t('backgroundOptions.lightBlue.description')}
                 </div>
               </div>
             </div>
 
             <div className="bg-gradient-to-br from-emerald-900/20 to-green-900/20 rounded-xl border border-emerald-700/50 p-6">
               <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                <span>✨</span> Features Included
+                <span>✨</span> {t('featuresIncluded.title')}
               </h3>
               <div className="space-y-3 text-gray-300 text-sm">
                 <div>
-                  <strong className="text-white">AI Technology:</strong> Advanced image editing that understands context and preserves product integrity
+                  <strong className="text-white">{t('featuresIncluded.aiTechnology.title')}</strong> {t('featuresIncluded.aiTechnology.description')}
                 </div>
                 <div>
-                  <strong className="text-white">Professional Results:</strong> Studio-quality lighting, clean backgrounds, and natural shadows
+                  <strong className="text-white">{t('featuresIncluded.professionalResults.title')}</strong> {t('featuresIncluded.professionalResults.description')}
                 </div>
                 <div>
-                  <strong className="text-white">High-Quality Output:</strong> 2000x2000px resolution, marketplace-ready packshots
+                  <strong className="text-white">{t('featuresIncluded.highQuality.title')}</strong> {t('featuresIncluded.highQuality.description')}
                 </div>
                 <div>
-                  <strong className="text-white">Fast & Affordable:</strong> Professional-grade results in 10-20 seconds
+                  <strong className="text-white">{t('featuresIncluded.fast.title')}</strong> {t('featuresIncluded.fast.description')}
                 </div>
               </div>
             </div>
@@ -226,31 +226,31 @@ export default function PackshotGeneratorPage() {
 
         {/* Use Cases */}
         <section className="px-6 mb-16">
-          <h2 className="text-2xl font-bold mb-8 text-center">Perfect For</h2>
+          <h2 className="text-2xl font-bold mb-8 text-center">{t('useCases.title')}</h2>
           <div className="grid md:grid-cols-3 gap-6">
             <div className="bg-gray-800/30 rounded-xl border border-gray-700 p-6 hover:border-green-500/50 transition">
               <div className="text-3xl mb-3">🛍️</div>
-              <h3 className="text-lg font-semibold mb-2">E-commerce Sellers</h3>
+              <h3 className="text-lg font-semibold mb-2">{t('useCases.ecommerce.title')}</h3>
               <p className="text-sm text-gray-400 mb-3">
-                Create consistent product photos for your online store. Amazon, eBay, Shopify - all covered.
+                {t('useCases.ecommerce.description')}
               </p>
-              <div className="text-xs text-green-400">Save time and money on product photography</div>
+              <div className="text-xs text-green-400">{t('useCases.ecommerce.detail')}</div>
             </div>
             <div className="bg-gray-800/30 rounded-xl border border-gray-700 p-6 hover:border-green-500/50 transition">
               <div className="text-3xl mb-3">📦</div>
-              <h3 className="text-lg font-semibold mb-2">Dropshippers</h3>
+              <h3 className="text-lg font-semibold mb-2">{t('useCases.dropshippers.title')}</h3>
               <p className="text-sm text-gray-400 mb-3">
-                Transform supplier photos into professional listings. Stand out from competition.
+                {t('useCases.dropshippers.description')}
               </p>
-              <div className="text-xs text-green-400">Professional look without photo studio</div>
+              <div className="text-xs text-green-400">{t('useCases.dropshippers.detail')}</div>
             </div>
             <div className="bg-gray-800/30 rounded-xl border border-gray-700 p-6 hover:border-green-500/50 transition">
               <div className="text-3xl mb-3">📱</div>
-              <h3 className="text-lg font-semibold mb-2">Social Media Marketers</h3>
+              <h3 className="text-lg font-semibold mb-2">{t('useCases.socialMedia.title')}</h3>
               <p className="text-sm text-gray-400 mb-3">
-                Create eye-catching product posts for Instagram, Facebook. Consistent branding everywhere.
+                {t('useCases.socialMedia.description')}
               </p>
-              <div className="text-xs text-green-400">Perfect square format for social media</div>
+              <div className="text-xs text-green-400">{t('useCases.socialMedia.detail')}</div>
             </div>
           </div>
         </section>
@@ -258,47 +258,47 @@ export default function PackshotGeneratorPage() {
         {/* Tips */}
         <section className="px-6 mb-16">
           <div className="bg-gray-800/30 rounded-2xl border border-gray-700 p-8">
-            <h2 className="text-2xl font-bold mb-6">Tips for Best Results</h2>
+            <h2 className="text-2xl font-bold mb-6">{t('tips.title')}</h2>
             <div className="grid md:grid-cols-2 gap-8">
               <div>
-                <h4 className="font-semibold text-green-400 mb-3">Best Practices</h4>
+                <h4 className="font-semibold text-green-400 mb-3">{t('tips.bestPractices.title')}</h4>
                 <ul className="space-y-2 text-sm text-gray-400">
                   <li className="flex items-start gap-2">
                     <span className="text-green-400 mt-0.5">✓</span>
-                    Use well-lit photos with clear product definition
+                    {t('tips.bestPractices.tip1')}
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-green-400 mt-0.5">✓</span>
-                    Ensure product is in focus and centered
+                    {t('tips.bestPractices.tip2')}
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-green-400 mt-0.5">✓</span>
-                    Avoid shadows that blend into the product
+                    {t('tips.bestPractices.tip3')}
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-green-400 mt-0.5">✓</span>
-                    Higher resolution input = better output quality
+                    {t('tips.bestPractices.tip4')}
                   </li>
                 </ul>
               </div>
               <div>
-                <h4 className="font-semibold text-emerald-400 mb-3">Pro Tips</h4>
+                <h4 className="font-semibold text-emerald-400 mb-3">{t('tips.proTips.title')}</h4>
                 <ul className="space-y-2 text-sm text-gray-400">
                   <li className="flex items-start gap-2">
                     <span className="text-emerald-400 mt-0.5">★</span>
-                    White background for Amazon marketplace compliance
+                    {t('tips.proTips.tip1')}
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-emerald-400 mt-0.5">★</span>
-                    Gray background for elegant, professional look
+                    {t('tips.proTips.tip2')}
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-emerald-400 mt-0.5">★</span>
-                    Beige for warm, natural product presentation
+                    {t('tips.proTips.tip3')}
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-emerald-400 mt-0.5">★</span>
-                    Works best with single products (not groups)
+                    {t('tips.proTips.tip4')}
                   </li>
                 </ul>
               </div>
@@ -309,22 +309,22 @@ export default function PackshotGeneratorPage() {
         {/* CTA Section */}
         <section className="px-6 pb-12">
           <div className="bg-gradient-to-r from-green-900/30 to-emerald-900/30 rounded-2xl border border-green-700/30 p-8 text-center">
-            <h2 className="text-2xl font-bold mb-4">Ready to Create Professional Packshots?</h2>
+            <h2 className="text-2xl font-bold mb-4">{t('cta.title')}</h2>
             <p className="text-gray-400 mb-6 max-w-2xl mx-auto">
-              Transform your product photos into marketplace-ready packshots in seconds. No studio required.
+              {t('cta.subtitle')}
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link
                 href="/pricing"
                 className="px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 rounded-lg font-semibold transition"
               >
-                Get Credits
+                {t('cta.getCredits')}
               </Link>
               <Link
                 href="/tools"
                 className="px-6 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg font-semibold transition"
               >
-                Explore All Tools
+                {t('cta.exploreTools')}
               </Link>
             </div>
           </div>

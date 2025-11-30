@@ -1798,5 +1798,132 @@
       "getCredits": "Get Credits",
       "exploreTools": "Explore All Tools"
     }
+  },
+  "packshotGeneratorPage": {
+    "badge": "Powered by OpenAI DALL-E 2",
+    "title": "AI Product Packshot Generator",
+    "subtitle": "Transform any product photo into a studio-quality professional packshot with AI. Perfect for Amazon, e-commerce, and marketplace listings.",
+    "stats": {
+      "outputSize": "2000×2000",
+      "outputSizeLabel": "Output Size",
+      "processing": "~15s",
+      "processingLabel": "Processing",
+      "creditCost": "2 Credits",
+      "creditCostLabel": "Per Packshot"
+    },
+    "creditsRemaining": "{credits} credits remaining",
+    "termsNotice": "By uploading a file you agree to our Terms of Use and Privacy Policy.",
+    "features": {
+      "marketplaceReady": {
+        "title": "Marketplace Ready",
+        "description": "Generate packshots optimized for Amazon (2000x2000), Allegro (1600x1200), and Instagram (1080x1080)."
+      },
+      "aiPowered": {
+        "title": "AI-Powered Editing",
+        "description": "Intelligent image editing that transforms backgrounds while preserving your product's appearance."
+      },
+      "professional": {
+        "title": "Professional Quality",
+        "description": "Studio-quality results without expensive equipment or photographers. Ready in seconds."
+      }
+    },
+    "howItWorks": {
+      "title": "How AI Packshot Generation Works",
+      "step1": {
+        "title": "1. Upload",
+        "description": "Upload your product photo (even from a phone)"
+      },
+      "step2": {
+        "title": "2. Remove BG",
+        "description": "AI removes background with precision"
+      },
+      "step3": {
+        "title": "3. Add Polish",
+        "description": "Add background, shadow, crop & resize"
+      },
+      "step4": {
+        "title": "4. Download",
+        "description": "Get marketplace-ready packshot"
+      }
+    },
+    "backgroundOptions": {
+      "title": "Background Options",
+      "white": {
+        "title": "White Background:",
+        "description": "Classic white 2000x2000px, perfect for Amazon listings and product catalogs"
+      },
+      "lightGray": {
+        "title": "Light Gray:",
+        "description": "Professional gray background, elegant and clean"
+      },
+      "beige": {
+        "title": "Beige:",
+        "description": "Warm, natural beige tone for organic products"
+      },
+      "lightBlue": {
+        "title": "Light Blue:",
+        "description": "Fresh, modern blue background for tech products"
+      }
+    },
+    "featuresIncluded": {
+      "title": "Features Included",
+      "aiTechnology": {
+        "title": "AI Technology:",
+        "description": "Advanced image editing that understands context and preserves product integrity"
+      },
+      "professionalResults": {
+        "title": "Professional Results:",
+        "description": "Studio-quality lighting, clean backgrounds, and natural shadows"
+      },
+      "highQuality": {
+        "title": "High-Quality Output:",
+        "description": "2000x2000px resolution, marketplace-ready packshots"
+      },
+      "fast": {
+        "title": "Fast & Affordable:",
+        "description": "Professional-grade results in 10-20 seconds"
+      }
+    },
+    "useCases": {
+      "title": "Perfect For",
+      "ecommerce": {
+        "title": "E-commerce Sellers",
+        "description": "Create consistent product photos for your online store. Amazon, eBay, Shopify - all covered.",
+        "detail": "Save time and money on product photography"
+      },
+      "dropshippers": {
+        "title": "Dropshippers",
+        "description": "Transform supplier photos into professional listings. Stand out from competition.",
+        "detail": "Professional look without photo studio"
+      },
+      "socialMedia": {
+        "title": "Social Media Marketers",
+        "description": "Create eye-catching product posts for Instagram, Facebook. Consistent branding everywhere.",
+        "detail": "Perfect square format for social media"
+      }
+    },
+    "tips": {
+      "title": "Tips for Best Results",
+      "bestPractices": {
+        "title": "Best Practices",
+        "tip1": "Use well-lit photos with clear product definition",
+        "tip2": "Ensure product is in focus and centered",
+        "tip3": "Avoid shadows that blend into the product",
+        "tip4": "Higher resolution input = better output quality"
+      },
+      "proTips": {
+        "title": "Pro Tips",
+        "tip1": "White background for Amazon marketplace compliance",
+        "tip2": "Gray background for elegant, professional look",
+        "tip3": "Beige for warm, natural product presentation",
+        "tip4": "Works best with single products (not groups)"
+      }
+    },
+    "cta": {
+      "title": "Ready to Create Professional Packshots?",
+      "subtitle": "Transform your product photos into marketplace-ready packshots in seconds. No studio required.",
+      "getCredits": "Get Credits",
+      "exploreTools": "Explore All Tools"
+    }
   }
 }

@@ -1881,5 +1881,132 @@
       "getCredits": "Obtenir des Crédits",
       "exploreTools": "Explorer Tous les Outils"
     }
+  },
+  "packshotGeneratorPage": {
+    "badge": "Propulsé par OpenAI DALL-E 2",
+    "title": "Générateur de Packshots Produits par IA",
+    "subtitle": "Transformez n'importe quelle photo de produit en un packshot professionnel de qualité studio avec l'IA. Parfait pour Amazon, e-commerce et marketplaces.",
+    "stats": {
+      "outputSize": "2000×2000",
+      "outputSizeLabel": "Taille de Sortie",
+      "processing": "~15s",
+      "processingLabel": "Traitement",
+      "creditCost": "2 Crédits",
+      "creditCostLabel": "Par Packshot"
+    },
+    "creditsRemaining": "{credits} crédits restants",
+    "termsNotice": "En téléchargeant un fichier, vous acceptez nos Conditions d'Utilisation et notre Politique de Confidentialité.",
+    "features": {
+      "marketplaceReady": {
+        "title": "Prêt pour les Marketplaces",
+        "description": "Générez des packshots optimisés pour Amazon (2000x2000), Allegro (1600x1200) et Instagram (1080x1080)."
+      },
+      "aiPowered": {
+        "title": "Édition Alimentée par l'IA",
+        "description": "Édition d'image intelligente qui transforme les arrière-plans tout en préservant l'apparence de votre produit."
+      },
+      "professional": {
+        "title": "Qualité Professionnelle",
+        "description": "Résultats de qualité studio sans équipement coûteux ni photographes. Prêt en quelques secondes."
+      }
+    },
+    "howItWorks": {
+      "title": "Comment Fonctionne la Génération de Packshots par IA",
+      "step1": {
+        "title": "1. Télécharger",
+        "description": "Téléchargez votre photo de produit (même depuis un téléphone)"
+      },
+      "step2": {
+        "title": "2. Supprimer le Fond",
+        "description": "L'IA supprime l'arrière-plan avec précision"
+      },
+      "step3": {
+        "title": "3. Ajouter la Finition",
+        "description": "Ajoutez fond, ombre, recadrez et redimensionnez"
+      },
+      "step4": {
+        "title": "4. Télécharger",
+        "description": "Obtenez le packshot prêt pour le marketplace"
+      }
+    },
+    "backgroundOptions": {
+      "title": "Options d'Arrière-plan",
+      "white": {
+        "title": "Fond Blanc:",
+        "description": "Blanc classique 2000x2000px, parfait pour les annonces Amazon et catalogues produits"
+      },
+      "lightGray": {
+        "title": "Gris Clair:",
+        "description": "Fond gris professionnel, élégant et épuré"
+      },
+      "beige": {
+        "title": "Beige:",
+        "description": "Ton beige chaud et naturel pour les produits biologiques"
+      },
+      "lightBlue": {
+        "title": "Bleu Clair:",
+        "description": "Fond bleu frais et moderne pour les produits technologiques"
+      }
+    },
+    "featuresIncluded": {
+      "title": "Fonctionnalités Incluses",
+      "aiTechnology": {
+        "title": "Technologie IA:",
+        "description": "Édition d'image avancée qui comprend le contexte et préserve l'intégrité du produit"
+      },
+      "professionalResults": {
+        "title": "Résultats Professionnels:",
+        "description": "Éclairage de qualité studio, arrière-plans propres et ombres naturelles"
+      },
+      "highQuality": {
+        "title": "Haute Qualité:",
+        "description": "Résolution 2000x2000px, packshots prêts pour les marketplaces"
+      },
+      "fast": {
+        "title": "Rapide et Abordable:",
+        "description": "Résultats de qualité professionnelle en 10-20 secondes"
+      }
+    },
+    "useCases": {
+      "title": "Parfait Pour",
+      "ecommerce": {
+        "title": "Vendeurs E-commerce",
+        "description": "Créez des photos de produits cohérentes pour votre boutique en ligne. Amazon, eBay, Shopify - tout est couvert.",
+        "detail": "Économisez du temps et de l'argent sur la photographie de produits"
+      },
+      "dropshippers": {
+        "title": "Dropshippers",
+        "description": "Transformez les photos fournisseurs en annonces professionnelles. Démarquez-vous de la concurrence.",
+        "detail": "Aspect professionnel sans studio photo"
+      },
+      "socialMedia": {
+        "title": "Marketeurs Réseaux Sociaux",
+        "description": "Créez des publications de produits accrocheuses pour Instagram, Facebook. Branding cohérent partout.",
+        "detail": "Format carré parfait pour les réseaux sociaux"
+      }
+    },
+    "tips": {
+      "title": "Conseils pour les Meilleurs Résultats",
+      "bestPractices": {
+        "title": "Meilleures Pratiques",
+        "tip1": "Utilisez des photos bien éclairées avec une définition claire du produit",
+        "tip2": "Assurez-vous que le produit est net et centré",
+        "tip3": "Évitez les ombres qui se fondent dans le produit",
+        "tip4": "Résolution d'entrée plus élevée = meilleure qualité de sortie"
+      },
+      "proTips": {
+        "title": "Conseils Pro",
+        "tip1": "Fond blanc pour la conformité Amazon marketplace",
+        "tip2": "Fond gris pour un aspect élégant et professionnel",
+        "tip3": "Beige pour une présentation de produit chaleureuse et naturelle",
+        "tip4": "Fonctionne mieux avec des produits individuels (pas des groupes)"
+      }
+    },
+    "cta": {
+      "title": "Prêt à Créer des Packshots Professionnels?",
+      "subtitle": "Transformez vos photos de produits en packshots prêts pour les marketplaces en quelques secondes. Aucun studio requis.",
+      "getCredits": "Obtenir des Crédits",
+      "exploreTools": "Explorer Tous les Outils"
+    }
   }
 }

@@ -1798,5 +1798,132 @@
       "getCredits": "Kup Kredyty",
       "exploreTools": "Odkryj Wszystkie Narzędzia"
     }
+  },
+  "packshotGeneratorPage": {
+    "badge": "Napędzane przez OpenAI DALL-E 2",
+    "title": "Generator Packshotów Produktowych AI",
+    "subtitle": "Przekształć dowolne zdjęcie produktu w profesjonalny packshot jakości studyjnej z AI. Idealny dla Amazon, e-commerce i platform sprzedażowych.",
+    "stats": {
+      "outputSize": "2000×2000",
+      "outputSizeLabel": "Rozmiar Wyjściowy",
+      "processing": "~15s",
+      "processingLabel": "Przetwarzanie",
+      "creditCost": "2 Kredyty",
+      "creditCostLabel": "Za Packshot"
+    },
+    "creditsRemaining": "Pozostało {credits} kredytów",
+    "termsNotice": "Przesyłając plik, akceptujesz nasz Regulamin i Politykę Prywatności.",
+    "features": {
+      "marketplaceReady": {
+        "title": "Gotowe na Marketplace",
+        "description": "Generuj packshoty zoptymalizowane dla Amazon (2000x2000), Allegro (1600x1200) i Instagram (1080x1080)."
+      },
+      "aiPowered": {
+        "title": "Edycja Napędzana AI",
+        "description": "Inteligentna edycja obrazu, która przekształca tła zachowując wygląd Twojego produktu."
+      },
+      "professional": {
+        "title": "Profesjonalna Jakość",
+        "description": "Wyniki jakości studyjnej bez drogiego sprzętu czy fotografów. Gotowe w sekundy."
+      }
+    },
+    "howItWorks": {
+      "title": "Jak Działa Generowanie Packshotów AI",
+      "step1": {
+        "title": "1. Prześlij",
+        "description": "Prześlij zdjęcie produktu (nawet z telefonu)"
+      },
+      "step2": {
+        "title": "2. Usuń Tło",
+        "description": "AI usuwa tło z precyzją"
+      },
+      "step3": {
+        "title": "3. Dopracuj",
+        "description": "Dodaj tło, cień, przytnij i zmień rozmiar"
+      },
+      "step4": {
+        "title": "4. Pobierz",
+        "description": "Pobierz packshot gotowy na marketplace"
+      }
+    },
+    "backgroundOptions": {
+      "title": "Opcje Tła",
+      "white": {
+        "title": "Białe Tło:",
+        "description": "Klasyczne białe 2000x2000px, idealne dla ofert Amazon i katalogów produktowych"
+      },
+      "lightGray": {
+        "title": "Jasny Szary:",
+        "description": "Profesjonalne szare tło, eleganckie i czyste"
+      },
+      "beige": {
+        "title": "Beżowy:",
+        "description": "Ciepły, naturalny beżowy odcień dla produktów organicznych"
+      },
+      "lightBlue": {
+        "title": "Jasny Niebieski:",
+        "description": "Świeże, nowoczesne niebieskie tło dla produktów technologicznych"
+      }
+    },
+    "featuresIncluded": {
+      "title": "Zawarte Funkcje",
+      "aiTechnology": {
+        "title": "Technologia AI:",
+        "description": "Zaawansowana edycja obrazu, która rozumie kontekst i zachowuje integralność produktu"
+      },
+      "professionalResults": {
+        "title": "Profesjonalne Wyniki:",
+        "description": "Oświetlenie jakości studyjnej, czyste tła i naturalne cienie"
+      },
+      "highQuality": {
+        "title": "Wysoka Jakość Wyjściowa:",
+        "description": "Rozdzielczość 2000x2000px, packshoty gotowe na marketplace"
+      },
+      "fast": {
+        "title": "Szybkie i Przystępne:",
+        "description": "Wyniki klasy profesjonalnej w 10-20 sekund"
+      }
+    },
+    "useCases": {
+      "title": "Idealne Dla",
+      "ecommerce": {
+        "title": "Sprzedawców E-commerce",
+        "description": "Twórz spójne zdjęcia produktów dla swojego sklepu online. Amazon, eBay, Shopify - wszystko obsługiwane.",
+        "detail": "Oszczędzaj czas i pieniądze na fotografii produktowej"
+      },
+      "dropshippers": {
+        "title": "Dropshipperów",
+        "description": "Przekształć zdjęcia od dostawców w profesjonalne oferty. Wyróżnij się od konkurencji.",
+        "detail": "Profesjonalny wygląd bez studia fotograficznego"
+      },
+      "socialMedia": {
+        "title": "Marketerów Social Media",
+        "description": "Twórz przyciągające wzrok posty produktowe na Instagram, Facebook. Spójny branding wszędzie.",
+        "detail": "Idealny kwadratowy format dla social media"
+      }
+    },
+    "tips": {
+      "title": "Wskazówki dla Najlepszych Rezultatów",
+      "bestPractices": {
+        "title": "Najlepsze Praktyki",
+        "tip1": "Używaj dobrze oświetlonych zdjęć z wyraźną definicją produktu",
+        "tip2": "Upewnij się, że produkt jest ostry i wyśrodkowany",
+        "tip3": "Unikaj cieni, które zlewają się z produktem",
+        "tip4": "Wyższa rozdzielczość wejściowa = lepsza jakość wyjściowa"
+      },
+      "proTips": {
+        "title": "Wskazówki Pro",
+        "tip1": "Białe tło dla zgodności z Amazon marketplace",
+        "tip2": "Szare tło dla eleganckiego, profesjonalnego wyglądu",
+        "tip3": "Beżowy dla ciepłej, naturalnej prezentacji produktu",
+        "tip4": "Działa najlepiej z pojedynczymi produktami (nie grupami)"
+      }
+    },
+    "cta": {
+      "title": "Gotowy Tworzyć Profesjonalne Packshoty?",
+      "subtitle": "Przekształć zdjęcia produktów w packshoty gotowe na marketplace w sekundy. Bez studia.",
+      "getCredits": "Kup Kredyty",
+      "exploreTools": "Odkryj Wszystkie Narzędzia"
+    }
   }
 }
