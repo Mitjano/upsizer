@@ -1,10 +1,14 @@
-import { getPublishedPosts } from "@/lib/blog";
+import { getPublishedPosts, SupportedLocale } from "@/lib/blog";
 import Link from "next/link";
 import Image from "next/image";
 import { getTranslations } from 'next-intl/server';
 
 // ISR - revalidate every 60 seconds for fresh content
 export const revalidate = 60;
+
+interface PageProps {
+  params: Promise<{ locale: string }>;
+}
 
 export async function generateMetadata() {
   const t = await getTranslations('blogPage');
@@ -14,9 +18,10 @@ export async function generateMetadata() {
   };
 }
 
-export default async function BlogPage() {
+export default async function BlogPage({ params }: PageProps) {
+  const { locale } = await params;
   const t = await getTranslations('blogPage');
-  const posts = await getPublishedPosts();
+  const posts = await getPublishedPosts(locale as SupportedLocale);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 via-black to-gray-900">
@@ -45,7 +50,7 @@ export default async function BlogPage() {
             {posts.map((post) => (
               <Link
                 key={post.id}
-                href={`/blog/${post.slug}`}
+                href={`/${locale}/blog/${post.slug}`}
                 className="group bg-gray-800 border border-gray-700 rounded-xl overflow-hidden hover:border-green-500 transition-all duration-300 hover:shadow-lg hover:shadow-green-500/20"
               >
                 {/* Featured Image */}

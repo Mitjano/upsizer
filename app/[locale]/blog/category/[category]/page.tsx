@@ -1,19 +1,20 @@
-import { getPostsByCategory, getAllCategories } from "@/lib/blog";
+import { getPostsByCategory, getAllCategories, SupportedLocale } from "@/lib/blog";
 import Link from "next/link";
+import { getTranslations } from 'next-intl/server';
 
 // ISR - revalidate every 60 seconds for fresh content
 export const revalidate = 60;
 
 // Generate static paths for all categories
 export async function generateStaticParams() {
-  const categories = await getAllCategories();
+  const categories = await getAllCategories("en");
   return categories.map((category) => ({
     category: encodeURIComponent(category),
   }));
 }
 
 interface PageProps {
-  params: Promise<{ category: string }>;
+  params: Promise<{ category: string; locale: string }>;
 }
 
 export async function generateMetadata({ params }: PageProps) {
@@ -27,28 +28,29 @@ export async function generateMetadata({ params }: PageProps) {
 }
 
 export default async function CategoryPage({ params }: PageProps) {
-  const { category } = await params;
+  const { category, locale } = await params;
   const decodedCategory = decodeURIComponent(category);
-  const posts = await getPostsByCategory(decodedCategory);
-  const allCategories = await getAllCategories();
+  const posts = await getPostsByCategory(decodedCategory, locale as SupportedLocale);
+  const allCategories = await getAllCategories(locale as SupportedLocale);
+  const t = await getTranslations('blogCategory');
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 via-black to-gray-900">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         {/* Breadcrumb */}
         <div className="mb-6">
-          <Link href="/blog" className="text-green-400 hover:text-green-300 text-sm">
-            ← Back to Blog
+          <Link href={`/${locale}/blog`} className="text-green-400 hover:text-green-300 text-sm">
+            ← {t('backToBlog')}
           </Link>
         </div>
 
         {/* Header */}
         <div className="mb-12">
           <h1 className="text-4xl font-bold text-white mb-4">
-            Category: <span className="text-green-400">{decodedCategory}</span>
+            {t('category')}: <span className="text-green-400">{decodedCategory}</span>
           </h1>
           <p className="text-gray-400">
-            {posts.length} {posts.length === 1 ? 'article' : 'articles'} found
+            {posts.length} {posts.length === 1 ? t('articleSingular') : t('articlesPlural')}
           </p>
         </div>
 
@@ -64,7 +66,7 @@ export default async function CategoryPage({ params }: PageProps) {
                   {post.categories.map((cat) => (
                     <Link
                       key={cat}
-                      href={`/blog/category/${encodeURIComponent(cat)}`}
+                      href={`/${locale}/blog/category/${encodeURIComponent(cat)}`}
                       className={`text-xs px-2 py-1 rounded-full transition-colors ${
                         cat.toLowerCase() === decodedCategory.toLowerCase()
                           ? "bg-green-500 text-white"
@@ -75,7 +77,7 @@ export default async function CategoryPage({ params }: PageProps) {
                     </Link>
                   ))}
                 </div>
-                <Link href={`/blog/${post.slug}`}>
+                <Link href={`/${locale}/blog/${post.slug}`}>
                   <h2 className="text-2xl font-bold text-white mb-3 hover:text-green-400 transition-colors">
                     {post.title}
                   </h2>
@@ -86,10 +88,10 @@ export default async function CategoryPage({ params }: PageProps) {
                     <span>{post.author.name}</span>
                   </div>
                   <Link
-                    href={`/blog/${post.slug}`}
+                    href={`/${locale}/blog/${post.slug}`}
                     className="text-green-400 hover:text-green-300 text-sm font-medium"
                   >
-                    Read more →
+                    {t('readMore')} →
                   </Link>
                 </div>
               </article>
@@ -97,24 +99,24 @@ export default async function CategoryPage({ params }: PageProps) {
           </div>
         ) : (
           <div className="text-center py-16">
-            <p className="text-gray-400 text-lg">No articles found in this category.</p>
+            <p className="text-gray-400 text-lg">{t('noArticles')}</p>
             <Link
-              href="/blog"
+              href={`/${locale}/blog`}
               className="inline-block mt-4 text-green-400 hover:text-green-300"
             >
-              Browse all articles →
+              {t('browseAll')} →
             </Link>
           </div>
         )}
 
         {/* All Categories */}
         <div className="mt-16 pt-8 border-t border-gray-800">
-          <h2 className="text-lg font-semibold text-white mb-4">All Categories</h2>
+          <h2 className="text-lg font-semibold text-white mb-4">{t('allCategories')}</h2>
           <div className="flex flex-wrap gap-2">
             {allCategories.map((cat) => (
               <Link
                 key={cat}
-                href={`/blog/category/${encodeURIComponent(cat)}`}
+                href={`/${locale}/blog/category/${encodeURIComponent(cat)}`}
                 className={`px-3 py-1 rounded-full text-sm transition-colors ${
                   cat.toLowerCase() === decodedCategory.toLowerCase()
                     ? "bg-green-500 text-white"

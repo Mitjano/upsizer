@@ -877,6 +877,31 @@
     "checkBackSoon": "¡Vuelve pronto para ver nuevo contenido!",
     "readMore": "Leer más"
   },
+  "blogPost": {
+    "backToBlog": "Volver al Blog",
+    "aboutAuthor": "Sobre el Autor",
+    "backToAllPosts": "Volver a Todos los Artículos"
+  },
+  "blogCategory": {
+    "backToBlog": "Volver al Blog",
+    "category": "Categoría",
+    "articleSingular": "artículo encontrado",
+    "articlesPlural": "artículos encontrados",
+    "readMore": "Leer más",
+    "noArticles": "No se encontraron artículos en esta categoría.",
+    "browseAll": "Ver todos los artículos",
+    "allCategories": "Todas las Categorías"
+  },
+  "blogTag": {
+    "backToBlog": "Volver al Blog",
+    "articlesTagged": "Artículos etiquetados",
+    "articleSingular": "artículo encontrado",
+    "articlesPlural": "artículos encontrados",
+    "readMore": "Leer más",
+    "noArticles": "No se encontraron artículos con esta etiqueta.",
+    "browseAll": "Ver todos los artículos",
+    "allTags": "Todas las Etiquetas"
+  },
   "knowledgePage": {
     "title": "Base de Conocimientos",
     "description": "Tu guía completa sobre generación de imágenes con IA. Aprende sobre modelos, técnicas y terminología.",

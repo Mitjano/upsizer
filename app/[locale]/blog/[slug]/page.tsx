@@ -1,28 +1,29 @@
-import { getPostBySlug, getPublishedPosts } from "@/lib/blog";
+import { getPostBySlugWithFallback, getPublishedPosts, SupportedLocale } from "@/lib/blog";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import BlogViewTracker from "@/components/BlogViewTracker";
 import SafeHTML from "@/components/SafeHTML";
+import { getTranslations } from 'next-intl/server';
 
 // ISR - revalidate every 60 seconds for fresh content
 export const revalidate = 60;
 
 // Generate static paths for all blog posts
 export async function generateStaticParams() {
-  const posts = await getPublishedPosts();
+  const posts = await getPublishedPosts("en");
   return posts.map((post) => ({
     slug: post.slug,
   }));
 }
 
 interface PageProps {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string; locale: string }>;
 }
 
 export async function generateMetadata({ params }: PageProps) {
-  const { slug } = await params;
-  const post = await getPostBySlug(slug);
+  const { slug, locale } = await params;
+  const post = await getPostBySlugWithFallback(slug, locale as SupportedLocale);
 
   if (!post || post.status !== "published") {
     return {
@@ -37,8 +38,9 @@ export async function generateMetadata({ params }: PageProps) {
 }
 
 export default async function BlogPostPage({ params }: PageProps) {
-  const { slug } = await params;
-  const post = await getPostBySlug(slug);
+  const { slug, locale } = await params;
+  const post = await getPostBySlugWithFallback(slug, locale as SupportedLocale);
+  const t = await getTranslations('blogPost');
 
   if (!post || post.status !== "published") {
     notFound();
@@ -52,8 +54,8 @@ export default async function BlogPostPage({ params }: PageProps) {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           {/* Breadcrumb */}
           <div className="mb-6">
-            <Link href="/blog" className="text-green-400 hover:text-green-300 text-sm">
-              ← Back to Blog
+            <Link href={`/${locale}/blog`} className="text-green-400 hover:text-green-300 text-sm">
+              ← {t('backToBlog')}
             </Link>
           </div>
 
@@ -63,7 +65,7 @@ export default async function BlogPostPage({ params }: PageProps) {
               {post.categories.map((category) => (
                 <Link
                   key={category}
-                  href={`/blog/category/${encodeURIComponent(category)}`}
+                  href={`/${locale}/blog/category/${encodeURIComponent(category)}`}
                   className="text-sm px-3 py-1 bg-green-500/20 text-green-400 rounded-full hover:bg-green-500/30 transition-colors"
                 >
                   {category}
@@ -132,7 +134,7 @@ export default async function BlogPostPage({ params }: PageProps) {
             {post.tags.map((tag) => (
               <Link
                 key={tag}
-                href={`/blog/tag/${encodeURIComponent(tag)}`}
+                href={`/${locale}/blog/tag/${encodeURIComponent(tag)}`}
                 className="px-3 py-1 bg-gray-800 border border-gray-700 text-gray-300 rounded-lg text-sm hover:border-green-500 hover:text-green-400 transition-colors"
               >
                 #{tag}
@@ -145,7 +147,7 @@ export default async function BlogPostPage({ params }: PageProps) {
       {/* Author Bio */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 border-t border-gray-800">
         <div className="bg-gray-800 border border-gray-700 rounded-xl p-6">
-          <h3 className="text-lg font-semibold text-white mb-2">About the Author</h3>
+          <h3 className="text-lg font-semibold text-white mb-2">{t('aboutAuthor')}</h3>
           <p className="text-gray-400">
             <strong className="text-white">{post.author.name}</strong>
           </p>
@@ -156,10 +158,10 @@ export default async function BlogPostPage({ params }: PageProps) {
       {/* Back to Blog */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mb-16">
         <Link
-          href="/blog"
+          href={`/${locale}/blog`}
           className="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-semibold transition"
         >
-          ← Back to All Posts
+          ← {t('backToAllPosts')}
         </Link>
       </div>
     </div>

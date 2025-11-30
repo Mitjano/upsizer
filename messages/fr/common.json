@@ -960,6 +960,31 @@
     "checkBackSoon": "Revenez bientôt pour du nouveau contenu !",
     "readMore": "Lire la suite"
   },
+  "blogPost": {
+    "backToBlog": "Retour au Blog",
+    "aboutAuthor": "À Propos de l'Auteur",
+    "backToAllPosts": "Retour à Tous les Articles"
+  },
+  "blogCategory": {
+    "backToBlog": "Retour au Blog",
+    "category": "Catégorie",
+    "articleSingular": "article trouvé",
+    "articlesPlural": "articles trouvés",
+    "readMore": "Lire la suite",
+    "noArticles": "Aucun article trouvé dans cette catégorie.",
+    "browseAll": "Parcourir tous les articles",
+    "allCategories": "Toutes les Catégories"
+  },
+  "blogTag": {
+    "backToBlog": "Retour au Blog",
+    "articlesTagged": "Articles tagués",
+    "articleSingular": "article trouvé",
+    "articlesPlural": "articles trouvés",
+    "readMore": "Lire la suite",
+    "noArticles": "Aucun article trouvé avec ce tag.",
+    "browseAll": "Parcourir tous les articles",
+    "allTags": "Tous les Tags"
+  },
   "knowledgePage": {
     "title": "Base de Connaissances",
     "description": "Votre guide complet sur la génération d'images par IA. Découvrez les modèles, techniques et terminologie.",

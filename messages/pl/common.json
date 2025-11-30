@@ -877,6 +877,31 @@
     "checkBackSoon": "Sprawdź wkrótce, aby zobaczyć nową zawartość!",
     "readMore": "Czytaj więcej"
   },
+  "blogPost": {
+    "backToBlog": "Powrót do Bloga",
+    "aboutAuthor": "O Autorze",
+    "backToAllPosts": "Powrót do Wszystkich Postów"
+  },
+  "blogCategory": {
+    "backToBlog": "Powrót do Bloga",
+    "category": "Kategoria",
+    "articleSingular": "artykuł",
+    "articlesPlural": "artykułów",
+    "readMore": "Czytaj więcej",
+    "noArticles": "Brak artykułów w tej kategorii.",
+    "browseAll": "Przeglądaj wszystkie artykuły",
+    "allCategories": "Wszystkie Kategorie"
+  },
+  "blogTag": {
+    "backToBlog": "Powrót do Bloga",
+    "articlesTagged": "Artykuły z tagiem",
+    "articleSingular": "artykuł",
+    "articlesPlural": "artykułów",
+    "readMore": "Czytaj więcej",
+    "noArticles": "Brak artykułów z tym tagiem.",
+    "browseAll": "Przeglądaj wszystkie artykuły",
+    "allTags": "Wszystkie Tagi"
+  },
   "knowledgePage": {
     "title": "Baza Wiedzy",
     "description": "Twój kompletny przewodnik po generowaniu obrazów AI. Dowiedz się o modelach, technikach i terminologii.",

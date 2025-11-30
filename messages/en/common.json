@@ -877,6 +877,31 @@
     "checkBackSoon": "Check back soon for new content!",
     "readMore": "Read more"
   },
+  "blogPost": {
+    "backToBlog": "Back to Blog",
+    "aboutAuthor": "About the Author",
+    "backToAllPosts": "Back to All Posts"
+  },
+  "blogCategory": {
+    "backToBlog": "Back to Blog",
+    "category": "Category",
+    "articleSingular": "article found",
+    "articlesPlural": "articles found",
+    "readMore": "Read more",
+    "noArticles": "No articles found in this category.",
+    "browseAll": "Browse all articles",
+    "allCategories": "All Categories"
+  },
+  "blogTag": {
+    "backToBlog": "Back to Blog",
+    "articlesTagged": "Articles tagged",
+    "articleSingular": "article found",
+    "articlesPlural": "articles found",
+    "readMore": "Read more",
+    "noArticles": "No articles found with this tag.",
+    "browseAll": "Browse all articles",
+    "allTags": "All Tags"
+  },
   "knowledgePage": {
     "title": "Knowledge Base",
     "description": "Your complete guide to AI image generation. Learn about models, techniques, and terminology.",
