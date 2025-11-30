@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import SafeHTML from "@/components/SafeHTML";
 import { getTranslations } from 'next-intl/server';
+import type { Metadata } from "next";
 
 export const dynamic = 'force-dynamic';
 
@@ -11,7 +12,15 @@ interface PageProps {
   params: Promise<{ slug: string; locale: string }>;
 }
 
-export async function generateMetadata({ params }: PageProps) {
+// Locale to OpenGraph locale mapping
+const ogLocaleMap: Record<string, string> = {
+  en: 'en_US',
+  pl: 'pl_PL',
+  es: 'es_ES',
+  fr: 'fr_FR',
+};
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug, locale } = await params;
   const article = await getArticleBySlugWithFallback(slug, locale as SupportedLocale);
 
@@ -21,9 +30,51 @@ export async function generateMetadata({ params }: PageProps) {
     };
   }
 
+  const title = article.metaTitle || `${article.title} - Pixelift Knowledge`;
+  const description = article.metaDescription || article.excerpt;
+  const url = `https://pixelift.pl/${locale}/knowledge/${slug}`;
+  const ogImage = article.featuredImage || 'https://pixelift.pl/og-image.png';
+
   return {
-    title: article.metaTitle || `${article.title} - Pixelift Knowledge`,
-    description: article.metaDescription || article.excerpt,
+    title,
+    description,
+    alternates: {
+      canonical: url,
+      languages: {
+        'en': `https://pixelift.pl/en/knowledge/${slug}`,
+        'pl': `https://pixelift.pl/pl/knowledge/${slug}`,
+        'es': `https://pixelift.pl/es/knowledge/${slug}`,
+        'fr': `https://pixelift.pl/fr/knowledge/${slug}`,
+        'x-default': `https://pixelift.pl/pl/knowledge/${slug}`,
+      },
+    },
+    openGraph: {
+      title,
+      description,
+      url,
+      siteName: 'Pixelift',
+      locale: ogLocaleMap[locale] || 'en_US',
+      type: 'article',
+      publishedTime: article.publishedAt || article.createdAt,
+      modifiedTime: article.updatedAt,
+      authors: ['Pixelift'],
+      tags: article.tags,
+      images: ogImage ? [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: article.title,
+        }
+      ] : undefined,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: ogImage ? [ogImage] : undefined,
+      creator: '@pixelift',
+    },
   };
 }
 
@@ -46,8 +97,79 @@ export default async function KnowledgeArticlePage({ params }: PageProps) {
     ? allArticles.filter(a => article.relatedSlugs?.includes(a.slug))
     : allArticles.filter(a => a.category === article.category && a.id !== article.id).slice(0, 3);
 
+  // JSON-LD structured data for article
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": article.title,
+    "description": article.excerpt,
+    "image": article.featuredImage || "https://pixelift.pl/og-image.png",
+    "author": {
+      "@type": "Organization",
+      "name": "Pixelift",
+      "url": "https://pixelift.pl"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Pixelift",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://pixelift.pl/logo.png"
+      }
+    },
+    "datePublished": article.publishedAt || article.createdAt,
+    "dateModified": article.updatedAt,
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": `https://pixelift.pl/${locale}/knowledge/${slug}`
+    },
+    "keywords": article.tags.join(", "),
+    "articleSection": categoryName,
+    "inLanguage": locale === 'pl' ? 'pl-PL' : locale === 'es' ? 'es-ES' : locale === 'fr' ? 'fr-FR' : 'en-US',
+  };
+
+  // BreadcrumbList structured data
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": `https://pixelift.pl/${locale}`
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": t('breadcrumbKnowledge'),
+        "item": `https://pixelift.pl/${locale}/knowledge`
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": categoryName,
+        "item": `https://pixelift.pl/${locale}/knowledge/category/${article.category}`
+      },
+      {
+        "@type": "ListItem",
+        "position": 4,
+        "name": article.title
+      }
+    ]
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-black to-gray-900">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <div className="min-h-screen bg-gradient-to-b from-gray-900 via-black to-gray-900">
       {/* Hero Section */}
       <div className="border-b border-gray-800">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -170,5 +292,6 @@ export default async function KnowledgeArticlePage({ params }: PageProps) {
         </Link>
       </div>
     </div>
+    </>
   );
 }
