@@ -1,14 +1,23 @@
 /**
  * Migration script: JSON files -> PostgreSQL
  *
- * Run with: npx tsx scripts/migrate-to-postgres.ts
+ * Run with:
+ * DATABASE_URL='postgresql://...' npx tsx scripts/migrate-to-postgres.ts
  */
 
 import { PrismaClient } from '../lib/generated/prisma';
 import fs from 'fs';
 import path from 'path';
 
-const prisma = new PrismaClient();
+// Ensure we have DATABASE_URL
+if (!process.env.DATABASE_URL) {
+  console.error('❌ DATABASE_URL environment variable is required');
+  process.exit(1);
+}
+
+const prisma = new PrismaClient({
+  log: ['error', 'warn'],
+});
 const DATA_DIR = path.join(process.cwd(), 'data');
 
 function readJSON<T>(filename: string): T | null {
