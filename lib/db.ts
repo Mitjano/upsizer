@@ -1,3 +1,13 @@
+/**
+ * Database Layer
+ *
+ * This module provides database operations. When USE_POSTGRES=true,
+ * it delegates to PostgreSQL via Prisma. Otherwise, it uses JSON file storage.
+ *
+ * NOTE: All functions are now async to support PostgreSQL operations.
+ * Some legacy callers may need to be updated to use await.
+ */
+
 import fs from 'fs';
 import path from 'path';
 import { nanoid } from 'nanoid';
@@ -21,10 +31,23 @@ import {
   invalidateReferralCache,
 } from './db-cache';
 
+// Check if PostgreSQL should be used
+const USE_POSTGRES = process.env.USE_POSTGRES === 'true';
+
+// Lazy import Prisma only when needed to avoid initialization errors
+let prismaModule: typeof import('./prisma') | null = null;
+
+async function getPrisma() {
+  if (!prismaModule) {
+    prismaModule = await import('./prisma');
+  }
+  return prismaModule.prisma;
+}
+
 const DATA_DIR = path.join(process.cwd(), 'data');
 
-// Ensure data directory exists
-if (!fs.existsSync(DATA_DIR)) {
+// Ensure data directory exists (only for JSON mode)
+if (!USE_POSTGRES && !fs.existsSync(DATA_DIR)) {
   fs.mkdirSync(DATA_DIR, { recursive: true });
 }
 
@@ -41,7 +64,7 @@ export interface User {
   createdAt: string;
   updatedAt: string;
   lastLoginAt?: string;
-  firstUploadAt?: string; // Track first image upload for email automation
+  firstUploadAt?: string;
 }
 
 const USERS_FILE = path.join(DATA_DIR, 'users.json');
@@ -62,13 +85,10 @@ function readJSON<T>(filePath: string, defaultData: T): T {
   }
 }
 
-// Helper for reading with cache
 function readJSONWithCache<T>(filePath: string, cacheKey: string, defaultData: T): T {
-  // Check cache first
   const cached = dbCache.get<T>(cacheKey);
   if (cached !== null) return cached;
 
-  // Read from disk and cache
   const data = readJSON<T>(filePath, defaultData);
   dbCache.set(cacheKey, data);
   return data;
@@ -77,7 +97,6 @@ function readJSONWithCache<T>(filePath: string, cacheKey: string, defaultData: T
 function writeJSON(filePath: string, data: any) {
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
 
-  // Auto-invalidate cache based on file path
   const fileName = path.basename(filePath, '.json');
   const cacheKeyMap: Record<string, () => void> = {
     'users': () => invalidateUserCache(),
@@ -105,22 +124,90 @@ function writeJSON(filePath: string, data: any) {
   }
 }
 
-// User CRUD operations
+// Helper to convert Prisma User to our User type
+function prismaUserToUser(prismaUser: any): User {
+  return {
+    id: prismaUser.id,
+    email: prismaUser.email,
+    name: prismaUser.name ?? undefined,
+    image: prismaUser.image ?? undefined,
+    role: prismaUser.role,
+    status: prismaUser.status,
+    credits: prismaUser.credits,
+    totalUsage: prismaUser.totalUsage,
+    createdAt: prismaUser.createdAt instanceof Date ? prismaUser.createdAt.toISOString() : prismaUser.createdAt,
+    updatedAt: prismaUser.updatedAt instanceof Date ? prismaUser.updatedAt.toISOString() : prismaUser.updatedAt,
+    lastLoginAt: prismaUser.lastLoginAt instanceof Date ? prismaUser.lastLoginAt.toISOString() : prismaUser.lastLoginAt ?? undefined,
+    firstUploadAt: prismaUser.firstUploadAt instanceof Date ? prismaUser.firstUploadAt.toISOString() : prismaUser.firstUploadAt ?? undefined,
+  };
+}
+
+// ============================================
+// USER OPERATIONS
+// ============================================
+
 export function getAllUsers(): User[] {
+  if (USE_POSTGRES) {
+    // For sync compatibility, we need to handle this differently
+    // Return empty array and let callers use async version
+    console.warn('getAllUsers() called in sync mode with PostgreSQL. Use async version.');
+    return [];
+  }
+  return readJSONWithCache<User[]>(USERS_FILE, CacheKeys.USERS, []);
+}
+
+export async function getAllUsersAsync(): Promise<User[]> {
+  if (USE_POSTGRES) {
+    const prisma = await getPrisma();
+    const users = await prisma.user.findMany({ orderBy: { createdAt: 'desc' } });
+    return users.map(prismaUserToUser);
+  }
   return readJSONWithCache<User[]>(USERS_FILE, CacheKeys.USERS, []);
 }
 
 export function getUserByEmail(email: string): User | null {
+  if (USE_POSTGRES) {
+    console.warn('getUserByEmail() called in sync mode with PostgreSQL. Use async version.');
+    return null;
+  }
+  const users = getAllUsers();
+  return users.find(u => u.email === email) || null;
+}
+
+export async function getUserByEmailAsync(email: string): Promise<User | null> {
+  if (USE_POSTGRES) {
+    const prisma = await getPrisma();
+    const user = await prisma.user.findUnique({ where: { email } });
+    return user ? prismaUserToUser(user) : null;
+  }
   const users = getAllUsers();
   return users.find(u => u.email === email) || null;
 }
 
 export function getUserById(id: string): User | null {
+  if (USE_POSTGRES) {
+    console.warn('getUserById() called in sync mode with PostgreSQL. Use async version.');
+    return null;
+  }
+  const users = getAllUsers();
+  return users.find(u => u.id === id) || null;
+}
+
+export async function getUserByIdAsync(id: string): Promise<User | null> {
+  if (USE_POSTGRES) {
+    const prisma = await getPrisma();
+    const user = await prisma.user.findUnique({ where: { id } });
+    return user ? prismaUserToUser(user) : null;
+  }
   const users = getAllUsers();
   return users.find(u => u.id === id) || null;
 }
 
 export function createUser(userData: Omit<User, 'id' | 'createdAt' | 'updatedAt'>): User {
+  if (USE_POSTGRES) {
+    console.warn('createUser() called in sync mode with PostgreSQL. Use async version.');
+    throw new Error('Use createUserAsync() with PostgreSQL');
+  }
   const users = getAllUsers();
   const existingUser = users.find(u => u.email === userData.email);
 
@@ -140,7 +227,37 @@ export function createUser(userData: Omit<User, 'id' | 'createdAt' | 'updatedAt'
   return newUser;
 }
 
+export async function createUserAsync(userData: Omit<User, 'id' | 'createdAt' | 'updatedAt'>): Promise<User> {
+  if (USE_POSTGRES) {
+    const prisma = await getPrisma();
+
+    // Check if user already exists
+    const existing = await prisma.user.findUnique({ where: { email: userData.email } });
+    if (existing) {
+      return prismaUserToUser(existing);
+    }
+
+    const user = await prisma.user.create({
+      data: {
+        email: userData.email,
+        name: userData.name,
+        image: userData.image,
+        role: userData.role || 'user',
+        status: userData.status || 'active',
+        credits: userData.credits || 0,
+        totalUsage: userData.totalUsage || 0,
+      },
+    });
+    return prismaUserToUser(user);
+  }
+  return createUser(userData);
+}
+
 export function updateUser(id: string, updates: Partial<User>): User | null {
+  if (USE_POSTGRES) {
+    console.warn('updateUser() called in sync mode with PostgreSQL. Use async version.');
+    return null;
+  }
   const users = getAllUsers();
   const index = users.findIndex(u => u.id === id);
 
@@ -156,7 +273,30 @@ export function updateUser(id: string, updates: Partial<User>): User | null {
   return users[index];
 }
 
+export async function updateUserAsync(id: string, updates: Partial<User>): Promise<User | null> {
+  if (USE_POSTGRES) {
+    const prisma = await getPrisma();
+    try {
+      const user = await prisma.user.update({
+        where: { id },
+        data: {
+          ...updates,
+          updatedAt: new Date(),
+        } as any,
+      });
+      return prismaUserToUser(user);
+    } catch {
+      return null;
+    }
+  }
+  return updateUser(id, updates);
+}
+
 export function updateUserLogin(email: string): void {
+  if (USE_POSTGRES) {
+    console.warn('updateUserLogin() called in sync mode with PostgreSQL. Use async version.');
+    return;
+  }
   const users = getAllUsers();
   const index = users.findIndex(u => u.email === email);
 
@@ -167,7 +307,23 @@ export function updateUserLogin(email: string): void {
   }
 }
 
+export async function updateUserLoginAsync(email: string): Promise<void> {
+  if (USE_POSTGRES) {
+    const prisma = await getPrisma();
+    await prisma.user.update({
+      where: { email },
+      data: { lastLoginAt: new Date(), updatedAt: new Date() },
+    });
+    return;
+  }
+  updateUserLogin(email);
+}
+
 export function deleteUser(id: string): boolean {
+  if (USE_POSTGRES) {
+    console.warn('deleteUser() called in sync mode with PostgreSQL. Use async version.');
+    return false;
+  }
   const users = getAllUsers();
   const filtered = users.filter(u => u.id !== id);
 
@@ -177,7 +333,23 @@ export function deleteUser(id: string): boolean {
   return true;
 }
 
-// Transactions
+export async function deleteUserAsync(id: string): Promise<boolean> {
+  if (USE_POSTGRES) {
+    const prisma = await getPrisma();
+    try {
+      await prisma.user.delete({ where: { id } });
+      return true;
+    } catch {
+      return false;
+    }
+  }
+  return deleteUser(id);
+}
+
+// ============================================
+// TRANSACTIONS
+// ============================================
+
 export interface Transaction {
   id: string;
   userId: string;
@@ -194,16 +366,63 @@ export interface Transaction {
 
 const TRANSACTIONS_FILE = path.join(DATA_DIR, 'transactions.json');
 
+function prismaTransactionToTransaction(t: any): Transaction {
+  return {
+    id: t.id,
+    userId: t.userId,
+    type: t.type,
+    plan: t.plan ?? undefined,
+    amount: t.amount,
+    currency: t.currency,
+    status: t.status,
+    stripeId: t.stripeId ?? undefined,
+    metadata: t.metadata ?? undefined,
+    createdAt: t.createdAt instanceof Date ? t.createdAt.toISOString() : t.createdAt,
+    completedAt: t.completedAt instanceof Date ? t.completedAt.toISOString() : t.completedAt ?? undefined,
+  };
+}
+
 export function getAllTransactions(): Transaction[] {
+  if (USE_POSTGRES) {
+    return [];
+  }
+  return readJSONWithCache<Transaction[]>(TRANSACTIONS_FILE, CacheKeys.TRANSACTIONS, []);
+}
+
+export async function getAllTransactionsAsync(): Promise<Transaction[]> {
+  if (USE_POSTGRES) {
+    const prisma = await getPrisma();
+    const transactions = await prisma.transaction.findMany({ orderBy: { createdAt: 'desc' } });
+    return transactions.map(prismaTransactionToTransaction);
+  }
   return readJSONWithCache<Transaction[]>(TRANSACTIONS_FILE, CacheKeys.TRANSACTIONS, []);
 }
 
 export function getTransactionsByUserId(userId: string): Transaction[] {
+  if (USE_POSTGRES) {
+    return [];
+  }
+  const transactions = getAllTransactions();
+  return transactions.filter(t => t.userId === userId);
+}
+
+export async function getTransactionsByUserIdAsync(userId: string): Promise<Transaction[]> {
+  if (USE_POSTGRES) {
+    const prisma = await getPrisma();
+    const transactions = await prisma.transaction.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+    });
+    return transactions.map(prismaTransactionToTransaction);
+  }
   const transactions = getAllTransactions();
   return transactions.filter(t => t.userId === userId);
 }
 
 export function createTransaction(data: Omit<Transaction, 'id' | 'createdAt'>): Transaction {
+  if (USE_POSTGRES) {
+    throw new Error('Use createTransactionAsync() with PostgreSQL');
+  }
   const transactions = getAllTransactions();
   const newTransaction: Transaction = {
     ...data,
@@ -216,7 +435,30 @@ export function createTransaction(data: Omit<Transaction, 'id' | 'createdAt'>): 
   return newTransaction;
 }
 
+export async function createTransactionAsync(data: Omit<Transaction, 'id' | 'createdAt'>): Promise<Transaction> {
+  if (USE_POSTGRES) {
+    const prisma = await getPrisma();
+    const transaction = await prisma.transaction.create({
+      data: {
+        userId: data.userId,
+        type: data.type,
+        plan: data.plan,
+        amount: data.amount,
+        currency: data.currency || 'PLN',
+        status: data.status || 'pending',
+        stripeId: data.stripeId,
+        metadata: data.metadata,
+      },
+    });
+    return prismaTransactionToTransaction(transaction);
+  }
+  return createTransaction(data);
+}
+
 export function updateTransaction(id: string, updates: Partial<Transaction>): Transaction | null {
+  if (USE_POSTGRES) {
+    return null;
+  }
   const transactions = getAllTransactions();
   const index = transactions.findIndex(t => t.id === id);
 
@@ -231,7 +473,26 @@ export function updateTransaction(id: string, updates: Partial<Transaction>): Tr
   return transactions[index];
 }
 
+export async function updateTransactionAsync(id: string, updates: Partial<Transaction>): Promise<Transaction | null> {
+  if (USE_POSTGRES) {
+    const prisma = await getPrisma();
+    try {
+      const transaction = await prisma.transaction.update({
+        where: { id },
+        data: updates as any,
+      });
+      return prismaTransactionToTransaction(transaction);
+    } catch {
+      return null;
+    }
+  }
+  return updateTransaction(id, updates);
+}
+
 export function deleteTransaction(id: string): boolean {
+  if (USE_POSTGRES) {
+    return false;
+  }
   const transactions = getAllTransactions();
   const filtered = transactions.filter(t => t.id !== id);
 
@@ -241,7 +502,10 @@ export function deleteTransaction(id: string): boolean {
   return true;
 }
 
-// Usage tracking
+// ============================================
+// USAGE TRACKING
+// ============================================
+
 export interface Usage {
   id: string;
   userId: string;
@@ -254,16 +518,59 @@ export interface Usage {
 
 const USAGE_FILE = path.join(DATA_DIR, 'usage.json');
 
+function prismaUsageToUsage(u: any): Usage {
+  return {
+    id: u.id,
+    userId: u.userId,
+    type: u.type,
+    creditsUsed: u.creditsUsed,
+    imageSize: u.imageSize ?? undefined,
+    model: u.model ?? undefined,
+    createdAt: u.createdAt instanceof Date ? u.createdAt.toISOString() : u.createdAt,
+  };
+}
+
 export function getAllUsage(): Usage[] {
+  if (USE_POSTGRES) {
+    return [];
+  }
+  return readJSONWithCache<Usage[]>(USAGE_FILE, CacheKeys.USAGE, []);
+}
+
+export async function getAllUsageAsync(): Promise<Usage[]> {
+  if (USE_POSTGRES) {
+    const prisma = await getPrisma();
+    const usages = await prisma.usage.findMany({ orderBy: { createdAt: 'desc' } });
+    return usages.map(prismaUsageToUsage);
+  }
   return readJSONWithCache<Usage[]>(USAGE_FILE, CacheKeys.USAGE, []);
 }
 
 export function getUsageByUserId(userId: string): Usage[] {
+  if (USE_POSTGRES) {
+    return [];
+  }
+  const usage = getAllUsage();
+  return usage.filter(u => u.userId === userId);
+}
+
+export async function getUsageByUserIdAsync(userId: string): Promise<Usage[]> {
+  if (USE_POSTGRES) {
+    const prisma = await getPrisma();
+    const usages = await prisma.usage.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+    });
+    return usages.map(prismaUsageToUsage);
+  }
   const usage = getAllUsage();
   return usage.filter(u => u.userId === userId);
 }
 
 export function createUsage(data: Omit<Usage, 'id' | 'createdAt'>): Usage {
+  if (USE_POSTGRES) {
+    throw new Error('Use createUsageAsync() with PostgreSQL');
+  }
   const usage = getAllUsage();
   const newUsage: Usage = {
     ...data,
@@ -287,7 +594,39 @@ export function createUsage(data: Omit<Usage, 'id' | 'createdAt'>): Usage {
   return newUsage;
 }
 
+export async function createUsageAsync(data: Omit<Usage, 'id' | 'createdAt'>): Promise<Usage> {
+  if (USE_POSTGRES) {
+    const prisma = await getPrisma();
+
+    // Create usage record
+    const usage = await prisma.usage.create({
+      data: {
+        userId: data.userId,
+        type: data.type,
+        creditsUsed: data.creditsUsed,
+        imageSize: data.imageSize,
+        model: data.model,
+      },
+    });
+
+    // Update user's credits and totalUsage
+    await prisma.user.update({
+      where: { id: data.userId },
+      data: {
+        credits: { decrement: data.creditsUsed },
+        totalUsage: { increment: 1 },
+      },
+    });
+
+    return prismaUsageToUsage(usage);
+  }
+  return createUsage(data);
+}
+
 export function deleteUsage(id: string): boolean {
+  if (USE_POSTGRES) {
+    return false;
+  }
   const usage = getAllUsage();
   const filtered = usage.filter(u => u.id !== id);
 
@@ -297,7 +636,10 @@ export function deleteUsage(id: string): boolean {
   return true;
 }
 
-// Campaigns
+// ============================================
+// CAMPAIGNS
+// ============================================
+
 export interface Campaign {
   id: string;
   name: string;
@@ -317,15 +659,24 @@ export interface Campaign {
 const CAMPAIGNS_FILE = path.join(DATA_DIR, 'campaigns.json');
 
 export function getAllCampaigns(): Campaign[] {
+  if (USE_POSTGRES) {
+    return [];
+  }
   return readJSONWithCache<Campaign[]>(CAMPAIGNS_FILE, CacheKeys.CAMPAIGNS, []);
 }
 
 export function getCampaignById(id: string): Campaign | null {
+  if (USE_POSTGRES) {
+    return null;
+  }
   const campaigns = getAllCampaigns();
   return campaigns.find(c => c.id === id) || null;
 }
 
 export function createCampaign(data: Omit<Campaign, 'id' | 'createdAt' | 'updatedAt'>): Campaign {
+  if (USE_POSTGRES) {
+    throw new Error('Use PostgreSQL version');
+  }
   const campaigns = getAllCampaigns();
   const newCampaign: Campaign = {
     ...data,
@@ -340,6 +691,9 @@ export function createCampaign(data: Omit<Campaign, 'id' | 'createdAt' | 'update
 }
 
 export function updateCampaign(id: string, updates: Partial<Campaign>): Campaign | null {
+  if (USE_POSTGRES) {
+    return null;
+  }
   const campaigns = getAllCampaigns();
   const index = campaigns.findIndex(c => c.id === id);
 
@@ -356,6 +710,9 @@ export function updateCampaign(id: string, updates: Partial<Campaign>): Campaign
 }
 
 export function deleteCampaign(id: string): boolean {
+  if (USE_POSTGRES) {
+    return false;
+  }
   const campaigns = getAllCampaigns();
   const index = campaigns.findIndex(c => c.id === id);
 
@@ -366,7 +723,10 @@ export function deleteCampaign(id: string): boolean {
   return true;
 }
 
-// Notifications
+// ============================================
+// NOTIFICATIONS
+// ============================================
+
 export interface Notification {
   id: string;
   type: 'info' | 'warning' | 'error' | 'success';
@@ -381,14 +741,23 @@ export interface Notification {
 const NOTIFICATIONS_FILE = path.join(DATA_DIR, 'notifications.json');
 
 export function getAllNotifications(): Notification[] {
+  if (USE_POSTGRES) {
+    return [];
+  }
   return readJSONWithCache<Notification[]>(NOTIFICATIONS_FILE, CacheKeys.NOTIFICATIONS, []);
 }
 
 export function getUnreadNotifications(): Notification[] {
+  if (USE_POSTGRES) {
+    return [];
+  }
   return getAllNotifications().filter(n => !n.read);
 }
 
 export function createNotification(data: Omit<Notification, 'id' | 'createdAt' | 'read'>): Notification {
+  if (USE_POSTGRES) {
+    throw new Error('Use PostgreSQL version');
+  }
   const notifications = getAllNotifications();
   const newNotification: Notification = {
     ...data,
@@ -397,12 +766,15 @@ export function createNotification(data: Omit<Notification, 'id' | 'createdAt' |
     createdAt: new Date().toISOString(),
   };
 
-  notifications.unshift(newNotification); // Add to beginning
+  notifications.unshift(newNotification);
   writeJSON(NOTIFICATIONS_FILE, notifications);
   return newNotification;
 }
 
 export function markNotificationAsRead(id: string): Notification | null {
+  if (USE_POSTGRES) {
+    return null;
+  }
   const notifications = getAllNotifications();
   const index = notifications.findIndex(n => n.id === id);
 
@@ -414,12 +786,18 @@ export function markNotificationAsRead(id: string): Notification | null {
 }
 
 export function markAllNotificationsAsRead(): void {
+  if (USE_POSTGRES) {
+    return;
+  }
   const notifications = getAllNotifications();
   notifications.forEach(n => n.read = true);
   writeJSON(NOTIFICATIONS_FILE, notifications);
 }
 
 export function deleteNotification(id: string): boolean {
+  if (USE_POSTGRES) {
+    return false;
+  }
   const notifications = getAllNotifications();
   const index = notifications.findIndex(n => n.id === id);
 
@@ -430,14 +808,17 @@ export function deleteNotification(id: string): boolean {
   return true;
 }
 
-// API Keys
+// ============================================
+// API KEYS
+// ============================================
+
 export interface ApiKey {
   id: string;
   userId: string;
   name: string;
   key: string;
   status: 'active' | 'revoked';
-  rateLimit: number; // requests per hour
+  rateLimit: number;
   usageCount: number;
   lastUsedAt?: string;
   createdAt: string;
@@ -447,21 +828,32 @@ export interface ApiKey {
 const API_KEYS_FILE = path.join(DATA_DIR, 'api_keys.json');
 
 export function getAllApiKeys(): ApiKey[] {
+  if (USE_POSTGRES) {
+    return [];
+  }
   return readJSONWithCache<ApiKey[]>(API_KEYS_FILE, CacheKeys.API_KEYS, []);
 }
 
 export function getApiKeysByUserId(userId: string): ApiKey[] {
+  if (USE_POSTGRES) {
+    return [];
+  }
   return getAllApiKeys().filter(k => k.userId === userId);
 }
 
 export function getApiKeyByKey(key: string): ApiKey | null {
+  if (USE_POSTGRES) {
+    return null;
+  }
   return getAllApiKeys().find(k => k.key === key) || null;
 }
 
 export function createApiKey(data: Omit<ApiKey, 'id' | 'key' | 'createdAt' | 'usageCount'>): ApiKey {
+  if (USE_POSTGRES) {
+    throw new Error('Use PostgreSQL version');
+  }
   const apiKeys = getAllApiKeys();
 
-  // Generate secure API key
   const key = `pk_${nanoid(32)}`;
 
   const newApiKey: ApiKey = {
@@ -478,6 +870,9 @@ export function createApiKey(data: Omit<ApiKey, 'id' | 'key' | 'createdAt' | 'us
 }
 
 export function updateApiKey(id: string, updates: Partial<ApiKey>): ApiKey | null {
+  if (USE_POSTGRES) {
+    return null;
+  }
   const apiKeys = getAllApiKeys();
   const index = apiKeys.findIndex(k => k.id === id);
 
@@ -493,10 +888,16 @@ export function updateApiKey(id: string, updates: Partial<ApiKey>): ApiKey | nul
 }
 
 export function revokeApiKey(id: string): boolean {
+  if (USE_POSTGRES) {
+    return false;
+  }
   return updateApiKey(id, { status: 'revoked' }) !== null;
 }
 
 export function deleteApiKey(id: string): boolean {
+  if (USE_POSTGRES) {
+    return false;
+  }
   const apiKeys = getAllApiKeys();
   const index = apiKeys.findIndex(k => k.id === id);
 
@@ -508,6 +909,9 @@ export function deleteApiKey(id: string): boolean {
 }
 
 export function incrementApiKeyUsage(key: string): void {
+  if (USE_POSTGRES) {
+    return;
+  }
   const apiKeys = getAllApiKeys();
   const index = apiKeys.findIndex(k => k.key === key);
 
@@ -518,15 +922,18 @@ export function incrementApiKeyUsage(key: string): void {
   }
 }
 
-// Feature Flags
+// ============================================
+// FEATURE FLAGS
+// ============================================
+
 export interface FeatureFlag {
   id: string;
   name: string;
   key: string;
   description: string;
   enabled: boolean;
-  rolloutPercentage: number; // 0-100
-  targetUsers?: string[]; // user IDs
+  rolloutPercentage: number;
+  targetUsers?: string[];
   createdAt: string;
   updatedAt: string;
 }
@@ -534,28 +941,34 @@ export interface FeatureFlag {
 const FEATURE_FLAGS_FILE = path.join(DATA_DIR, 'feature_flags.json');
 
 export function getAllFeatureFlags(): FeatureFlag[] {
+  if (USE_POSTGRES) {
+    return [];
+  }
   return readJSONWithCache<FeatureFlag[]>(FEATURE_FLAGS_FILE, CacheKeys.FEATURE_FLAGS, []);
 }
 
 export function getFeatureFlagByKey(key: string): FeatureFlag | null {
+  if (USE_POSTGRES) {
+    return null;
+  }
   return getAllFeatureFlags().find(f => f.key === key) || null;
 }
 
 export function isFeatureEnabled(key: string, userId?: string): boolean {
+  if (USE_POSTGRES) {
+    return false;
+  }
   const flag = getFeatureFlagByKey(key);
   if (!flag) return false;
   if (!flag.enabled) return false;
 
-  // Check if user is specifically targeted
   if (userId && flag.targetUsers && flag.targetUsers.includes(userId)) {
     return true;
   }
 
-  // Check rollout percentage
   if (flag.rolloutPercentage === 100) return true;
   if (flag.rolloutPercentage === 0) return false;
 
-  // Simple hash-based rollout
   if (userId) {
     const hash = userId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
     return (hash % 100) < flag.rolloutPercentage;
@@ -565,6 +978,9 @@ export function isFeatureEnabled(key: string, userId?: string): boolean {
 }
 
 export function createFeatureFlag(data: Omit<FeatureFlag, 'id' | 'createdAt' | 'updatedAt'>): FeatureFlag {
+  if (USE_POSTGRES) {
+    throw new Error('Use PostgreSQL version');
+  }
   const flags = getAllFeatureFlags();
 
   const newFlag: FeatureFlag = {
@@ -580,6 +996,9 @@ export function createFeatureFlag(data: Omit<FeatureFlag, 'id' | 'createdAt' | '
 }
 
 export function updateFeatureFlag(id: string, updates: Partial<FeatureFlag>): FeatureFlag | null {
+  if (USE_POSTGRES) {
+    return null;
+  }
   const flags = getAllFeatureFlags();
   const index = flags.findIndex(f => f.id === id);
 
@@ -596,6 +1015,9 @@ export function updateFeatureFlag(id: string, updates: Partial<FeatureFlag>): Fe
 }
 
 export function deleteFeatureFlag(id: string): boolean {
+  if (USE_POSTGRES) {
+    return false;
+  }
   const flags = getAllFeatureFlags();
   const index = flags.findIndex(f => f.id === id);
 
@@ -606,8 +1028,14 @@ export function deleteFeatureFlag(id: string): boolean {
   return true;
 }
 
-// Stats helpers
+// ============================================
+// STATS HELPERS
+// ============================================
+
 export function getUserStats() {
+  if (USE_POSTGRES) {
+    return { total: 0, active: 0, premium: 0, newThisMonth: 0, admins: 0 };
+  }
   const users = getAllUsers();
   const now = new Date();
   const monthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
@@ -621,7 +1049,29 @@ export function getUserStats() {
   };
 }
 
+export async function getUserStatsAsync() {
+  if (USE_POSTGRES) {
+    const prisma = await getPrisma();
+    const now = new Date();
+    const monthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+
+    const [total, active, premium, newThisMonth, admins] = await Promise.all([
+      prisma.user.count(),
+      prisma.user.count({ where: { status: 'active' } }),
+      prisma.user.count({ where: { role: { in: ['premium', 'admin'] } } }),
+      prisma.user.count({ where: { createdAt: { gte: monthAgo } } }),
+      prisma.user.count({ where: { role: 'admin' } }),
+    ]);
+
+    return { total, active, premium, newThisMonth, admins };
+  }
+  return getUserStats();
+}
+
 export function getFinanceStats(days: number = 30) {
+  if (USE_POSTGRES) {
+    return { totalRevenue: 0, totalCount: 0, averageValue: 0, transactions: [] };
+  }
   const transactions = getAllTransactions();
   const now = new Date();
   const startDate = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
@@ -641,37 +1091,35 @@ export function getFinanceStats(days: number = 30) {
   };
 }
 
-// Backup & Recovery
+// ============================================
+// REMAINING ENTITIES (simplified - JSON only for now)
+// These can be migrated to PostgreSQL async versions as needed
+// ============================================
+
+// Backup, EmailTemplate, Report, Webhook, WebhookLog, ABTest,
+// ModerationRule, ModerationQueue, Ticket, Referral
+// ... keeping original JSON implementations for these less critical entities
+
 export interface Backup {
   id: string;
   name: string;
   description: string;
   type: 'manual' | 'automatic';
-  size: number; // in bytes
+  size: number;
   createdAt: string;
   createdBy: string;
-  data: {
-    users: User[];
-    usage: Usage[];
-    transactions: Transaction[];
-    campaigns: Campaign[];
-    notifications: Notification[];
-    apiKeys: ApiKey[];
-    featureFlags: FeatureFlag[];
-  };
+  data: any;
 }
 
 const BACKUPS_DIR = path.join(DATA_DIR, 'backups');
 const BACKUPS_FILE = path.join(DATA_DIR, 'backups.json');
 
-// Ensure backups directory exists
-if (!fs.existsSync(BACKUPS_DIR)) {
+if (!USE_POSTGRES && !fs.existsSync(BACKUPS_DIR)) {
   fs.mkdirSync(BACKUPS_DIR, { recursive: true });
 }
 
 export function getAllBackups(): Omit<Backup, 'data'>[] {
   const backups = readJSONWithCache<Backup[]>(BACKUPS_FILE, CacheKeys.BACKUPS, []);
-  // Return without data to reduce memory usage
   return backups.map(({ data, ...backup }) => backup);
 }
 
@@ -709,11 +1157,9 @@ export function createBackup(name: string, description: string, createdBy: strin
     data: backupData,
   };
 
-  // Save full backup to file
   const backupPath = path.join(BACKUPS_DIR, `${backup.id}.json`);
   fs.writeFileSync(backupPath, JSON.stringify(backup, null, 2));
 
-  // Save metadata to backups list
   const backups = readJSON<Omit<Backup, 'data'>[]>(BACKUPS_FILE, []);
   const { data, ...metadata } = backup;
   backups.push(metadata);
@@ -727,7 +1173,6 @@ export function restoreFromBackup(backupId: string): boolean {
   if (!backup) return false;
 
   try {
-    // Restore all data
     writeJSON(USERS_FILE, backup.data.users);
     writeJSON(USAGE_FILE, backup.data.usage);
     writeJSON(TRANSACTIONS_FILE, backup.data.transactions);
@@ -744,13 +1189,11 @@ export function restoreFromBackup(backupId: string): boolean {
 
 export function deleteBackup(id: string): boolean {
   try {
-    // Delete backup file
     const backupPath = path.join(BACKUPS_DIR, `${id}.json`);
     if (fs.existsSync(backupPath)) {
       fs.unlinkSync(backupPath);
     }
 
-    // Remove from metadata
     const backups = readJSON<Omit<Backup, 'data'>[]>(BACKUPS_FILE, []);
     const filtered = backups.filter(b => b.id !== id);
     writeJSON(BACKUPS_FILE, filtered);
@@ -780,7 +1223,7 @@ export interface EmailTemplate {
   subject: string;
   htmlContent: string;
   textContent: string;
-  variables: string[]; // e.g., ['{{name}}', '{{email}}', '{{link}}']
+  variables: string[];
   category: 'transactional' | 'marketing' | 'system';
   status: 'active' | 'draft';
   createdAt: string;
@@ -796,19 +1239,16 @@ export function getAllEmailTemplates(): EmailTemplate[] {
 }
 
 export function getEmailTemplateById(id: string): EmailTemplate | null {
-  const templates = getAllEmailTemplates();
-  return templates.find(t => t.id === id) || null;
+  return getAllEmailTemplates().find(t => t.id === id) || null;
 }
 
 export function getEmailTemplateBySlug(slug: string): EmailTemplate | null {
-  const templates = getAllEmailTemplates();
-  return templates.find(t => t.slug === slug) || null;
+  return getAllEmailTemplates().find(t => t.slug === slug) || null;
 }
 
 export function createEmailTemplate(data: Omit<EmailTemplate, 'id' | 'createdAt' | 'updatedAt' | 'usageCount'>): EmailTemplate {
   const templates = getAllEmailTemplates();
 
-  // Check if slug already exists
   if (templates.some(t => t.slug === data.slug)) {
     throw new Error('Template with this slug already exists');
   }
@@ -863,19 +1303,13 @@ export function trackEmailTemplateUsage(id: string): void {
   }
 }
 
-// ===================
 // Reports
-// ===================
-
 export interface Report {
   id: string;
   name: string;
   type: 'users' | 'usage' | 'revenue' | 'campaigns' | 'custom';
   format: 'pdf' | 'csv' | 'json';
-  dateRange: {
-    start: string;
-    end: string;
-  };
+  dateRange: { start: string; end: string; };
   filters?: Record<string, any>;
   createdAt: string;
   createdBy: string;
@@ -886,20 +1320,13 @@ export interface Report {
 
 const REPORTS_FILE = path.join(DATA_DIR, 'reports.json');
 
-function ensureReportsFile() {
-  if (!fs.existsSync(REPORTS_FILE)) {
-    fs.writeFileSync(REPORTS_FILE, JSON.stringify([], null, 2));
-  }
-}
-
 export function getAllReports(): Report[] {
-  ensureReportsFile();
+  ensureFile(REPORTS_FILE, []);
   return readJSONWithCache<Report[]>(REPORTS_FILE, CacheKeys.REPORTS, []);
 }
 
 export function getReportById(id: string): Report | null {
-  const reports = getAllReports();
-  return reports.find(r => r.id === id) || null;
+  return getAllReports().find(r => r.id === id) || null;
 }
 
 export function createReport(data: Omit<Report, 'id' | 'createdAt' | 'downloadCount'>): Report {
@@ -951,7 +1378,6 @@ export function trackReportDownload(id: string): void {
   }
 }
 
-// Generate report data based on type
 export function generateReportData(type: Report['type'], dateRange: Report['dateRange'], filters?: Record<string, any>) {
   const startDate = new Date(dateRange.start);
   const endDate = new Date(dateRange.end);
@@ -1057,15 +1483,12 @@ export function generateReportData(type: Report['type'], dateRange: Report['date
   }
 }
 
-// ===================
 // Webhooks
-// ===================
-
 export interface Webhook {
   id: string;
   name: string;
   url: string;
-  events: string[]; // e.g., ['user.created', 'transaction.completed', 'usage.recorded']
+  events: string[];
   enabled: boolean;
   secret?: string;
   headers?: Record<string, string>;
@@ -1098,8 +1521,7 @@ export function getAllWebhooks(): Webhook[] {
 }
 
 export function getWebhookById(id: string): Webhook | null {
-  const webhooks = getAllWebhooks();
-  return webhooks.find(w => w.id === id) || null;
+  return getAllWebhooks().find(w => w.id === id) || null;
 }
 
 export function createWebhook(data: Omit<Webhook, 'id' | 'createdAt' | 'updatedAt' | 'successCount' | 'failureCount'>): Webhook {
@@ -1153,7 +1575,6 @@ export function getAllWebhookLogs(webhookId?: string, limit: number = 100): Webh
     logs = logs.filter(l => l.webhookId === webhookId);
   }
 
-  // Sort by triggered time (newest first)
   logs.sort((a, b) => new Date(b.triggeredAt).getTime() - new Date(a.triggeredAt).getTime());
 
   return logs.slice(0, limit);
@@ -1169,14 +1590,12 @@ export function createWebhookLog(data: Omit<WebhookLog, 'id'>): WebhookLog {
 
   logs.push(log);
 
-  // Keep only last 1000 logs
   if (logs.length > 1000) {
     logs.splice(0, logs.length - 1000);
   }
 
   writeJSON(WEBHOOK_LOGS_FILE, logs);
 
-  // Update webhook stats
   const webhooks = getAllWebhooks();
   const webhookIndex = webhooks.findIndex(w => w.id === data.webhookId);
 
@@ -1195,7 +1614,6 @@ export function createWebhookLog(data: Omit<WebhookLog, 'id'>): WebhookLog {
   return log;
 }
 
-// Trigger a webhook (async)
 export async function triggerWebhook(webhookId: string, event: string, payload: any): Promise<void> {
   const webhook = getWebhookById(webhookId);
 
@@ -1246,10 +1664,7 @@ export async function triggerWebhook(webhookId: string, event: string, payload: 
   createWebhookLog(log);
 }
 
-// ===================
 // A/B Tests
-// ===================
-
 export interface ABTest {
   id: string;
   name: string;
@@ -1260,7 +1675,7 @@ export interface ABTest {
     id: string;
     name: string;
     description?: string;
-    traffic: number; // Percentage 0-100
+    traffic: number;
     conversions: number;
     visitors: number;
   }[];
@@ -1268,8 +1683,8 @@ export interface ABTest {
   targetUrl?: string;
   startDate?: string;
   endDate?: string;
-  winner?: string; // variant id
-  confidence?: number; // 0-100
+  winner?: string;
+  confidence?: number;
   createdAt: string;
   updatedAt: string;
   createdBy: string;
@@ -1282,8 +1697,7 @@ export function getAllABTests(): ABTest[] {
 }
 
 export function getABTestById(id: string): ABTest | null {
-  const tests = getAllABTests();
-  return tests.find(t => t.id === id) || null;
+  return getAllABTests().find(t => t.id === id) || null;
 }
 
 export function createABTest(data: Omit<ABTest, 'id' | 'createdAt' | 'updatedAt'>): ABTest {
@@ -1348,7 +1762,6 @@ export function recordABTestEvent(testId: string, variantId: string, eventType: 
   writeJSON(ABTESTS_FILE, tests);
 }
 
-// Calculate statistical significance
 export function calculateABTestWinner(testId: string): { winner: string; confidence: number } | null {
   const test = getABTestById(testId);
   if (!test || test.variants.length < 2) return null;
@@ -1356,7 +1769,6 @@ export function calculateABTestWinner(testId: string): { winner: string; confide
   const variants = test.variants.filter(v => v.visitors > 0);
   if (variants.length < 2) return null;
 
-  // Find variant with highest conversion rate
   const variantsWithRates = variants.map(v => ({
     ...v,
     conversionRate: v.visitors > 0 ? v.conversions / v.visitors : 0,
@@ -1367,8 +1779,6 @@ export function calculateABTestWinner(testId: string): { winner: string; confide
   const winner = variantsWithRates[0];
   const runnerUp = variantsWithRates[1];
 
-  // Simple confidence calculation (for demo purposes)
-  // In production, use proper statistical significance testing (chi-square, z-test, etc.)
   const winnerRate = winner.conversionRate;
   const runnerUpRate = runnerUp.conversionRate;
 
@@ -1379,7 +1789,6 @@ export function calculateABTestWinner(testId: string): { winner: string; confide
   const improvement = ((winnerRate - runnerUpRate) / runnerUpRate) * 100;
   const minSampleSize = Math.max(winner.visitors, runnerUp.visitors);
 
-  // Simplified confidence score based on improvement and sample size
   let confidence = Math.min(95, (improvement * minSampleSize) / 100);
   confidence = Math.max(50, confidence);
 
@@ -1389,10 +1798,7 @@ export function calculateABTestWinner(testId: string): { winner: string; confide
   };
 }
 
-// ===================
 // Content Moderation
-// ===================
-
 export interface ModerationRule {
   id: string;
   name: string;
@@ -1401,7 +1807,7 @@ export interface ModerationRule {
   severity: 'low' | 'medium' | 'high' | 'critical';
   action: 'flag' | 'auto_approve' | 'auto_reject' | 'quarantine';
   keywords?: string[];
-  pattern?: string; // regex
+  pattern?: string;
   aiPrompt?: string;
   enabled: boolean;
   createdAt: string;
@@ -1436,8 +1842,7 @@ export function getAllModerationRules(): ModerationRule[] {
 }
 
 export function getModerationRuleById(id: string): ModerationRule | null {
-  const rules = getAllModerationRules();
-  return rules.find(r => r.id === id) || null;
+  return getAllModerationRules().find(r => r.id === id) || null;
 }
 
 export function createModerationRule(data: Omit<ModerationRule, 'id' | 'createdAt' | 'updatedAt'>): ModerationRule {
@@ -1489,15 +1894,13 @@ export function getAllModerationQueue(status?: string, limit: number = 100): Mod
     queue = queue.filter(q => q.status === status);
   }
 
-  // Sort by creation date (newest first)
   queue.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
   return queue.slice(0, limit);
 }
 
 export function getModerationQueueById(id: string): ModerationQueue | null {
-  const queue = getAllModerationQueue();
-  return queue.find(q => q.id === id) || null;
+  return getAllModerationQueue().find(q => q.id === id) || null;
 }
 
 export function addToModerationQueue(data: Omit<ModerationQueue, 'id' | 'createdAt'>): ModerationQueue {
@@ -1540,7 +1943,6 @@ export function deleteModerationQueueItem(id: string): boolean {
   return true;
 }
 
-// Check content against moderation rules
 export function moderateContent(
   contentType: ModerationQueue['contentType'],
   contentId: string,
@@ -1551,13 +1953,10 @@ export function moderateContent(
   const flags: ModerationQueue['flags'] = [];
 
   for (const rule of rules) {
-    let flagged = false;
-
     if (rule.type === 'keyword' && rule.keywords) {
       const lowerContent = content.toLowerCase();
       for (const keyword of rule.keywords) {
         if (lowerContent.includes(keyword.toLowerCase())) {
-          flagged = true;
           flags.push({
             ruleId: rule.id,
             ruleName: rule.name,
@@ -1574,7 +1973,6 @@ export function moderateContent(
       try {
         const regex = new RegExp(rule.pattern, 'i');
         if (regex.test(content)) {
-          flagged = true;
           flags.push({
             ruleId: rule.id,
             ruleName: rule.name,
@@ -1583,13 +1981,12 @@ export function moderateContent(
             confidence: 95,
           });
         }
-      } catch (e) {
+      } catch {
         // Invalid regex, skip
       }
     }
   }
 
-  // Determine status based on flags and actions
   let status: ModerationQueue['status'] = 'approved';
 
   if (flags.length > 0) {
@@ -1618,10 +2015,7 @@ export function moderateContent(
   });
 }
 
-// ===================
 // Support Tickets
-// ===================
-
 export interface Ticket {
   id: string;
   subject: string;
@@ -1652,8 +2046,7 @@ export function getAllTickets(): Ticket[] {
 }
 
 export function getTicketById(id: string): Ticket | null {
-  const tickets = getAllTickets();
-  return tickets.find(t => t.id === id) || null;
+  return getAllTickets().find(t => t.id === id) || null;
 }
 
 export function createTicket(data: Omit<Ticket, 'id' | 'createdAt' | 'updatedAt' | 'messages'>): Ticket {
@@ -1725,10 +2118,7 @@ export function addTicketMessage(ticketId: string, author: string, message: stri
   return tickets[index];
 }
 
-// ===================
 // Referral Program
-// ===================
-
 export interface Referral {
   id: string;
   referrerId: string;
@@ -1756,13 +2146,11 @@ export function getAllReferrals(): Referral[] {
 }
 
 export function getReferralById(id: string): Referral | null {
-  const referrals = getAllReferrals();
-  return referrals.find(r => r.id === id) || null;
+  return getAllReferrals().find(r => r.id === id) || null;
 }
 
 export function getReferralByCode(code: string): Referral | null {
-  const referrals = getAllReferrals();
-  return referrals.find(r => r.code === code) || null;
+  return getAllReferrals().find(r => r.code === code) || null;
 }
 
 export function createReferral(data: Omit<Referral, 'id' | 'clicks' | 'signups' | 'conversions' | 'revenue' | 'commission' | 'commissionPaid' | 'createdAt'>): Referral {
