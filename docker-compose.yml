@@ -39,6 +39,7 @@ services:
     ports:
       - "3000:3000"
     environment:
+      - USE_POSTGRES=true
       - DATABASE_URL=postgresql://pixelift:${POSTGRES_PASSWORD:-pixelift_password}@postgres:5432/pixelift?schema=public
       - REDIS_URL=redis://redis:6379
       - REPLICATE_API_TOKEN=${REPLICATE_API_TOKEN}
