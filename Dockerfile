@@ -28,8 +28,8 @@ COPY . .
 
 # Set dummy DATABASE_URL for prisma generate during build
 ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
-# Generate Prisma client and build Next.js with increased memory limit
-ENV NODE_OPTIONS="--max-old-space-size=2048"
+# Generate Prisma client and build Next.js with constrained memory limit
+ENV NODE_OPTIONS="--max-old-space-size=1536"
 RUN npx prisma generate && npm run build
 
 # Production image
