@@ -26,10 +26,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Get or create user
-    let user = getUserByEmail(session.user.email);
+    let user = await getUserByEmail(session.user.email);
     if (!user) {
       // Auto-create user from session data
-      user = createUser({
+      user = await createUser({
         email: session.user.email,
         name: session.user.name || undefined,
         image: session.user.image || undefined,
@@ -171,12 +171,12 @@ export async function POST(request: NextRequest) {
     const actualCreditsUsed = creditsPerImage * successfulResults.length;
 
     // Deduct credits
-    updateUser(user.id, {
+    await updateUser(user.id, {
       credits: user.credits - actualCreditsUsed,
     });
 
     // Create usage record
-    createUsage({
+    await createUsage({
       userId: user.id,
       type: 'ai_image_generation',
       creditsUsed: actualCreditsUsed,

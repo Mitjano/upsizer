@@ -10,8 +10,8 @@ export default async function UsersPage() {
     redirect("/admin");
   }
 
-  const users = getAllUsers();
-  const stats = getUserStats();
+  const users = await getAllUsers();
+  const stats = await getUserStats();
 
   return (
     <div>

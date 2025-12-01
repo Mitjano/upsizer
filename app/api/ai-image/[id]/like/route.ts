@@ -17,7 +17,7 @@ export async function POST(
       );
     }
 
-    const user = getUserByEmail(session.user.email);
+    const user = await getUserByEmail(session.user.email);
     if (!user) {
       return NextResponse.json(
         { error: 'User not found' },

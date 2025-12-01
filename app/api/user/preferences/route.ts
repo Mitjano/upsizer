@@ -33,7 +33,7 @@ export async function GET() {
       );
     }
 
-    const user = getUserByEmail(session.user.email);
+    const user = await getUserByEmail(session.user.email);
 
     if (!user) {
       return NextResponse.json(
@@ -80,7 +80,7 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    const user = getUserByEmail(session.user.email);
+    const user = await getUserByEmail(session.user.email);
 
     if (!user) {
       return NextResponse.json(
@@ -107,7 +107,7 @@ export async function PUT(request: NextRequest) {
 
     // Store preferences as JSON in user record
     // We need to extend the User type or use a flexible update
-    updateUser(user.id, {
+    await updateUser(user.id, {
       // Store as serialized JSON in a flexible field
       // This requires the db to accept additional fields
     } as Parameters<typeof updateUser>[1] & { emailPreferences?: string });

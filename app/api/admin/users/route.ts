@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const users = getAllUsers();
+    const users = await getAllUsers();
 
     // Parse pagination params
     const url = new URL(request.url);
@@ -65,7 +65,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     const { userId, updates } = validation.data;
-    const updatedUser = updateUser(userId, updates);
+    const updatedUser = await updateUser(userId, updates);
 
     if (!updatedUser) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });

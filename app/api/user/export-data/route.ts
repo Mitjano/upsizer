@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
     }
 
     const email = session.user.email;
-    const user = getUserByEmail(email);
+    const user = await getUserByEmail(email);
 
     if (!user) {
       return NextResponse.json(
@@ -35,8 +35,8 @@ export async function GET(request: NextRequest) {
     }
 
     // Collect all user data
-    const transactions = getTransactionsByUserId(user.id);
-    const usage = getUsageByUserId(user.id);
+    const transactions = await getTransactionsByUserId(user.id);
+    const usage = await getUsageByUserId(user.id);
     const allTickets = getAllTickets();
     const userTickets = allTickets.filter(t => t.userEmail === email || t.userId === user.id);
     const processedImages = await ProcessedImagesDB.getByUserId(email);

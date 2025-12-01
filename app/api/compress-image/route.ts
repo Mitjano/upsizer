@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 2. Get user from database
-    const user = getUserByEmail(authResult.user!.email)
+    const user = await getUserByEmail(authResult.user!.email)
 
     if (!user) {
       return NextResponse.json(
@@ -138,7 +138,7 @@ export async function POST(request: NextRequest) {
 
 
     // 11. Deduct credits and log usage
-    createUsage({
+    await createUsage({
       userId: user.id,
       type: 'compress',
       creditsUsed: creditsNeeded,

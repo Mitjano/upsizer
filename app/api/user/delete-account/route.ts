@@ -30,7 +30,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     const email = session.user.email;
-    const user = getUserByEmail(email);
+    const user = await getUserByEmail(email);
 
     if (!user) {
       return NextResponse.json(
@@ -73,14 +73,14 @@ export async function DELETE(request: NextRequest) {
     };
 
     // 1. Delete transactions
-    const transactions = getTransactionsByUserId(user.id);
+    const transactions = await getTransactionsByUserId(user.id);
     for (const transaction of transactions) {
       deleteTransaction(transaction.id);
       deletionLog.transactionsDeleted++;
     }
 
     // 2. Delete usage records
-    const usageRecords = getUsageByUserId(user.id);
+    const usageRecords = await getUsageByUserId(user.id);
     for (const usage of usageRecords) {
       deleteUsage(usage.id);
       deletionLog.usageDeleted++;

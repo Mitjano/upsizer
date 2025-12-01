@@ -13,7 +13,7 @@ export async function GET() {
       );
     }
 
-    const user = getUserByEmail(session.user.email);
+    const user = await getUserByEmail(session.user.email);
 
     if (!user) {
       return NextResponse.json(
@@ -23,7 +23,7 @@ export async function GET() {
     }
 
     // Get all usage records for this user
-    const usageRecords = getUsageByUserId(user.id);
+    const usageRecords = await getUsageByUserId(user.id);
 
     // Calculate statistics
     const totalImages = usageRecords.length;

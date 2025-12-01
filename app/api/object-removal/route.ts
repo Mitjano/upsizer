@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 2. GET USER
-    const user = getUserByEmail(authResult.user!.email)
+    const user = await getUserByEmail(authResult.user!.email)
     if (!user) {
       return NextResponse.json(
         { error: 'User not found' },
@@ -132,7 +132,7 @@ export async function POST(request: NextRequest) {
     const resultDataUrl = `data:image/png;base64,${resultBase64}`
 
     // 9. DEDUCT CREDITS & LOG USAGE
-    createUsage({
+    await createUsage({
       userId: user.id,
       type: 'object_removal',
       creditsUsed: CREDITS_PER_REMOVAL,

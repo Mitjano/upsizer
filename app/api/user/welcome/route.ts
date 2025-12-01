@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if user exists and if welcome email was already sent
-    const user = getUserByEmail(session.user.email);
+    const user = await getUserByEmail(session.user.email);
 
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
 
       // Update lastLoginAt to prevent sending welcome email again
       if (!user.lastLoginAt) {
-        updateUser(user.id, {
+        await updateUser(user.id, {
           lastLoginAt: new Date().toISOString(),
         });
       }

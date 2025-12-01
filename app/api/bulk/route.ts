@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check user credits
-    const user = getUserByEmail(session.user.email);
+    const user = await getUserByEmail(session.user.email);
     if (!user) {
       return NextResponse.json(
         { error: 'User not found' },
@@ -120,7 +120,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create the bulk job
-    const job = createBulkJob({
+    const job = await createBulkJob({
       userId,
       type,
       imageUrls,
@@ -128,7 +128,7 @@ export async function POST(request: NextRequest) {
     });
 
     // Reserve credits (deduct estimated amount)
-    updateUser(user.id, {
+    await updateUser(user.id, {
       credits: (user.credits || 0) - estimatedCredits,
     });
 

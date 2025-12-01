@@ -10,8 +10,8 @@ export default async function UsagePage() {
     redirect("/admin");
   }
 
-  const allUsage = getAllUsage();
-  const allUsers = getAllUsers();
+  const allUsage = await getAllUsage();
+  const allUsers = await getAllUsers();
 
   // Calculate usage stats
   const totalUsage = allUsage.length;

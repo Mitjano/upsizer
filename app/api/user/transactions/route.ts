@@ -18,13 +18,13 @@ export async function GET(request: NextRequest) {
     }
 
     // Get user
-    const user = getUserByEmail(session.user.email);
+    const user = await getUserByEmail(session.user.email);
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
     // Get transactions
-    const transactions = getTransactionsByUserId(user.id);
+    const transactions = await getTransactionsByUserId(user.id);
 
     // Sort by date (newest first) and limit to last 50
     const sortedTransactions = transactions

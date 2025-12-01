@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
     const { type, scale, enhanceFace, imageUrl } = body;
 
     // Get user from database
-    const user = getUserByEmail(session.user.email);
+    const user = await getUserByEmail(session.user.email);
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Log usage (createUsage automatically updates user credits and totalUsage)
-    const usage = createUsage({
+    const usage = await createUsage({
       userId: user.id,
       type,
       creditsUsed: creditsCost,

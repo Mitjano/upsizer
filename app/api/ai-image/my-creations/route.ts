@@ -15,10 +15,10 @@ export async function GET(request: NextRequest) {
     }
 
     // Get or create user
-    let user = getUserByEmail(session.user.email);
+    let user = await getUserByEmail(session.user.email);
     if (!user) {
       // Auto-create user from session data
-      user = createUser({
+      user = await createUser({
         email: session.user.email,
         name: session.user.name || undefined,
         image: session.user.image || undefined,

@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: 'Report not found' }, { status: 404 });
       }
 
-      const reportData = generateReportData(report.type, report.dateRange, report.filters);
+      const reportData = await generateReportData(report.type, report.dateRange, report.filters);
 
       trackReportDownload(reportId);
 

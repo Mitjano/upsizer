@@ -35,7 +35,7 @@ export async function GET(
     }
 
     // Get user to check tier
-    const user = getUserByEmail(session.user.email)
+    const user = await getUserByEmail(session.user.email)
     if (!user) {
       return NextResponse.json(
         { error: 'User not found' },

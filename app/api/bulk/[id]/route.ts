@@ -154,9 +154,9 @@ export async function DELETE(
       // Refund unused credits
       const unusedCredits = job.estimatedCredits - job.actualCredits;
       if (unusedCredits > 0) {
-        const user = getUserByEmail(session.user.email);
+        const user = await getUserByEmail(session.user.email);
         if (user) {
-          updateUser(user.id, {
+          await updateUser(user.id, {
             credits: (user.credits || 0) + unusedCredits,
           });
         }

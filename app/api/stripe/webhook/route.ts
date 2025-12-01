@@ -111,7 +111,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   }
 
   // Find user by email
-  const user = getUserByEmail(customerEmail);
+  const user = await getUserByEmail(customerEmail);
   if (!user) {
     console.error('User not found:', customerEmail);
     return;
@@ -122,12 +122,12 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 
   if (type === 'onetime') {
     // Add credits for one-time purchase
-    updateUser(user.id, {
+    await updateUser(user.id, {
       credits: (user.credits || 0) + credits,
     });
 
     // Record transaction
-    createTransaction({
+    await createTransaction({
       userId: user.id,
       type: 'purchase',
       plan: metadata.packageId,
@@ -156,7 +156,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   } else if (type === 'subscription') {
     // Credits will be added on invoice.payment_succeeded
     // Just record the subscription start
-    updateUser(user.id, {
+    await updateUser(user.id, {
       role: 'premium',
     });
 
@@ -173,13 +173,19 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
   const customerId = subscription.customer as string;
 
   // Find user by customer ID in transactions or by searching
-  const users = getAllUsers();
-  const user = users.find((u: User) => {
-    const transactions = getTransactionsByUserId(u.id);
-    return transactions.some((t: Transaction) =>
+  const users = await getAllUsers();
+  let user: User | undefined;
+
+  for (const u of users) {
+    const transactions = await getTransactionsByUserId(u.id);
+    const hasMatchingTransaction = transactions.some((t: Transaction) =>
       t.metadata?.includes(customerId) || t.stripeId?.includes(customerId)
     );
-  });
+    if (hasMatchingTransaction) {
+      user = u;
+      break;
+    }
+  }
 
   if (!user) {
     console.log('User not found for subscription:', subscription.id);
@@ -188,11 +194,11 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
 
   // Update user role based on subscription status
   if (subscription.status === 'active') {
-    updateUser(user.id, {
+    await updateUser(user.id, {
       role: 'premium',
     });
   } else if (subscription.status === 'canceled' || subscription.status === 'unpaid') {
-    updateUser(user.id, {
+    await updateUser(user.id, {
       role: 'user',
     });
   }
@@ -205,16 +211,22 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
   console.log('Subscription deleted:', subscription.id);
 
   // Find user and downgrade
-  const users = getAllUsers();
-  const user = users.find((u: User) => {
-    const transactions = getTransactionsByUserId(u.id);
-    return transactions.some((t: Transaction) =>
+  const users = await getAllUsers();
+  let user: User | undefined;
+
+  for (const u of users) {
+    const transactions = await getTransactionsByUserId(u.id);
+    const hasMatchingTransaction = transactions.some((t: Transaction) =>
       t.metadata?.includes(subscription.id)
     );
-  });
+    if (hasMatchingTransaction) {
+      user = u;
+      break;
+    }
+  }
 
   if (user) {
-    updateUser(user.id, {
+    await updateUser(user.id, {
       role: 'user',
     });
 
@@ -265,7 +277,7 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
     return;
   }
 
-  const user = getUserByEmail(customerEmail);
+  const user = await getUserByEmail(customerEmail);
   if (!user) {
     console.error('User not found:', customerEmail);
     return;
@@ -286,12 +298,12 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
 
   // Add monthly credits
   const credits = planInfo.plan.credits;
-  updateUser(user.id, {
+  await updateUser(user.id, {
     credits: (user.credits || 0) + credits,
   });
 
   // Record transaction
-  createTransaction({
+  await createTransaction({
     userId: user.id,
     type: 'subscription',
     plan: planInfo.plan.id,
@@ -340,13 +352,13 @@ async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
     return;
   }
 
-  const user = getUserByEmail(customerEmail);
+  const user = await getUserByEmail(customerEmail);
   if (!user) {
     return;
   }
 
   // Record failed transaction
-  createTransaction({
+  await createTransaction({
     userId: user.id,
     type: 'subscription',
     amount: (invoiceData.amount_due || 0) / 100,

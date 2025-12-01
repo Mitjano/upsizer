@@ -8,9 +8,9 @@ export const dynamic = 'force-dynamic';
 export default async function AdminDashboard() {
   const session = await auth();
   const allPosts = await getAllPosts();
-  const allUsers = getAllUsers();
-  const allUsage = getAllUsage();
-  const allTransactions = getAllTransactions();
+  const allUsers = await getAllUsers();
+  const allUsage = await getAllUsage();
+  const allTransactions = await getAllTransactions();
 
   const publishedPosts = allPosts.filter((p) => p.status === "published");
   const draftPosts = allPosts.filter((p) => p.status === "draft");

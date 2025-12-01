@@ -146,12 +146,12 @@ function prismaUserToUser(prismaUser: any): User {
 // USER OPERATIONS
 // ============================================
 
-export function getAllUsers(): User[] {
+// getAllUsers - now async to support PostgreSQL
+export async function getAllUsers(): Promise<User[]> {
   if (USE_POSTGRES) {
-    // For sync compatibility, we need to handle this differently
-    // Return empty array and let callers use async version
-    console.warn('getAllUsers() called in sync mode with PostgreSQL. Use async version.');
-    return [];
+    const prisma = await getPrisma();
+    const users = await prisma.user.findMany({ orderBy: { createdAt: 'desc' } });
+    return users.map(prismaUserToUser);
   }
   return readJSONWithCache<User[]>(USERS_FILE, CacheKeys.USERS, []);
 }
@@ -165,12 +165,15 @@ export async function getAllUsersAsync(): Promise<User[]> {
   return readJSONWithCache<User[]>(USERS_FILE, CacheKeys.USERS, []);
 }
 
-export function getUserByEmail(email: string): User | null {
+// getUserByEmail - now async to support PostgreSQL
+// Returns Promise<User | null> - callers must use await
+export async function getUserByEmail(email: string): Promise<User | null> {
   if (USE_POSTGRES) {
-    console.warn('getUserByEmail() called in sync mode with PostgreSQL. Use async version.');
-    return null;
+    const prisma = await getPrisma();
+    const user = await prisma.user.findUnique({ where: { email } });
+    return user ? prismaUserToUser(user) : null;
   }
-  const users = getAllUsers();
+  const users = readJSONWithCache<User[]>(USERS_FILE, CacheKeys.USERS, []);
   return users.find(u => u.email === email) || null;
 }
 
@@ -180,7 +183,7 @@ export async function getUserByEmailAsync(email: string): Promise<User | null> {
     const user = await prisma.user.findUnique({ where: { email } });
     return user ? prismaUserToUser(user) : null;
   }
-  const users = getAllUsers();
+  const users = await getAllUsers();
   return users.find(u => u.email === email) || null;
 }
 
@@ -189,7 +192,8 @@ export function getUserById(id: string): User | null {
     console.warn('getUserById() called in sync mode with PostgreSQL. Use async version.');
     return null;
   }
-  const users = getAllUsers();
+  // Use cached JSON read directly for sync operation
+  const users = readJSONWithCache<User[]>(USERS_FILE, CacheKeys.USERS, []);
   return users.find(u => u.id === id) || null;
 }
 
@@ -199,16 +203,37 @@ export async function getUserByIdAsync(id: string): Promise<User | null> {
     const user = await prisma.user.findUnique({ where: { id } });
     return user ? prismaUserToUser(user) : null;
   }
-  const users = getAllUsers();
+  const users = await getAllUsers();
   return users.find(u => u.id === id) || null;
 }
 
-export function createUser(userData: Omit<User, 'id' | 'createdAt' | 'updatedAt'>): User {
+// createUser - now async to support PostgreSQL
+// Returns Promise<User> - callers must use await
+export async function createUser(userData: Omit<User, 'id' | 'createdAt' | 'updatedAt'>): Promise<User> {
   if (USE_POSTGRES) {
-    console.warn('createUser() called in sync mode with PostgreSQL. Use async version.');
-    throw new Error('Use createUserAsync() with PostgreSQL');
+    const prisma = await getPrisma();
+
+    // Check if user already exists
+    const existing = await prisma.user.findUnique({ where: { email: userData.email } });
+    if (existing) {
+      return prismaUserToUser(existing);
+    }
+
+    const user = await prisma.user.create({
+      data: {
+        email: userData.email,
+        name: userData.name,
+        image: userData.image,
+        role: userData.role || 'user',
+        status: userData.status || 'active',
+        credits: userData.credits || 0,
+        totalUsage: userData.totalUsage || 0,
+      },
+    });
+    return prismaUserToUser(user);
   }
-  const users = getAllUsers();
+
+  const users = readJSONWithCache<User[]>(USERS_FILE, CacheKeys.USERS, []);
   const existingUser = users.find(u => u.email === userData.email);
 
   if (existingUser) {
@@ -253,12 +278,26 @@ export async function createUserAsync(userData: Omit<User, 'id' | 'createdAt' | 
   return createUser(userData);
 }
 
-export function updateUser(id: string, updates: Partial<User>): User | null {
+// updateUser - now async to support PostgreSQL
+// Returns Promise<User | null> - callers must use await
+export async function updateUser(id: string, updates: Partial<User>): Promise<User | null> {
   if (USE_POSTGRES) {
-    console.warn('updateUser() called in sync mode with PostgreSQL. Use async version.');
-    return null;
+    const prisma = await getPrisma();
+    try {
+      const user = await prisma.user.update({
+        where: { id },
+        data: {
+          ...updates,
+          updatedAt: new Date(),
+        } as any,
+      });
+      return prismaUserToUser(user);
+    } catch {
+      return null;
+    }
   }
-  const users = getAllUsers();
+
+  const users = readJSONWithCache<User[]>(USERS_FILE, CacheKeys.USERS, []);
   const index = users.findIndex(u => u.id === id);
 
   if (index === -1) return null;
@@ -292,12 +331,19 @@ export async function updateUserAsync(id: string, updates: Partial<User>): Promi
   return updateUser(id, updates);
 }
 
-export function updateUserLogin(email: string): void {
+// updateUserLogin - now async to support PostgreSQL
+// Returns Promise<void> - callers must use await
+export async function updateUserLogin(email: string): Promise<void> {
   if (USE_POSTGRES) {
-    console.warn('updateUserLogin() called in sync mode with PostgreSQL. Use async version.');
+    const prisma = await getPrisma();
+    await prisma.user.update({
+      where: { email },
+      data: { lastLoginAt: new Date(), updatedAt: new Date() },
+    });
     return;
   }
-  const users = getAllUsers();
+
+  const users = readJSONWithCache<User[]>(USERS_FILE, CacheKeys.USERS, []);
   const index = users.findIndex(u => u.email === email);
 
   if (index !== -1) {
@@ -324,7 +370,8 @@ export function deleteUser(id: string): boolean {
     console.warn('deleteUser() called in sync mode with PostgreSQL. Use async version.');
     return false;
   }
-  const users = getAllUsers();
+  // Use cached JSON read directly for sync operation
+  const users = readJSONWithCache<User[]>(USERS_FILE, CacheKeys.USERS, []);
   const filtered = users.filter(u => u.id !== id);
 
   if (filtered.length === users.length) return false;
@@ -398,11 +445,17 @@ export async function getAllTransactionsAsync(): Promise<Transaction[]> {
   return readJSONWithCache<Transaction[]>(TRANSACTIONS_FILE, CacheKeys.TRANSACTIONS, []);
 }
 
-export function getTransactionsByUserId(userId: string): Transaction[] {
+// getTransactionsByUserId - now async to support PostgreSQL
+export async function getTransactionsByUserId(userId: string): Promise<Transaction[]> {
   if (USE_POSTGRES) {
-    return [];
+    const prisma = await getPrisma();
+    const transactions = await prisma.transaction.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+    });
+    return transactions.map(prismaTransactionToTransaction);
   }
-  const transactions = getAllTransactions();
+  const transactions = readJSONWithCache<Transaction[]>(TRANSACTIONS_FILE, CacheKeys.TRANSACTIONS, []);
   return transactions.filter(t => t.userId === userId);
 }
 
@@ -546,11 +599,18 @@ export async function getAllUsageAsync(): Promise<Usage[]> {
   return readJSONWithCache<Usage[]>(USAGE_FILE, CacheKeys.USAGE, []);
 }
 
-export function getUsageByUserId(userId: string): Usage[] {
+// getUsageByUserId - now async to support PostgreSQL
+// Returns Promise<Usage[]> - callers must use await
+export async function getUsageByUserId(userId: string): Promise<Usage[]> {
   if (USE_POSTGRES) {
-    return [];
+    const prisma = await getPrisma();
+    const usages = await prisma.usage.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+    });
+    return usages.map(prismaUsageToUsage);
   }
-  const usage = getAllUsage();
+  const usage = readJSONWithCache<Usage[]>(USAGE_FILE, CacheKeys.USAGE, []);
   return usage.filter(u => u.userId === userId);
 }
 
@@ -567,25 +627,50 @@ export async function getUsageByUserIdAsync(userId: string): Promise<Usage[]> {
   return usage.filter(u => u.userId === userId);
 }
 
-export function createUsage(data: Omit<Usage, 'id' | 'createdAt'>): Usage {
+// createUsage - now async to support PostgreSQL
+// Returns Promise<Usage> - callers must use await
+export async function createUsage(data: Omit<Usage, 'id' | 'createdAt'>): Promise<Usage> {
   if (USE_POSTGRES) {
-    throw new Error('Use createUsageAsync() with PostgreSQL');
+    const prisma = await getPrisma();
+
+    // Create usage record
+    const usage = await prisma.usage.create({
+      data: {
+        userId: data.userId,
+        type: data.type,
+        creditsUsed: data.creditsUsed,
+        imageSize: data.imageSize,
+        model: data.model,
+      },
+    });
+
+    // Update user's credits and totalUsage
+    await prisma.user.update({
+      where: { id: data.userId },
+      data: {
+        credits: { decrement: data.creditsUsed },
+        totalUsage: { increment: 1 },
+      },
+    });
+
+    return prismaUsageToUsage(usage);
   }
-  const usage = getAllUsage();
+
+  const usageList = readJSONWithCache<Usage[]>(USAGE_FILE, CacheKeys.USAGE, []);
   const newUsage: Usage = {
     ...data,
     id: nanoid(),
     createdAt: new Date().toISOString(),
   };
 
-  usage.push(newUsage);
-  writeJSON(USAGE_FILE, usage);
+  usageList.push(newUsage);
+  writeJSON(USAGE_FILE, usageList);
 
-  // Update user's total usage
-  const user = getUserById(data.userId);
+  // Update user's total usage (await since updateUser is now async)
+  const user = await getUserByIdAsync(data.userId);
   if (user) {
     const newCredits = Math.max(0, user.credits - data.creditsUsed);
-    updateUser(user.id, {
+    await updateUser(user.id, {
       totalUsage: user.totalUsage + 1,
       credits: newCredits,
     });
@@ -1032,11 +1117,24 @@ export function deleteFeatureFlag(id: string): boolean {
 // STATS HELPERS
 // ============================================
 
-export function getUserStats() {
+// getUserStats - now async to support PostgreSQL
+export async function getUserStats(): Promise<{ total: number; active: number; premium: number; newThisMonth: number; admins: number }> {
   if (USE_POSTGRES) {
-    return { total: 0, active: 0, premium: 0, newThisMonth: 0, admins: 0 };
+    const prisma = await getPrisma();
+    const now = new Date();
+    const monthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+
+    const [total, active, premium, newThisMonth, admins] = await Promise.all([
+      prisma.user.count(),
+      prisma.user.count({ where: { status: 'active' } }),
+      prisma.user.count({ where: { role: { in: ['premium', 'admin'] } } }),
+      prisma.user.count({ where: { createdAt: { gt: monthAgo } } }),
+      prisma.user.count({ where: { role: 'admin' } }),
+    ]);
+
+    return { total, active, premium, newThisMonth, admins };
   }
-  const users = getAllUsers();
+  const users = await getAllUsers();
   const now = new Date();
   const monthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
 
@@ -1135,14 +1233,14 @@ export function getBackupById(id: string): Backup | null {
   }
 }
 
-export function createBackup(name: string, description: string, createdBy: string, type: 'manual' | 'automatic' = 'manual'): Backup {
+export async function createBackup(name: string, description: string, createdBy: string, type: 'manual' | 'automatic' = 'manual'): Promise<Backup> {
   const backupData = {
-    users: getAllUsers(),
-    usage: getAllUsage(),
-    transactions: getAllTransactions(),
+    users: await getAllUsers(),
+    usage: await getAllUsage(),
+    transactions: await getAllTransactions(),
     campaigns: getAllCampaigns(),
     notifications: getAllNotifications(),
-    apiKeys: getAllApiKeys(),
+    apiKeys: await getAllApiKeys(),
     featureFlags: getAllFeatureFlags(),
   };
 
@@ -1378,13 +1476,14 @@ export function trackReportDownload(id: string): void {
   }
 }
 
-export function generateReportData(type: Report['type'], dateRange: Report['dateRange'], filters?: Record<string, any>) {
+export async function generateReportData(type: Report['type'], dateRange: Report['dateRange'], filters?: Record<string, any>) {
   const startDate = new Date(dateRange.start);
   const endDate = new Date(dateRange.end);
 
   switch (type) {
     case 'users': {
-      let users = getAllUsers().filter(u => {
+      const allUsers = await getAllUsers();
+      let users = allUsers.filter(u => {
         const createdAt = new Date(u.createdAt);
         return createdAt >= startDate && createdAt <= endDate;
       });
@@ -1412,7 +1511,8 @@ export function generateReportData(type: Report['type'], dateRange: Report['date
     }
 
     case 'usage': {
-      let usage = getAllUsage().filter(u => {
+      const allUsage = await getAllUsage();
+      let usage = allUsage.filter(u => {
         const createdAt = new Date(u.createdAt);
         return createdAt >= startDate && createdAt <= endDate;
       });
@@ -1431,7 +1531,8 @@ export function generateReportData(type: Report['type'], dateRange: Report['date
     }
 
     case 'revenue': {
-      let transactions = getAllTransactions().filter(t => {
+      const allTransactions = await getAllTransactions();
+      let transactions = allTransactions.filter(t => {
         const createdAt = new Date(t.createdAt);
         return createdAt >= startDate && createdAt <= endDate;
       });

@@ -43,7 +43,7 @@ export async function GET(
     // Check if current user has liked this image
     let hasLiked = false;
     if (session?.user?.email) {
-      const user = getUserByEmail(session.user.email);
+      const user = await getUserByEmail(session.user.email);
       if (user) {
         hasLiked = image.likedBy?.includes(user.id) || false;
       }

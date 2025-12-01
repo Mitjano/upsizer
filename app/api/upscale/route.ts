@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get full user from database (authResult.user has limited info)
-    const user = getUserByEmail(authResult.user!.email);
+    const user = await getUserByEmail(authResult.user!.email);
 
     if (!user) {
       return NextResponse.json(
@@ -183,7 +183,7 @@ export async function POST(request: NextRequest) {
     const oldCredits = user.credits;
 
     // Track usage and deduct credits
-    createUsage({
+    await createUsage({
       userId: user.id,
       type: qualityBoost ? 'upscale_premium' : 'upscale_standard',
       creditsUsed: creditsNeeded,
@@ -193,12 +193,12 @@ export async function POST(request: NextRequest) {
 
     // Credits are already deducted by createUsage function
     // Get updated user data
-    const updatedUser = getUserByEmail(user.email);
+    const updatedUser = await getUserByEmail(user.email);
 
     // Send first upload email if this is the first time
     if (isFirstUpload && updatedUser) {
       // Update user with firstUploadAt timestamp
-      updateUser(user.id, {
+      await updateUser(user.id, {
         firstUploadAt: new Date().toISOString(),
       });
 

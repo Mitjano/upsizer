@@ -10,8 +10,8 @@ export default async function ApiKeysPage() {
     redirect("/admin");
   }
 
-  const allApiKeys = getAllApiKeys();
-  const allUsers = getAllUsers();
+  const allApiKeys = await getAllApiKeys();
+  const allUsers = await getAllUsers();
 
   const apiKeysWithUsers = allApiKeys.map(key => {
     const user = allUsers.find(u => u.id === key.userId);

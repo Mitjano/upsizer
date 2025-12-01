@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 2. Get user from database
-    const user = getUserByEmail(authResult.user!.email)
+    const user = await getUserByEmail(authResult.user!.email)
 
     if (!user) {
       return NextResponse.json(
@@ -134,7 +134,7 @@ export async function POST(request: NextRequest) {
       const newCredits = user.credits - creditsNeeded
       const newTotalUsage = (user.totalUsage || 0) + 1
 
-      updateUser(user.email, {
+      await updateUser(user.email, {
         credits: newCredits,
         totalUsage: newTotalUsage
       })

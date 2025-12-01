@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (validation.data.action === 'create') {
-      const backup = createBackup(
+      const backup = await createBackup(
         validation.data.name,
         validation.data.description || '',
         session.user.email || 'Unknown',

@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
-import { createUser, getUserByEmail, updateUserLogin, createNotification } from '@/lib/db';
+import {
+  getUserByEmailAsync,
+  createUserAsync,
+  updateUserLoginAsync,
+  createNotification
+} from '@/lib/db';
 import { sendWelcomeEmail } from '@/lib/email';
 import { authLimiter, getClientIdentifier, rateLimitResponse } from '@/lib/rate-limit';
 import { isAdminEmail } from '@/lib/admin-config';
@@ -24,13 +29,13 @@ export async function POST(request: NextRequest) {
 
     const { email, name, image } = session.user;
 
-    // Check if user exists
-    let user = getUserByEmail(email);
+    // Check if user exists (async for PostgreSQL support)
+    let user = await getUserByEmailAsync(email);
     const isNewUser = !user;
 
     if (!user) {
-      // Create new user
-      user = createUser({
+      // Create new user (async for PostgreSQL support)
+      user = await createUserAsync({
         email,
         name: name || undefined,
         image: image || undefined,
@@ -57,8 +62,8 @@ export async function POST(request: NextRequest) {
         freeCredits: 3,
       }).catch(err => console.error('[register-user] Welcome email failed:', err));
     } else {
-      // Update last login
-      updateUserLogin(email);
+      // Update last login (async for PostgreSQL support)
+      await updateUserLoginAsync(email);
     }
 
     return NextResponse.json({ success: true, user, isNewUser });

@@ -221,7 +221,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 2. GET USER
-    const user = getUserByEmail(authResult.user!.email)
+    const user = await getUserByEmail(authResult.user!.email)
     if (!user) {
       return NextResponse.json(
         { error: 'User not found' },
@@ -306,7 +306,7 @@ export async function POST(request: NextRequest) {
     const height = metadata.height || 2000
 
     // 8. DEDUCT CREDITS & LOG USAGE
-    createUsage({
+    await createUsage({
       userId: user.id,
       type: 'packshot_generation',
       creditsUsed: creditsNeeded,
