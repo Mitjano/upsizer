@@ -2340,3 +2340,1023 @@ export function trackReferralConversion(code: string, amount: number, commission
     writeJSON(REFERRALS_FILE, referrals);
   }
 }
+
+// ============================================
+// USER SESSION TRACKING
+// ============================================
+
+export interface UserSession {
+  id: string;
+  userId: string;
+  sessionToken: string;
+  fingerprint?: string;
+
+  // Timing
+  startedAt: string;
+  endedAt?: string;
+  lastActivityAt: string;
+  duration: number;
+
+  // Device & Technical
+  ipAddress?: string;
+  userAgent?: string;
+  browser?: string;
+  browserVersion?: string;
+  os?: string;
+  osVersion?: string;
+  deviceType?: string;
+  screenResolution?: string;
+  language?: string;
+
+  // Geographic
+  country?: string;
+  countryName?: string;
+  region?: string;
+  city?: string;
+  timezone?: string;
+  latitude?: number;
+  longitude?: number;
+
+  // Traffic source
+  referrer?: string;
+  utmSource?: string;
+  utmMedium?: string;
+  utmCampaign?: string;
+  utmTerm?: string;
+  utmContent?: string;
+  landingPage?: string;
+  exitPage?: string;
+
+  // Engagement
+  pageViews: number;
+  actions: number;
+  scrollDepthMax?: number;
+  bounced: boolean;
+  converted: boolean;
+  conversionType?: string;
+  conversionValue?: number;
+}
+
+function prismaSessionToSession(s: any): UserSession {
+  return {
+    id: s.id,
+    userId: s.userId,
+    sessionToken: s.sessionToken,
+    fingerprint: s.fingerprint ?? undefined,
+    startedAt: s.startedAt instanceof Date ? s.startedAt.toISOString() : s.startedAt,
+    endedAt: s.endedAt instanceof Date ? s.endedAt.toISOString() : s.endedAt ?? undefined,
+    lastActivityAt: s.lastActivityAt instanceof Date ? s.lastActivityAt.toISOString() : s.lastActivityAt,
+    duration: s.duration,
+    ipAddress: s.ipAddress ?? undefined,
+    userAgent: s.userAgent ?? undefined,
+    browser: s.browser ?? undefined,
+    browserVersion: s.browserVersion ?? undefined,
+    os: s.os ?? undefined,
+    osVersion: s.osVersion ?? undefined,
+    deviceType: s.deviceType ?? undefined,
+    screenResolution: s.screenResolution ?? undefined,
+    language: s.language ?? undefined,
+    country: s.country ?? undefined,
+    countryName: s.countryName ?? undefined,
+    region: s.region ?? undefined,
+    city: s.city ?? undefined,
+    timezone: s.timezone ?? undefined,
+    latitude: s.latitude ?? undefined,
+    longitude: s.longitude ?? undefined,
+    referrer: s.referrer ?? undefined,
+    utmSource: s.utmSource ?? undefined,
+    utmMedium: s.utmMedium ?? undefined,
+    utmCampaign: s.utmCampaign ?? undefined,
+    utmTerm: s.utmTerm ?? undefined,
+    utmContent: s.utmContent ?? undefined,
+    landingPage: s.landingPage ?? undefined,
+    exitPage: s.exitPage ?? undefined,
+    pageViews: s.pageViews,
+    actions: s.actions,
+    scrollDepthMax: s.scrollDepthMax ?? undefined,
+    bounced: s.bounced,
+    converted: s.converted,
+    conversionType: s.conversionType ?? undefined,
+    conversionValue: s.conversionValue ?? undefined,
+  };
+}
+
+export async function createUserSession(data: Omit<UserSession, 'id' | 'startedAt' | 'lastActivityAt' | 'duration' | 'pageViews' | 'actions' | 'bounced' | 'converted'>): Promise<UserSession> {
+  if (USE_POSTGRES) {
+    const prisma = await getPrisma();
+    const session = await prisma.userSession.create({
+      data: {
+        userId: data.userId,
+        sessionToken: data.sessionToken,
+        fingerprint: data.fingerprint,
+        ipAddress: data.ipAddress,
+        userAgent: data.userAgent,
+        browser: data.browser,
+        browserVersion: data.browserVersion,
+        os: data.os,
+        osVersion: data.osVersion,
+        deviceType: data.deviceType,
+        screenResolution: data.screenResolution,
+        language: data.language,
+        country: data.country,
+        countryName: data.countryName,
+        region: data.region,
+        city: data.city,
+        timezone: data.timezone,
+        latitude: data.latitude,
+        longitude: data.longitude,
+        referrer: data.referrer,
+        utmSource: data.utmSource,
+        utmMedium: data.utmMedium,
+        utmCampaign: data.utmCampaign,
+        utmTerm: data.utmTerm,
+        utmContent: data.utmContent,
+        landingPage: data.landingPage,
+      },
+    });
+
+    // Update user's session count
+    await prisma.user.update({
+      where: { id: data.userId },
+      data: {
+        totalSessions: { increment: 1 },
+        lastActiveAt: new Date(),
+      },
+    });
+
+    return prismaSessionToSession(session);
+  }
+  throw new Error('User session tracking requires PostgreSQL');
+}
+
+export async function updateUserSession(sessionToken: string, updates: Partial<UserSession>): Promise<UserSession | null> {
+  if (USE_POSTGRES) {
+    const prisma = await getPrisma();
+    try {
+      const session = await prisma.userSession.update({
+        where: { sessionToken },
+        data: {
+          ...updates,
+          lastActivityAt: new Date(),
+        } as any,
+      });
+      return prismaSessionToSession(session);
+    } catch {
+      return null;
+    }
+  }
+  return null;
+}
+
+export async function endUserSession(sessionToken: string): Promise<UserSession | null> {
+  if (USE_POSTGRES) {
+    const prisma = await getPrisma();
+    try {
+      const existing = await prisma.userSession.findUnique({ where: { sessionToken } });
+      if (!existing) return null;
+
+      const duration = Math.floor((Date.now() - existing.startedAt.getTime()) / 1000);
+
+      const session = await prisma.userSession.update({
+        where: { sessionToken },
+        data: {
+          endedAt: new Date(),
+          duration,
+          bounced: existing.pageViews <= 1,
+        },
+      });
+
+      // Update user's average session time
+      const allSessions = await prisma.userSession.findMany({
+        where: { userId: existing.userId, endedAt: { not: null } },
+        select: { duration: true },
+      });
+
+      const avgTime = allSessions.length > 0
+        ? Math.floor(allSessions.reduce((sum, s) => sum + s.duration, 0) / allSessions.length)
+        : 0;
+
+      await prisma.user.update({
+        where: { id: existing.userId },
+        data: {
+          avgSessionTime: avgTime,
+          totalTimeSpent: { increment: duration },
+        },
+      });
+
+      return prismaSessionToSession(session);
+    } catch {
+      return null;
+    }
+  }
+  return null;
+}
+
+export async function getUserSessions(userId: string, limit: number = 50): Promise<UserSession[]> {
+  if (USE_POSTGRES) {
+    const prisma = await getPrisma();
+    const sessions = await prisma.userSession.findMany({
+      where: { userId },
+      orderBy: { startedAt: 'desc' },
+      take: limit,
+    });
+    return sessions.map(prismaSessionToSession);
+  }
+  return [];
+}
+
+export async function getSessionByToken(token: string): Promise<UserSession | null> {
+  if (USE_POSTGRES) {
+    const prisma = await getPrisma();
+    const session = await prisma.userSession.findUnique({ where: { sessionToken: token } });
+    return session ? prismaSessionToSession(session) : null;
+  }
+  return null;
+}
+
+// ============================================
+// USER EVENT TRACKING
+// ============================================
+
+export interface UserEvent {
+  id: string;
+  userId: string;
+  sessionId?: string;
+
+  // Event identification
+  eventName: string;
+  eventCategory: 'navigation' | 'engagement' | 'conversion' | 'tool_usage' | 'error' | 'authentication' | 'account' | 'payment' | 'api' | 'custom';
+  eventLabel?: string;
+  eventValue?: number;
+
+  // Context
+  pageUrl?: string;
+  pageTitle?: string;
+  elementId?: string;
+  elementClass?: string;
+  elementText?: string;
+
+  // Technical
+  ipAddress?: string;
+  userAgent?: string;
+  browser?: string;
+  os?: string;
+  deviceType?: string;
+
+  // Geographic
+  country?: string;
+  city?: string;
+
+  // Tool-specific
+  toolType?: string;
+  toolPreset?: string;
+  toolSettings?: any;
+  inputSize?: number;
+  outputSize?: number;
+  processingTime?: number;
+  creditsUsed?: number;
+
+  // Error tracking
+  errorMessage?: string;
+  errorStack?: string;
+  errorCode?: string;
+
+  // Custom data
+  metadata?: any;
+
+  // Timing
+  timestamp: string;
+  clientTimestamp?: string;
+}
+
+function prismaEventToEvent(e: any): UserEvent {
+  return {
+    id: e.id,
+    userId: e.userId,
+    sessionId: e.sessionId ?? undefined,
+    eventName: e.eventName,
+    eventCategory: e.eventCategory,
+    eventLabel: e.eventLabel ?? undefined,
+    eventValue: e.eventValue ?? undefined,
+    pageUrl: e.pageUrl ?? undefined,
+    pageTitle: e.pageTitle ?? undefined,
+    elementId: e.elementId ?? undefined,
+    elementClass: e.elementClass ?? undefined,
+    elementText: e.elementText ?? undefined,
+    ipAddress: e.ipAddress ?? undefined,
+    userAgent: e.userAgent ?? undefined,
+    browser: e.browser ?? undefined,
+    os: e.os ?? undefined,
+    deviceType: e.deviceType ?? undefined,
+    country: e.country ?? undefined,
+    city: e.city ?? undefined,
+    toolType: e.toolType ?? undefined,
+    toolPreset: e.toolPreset ?? undefined,
+    toolSettings: e.toolSettings ?? undefined,
+    inputSize: e.inputSize ?? undefined,
+    outputSize: e.outputSize ?? undefined,
+    processingTime: e.processingTime ?? undefined,
+    creditsUsed: e.creditsUsed ?? undefined,
+    errorMessage: e.errorMessage ?? undefined,
+    errorStack: e.errorStack ?? undefined,
+    errorCode: e.errorCode ?? undefined,
+    metadata: e.metadata ?? undefined,
+    timestamp: e.timestamp instanceof Date ? e.timestamp.toISOString() : e.timestamp,
+    clientTimestamp: e.clientTimestamp instanceof Date ? e.clientTimestamp.toISOString() : e.clientTimestamp ?? undefined,
+  };
+}
+
+export async function trackUserEvent(data: Omit<UserEvent, 'id' | 'timestamp'>): Promise<UserEvent> {
+  if (USE_POSTGRES) {
+    const prisma = await getPrisma();
+    const event = await prisma.userEvent.create({
+      data: {
+        userId: data.userId,
+        sessionId: data.sessionId,
+        eventName: data.eventName,
+        eventCategory: data.eventCategory,
+        eventLabel: data.eventLabel,
+        eventValue: data.eventValue,
+        pageUrl: data.pageUrl,
+        pageTitle: data.pageTitle,
+        elementId: data.elementId,
+        elementClass: data.elementClass,
+        elementText: data.elementText,
+        ipAddress: data.ipAddress,
+        userAgent: data.userAgent,
+        browser: data.browser,
+        os: data.os,
+        deviceType: data.deviceType,
+        country: data.country,
+        city: data.city,
+        toolType: data.toolType,
+        toolPreset: data.toolPreset,
+        toolSettings: data.toolSettings,
+        inputSize: data.inputSize,
+        outputSize: data.outputSize,
+        processingTime: data.processingTime,
+        creditsUsed: data.creditsUsed,
+        errorMessage: data.errorMessage,
+        errorStack: data.errorStack,
+        errorCode: data.errorCode,
+        metadata: data.metadata,
+        clientTimestamp: data.clientTimestamp ? new Date(data.clientTimestamp) : undefined,
+      },
+    });
+
+    // Update session actions count if session exists
+    if (data.sessionId) {
+      await prisma.userSession.update({
+        where: { id: data.sessionId },
+        data: {
+          actions: { increment: 1 },
+          lastActivityAt: new Date(),
+        },
+      }).catch(() => {});
+    }
+
+    // Update user's last activity
+    await prisma.user.update({
+      where: { id: data.userId },
+      data: {
+        lastActiveAt: new Date(),
+        lastToolUsed: data.toolType || undefined,
+      },
+    }).catch(() => {});
+
+    return prismaEventToEvent(event);
+  }
+  throw new Error('User event tracking requires PostgreSQL');
+}
+
+export async function getUserEvents(userId: string, options?: {
+  limit?: number;
+  eventCategory?: string;
+  eventName?: string;
+  startDate?: Date;
+  endDate?: Date;
+}): Promise<UserEvent[]> {
+  if (USE_POSTGRES) {
+    const prisma = await getPrisma();
+    const events = await prisma.userEvent.findMany({
+      where: {
+        userId,
+        ...(options?.eventCategory && { eventCategory: options.eventCategory as any }),
+        ...(options?.eventName && { eventName: options.eventName }),
+        ...(options?.startDate && { timestamp: { gte: options.startDate } }),
+        ...(options?.endDate && { timestamp: { lte: options.endDate } }),
+      },
+      orderBy: { timestamp: 'desc' },
+      take: options?.limit || 100,
+    });
+    return events.map(prismaEventToEvent);
+  }
+  return [];
+}
+
+export async function getEventsBySession(sessionId: string): Promise<UserEvent[]> {
+  if (USE_POSTGRES) {
+    const prisma = await getPrisma();
+    const events = await prisma.userEvent.findMany({
+      where: { sessionId },
+      orderBy: { timestamp: 'asc' },
+    });
+    return events.map(prismaEventToEvent);
+  }
+  return [];
+}
+
+// ============================================
+// PAGE VIEW TRACKING
+// ============================================
+
+export interface PageView {
+  id: string;
+  userId: string;
+  sessionId?: string;
+
+  // Page identification
+  pageUrl: string;
+  pagePath: string;
+  pageTitle?: string;
+  pageType?: string;
+
+  // Referrer
+  referrer?: string;
+  referrerDomain?: string;
+
+  // Technical
+  ipAddress?: string;
+  userAgent?: string;
+  browser?: string;
+  os?: string;
+  deviceType?: string;
+  screenResolution?: string;
+  viewportSize?: string;
+
+  // Geographic
+  country?: string;
+  city?: string;
+
+  // Engagement
+  timeOnPage?: number;
+  scrollDepth?: number;
+  scrollEvents: number;
+  clickEvents: number;
+  formInteractions: number;
+
+  // Content engagement
+  readTime?: number;
+  contentLength?: number;
+  imagesViewed: number;
+  videosPlayed: number;
+  videoWatchTime: number;
+
+  // Exit behavior
+  exitType?: string;
+  nextPage?: string;
+
+  // Timing
+  enteredAt: string;
+  exitedAt?: string;
+
+  // Performance
+  loadTime?: number;
+  timeToFirstByte?: number;
+  domContentLoaded?: number;
+  largestContentfulPaint?: number;
+  firstInputDelay?: number;
+  cumulativeLayoutShift?: number;
+
+  // Custom
+  metadata?: any;
+}
+
+function prismaPageViewToPageView(p: any): PageView {
+  return {
+    id: p.id,
+    userId: p.userId,
+    sessionId: p.sessionId ?? undefined,
+    pageUrl: p.pageUrl,
+    pagePath: p.pagePath,
+    pageTitle: p.pageTitle ?? undefined,
+    pageType: p.pageType ?? undefined,
+    referrer: p.referrer ?? undefined,
+    referrerDomain: p.referrerDomain ?? undefined,
+    ipAddress: p.ipAddress ?? undefined,
+    userAgent: p.userAgent ?? undefined,
+    browser: p.browser ?? undefined,
+    os: p.os ?? undefined,
+    deviceType: p.deviceType ?? undefined,
+    screenResolution: p.screenResolution ?? undefined,
+    viewportSize: p.viewportSize ?? undefined,
+    country: p.country ?? undefined,
+    city: p.city ?? undefined,
+    timeOnPage: p.timeOnPage ?? undefined,
+    scrollDepth: p.scrollDepth ?? undefined,
+    scrollEvents: p.scrollEvents,
+    clickEvents: p.clickEvents,
+    formInteractions: p.formInteractions,
+    readTime: p.readTime ?? undefined,
+    contentLength: p.contentLength ?? undefined,
+    imagesViewed: p.imagesViewed,
+    videosPlayed: p.videosPlayed,
+    videoWatchTime: p.videoWatchTime,
+    exitType: p.exitType ?? undefined,
+    nextPage: p.nextPage ?? undefined,
+    enteredAt: p.enteredAt instanceof Date ? p.enteredAt.toISOString() : p.enteredAt,
+    exitedAt: p.exitedAt instanceof Date ? p.exitedAt.toISOString() : p.exitedAt ?? undefined,
+    loadTime: p.loadTime ?? undefined,
+    timeToFirstByte: p.timeToFirstByte ?? undefined,
+    domContentLoaded: p.domContentLoaded ?? undefined,
+    largestContentfulPaint: p.largestContentfulPaint ?? undefined,
+    firstInputDelay: p.firstInputDelay ?? undefined,
+    cumulativeLayoutShift: p.cumulativeLayoutShift ?? undefined,
+    metadata: p.metadata ?? undefined,
+  };
+}
+
+export async function trackPageView(data: Omit<PageView, 'id' | 'enteredAt' | 'scrollEvents' | 'clickEvents' | 'formInteractions' | 'imagesViewed' | 'videosPlayed' | 'videoWatchTime'>): Promise<PageView> {
+  if (USE_POSTGRES) {
+    const prisma = await getPrisma();
+    const pageView = await prisma.pageView.create({
+      data: {
+        userId: data.userId,
+        sessionId: data.sessionId,
+        pageUrl: data.pageUrl,
+        pagePath: data.pagePath,
+        pageTitle: data.pageTitle,
+        pageType: data.pageType,
+        referrer: data.referrer,
+        referrerDomain: data.referrerDomain,
+        ipAddress: data.ipAddress,
+        userAgent: data.userAgent,
+        browser: data.browser,
+        os: data.os,
+        deviceType: data.deviceType,
+        screenResolution: data.screenResolution,
+        viewportSize: data.viewportSize,
+        country: data.country,
+        city: data.city,
+        loadTime: data.loadTime,
+        timeToFirstByte: data.timeToFirstByte,
+        domContentLoaded: data.domContentLoaded,
+        largestContentfulPaint: data.largestContentfulPaint,
+        firstInputDelay: data.firstInputDelay,
+        cumulativeLayoutShift: data.cumulativeLayoutShift,
+        metadata: data.metadata,
+      },
+    });
+
+    // Update session page view count
+    if (data.sessionId) {
+      await prisma.userSession.update({
+        where: { id: data.sessionId },
+        data: {
+          pageViews: { increment: 1 },
+          lastActivityAt: new Date(),
+        },
+      }).catch(() => {});
+    }
+
+    // Update user's total page views
+    await prisma.user.update({
+      where: { id: data.userId },
+      data: {
+        totalPageViews: { increment: 1 },
+        lastActiveAt: new Date(),
+        lastPageViewed: data.pagePath,
+      },
+    }).catch(() => {});
+
+    return prismaPageViewToPageView(pageView);
+  }
+  throw new Error('Page view tracking requires PostgreSQL');
+}
+
+export async function updatePageView(id: string, updates: Partial<PageView>): Promise<PageView | null> {
+  if (USE_POSTGRES) {
+    const prisma = await getPrisma();
+    try {
+      const pageView = await prisma.pageView.update({
+        where: { id },
+        data: updates as any,
+      });
+      return prismaPageViewToPageView(pageView);
+    } catch {
+      return null;
+    }
+  }
+  return null;
+}
+
+export async function getUserPageViews(userId: string, options?: {
+  limit?: number;
+  pageType?: string;
+  startDate?: Date;
+  endDate?: Date;
+}): Promise<PageView[]> {
+  if (USE_POSTGRES) {
+    const prisma = await getPrisma();
+    const pageViews = await prisma.pageView.findMany({
+      where: {
+        userId,
+        ...(options?.pageType && { pageType: options.pageType }),
+        ...(options?.startDate && { enteredAt: { gte: options.startDate } }),
+        ...(options?.endDate && { enteredAt: { lte: options.endDate } }),
+      },
+      orderBy: { enteredAt: 'desc' },
+      take: options?.limit || 100,
+    });
+    return pageViews.map(prismaPageViewToPageView);
+  }
+  return [];
+}
+
+// ============================================
+// EXTENDED USER DATA UPDATES
+// ============================================
+
+export interface ExtendedUserData {
+  // Geographic
+  country?: string;
+  countryName?: string;
+  region?: string;
+  city?: string;
+  postalCode?: string;
+  timezone?: string;
+  latitude?: number;
+  longitude?: number;
+
+  // Device
+  lastIpAddress?: string;
+  signupIpAddress?: string;
+  userAgent?: string;
+  browser?: string;
+  browserVersion?: string;
+  os?: string;
+  osVersion?: string;
+  deviceType?: string;
+  deviceBrand?: string;
+  deviceModel?: string;
+  screenResolution?: string;
+  language?: string;
+  languages?: string[];
+
+  // Marketing
+  referralSource?: string;
+  referralMedium?: string;
+  referralCampaign?: string;
+  referralTerm?: string;
+  referralContent?: string;
+  landingPage?: string;
+  signupPage?: string;
+  referrerUrl?: string;
+  gclid?: string;
+  fbclid?: string;
+  affiliateId?: string;
+  promoCode?: string;
+
+  // Business
+  subscriptionTier?: string;
+  subscriptionStatus?: string;
+  customerSegment?: string;
+
+  // Communication
+  emailVerified?: boolean;
+  phoneNumber?: string;
+  marketingConsent?: boolean;
+  newsletterSubscribed?: boolean;
+
+  // Company (B2B)
+  companyName?: string;
+  companySize?: string;
+  companyIndustry?: string;
+  jobTitle?: string;
+
+  // Auth
+  googleId?: string;
+  authProvider?: string;
+}
+
+export async function updateUserExtendedData(userId: string, data: ExtendedUserData): Promise<User | null> {
+  if (USE_POSTGRES) {
+    const prisma = await getPrisma();
+    try {
+      const user = await prisma.user.update({
+        where: { id: userId },
+        data: {
+          ...data,
+          updatedAt: new Date(),
+          ...(data.marketingConsent !== undefined && { marketingConsentAt: data.marketingConsent ? new Date() : null }),
+          ...(data.emailVerified !== undefined && data.emailVerified && { emailVerifiedAt: new Date() }),
+        } as any,
+      });
+      return prismaUserToUser(user);
+    } catch {
+      return null;
+    }
+  }
+  return null;
+}
+
+export async function updateUserOnSignup(userId: string, data: {
+  ipAddress?: string;
+  userAgent?: string;
+  referrer?: string;
+  utmSource?: string;
+  utmMedium?: string;
+  utmCampaign?: string;
+  utmTerm?: string;
+  utmContent?: string;
+  landingPage?: string;
+  signupPage?: string;
+  gclid?: string;
+  fbclid?: string;
+  promoCode?: string;
+  authProvider?: string;
+  googleId?: string;
+}): Promise<void> {
+  if (USE_POSTGRES) {
+    const prisma = await getPrisma();
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        signupIpAddress: data.ipAddress,
+        lastIpAddress: data.ipAddress,
+        userAgent: data.userAgent,
+        referrerUrl: data.referrer,
+        referralSource: data.utmSource,
+        referralMedium: data.utmMedium,
+        referralCampaign: data.utmCampaign,
+        referralTerm: data.utmTerm,
+        referralContent: data.utmContent,
+        landingPage: data.landingPage,
+        signupPage: data.signupPage,
+        gclid: data.gclid,
+        fbclid: data.fbclid,
+        promoCode: data.promoCode,
+        authProvider: data.authProvider,
+        googleId: data.googleId,
+      },
+    });
+  }
+}
+
+export async function updateUserOnLogin(userId: string, data: {
+  ipAddress?: string;
+  userAgent?: string;
+  browser?: string;
+  os?: string;
+  deviceType?: string;
+  country?: string;
+  city?: string;
+}): Promise<void> {
+  if (USE_POSTGRES) {
+    const prisma = await getPrisma();
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        lastIpAddress: data.ipAddress,
+        userAgent: data.userAgent,
+        browser: data.browser,
+        os: data.os,
+        deviceType: data.deviceType,
+        country: data.country,
+        city: data.city,
+        lastLoginAt: new Date(),
+        lastActiveAt: new Date(),
+      },
+    });
+  }
+}
+
+export async function updateUserToolUsage(userId: string, toolType: string, preset?: string): Promise<void> {
+  if (USE_POSTGRES) {
+    const prisma = await getPrisma();
+
+    // Get current user data
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { preferredTools: true },
+    });
+
+    // Update preferred tools (keep last 5 most used)
+    let preferredTools = user?.preferredTools || [];
+    if (!preferredTools.includes(toolType)) {
+      preferredTools = [toolType, ...preferredTools].slice(0, 5);
+    }
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        lastToolUsed: toolType,
+        favoritePreset: preset,
+        totalImagesProcessed: { increment: 1 },
+        preferredTools,
+        lastActiveAt: new Date(),
+      },
+    });
+  }
+}
+
+export async function updateUserPurchase(userId: string, amount: number): Promise<void> {
+  if (USE_POSTGRES) {
+    const prisma = await getPrisma();
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { totalPurchases: true, totalSpent: true, firstPurchaseAt: true },
+    });
+
+    const newTotalPurchases = (user?.totalPurchases || 0) + 1;
+    const newTotalSpent = (user?.totalSpent || 0) + amount;
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        totalPurchases: newTotalPurchases,
+        totalSpent: newTotalSpent,
+        lifetimeValue: newTotalSpent,
+        avgPurchaseValue: newTotalSpent / newTotalPurchases,
+        lastPurchaseAt: new Date(),
+        ...(!user?.firstPurchaseAt && { firstPurchaseAt: new Date() }),
+      },
+    });
+  }
+}
+
+// ============================================
+// ANALYTICS AGGREGATION
+// ============================================
+
+export async function getUserAnalytics(userId: string): Promise<{
+  totalSessions: number;
+  totalPageViews: number;
+  totalEvents: number;
+  avgSessionDuration: number;
+  lastActive: string | null;
+  topPages: { path: string; views: number }[];
+  topEvents: { name: string; count: number }[];
+  deviceBreakdown: { type: string; count: number }[];
+  countryBreakdown: { country: string; count: number }[];
+} | null> {
+  if (USE_POSTGRES) {
+    const prisma = await getPrisma();
+
+    const [
+      user,
+      topPages,
+      topEvents,
+      devices,
+      countries,
+    ] = await Promise.all([
+      prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+          totalSessions: true,
+          totalPageViews: true,
+          avgSessionTime: true,
+          lastActiveAt: true,
+        },
+      }),
+      prisma.pageView.groupBy({
+        by: ['pagePath'],
+        where: { userId },
+        _count: { pagePath: true },
+        orderBy: { _count: { pagePath: 'desc' } },
+        take: 10,
+      }),
+      prisma.userEvent.groupBy({
+        by: ['eventName'],
+        where: { userId },
+        _count: { eventName: true },
+        orderBy: { _count: { eventName: 'desc' } },
+        take: 10,
+      }),
+      prisma.userSession.groupBy({
+        by: ['deviceType'],
+        where: { userId, deviceType: { not: null } },
+        _count: { deviceType: true },
+      }),
+      prisma.userSession.groupBy({
+        by: ['country'],
+        where: { userId, country: { not: null } },
+        _count: { country: true },
+        orderBy: { _count: { country: 'desc' } },
+        take: 10,
+      }),
+    ]);
+
+    if (!user) return null;
+
+    const totalEvents = await prisma.userEvent.count({ where: { userId } });
+
+    return {
+      totalSessions: user.totalSessions,
+      totalPageViews: user.totalPageViews,
+      totalEvents,
+      avgSessionDuration: user.avgSessionTime,
+      lastActive: user.lastActiveAt?.toISOString() || null,
+      topPages: topPages.map(p => ({ path: p.pagePath, views: p._count.pagePath })),
+      topEvents: topEvents.map(e => ({ name: e.eventName, count: e._count.eventName })),
+      deviceBreakdown: devices.map(d => ({ type: d.deviceType || 'unknown', count: d._count.deviceType })),
+      countryBreakdown: countries.map(c => ({ country: c.country || 'unknown', count: c._count.country })),
+    };
+  }
+  return null;
+}
+
+export async function getGlobalAnalytics(days: number = 30): Promise<{
+  totalUsers: number;
+  activeUsers: number;
+  totalSessions: number;
+  totalPageViews: number;
+  totalEvents: number;
+  avgSessionDuration: number;
+  topCountries: { country: string; users: number }[];
+  topReferrers: { source: string; users: number }[];
+  userGrowth: { date: string; count: number }[];
+}> {
+  if (USE_POSTGRES) {
+    const prisma = await getPrisma();
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - days);
+
+    const [
+      totalUsers,
+      activeUsers,
+      totalSessions,
+      totalPageViews,
+      totalEvents,
+      avgSession,
+      topCountries,
+      topReferrers,
+    ] = await Promise.all([
+      prisma.user.count(),
+      prisma.user.count({ where: { lastActiveAt: { gte: startDate } } }),
+      prisma.userSession.count({ where: { startedAt: { gte: startDate } } }),
+      prisma.pageView.count({ where: { enteredAt: { gte: startDate } } }),
+      prisma.userEvent.count({ where: { timestamp: { gte: startDate } } }),
+      prisma.userSession.aggregate({
+        where: { startedAt: { gte: startDate }, endedAt: { not: null } },
+        _avg: { duration: true },
+      }),
+      prisma.user.groupBy({
+        by: ['country'],
+        where: { country: { not: null } },
+        _count: { country: true },
+        orderBy: { _count: { country: 'desc' } },
+        take: 10,
+      }),
+      prisma.user.groupBy({
+        by: ['referralSource'],
+        where: { referralSource: { not: null } },
+        _count: { referralSource: true },
+        orderBy: { _count: { referralSource: 'desc' } },
+        take: 10,
+      }),
+    ]);
+
+    // Get daily user growth
+    const userGrowth: { date: string; count: number }[] = [];
+    for (let i = days - 1; i >= 0; i--) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      const dateStr = date.toISOString().split('T')[0];
+      const nextDate = new Date(date);
+      nextDate.setDate(nextDate.getDate() + 1);
+
+      const count = await prisma.user.count({
+        where: {
+          createdAt: { gte: date, lt: nextDate },
+        },
+      });
+      userGrowth.push({ date: dateStr, count });
+    }
+
+    return {
+      totalUsers,
+      activeUsers,
+      totalSessions,
+      totalPageViews,
+      totalEvents,
+      avgSessionDuration: Math.floor(avgSession._avg?.duration || 0),
+      topCountries: topCountries.map(c => ({ country: c.country || 'unknown', users: c._count.country })),
+      topReferrers: topReferrers.map(r => ({ source: r.referralSource || 'direct', users: r._count.referralSource })),
+      userGrowth,
+    };
+  }
+
+  return {
+    totalUsers: 0,
+    activeUsers: 0,
+    totalSessions: 0,
+    totalPageViews: 0,
+    totalEvents: 0,
+    avgSessionDuration: 0,
+    topCountries: [],
+    topReferrers: [],
+    userGrowth: [],
+  };
+}

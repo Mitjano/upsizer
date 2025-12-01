@@ -40,6 +40,113 @@ model User {
   lastLoginAt   DateTime?
   firstUploadAt DateTime?
 
+  // ========== GEOGRAPHIC & LOCATION DATA ==========
+  country           String?   // ISO country code (PL, US, DE)
+  countryName       String?   // Full country name
+  region            String?   // State/Province/Region
+  city              String?   // City name
+  postalCode        String?   // Postal/ZIP code
+  timezone          String?   // e.g., "Europe/Warsaw"
+  latitude          Float?    // Approximate latitude
+  longitude         Float?    // Approximate longitude
+
+  // ========== DEVICE & TECHNICAL DATA ==========
+  lastIpAddress     String?   // Last known IP (hashed for privacy)
+  signupIpAddress   String?   // IP at registration
+  userAgent         String?   // Full user agent string
+  browser           String?   // Parsed browser name (Chrome, Firefox)
+  browserVersion    String?   // Browser version
+  os                String?   // Operating system (Windows, macOS, iOS)
+  osVersion         String?   // OS version
+  deviceType        String?   // desktop, mobile, tablet
+  deviceBrand       String?   // Apple, Samsung, etc.
+  deviceModel       String?   // iPhone 14, Galaxy S23
+  screenResolution  String?   // e.g., "1920x1080"
+  language          String?   // Browser language (pl, en-US)
+  languages         String[]  @default([]) // All accepted languages
+
+  // ========== ACQUISITION & MARKETING DATA ==========
+  referralSource    String?   // utm_source or referrer domain
+  referralMedium    String?   // utm_medium (cpc, organic, email)
+  referralCampaign  String?   // utm_campaign
+  referralTerm      String?   // utm_term (keywords)
+  referralContent   String?   // utm_content
+  landingPage       String?   // First page visited
+  signupPage        String?   // Page where signup occurred
+  referrerUrl       String?   // Full referrer URL
+  gclid             String?   // Google Click ID
+  fbclid            String?   // Facebook Click ID
+  affiliateId       String?   // Affiliate tracking ID
+  promoCode         String?   // Promo code used at signup
+
+  // ========== ENGAGEMENT & BEHAVIOR DATA ==========
+  totalSessions     Int       @default(0)  // Number of sessions
+  totalPageViews    Int       @default(0)  // Total pages viewed
+  totalTimeSpent    Int       @default(0)  // Total time in seconds
+  avgSessionTime    Int       @default(0)  // Avg session in seconds
+  lastActiveAt      DateTime? // Last activity (more granular than login)
+  lastPageViewed    String?   // Last page URL
+  bounceRate        Float?    // Calculated bounce rate
+
+  // ========== BUSINESS & VALUE DATA ==========
+  lifetimeValue     Float     @default(0)  // Total revenue from user
+  totalSpent        Float     @default(0)  // Total money spent
+  totalPurchases    Int       @default(0)  // Number of purchases
+  avgPurchaseValue  Float     @default(0)  // Average order value
+  firstPurchaseAt   DateTime? // First purchase date
+  lastPurchaseAt    DateTime? // Last purchase date
+  subscriptionTier  String?   // free, starter, pro, enterprise
+  subscriptionStatus String?  // active, canceled, past_due
+  subscriptionStartAt DateTime?
+  subscriptionEndAt DateTime?
+  trialEndsAt       DateTime? // Trial expiration
+  churnRisk         Int?      // 0-100 churn probability
+  customerSegment   String?   // VIP, regular, at-risk, new
+
+  // ========== COMMUNICATION PREFERENCES ==========
+  emailVerified     Boolean   @default(false)
+  emailVerifiedAt   DateTime?
+  phoneNumber       String?
+  phoneVerified     Boolean   @default(false)
+  emailNotifications Boolean  @default(true)
+  pushNotifications Boolean   @default(false)
+  smsNotifications  Boolean   @default(false)
+  marketingConsent  Boolean   @default(false)
+  marketingConsentAt DateTime?
+  newsletterSubscribed Boolean @default(false)
+
+  // ========== FEATURE USAGE DATA ==========
+  preferredTools    String[]  @default([]) // Most used tools
+  lastToolUsed      String?   // Last AI tool used
+  favoritePreset    String?   // Most used preset
+  totalImagesProcessed Int    @default(0)
+  totalCreditsUsed  Int       @default(0)
+  freeCreditsUsed   Int       @default(0)
+  paidCreditsUsed   Int       @default(0)
+
+  // ========== SOCIAL & AUTH DATA ==========
+  googleId          String?   // Google OAuth ID
+  facebookId        String?   // Facebook OAuth ID
+  appleId           String?   // Apple OAuth ID
+  linkedinId        String?   // LinkedIn OAuth ID
+  githubId          String?   // GitHub OAuth ID
+  authProvider      String?   // Primary auth method
+  twoFactorEnabled  Boolean   @default(false)
+
+  // ========== COMPANY/B2B DATA ==========
+  companyName       String?
+  companySize       String?   // 1-10, 11-50, 51-200, 201-500, 500+
+  companyIndustry   String?
+  jobTitle          String?
+  department        String?
+  vatNumber         String?
+  billingAddress    String?
+
+  // ========== NOTES & METADATA ==========
+  internalNotes     String?   // Admin notes
+  tags              String[]  @default([]) // Custom tags
+  customFields      Json?     // Flexible custom data
+
   // Relations
   transactions  Transaction[]
   usages        Usage[]
@@ -48,11 +155,20 @@ model User {
   referralsGiven Referral[] @relation("ReferrerRelation")
   referralsReceived Referral[] @relation("ReferredRelation")
   imageHistory  ImageHistory[]
+  sessions      UserSession[]
+  events        UserEvent[]
+  pageViews     PageView[]
 
   @@index([email])
   @@index([role])
   @@index([status])
   @@index([createdAt])
+  @@index([country])
+  @@index([referralSource])
+  @@index([subscriptionTier])
+  @@index([customerSegment])
+  @@index([lastActiveAt])
+  @@index([lifetimeValue])
 }
 
 // ===================
@@ -685,4 +801,231 @@ model Referral {
   @@index([referredUserId])
   @@index([code])
   @@index([status])
+}
+
+// ===================
+// User Session Tracking
+// ===================
+
+model UserSession {
+  id              String    @id @default(cuid())
+  userId          String
+
+  // Session identification
+  sessionToken    String    @unique
+  fingerprint     String?   // Browser fingerprint hash
+
+  // Timing
+  startedAt       DateTime  @default(now())
+  endedAt         DateTime?
+  lastActivityAt  DateTime  @default(now())
+  duration        Int       @default(0)  // in seconds
+
+  // Device & Technical
+  ipAddress       String?
+  userAgent       String?
+  browser         String?
+  browserVersion  String?
+  os              String?
+  osVersion       String?
+  deviceType      String?   // desktop, mobile, tablet
+  screenResolution String?
+  language        String?
+
+  // Geographic
+  country         String?
+  countryName     String?
+  region          String?
+  city            String?
+  timezone        String?
+  latitude        Float?
+  longitude       Float?
+
+  // Traffic source (per session)
+  referrer        String?
+  utmSource       String?
+  utmMedium       String?
+  utmCampaign     String?
+  utmTerm         String?
+  utmContent      String?
+  landingPage     String?
+  exitPage        String?
+
+  // Engagement
+  pageViews       Int       @default(0)
+  actions         Int       @default(0)   // clicks, form submits, etc.
+  scrollDepthMax  Int?      // max scroll depth percentage
+  bounced         Boolean   @default(false)
+  converted       Boolean   @default(false)
+  conversionType  String?   // signup, purchase, etc.
+  conversionValue Float?
+
+  // Relations
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  events          UserEvent[]
+  pages           PageView[]
+
+  @@index([userId])
+  @@index([sessionToken])
+  @@index([startedAt])
+  @@index([country])
+  @@index([utmSource])
+  @@index([converted])
+}
+
+// ===================
+// User Event Tracking
+// ===================
+
+enum UserEventCategory {
+  navigation      // page views, clicks
+  engagement      // scroll, time spent, video play
+  conversion      // signup, purchase, subscription
+  tool_usage      // image processing, AI tools
+  error           // client errors, API errors
+  authentication  // login, logout, password reset
+  account         // profile update, settings change
+  payment         // payment attempt, success, failure
+  api             // API key usage, rate limits
+  custom          // custom events
+}
+
+model UserEvent {
+  id              String            @id @default(cuid())
+  userId          String
+  sessionId       String?
+
+  // Event identification
+  eventName       String            // e.g., "button_click", "image_uploaded"
+  eventCategory   UserEventCategory
+  eventLabel      String?           // Additional label
+  eventValue      Float?            // Numeric value if applicable
+
+  // Context
+  pageUrl         String?
+  pageTitle       String?
+  elementId       String?           // DOM element ID clicked
+  elementClass    String?           // DOM element class
+  elementText     String?           // Button text, link text
+
+  // Technical
+  ipAddress       String?
+  userAgent       String?
+  browser         String?
+  os              String?
+  deviceType      String?
+
+  // Geographic
+  country         String?
+  city            String?
+
+  // Tool-specific data
+  toolType        String?           // upscale, enhance, restore, etc.
+  toolPreset      String?
+  toolSettings    Json?
+  inputSize       Int?              // Input file size
+  outputSize      Int?              // Output file size
+  processingTime  Int?              // ms
+  creditsUsed     Int?
+
+  // Error tracking
+  errorMessage    String?
+  errorStack      String?
+  errorCode       String?
+
+  // Custom data
+  metadata        Json?
+
+  // Timing
+  timestamp       DateTime          @default(now())
+  clientTimestamp DateTime?         // Client-side timestamp
+
+  // Relations
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  session         UserSession?      @relation(fields: [sessionId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([sessionId])
+  @@index([eventName])
+  @@index([eventCategory])
+  @@index([timestamp])
+  @@index([toolType])
+  @@index([country])
+}
+
+// ===================
+// Page View Tracking
+// ===================
+
+model PageView {
+  id              String       @id @default(cuid())
+  userId          String
+  sessionId       String?
+
+  // Page identification
+  pageUrl         String
+  pagePath        String       // URL path without domain
+  pageTitle       String?
+  pageType        String?      // home, tool, pricing, blog, etc.
+
+  // Referrer
+  referrer        String?
+  referrerDomain  String?
+
+  // Technical
+  ipAddress       String?
+  userAgent       String?
+  browser         String?
+  os              String?
+  deviceType      String?
+  screenResolution String?
+  viewportSize    String?
+
+  // Geographic
+  country         String?
+  city            String?
+
+  // Engagement
+  timeOnPage      Int?         // seconds spent on page
+  scrollDepth     Int?         // max scroll percentage (0-100)
+  scrollEvents    Int          @default(0)
+  clickEvents     Int          @default(0)
+  formInteractions Int         @default(0)
+
+  // Content engagement
+  readTime        Int?         // estimated read time in seconds
+  contentLength   Int?         // page content length
+  imagesViewed    Int          @default(0)
+  videosPlayed    Int          @default(0)
+  videoWatchTime  Int          @default(0)
+
+  // Exit behavior
+  exitType        String?      // navigation, tab_close, timeout, external_link
+  nextPage        String?      // Next page visited (if internal)
+
+  // Timing
+  enteredAt       DateTime     @default(now())
+  exitedAt        DateTime?
+
+  // Performance metrics
+  loadTime        Int?         // page load time in ms
+  timeToFirstByte Int?         // TTFB in ms
+  domContentLoaded Int?        // DCL in ms
+  largestContentfulPaint Int?  // LCP in ms
+  firstInputDelay Int?         // FID in ms
+  cumulativeLayoutShift Float? // CLS score
+
+  // Custom data
+  metadata        Json?
+
+  // Relations
+  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  session         UserSession? @relation(fields: [sessionId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([sessionId])
+  @@index([pagePath])
+  @@index([pageType])
+  @@index([enteredAt])
+  @@index([country])
 }
