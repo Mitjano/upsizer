@@ -14,10 +14,12 @@ const ALLOWED_ORIGINS = [
 // Create the intl middleware
 // Using 'as-needed' so default locale (pl) doesn't have prefix
 // pixelift.pl/ → Polish, pixelift.pl/en → English, etc.
+// localeDetection: false prevents redirect loops based on Accept-Language header
 const intlMiddleware = createIntlMiddleware({
   locales,
   defaultLocale,
-  localePrefix: 'as-needed'
+  localePrefix: 'as-needed',
+  localeDetection: false
 });
 
 export default auth((req) => {
