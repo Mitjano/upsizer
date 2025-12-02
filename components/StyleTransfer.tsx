@@ -3,17 +3,21 @@
 import { useState, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import ImageComparison from "./ImageComparison";
-import { FaTimes, FaInfoCircle, FaPalette } from "react-icons/fa";
+import { FaTimes, FaInfoCircle, FaPalette, FaMagic } from "react-icons/fa";
 
-// Face-to-Many model supports: 3D, Emoji, Video game, Pixels, Clay, Toy
-// Uses InstantID for facial identity preservation
+// Style presets that change scene/background while preserving identity
 const STYLE_PRESETS = [
-  { id: '3D', name: '3D Character', icon: '🎮', description: 'Pixar/3D animation style' },
-  { id: 'Emoji', name: 'Emoji', icon: '😊', description: 'Emoji avatar style' },
-  { id: 'Video game', name: 'Video Game', icon: '🕹️', description: 'Game character style' },
-  { id: 'Pixels', name: 'Pixel Art', icon: '👾', description: 'Retro pixel style' },
-  { id: 'Clay', name: 'Clay', icon: '🎨', description: 'Claymation style' },
-  { id: 'Toy', name: 'Toy', icon: '🧸', description: 'Toy figure style' },
+  { id: 'cyberpunk', name: 'Cyberpunk', icon: '🌃', description: 'Neon city, futuristic vibes' },
+  { id: 'fantasy', name: 'Fantasy', icon: '✨', description: 'Magical world, enchanted' },
+  { id: 'professional', name: 'Professional', icon: '💼', description: 'Corporate portrait' },
+  { id: 'anime', name: 'Anime', icon: '🎌', description: 'Japanese animation style' },
+  { id: 'vintage', name: 'Vintage', icon: '📷', description: '1950s retro aesthetic' },
+  { id: 'nature', name: 'Nature', icon: '🌲', description: 'Forest, golden hour' },
+  { id: 'beach', name: 'Beach', icon: '🏖️', description: 'Tropical sunset paradise' },
+  { id: 'urban', name: 'Urban', icon: '🏙️', description: 'City street photography' },
+  { id: 'artistic', name: 'Artistic', icon: '🎨', description: 'Oil painting style' },
+  { id: 'scifi', name: 'Sci-Fi', icon: '🚀', description: 'Space station, futuristic' },
+  { id: 'custom', name: 'Custom', icon: '✏️', description: 'Write your own prompt' },
 ];
 
 export default function StyleTransfer() {
@@ -26,7 +30,7 @@ export default function StyleTransfer() {
   const [progress, setProgress] = useState("");
   const [imageInfo, setImageInfo] = useState<{width: number, height: number, size: number} | null>(null);
   const [creditsRemaining, setCreditsRemaining] = useState<number | null>(null);
-  const [selectedStyle, setSelectedStyle] = useState('3D');
+  const [selectedStyle, setSelectedStyle] = useState('cyberpunk');
   const [customPrompt, setCustomPrompt] = useState('');
 
   const handleDrag = useCallback((e: React.DragEvent) => {
@@ -90,6 +94,12 @@ export default function StyleTransfer() {
   const handleProcess = async () => {
     if (!selectedFile) return;
 
+    // Validate custom prompt if custom style selected
+    if (selectedStyle === 'custom' && !customPrompt.trim()) {
+      alert("Please enter a custom prompt for your style");
+      return;
+    }
+
     setProcessing(true);
     setProgress("Uploading image...");
     setStyledUrl(null);
@@ -98,12 +108,12 @@ export default function StyleTransfer() {
       const formData = new FormData();
       formData.append("file", selectedFile);
       formData.append("style_preset", selectedStyle);
-      if (customPrompt) {
+      if (selectedStyle === 'custom' && customPrompt) {
         formData.append("prompt", customPrompt);
       }
 
       const styleName = STYLE_PRESETS.find(s => s.id === selectedStyle)?.name || 'Style';
-      setProgress(`Transforming face to ${styleName} (preserving identity)...`);
+      setProgress(`Transforming to ${styleName} style (preserving your identity)...`);
 
       const response = await fetch("/api/style-transfer", {
         method: "POST",
@@ -141,7 +151,7 @@ export default function StyleTransfer() {
     try {
       const link = document.createElement("a");
       link.href = styledUrl;
-      link.download = `pixelift_${selectedStyle}_${selectedFile?.name || "image.png"}`;
+      link.download = `pixelift_${selectedStyle}_${selectedFile?.name || "image.webp"}`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -168,9 +178,9 @@ export default function StyleTransfer() {
             <div className="mb-6">
               <FaPalette className="mx-auto h-16 w-16 text-gray-500" />
             </div>
-            <h3 className="text-2xl font-bold mb-3">Sign in to Use AI Style Transfer</h3>
+            <h3 className="text-2xl font-bold mb-3">Sign in to Use Style Diffusion</h3>
             <p className="text-gray-400 mb-6 max-w-md mx-auto">
-              Create a free account to transform your photos with AI-powered artistic styles.
+              Transform your photos into different scenes and styles while keeping your identity perfectly preserved.
             </p>
             <div className="flex gap-4 justify-center">
               <a href="/auth/signin" className="inline-block px-8 py-3 bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 rounded-lg font-medium transition">
@@ -188,6 +198,20 @@ export default function StyleTransfer() {
 
   return (
     <div className="max-w-6xl mx-auto">
+      {/* Info Banner */}
+      <div className="mb-6 bg-gradient-to-r from-pink-500/10 to-purple-500/10 border border-pink-500/30 rounded-xl p-4">
+        <div className="flex items-start gap-3">
+          <FaMagic className="text-pink-400 mt-1 flex-shrink-0" />
+          <div>
+            <h4 className="font-semibold text-pink-300">Identity-Preserving Style Transfer</h4>
+            <p className="text-sm text-gray-400 mt-1">
+              Your face and identity stay exactly the same - only the scene, background, and artistic style change.
+              Perfect for creating professional headshots, fantasy portraits, or placing yourself in any environment!
+            </p>
+          </div>
+        </div>
+      </div>
+
       {!previewUrl ? (
         <div
           className={`relative border-2 border-dashed rounded-2xl p-12 transition-all ${
@@ -212,13 +236,13 @@ export default function StyleTransfer() {
             </div>
 
             <label htmlFor="file-upload" className="cursor-pointer inline-block px-8 py-3 bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 rounded-lg font-medium transition mb-4">
-              Upload Image for Style Transfer
+              Upload Your Photo
             </label>
 
             <p className="text-gray-400 mt-4">or drop image anywhere</p>
             <div className="mt-6 text-sm text-gray-500">
-              <p className="mb-2">Supported formats: PNG, JPEG, JPG, WEBP</p>
-              <p>Maximum file size: 20MB</p>
+              <p className="mb-2">Best results with clear face photos - frontal view recommended</p>
+              <p>Supported formats: PNG, JPEG, WEBP • Max size: 20MB</p>
             </div>
           </div>
         </div>
@@ -250,9 +274,12 @@ export default function StyleTransfer() {
             <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700">
               <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                 <FaPalette className="text-pink-400" />
-                Choose Art Style
+                Choose Scene / Style
               </h3>
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+              <p className="text-sm text-gray-400 mb-4">
+                Select a style - your face will stay identical, only the scene changes!
+              </p>
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
                 {STYLE_PRESETS.map((style) => (
                   <button
                     key={style.id}
@@ -265,24 +292,29 @@ export default function StyleTransfer() {
                   >
                     <div className="text-3xl mb-2">{style.icon}</div>
                     <div className="font-medium text-sm">{style.name}</div>
-                    <div className="text-xs text-gray-500 mt-1">{style.description}</div>
+                    <div className="text-xs text-gray-500 mt-1 line-clamp-2">{style.description}</div>
                   </button>
                 ))}
               </div>
 
-              {/* Custom Prompt */}
-              <div className="mt-4">
-                <label className="block text-sm font-medium text-gray-400 mb-2">
-                  Custom Style Prompt (optional)
-                </label>
-                <input
-                  type="text"
-                  value={customPrompt}
-                  onChange={(e) => setCustomPrompt(e.target.value)}
-                  placeholder="e.g., 'in the style of Van Gogh with vibrant colors'"
-                  className="w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-lg focus:border-pink-500 focus:outline-none"
-                />
-              </div>
+              {/* Custom Prompt - only show when custom is selected */}
+              {selectedStyle === 'custom' && (
+                <div className="mt-4">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Describe your custom scene/style:
+                  </label>
+                  <textarea
+                    value={customPrompt}
+                    onChange={(e) => setCustomPrompt(e.target.value)}
+                    placeholder="e.g., 'portrait in a cozy coffee shop, warm lighting, autumn vibes' or 'on the moon surface, astronaut suit, Earth in background'"
+                    className="w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-lg focus:border-pink-500 focus:outline-none resize-none"
+                    rows={3}
+                  />
+                  <p className="text-xs text-gray-500 mt-2">
+                    Tip: Describe the scene, environment, lighting, and mood. Your face will be preserved automatically.
+                  </p>
+                </div>
+              )}
             </div>
           )}
 
@@ -297,19 +329,24 @@ export default function StyleTransfer() {
             ) : (
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <h3 className="text-sm font-medium text-gray-400 mb-3">Original Image</h3>
+                  <h3 className="text-sm font-medium text-gray-400 mb-3">Your Photo</h3>
                   <img src={previewUrl || undefined} alt="Original" className="w-full rounded-lg border border-gray-600" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-gray-400 mb-3">Styled Preview</h3>
+                  <h3 className="text-sm font-medium text-gray-400 mb-3">Styled Result</h3>
                   <div className="w-full aspect-square bg-gray-700 rounded-lg border border-gray-600 flex items-center justify-center">
                     {processing ? (
-                      <div className="text-center">
+                      <div className="text-center p-6">
                         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500 mx-auto mb-4"></div>
                         <p className="text-gray-400">{progress}</p>
+                        <p className="text-xs text-gray-500 mt-2">This may take 20-40 seconds...</p>
                       </div>
                     ) : (
-                      <p className="text-gray-500">Select a style and click &quot;Apply Style&quot;</p>
+                      <div className="text-center p-6">
+                        <FaMagic className="mx-auto h-10 w-10 text-gray-500 mb-3" />
+                        <p className="text-gray-500">Select a style and click &quot;Transform&quot;</p>
+                        <p className="text-xs text-gray-600 mt-2">Your identity will be perfectly preserved</p>
+                      </div>
                     )}
                   </div>
                 </div>
@@ -321,10 +358,10 @@ export default function StyleTransfer() {
             {!styledUrl ? (
               <button
                 onClick={handleProcess}
-                disabled={processing}
+                disabled={processing || (selectedStyle === 'custom' && !customPrompt.trim())}
                 className="px-12 py-5 bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 disabled:from-gray-600 disabled:to-gray-600 disabled:cursor-not-allowed rounded-xl font-bold text-xl transition shadow-xl shadow-pink-500/30"
               >
-                {processing ? "Applying Style..." : `Apply ${STYLE_PRESETS.find(s => s.id === selectedStyle)?.name} Style`}
+                {processing ? "Transforming..." : `Transform to ${STYLE_PRESETS.find(s => s.id === selectedStyle)?.name}`}
               </button>
             ) : (
               <>
@@ -335,7 +372,7 @@ export default function StyleTransfer() {
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                   </svg>
-                  Download Styled Image
+                  Download Image
                 </button>
                 <button
                   onClick={() => setStyledUrl(null)}
@@ -351,12 +388,12 @@ export default function StyleTransfer() {
               disabled={processing}
               className="px-6 py-4 bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:cursor-not-allowed rounded-lg font-semibold transition"
             >
-              Upload New Image
+              Upload New Photo
             </button>
           </div>
 
           <div className="text-center text-sm text-gray-500">
-            <p>Powered by InstantID Face-to-Many AI - Preserves your identity - 4 credits</p>
+            <p>Powered by InstantID + IPAdapter AI - Your face stays identical - 4 credits per transform</p>
           </div>
         </div>
       )}

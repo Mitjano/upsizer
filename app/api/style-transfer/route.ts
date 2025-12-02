@@ -11,9 +11,54 @@ const replicate = new Replicate({
 
 const CREDITS_PER_TRANSFER = 4 // Style transfer is compute-intensive
 
-// Valid styles for face-to-many model
-const VALID_STYLES = ['3D', 'Emoji', 'Video game', 'Pixels', 'Clay', 'Toy'] as const
-type ValidStyle = typeof VALID_STYLES[number]
+// Style presets with prompts - these define different scene/style transformations
+// while preserving the person's identity
+const STYLE_PRESETS: Record<string, { prompt: string; negative: string }> = {
+  cyberpunk: {
+    prompt: 'portrait in cyberpunk city, neon lights, futuristic, high-tech environment, night scene, cinematic lighting, 8k, highly detailed',
+    negative: 'deformed, ugly, disfigured, low quality, blurry'
+  },
+  fantasy: {
+    prompt: 'portrait in magical fantasy world, enchanted forest, mystical atmosphere, soft magical lighting, fairy tale, 8k, highly detailed',
+    negative: 'deformed, ugly, disfigured, low quality, blurry'
+  },
+  professional: {
+    prompt: 'professional corporate portrait, modern office background, business attire, clean lighting, professional headshot, 8k, highly detailed',
+    negative: 'casual, deformed, ugly, disfigured, low quality, blurry'
+  },
+  anime: {
+    prompt: 'anime style portrait, vibrant colors, anime background, Japanese animation style, detailed anime art, studio ghibli inspired, 8k',
+    negative: 'realistic, photo, deformed, ugly, disfigured, low quality'
+  },
+  vintage: {
+    prompt: 'vintage 1950s portrait, retro style, classic film photography, sepia tones, nostalgic atmosphere, old hollywood glamour, 8k',
+    negative: 'modern, digital, deformed, ugly, disfigured, low quality'
+  },
+  nature: {
+    prompt: 'portrait in beautiful nature setting, lush forest background, golden hour sunlight, natural environment, outdoor photography, 8k, highly detailed',
+    negative: 'indoor, urban, deformed, ugly, disfigured, low quality'
+  },
+  beach: {
+    prompt: 'portrait on tropical beach, ocean waves, sunset sky, palm trees, summer vacation vibes, warm lighting, 8k, highly detailed',
+    negative: 'indoor, cold, winter, deformed, ugly, disfigured, low quality'
+  },
+  urban: {
+    prompt: 'portrait in modern city, urban street photography, city lights, metropolitan environment, street style, 8k, highly detailed',
+    negative: 'rural, nature, deformed, ugly, disfigured, low quality'
+  },
+  artistic: {
+    prompt: 'artistic portrait, oil painting style background, renaissance inspired, dramatic lighting, museum quality, masterpiece, 8k',
+    negative: 'photo realistic background, deformed, ugly, disfigured, low quality'
+  },
+  scifi: {
+    prompt: 'portrait in sci-fi spaceship interior, futuristic technology, space station, holographic displays, advanced civilization, 8k, highly detailed',
+    negative: 'medieval, ancient, deformed, ugly, disfigured, low quality'
+  },
+  custom: {
+    prompt: '',
+    negative: 'deformed, ugly, disfigured, low quality, blurry, bad anatomy'
+  }
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -45,9 +90,8 @@ export async function POST(request: NextRequest) {
     // 3. GET FILES FROM FORMDATA
     const formData = await request.formData()
     const file = formData.get('file') as File
-    const prompt = formData.get('prompt') as string || 'a person'
-    const stylePreset = formData.get('style_preset') as string || '3D'
-    const strength = parseFloat(formData.get('strength') as string || '0.65')
+    const stylePreset = formData.get('style_preset') as string || 'cyberpunk'
+    const customPrompt = formData.get('prompt') as string || ''
 
     if (!file) {
       return NextResponse.json(
@@ -99,54 +143,61 @@ export async function POST(request: NextRequest) {
     const mimeType = file.type
     const dataUrl = `data:${mimeType};base64,${base64}`
 
-    // 7. MAP STYLE PRESET TO VALID STYLE
-    // face-to-many supports: 3D, Emoji, Video game, Pixels, Clay, Toy
-    const styleMapping: Record<string, ValidStyle> = {
-      '3d': '3D',
-      '3D': '3D',
-      'emoji': 'Emoji',
-      'video_game': 'Video game',
-      'videogame': 'Video game',
-      'pixels': 'Pixels',
-      'pixel': 'Pixels',
-      'clay': 'Clay',
-      'toy': 'Toy',
-    }
+    // 7. GET STYLE PRESET OR USE CUSTOM PROMPT
+    const preset = STYLE_PRESETS[stylePreset] || STYLE_PRESETS.cyberpunk
+    const finalPrompt = stylePreset === 'custom' && customPrompt
+      ? customPrompt
+      : preset.prompt
+    const negativePrompt = preset.negative
 
-    const mappedStyle: ValidStyle = styleMapping[stylePreset] || '3D'
-
-    // 8. CALL REPLICATE - fofr/face-to-many for identity-preserving style transfer
-    // This model uses InstantID to preserve facial identity while applying artistic styles
+    // 8. CALL REPLICATE - InstantID + IPAdapter for identity-preserving style transfer
+    // This model preserves the exact face while changing the style/background
     const output = await replicate.run(
-      "fofr/face-to-many",
+      "zsxkib/instant-id-ipadapter-plus-face:32402fb5c493d883aa6cf098ce3e4cc80f1fe6871f6ae7f632a8dbde01a3d161",
       {
         input: {
           image: dataUrl,
-          style: mappedStyle,
-          prompt: prompt,
-          denoising_strength: strength, // How much to change (0.65 default preserves more)
-          instant_id_strength: 1, // Maximum identity preservation
-          control_depth_strength: 0.8, // Preserve depth/structure
-          prompt_strength: 4.5, // CFG scale
+          prompt: finalPrompt,
+          negative_prompt: negativePrompt,
+          // Face preservation settings - HIGH values to keep identity
+          instantid_weight: 0.8,       // High for strong identity preservation
+          instantid_start_at: 0,
+          instantid_end_at: 1,
+          // Style transfer settings
+          ipadapter_weight: 0.5,       // Moderate for style while keeping face
+          ipadapter_start_at: 0,
+          ipadapter_end_at: 1,
+          ipadapter_weight_type: 'style transfer',
+          // Generation settings
+          steps: 30,
+          cfg: 4.5,
+          width: 1024,
+          height: 1024,
+          denoise: 1.0,
+          output_format: 'webp',
+          output_quality: 90,
+          sampler_name: 'euler',
+          scheduler: 'normal',
+          batch_size: 1,
         }
       }
-    ) as unknown as string[]
+    ) as unknown
 
     // 9. GET RESULT
     const outputArray = Array.isArray(output) ? output : [output]
     if (outputArray.length === 0) {
       throw new Error('No output generated')
     }
-    const resultUrl = outputArray[0]
+    const resultUrl = outputArray[0] as string
 
     // 10. DOWNLOAD RESULT AND CONVERT TO BASE64
-    const resultResponse = await fetch(resultUrl as string)
+    const resultResponse = await fetch(resultUrl)
     if (!resultResponse.ok) {
       throw new Error('Failed to download styled image')
     }
     const resultBuffer = Buffer.from(await resultResponse.arrayBuffer())
     const resultBase64 = resultBuffer.toString('base64')
-    const resultDataUrl = `data:image/png;base64,${resultBase64}`
+    const resultDataUrl = `data:image/webp;base64,${resultBase64}`
 
     // 11. DEDUCT CREDITS & LOG USAGE
     await createUsage({
@@ -154,7 +205,7 @@ export async function POST(request: NextRequest) {
       type: 'style_transfer',
       creditsUsed: CREDITS_PER_TRANSFER,
       imageSize: `${file.size} bytes`,
-      model: 'face-to-many',
+      model: 'instant-id-ipadapter-plus-face',
     })
 
     const newCredits = user.credits - CREDITS_PER_TRANSFER
@@ -173,8 +224,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       styledImage: resultDataUrl,
-      style: mappedStyle,
-      prompt: prompt,
+      style: stylePreset,
+      prompt: finalPrompt,
       creditsUsed: CREDITS_PER_TRANSFER,
       creditsRemaining: newCredits,
     })
