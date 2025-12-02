@@ -127,6 +127,26 @@
     "expand": {
       "name": "Expansión de Imagen",
       "description": "Extiende imágenes con IA"
+    },
+    "styleTransfer": {
+      "name": "Transferencia de Estilo",
+      "description": "Transforma fotos en estilos artísticos",
+      "badge": "NUEVO"
+    },
+    "inpainting": {
+      "name": "Inpainting IA",
+      "description": "Rellena y extiende con IA",
+      "badge": "NUEVO"
+    },
+    "reimagine": {
+      "name": "Reimaginar Imagen",
+      "description": "Genera variaciones de imágenes",
+      "badge": "NUEVO"
+    },
+    "structureControl": {
+      "name": "Control de Estructura",
+      "description": "Genera con control de profundidad y bordes",
+      "badge": "NUEVO"
     }
   },
   "home": {
