@@ -7,17 +7,16 @@ import { FaTimes, FaInfoCircle, FaPalette, FaMagic } from "react-icons/fa";
 
 // Style presets that change scene/background while preserving identity
 const STYLE_PRESETS = [
-  { id: 'cyberpunk', name: 'Cyberpunk', icon: '🌃', description: 'Neon city, futuristic vibes' },
-  { id: 'fantasy', name: 'Fantasy', icon: '✨', description: 'Magical world, enchanted' },
-  { id: 'professional', name: 'Professional', icon: '💼', description: 'Corporate portrait' },
-  { id: 'anime', name: 'Anime', icon: '🎌', description: 'Japanese animation style' },
-  { id: 'vintage', name: 'Vintage', icon: '📷', description: '1950s retro aesthetic' },
-  { id: 'nature', name: 'Nature', icon: '🌲', description: 'Forest, golden hour' },
-  { id: 'beach', name: 'Beach', icon: '🏖️', description: 'Tropical sunset paradise' },
-  { id: 'urban', name: 'Urban', icon: '🏙️', description: 'City street photography' },
-  { id: 'artistic', name: 'Artistic', icon: '🎨', description: 'Oil painting style' },
-  { id: 'scifi', name: 'Sci-Fi', icon: '🚀', description: 'Space station, futuristic' },
-  { id: 'custom', name: 'Custom', icon: '✏️', description: 'Write your own prompt' },
+  { id: 'cyberpunk', name: 'Cyberpunk', icon: '🌃', description: 'Neon city, futuristic vibes', placeholder: 'e.g., with glowing tattoos, in a dark alley, rain falling...' },
+  { id: 'fantasy', name: 'Fantasy', icon: '✨', description: 'Magical world, enchanted', placeholder: 'e.g., as an elf warrior, in a crystal cave, with magical aura...' },
+  { id: 'professional', name: 'Professional', icon: '💼', description: 'Corporate portrait', placeholder: 'e.g., in a modern office, wearing a suit, confident pose...' },
+  { id: 'anime', name: 'Anime', icon: '🎌', description: 'Japanese animation style', placeholder: 'e.g., with cherry blossoms, in a school setting, vibrant colors...' },
+  { id: 'vintage', name: 'Vintage', icon: '📷', description: '1950s retro aesthetic', placeholder: 'e.g., at a classic diner, vintage car in background, sepia tones...' },
+  { id: 'nature', name: 'Nature', icon: '🌲', description: 'Forest, golden hour', placeholder: 'e.g., in a meadow with flowers, by a waterfall, autumn leaves...' },
+  { id: 'beach', name: 'Beach', icon: '🏖️', description: 'Tropical sunset paradise', placeholder: 'e.g., with surfboard, palm trees, crystal clear water...' },
+  { id: 'urban', name: 'Urban', icon: '🏙️', description: 'City street photography', placeholder: 'e.g., on a rooftop, graffiti wall behind, street fashion...' },
+  { id: 'artistic', name: 'Artistic', icon: '🎨', description: 'Oil painting style', placeholder: 'e.g., Renaissance style, dramatic lighting, museum setting...' },
+  { id: 'scifi', name: 'Sci-Fi', icon: '🚀', description: 'Space station, futuristic', placeholder: 'e.g., in a spaceship cockpit, with holographic displays, astronaut suit...' },
 ];
 
 export default function StyleTransfer() {
@@ -94,12 +93,6 @@ export default function StyleTransfer() {
   const handleProcess = async () => {
     if (!selectedFile) return;
 
-    // Validate custom prompt if custom style selected
-    if (selectedStyle === 'custom' && !customPrompt.trim()) {
-      alert("Please enter a custom prompt for your style");
-      return;
-    }
-
     setProcessing(true);
     setProgress("Uploading image...");
     setStyledUrl(null);
@@ -108,8 +101,9 @@ export default function StyleTransfer() {
       const formData = new FormData();
       formData.append("file", selectedFile);
       formData.append("style_preset", selectedStyle);
-      if (selectedStyle === 'custom' && customPrompt) {
-        formData.append("prompt", customPrompt);
+      // Always send custom prompt if provided (to enhance the base style)
+      if (customPrompt.trim()) {
+        formData.append("prompt", customPrompt.trim());
       }
 
       const styleName = STYLE_PRESETS.find(s => s.id === selectedStyle)?.name || 'Style';
@@ -272,49 +266,56 @@ export default function StyleTransfer() {
           {/* Style Presets */}
           {!styledUrl && (
             <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700">
-              <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                <FaPalette className="text-pink-400" />
-                Choose Scene / Style
-              </h3>
-              <p className="text-sm text-gray-400 mb-4">
-                Select a style - your face will stay identical, only the scene changes!
-              </p>
-              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
-                {STYLE_PRESETS.map((style) => (
-                  <button
-                    key={style.id}
-                    onClick={() => setSelectedStyle(style.id)}
-                    className={`p-4 rounded-xl border-2 transition-all text-center ${
-                      selectedStyle === style.id
-                        ? 'border-pink-500 bg-pink-500/20'
-                        : 'border-gray-600 hover:border-gray-500 bg-gray-800/50'
-                    }`}
-                  >
-                    <div className="text-3xl mb-2">{style.icon}</div>
-                    <div className="font-medium text-sm">{style.name}</div>
-                    <div className="text-xs text-gray-500 mt-1 line-clamp-2">{style.description}</div>
-                  </button>
-                ))}
+              {/* Step 1: Choose Style */}
+              <div className="mb-6">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="flex items-center justify-center w-6 h-6 rounded-full bg-pink-500 text-white text-sm font-bold">1</span>
+                  <h3 className="text-lg font-semibold">Choose Style</h3>
+                </div>
+                <p className="text-sm text-gray-400 mb-4 ml-8">
+                  Select a base style for your transformation
+                </p>
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                  {STYLE_PRESETS.map((style) => (
+                    <button
+                      key={style.id}
+                      onClick={() => setSelectedStyle(style.id)}
+                      className={`p-3 rounded-xl border-2 transition-all text-center ${
+                        selectedStyle === style.id
+                          ? 'border-pink-500 bg-pink-500/20'
+                          : 'border-gray-600 hover:border-gray-500 bg-gray-800/50'
+                      }`}
+                    >
+                      <div className="text-2xl mb-1">{style.icon}</div>
+                      <div className="font-medium text-sm">{style.name}</div>
+                    </button>
+                  ))}
+                </div>
               </div>
 
-              {/* Custom Prompt - only show when custom is selected */}
-              {selectedStyle === 'custom' && (
-                <div className="mt-4">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Describe your custom scene/style:
-                  </label>
+              {/* Step 2: Customize Details */}
+              <div className="border-t border-gray-700 pt-6">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="flex items-center justify-center w-6 h-6 rounded-full bg-pink-500 text-white text-sm font-bold">2</span>
+                  <h3 className="text-lg font-semibold">Customize Your Scene</h3>
+                  <span className="text-xs text-gray-500 ml-2">(optional but recommended)</span>
+                </div>
+                <p className="text-sm text-gray-400 mb-3 ml-8">
+                  Add specific details to make your <span className="text-pink-400 font-medium">{STYLE_PRESETS.find(s => s.id === selectedStyle)?.name}</span> transformation unique
+                </p>
+                <div className="ml-8">
                   <textarea
                     value={customPrompt}
                     onChange={(e) => setCustomPrompt(e.target.value)}
-                    placeholder="e.g., 'portrait in a cozy coffee shop, warm lighting, autumn vibes' or 'on the moon surface, astronaut suit, Earth in background'"
-                    className="w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-lg focus:border-pink-500 focus:outline-none resize-none"
-                    rows={3}
+                    placeholder={STYLE_PRESETS.find(s => s.id === selectedStyle)?.placeholder || 'Add details about the scene, clothing, background, mood...'}
+                    className="w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-lg focus:border-pink-500 focus:outline-none resize-none text-white placeholder-gray-500"
+                    rows={2}
                   />
                   <p className="text-xs text-gray-500 mt-2">
-                    Tip: Describe the scene, environment, lighting, and mood. Your face will be preserved automatically.
+                    Your face and identity will be preserved automatically. Describe the scene, environment, clothing, or mood you want.
                   </p>
                 </div>
-              )}
+              </div>
             </div>
           )}
 
@@ -358,7 +359,7 @@ export default function StyleTransfer() {
             {!styledUrl ? (
               <button
                 onClick={handleProcess}
-                disabled={processing || (selectedStyle === 'custom' && !customPrompt.trim())}
+                disabled={processing}
                 className="px-12 py-5 bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 disabled:from-gray-600 disabled:to-gray-600 disabled:cursor-not-allowed rounded-xl font-bold text-xl transition shadow-xl shadow-pink-500/30"
               >
                 {processing ? "Transforming..." : `Transform to ${STYLE_PRESETS.find(s => s.id === selectedStyle)?.name}`}

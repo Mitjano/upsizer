@@ -53,10 +53,6 @@ const STYLE_PRESETS: Record<string, { prompt: string; negative: string }> = {
   scifi: {
     prompt: 'portrait in sci-fi spaceship interior, futuristic technology, space station, holographic displays, advanced civilization, 8k, highly detailed',
     negative: 'medieval, ancient, deformed, ugly, disfigured, low quality'
-  },
-  custom: {
-    prompt: '',
-    negative: 'deformed, ugly, disfigured, low quality, blurry, bad anatomy'
   }
 }
 
@@ -143,11 +139,15 @@ export async function POST(request: NextRequest) {
     const mimeType = file.type
     const dataUrl = `data:${mimeType};base64,${base64}`
 
-    // 7. GET STYLE PRESET OR USE CUSTOM PROMPT
+    // 7. BUILD FINAL PROMPT - combine preset with user's custom details
     const preset = STYLE_PRESETS[stylePreset] || STYLE_PRESETS.cyberpunk
-    const finalPrompt = stylePreset === 'custom' && customPrompt
-      ? customPrompt
-      : preset.prompt
+    let finalPrompt = preset.prompt
+
+    // If user provided additional details, append them to the base prompt
+    if (customPrompt && customPrompt.trim()) {
+      finalPrompt = `${preset.prompt}, ${customPrompt.trim()}`
+    }
+
     const negativePrompt = preset.negative
 
     // 8. CALL REPLICATE - InstantID + IPAdapter for identity-preserving style transfer
