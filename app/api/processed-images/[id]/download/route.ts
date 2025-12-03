@@ -85,7 +85,9 @@ export async function GET(
     }
 
     // Validate path to prevent path traversal attacks
-    const pathValidation = validateSafePath(image.processedPath)
+    // Remove leading slash if present (paths stored as /uploads/...)
+    const relativePath = image.processedPath.startsWith('/') ? image.processedPath.slice(1) : image.processedPath
+    const pathValidation = validateSafePath(relativePath)
     if (!pathValidation.valid) {
       return NextResponse.json(
         { error: 'Invalid file path' },

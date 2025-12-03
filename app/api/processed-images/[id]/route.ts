@@ -43,9 +43,11 @@ export async function DELETE(
     }
 
     // Delete files from filesystem with path validation
+    // Remove leading slash if present (paths stored as /uploads/...)
     try {
       // Validate and delete original file
-      const originalValidation = validateSafePath(image.originalPath)
+      const originalRelative = image.originalPath.startsWith('/') ? image.originalPath.slice(1) : image.originalPath
+      const originalValidation = validateSafePath(originalRelative)
       if (originalValidation.valid) {
         await unlink(originalValidation.safePath).catch(() => {
           // Ignore error if file doesn't exist
@@ -54,7 +56,8 @@ export async function DELETE(
 
       // Validate and delete processed file if it exists
       if (image.processedPath) {
-        const processedValidation = validateSafePath(image.processedPath)
+        const processedRelative = image.processedPath.startsWith('/') ? image.processedPath.slice(1) : image.processedPath
+        const processedValidation = validateSafePath(processedRelative)
         if (processedValidation.valid) {
           await unlink(processedValidation.safePath).catch(() => {
             // Ignore error if file doesn't exist
