@@ -180,13 +180,26 @@ export default function InpaintingPro() {
   };
 
   const handleProcess = async () => {
-    if (!selectedFile) return;
+    if (!selectedFile || !maskCanvasRef.current || !imageInfo) return;
 
     setProcessing(true);
     setProgress("Preparing mask...");
     setProcessedUrl(null);
 
     try {
+      // Check if mask has any white pixels (areas to inpaint)
+      const maskCanvas = maskCanvasRef.current;
+      const maskCtx = maskCanvas.getContext('2d')!;
+      const maskData = maskCtx.getImageData(0, 0, maskCanvas.width, maskCanvas.height);
+      const hasWhitePixels = Array.from(maskData.data).some((val, i) => i % 4 === 0 && val > 128);
+
+      if (!hasWhitePixels) {
+        alert("Please draw over the area you want to modify (paint red areas on the image)");
+        setProcessing(false);
+        setProgress("");
+        return;
+      }
+
       const maskBlob = await getMaskBlob();
 
       const formData = new FormData();
