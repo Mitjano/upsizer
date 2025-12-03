@@ -185,18 +185,23 @@ async function sendSEOReport(report: SEOReport, recipients: string[]) {
 - Scheduling system
 - Auto-publish
 
-### Social Media Module (nowy)
-- Multi-platform posting
+### Social Media Hub (nowy moduł)
+**Pełny plan:** `docs/SOCIAL-MEDIA-HUB-PLAN.md`
+
+- Multi-platform posting (Facebook, Instagram, Twitter, LinkedIn)
+- Content scheduling & calendar
+- AI caption generation
 - Analytics dashboard
-- Content scheduling
+- Auto-posting (blog → social)
 - Engagement tracking
 
 ---
 
 ## 📁 Pliki referencyjne
 
-- `docs/SEO-HUB-IMPLEMENTATION-PLAN.md` - Szczegółowy plan implementacji
+- `docs/SEO-HUB-IMPLEMENTATION-PLAN.md` - Szczegółowy plan implementacji SEO
 - `docs/SEO-MARKETING-HUB-PLAN.md` - Szerszy plan marketingowy
+- `docs/SOCIAL-MEDIA-HUB-PLAN.md` - Plan Social Media Hub
 - `prisma/schema.prisma` - Modele bazy danych
 - `lib/seo/` - Biblioteki SEO
 
