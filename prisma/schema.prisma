@@ -1030,3 +1030,271 @@ model PageView {
   @@index([enteredAt])
   @@index([country])
 }
+
+// ===================
+// SEO - Locale Configuration
+// ===================
+
+model SEOLocale {
+  id              String   @id @default(cuid())
+  code            String   @unique  // pl, en, es, fr, de, it...
+  name            String            // Polski, English, Español...
+  nativeName      String?           // Polski, English, Español...
+  googleDomain    String            // google.pl, google.com...
+  googleHL        String            // hl parameter
+  googleGL        String            // gl parameter (country)
+  flag            String            // Emoji flag
+
+  isActive        Boolean  @default(true)
+  priority        Int      @default(0)  // Sort order (lower = higher priority)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  keywords        TrackedKeyword[]
+
+  @@index([isActive])
+  @@index([code])
+  @@index([priority])
+}
+
+// ===================
+// SEO - Tracked Keywords
+// ===================
+
+model TrackedKeyword {
+  id               String   @id @default(cuid())
+  keyword          String
+  domain           String   @default("pixelift.pl")
+  localeCode       String   // Reference to SEOLocale.code
+
+  // Current metrics (per locale!)
+  currentPosition  Int?     // null = not in top 100
+  previousPosition Int?
+  bestPosition     Int?
+  worstPosition    Int?
+
+  // Search metrics (locale-specific)
+  searchVolume     Int?     // monthly searches estimate for this locale
+  difficulty       Int?     // 0-100 competition score
+  cpc              Float?   // cost per click estimate
+  trend            String?  // rising, falling, stable
+
+  // Tracking config
+  isActive         Boolean  @default(true)
+  priority         String   @default("medium") // high, medium, low
+  tags             String[] @default([])
+  targetUrl        String?  // expected ranking URL (locale-specific)
+
+  // Group keywords across locales
+  groupId          String?  // Same keyword in different locales shares groupId
+
+  // Timestamps
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  lastChecked      DateTime?
+
+  // Relations
+  locale           SEOLocale @relation(fields: [localeCode], references: [code])
+  history          KeywordPositionHistory[]
+
+  @@unique([keyword, domain, localeCode])
+  @@index([domain])
+  @@index([localeCode])
+  @@index([isActive])
+  @@index([currentPosition])
+  @@index([groupId])
+  @@index([priority])
+  @@index([lastChecked])
+}
+
+model KeywordPositionHistory {
+  id          String   @id @default(cuid())
+  keywordId   String
+  position    Int?     // null = not found in top 100
+  url         String?  // URL that ranked
+  title       String?  // SERP title
+  snippet     String?  // SERP description
+  features    String[] @default([]) // featured_snippet, local_pack, images, etc.
+  checkedAt   DateTime @default(now())
+
+  keyword     TrackedKeyword @relation(fields: [keywordId], references: [id], onDelete: Cascade)
+
+  @@index([keywordId])
+  @@index([checkedAt])
+}
+
+// ===================
+// SEO - Backlinks
+// ===================
+
+model Backlink {
+  id              String   @id @default(cuid())
+
+  // Link details
+  sourceUrl       String   // URL where link is found
+  sourceDomain    String   // Domain of source
+  targetUrl       String   // Our URL being linked
+  targetDomain    String   @default("pixelift.pl")
+  anchorText      String?
+
+  // Metrics
+  domainAuthority Int?     // 0-100
+  pageAuthority   Int?     // 0-100
+  spamScore       Int?     // 0-100
+
+  // Link attributes
+  isDoFollow      Boolean  @default(true)
+  isSponsored     Boolean  @default(false)
+  isUGC           Boolean  @default(false)
+  linkType        String?  // text, image, redirect
+
+  // Status tracking
+  status          String   @default("active") // active, lost, broken, new
+  firstSeen       DateTime @default(now())
+  lastSeen        DateTime @default(now())
+  lastChecked     DateTime @default(now())
+  lostAt          DateTime?
+
+  @@unique([sourceUrl, targetUrl])
+  @@index([targetDomain])
+  @@index([sourceDomain])
+  @@index([status])
+  @@index([firstSeen])
+  @@index([lastChecked])
+}
+
+// ===================
+// SEO - Site Audit
+// ===================
+
+model SiteAuditResult {
+  id              String   @id @default(cuid())
+  domain          String   @default("pixelift.pl")
+  locale          String?  // Optional locale for locale-specific audits
+
+  // Scores (0-100)
+  overallScore    Int
+  performanceScore Int
+  seoScore        Int
+  accessibilityScore Int
+  bestPracticesScore Int
+
+  // Issue counts
+  criticalIssues  Int      @default(0)
+  warningIssues   Int      @default(0)
+  infoIssues      Int      @default(0)
+
+  // Core Web Vitals
+  lcp             Float?   // Largest Contentful Paint (seconds)
+  fid             Float?   // First Input Delay (ms)
+  cls             Float?   // Cumulative Layout Shift
+  ttfb            Float?   // Time to First Byte (ms)
+  inp             Float?   // Interaction to Next Paint (ms)
+
+  // Page stats
+  totalPages      Int      @default(0)
+  indexedPages    Int      @default(0)
+  brokenLinks     Int      @default(0)
+  missingMeta     Int      @default(0)
+  missingAlt      Int      @default(0)
+  duplicateContent Int     @default(0)
+
+  // Full results
+  issues          Json     // Array of all issues
+  pageResults     Json?    // Per-page audit results
+
+  createdAt       DateTime @default(now())
+
+  @@index([domain])
+  @@index([locale])
+  @@index([createdAt])
+  @@index([overallScore])
+}
+
+// ===================
+// SEO - Competitors
+// ===================
+
+model SEOCompetitor {
+  id              String   @id @default(cuid())
+  domain          String   @unique
+  name            String
+  description     String?
+
+  // Estimated metrics
+  domainAuthority Int?
+  monthlyTraffic  Int?
+  totalKeywords   Int?
+  totalBacklinks  Int?
+
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  rankings        CompetitorRanking[]
+
+  @@index([isActive])
+  @@index([domain])
+}
+
+model CompetitorRanking {
+  id            String   @id @default(cuid())
+  competitorId  String
+  keyword       String
+  localeCode    String   // Which locale this ranking is for
+  position      Int?
+  url           String?
+  checkedAt     DateTime @default(now())
+
+  competitor    SEOCompetitor @relation(fields: [competitorId], references: [id], onDelete: Cascade)
+
+  @@index([competitorId])
+  @@index([keyword])
+  @@index([localeCode])
+  @@index([checkedAt])
+}
+
+// ===================
+// SEO - Reports
+// ===================
+
+model SEOReport {
+  id              String   @id @default(cuid())
+  name            String
+  type            String   // weekly, monthly, custom
+  domain          String   @default("pixelift.pl")
+  locales         String[] @default([]) // Which locales included
+
+  // Report period
+  periodStart     DateTime
+  periodEnd       DateTime
+
+  // Summary metrics
+  keywordsTracked Int
+  avgPosition     Float?
+  positionsUp     Int      @default(0)
+  positionsDown   Int      @default(0)
+  positionsStable Int      @default(0)
+  newKeywords     Int      @default(0)
+  lostKeywords    Int      @default(0)
+  newBacklinks    Int      @default(0)
+  lostBacklinks   Int      @default(0)
+
+  // Full data
+  data            Json
+
+  // Delivery
+  emailSent       Boolean  @default(false)
+  sentAt          DateTime?
+  recipients      String[] @default([])
+
+  createdAt       DateTime @default(now())
+
+  @@index([domain])
+  @@index([type])
+  @@index([createdAt])
+  @@index([periodStart])
+}
