@@ -214,17 +214,232 @@ ANTHROPIC_API_KEY=xxx
 OPENAI_API_KEY=xxx
 ```
 
-#### 2.4 DataForSEO API (opcjonalne - płatne)
-- **Funkcje:**
-  - Keyword research z rzeczywistymi danymi
-  - SERP analysis
-  - Competitor analysis
-  - Backlink checking
+#### 2.4 DIY SEO Tools (własne rozwiązanie - darmowe)
 
-**Konfiguracja .env:**
-```env
-DATAFORSEO_LOGIN=xxx
-DATAFORSEO_PASSWORD=xxx
+Zamiast płatnych serwisów jak DataForSEO ($50+/mo), budujemy własne narzędzia:
+
+##### 2.4.1 Keyword Research Engine
+**Plik:** `lib/seo/keyword-research.ts`
+
+```typescript
+interface KeywordData {
+  keyword: string;
+  suggestions: string[];           // Z Google Autocomplete
+  relatedQueries: string[];        // Z Google Trends
+  trendData: TrendPoint[];         // Relative popularity over time
+  difficulty: 'easy' | 'medium' | 'hard';  // AI-estimated
+  intent: 'informational' | 'transactional' | 'navigational';
+}
+
+// Źródła danych:
+// 1. Google Autocomplete API (scraping) - sugestie keywords
+// 2. Google Trends API - trendy i relative volume
+// 3. GSC - real performance dla naszej domeny
+// 4. AI (Claude) - analiza i klasyfikacja
+```
+
+**Funkcje:**
+- `getAutocompleteSuggestions(seed: string, locale: string)` - sugestie z Google
+- `getTrendData(keyword: string, locale: string)` - dane z Google Trends
+- `analyzeKeywordWithAI(keyword: string)` - AI difficulty/intent estimation
+- `findLongTailVariations(keyword: string)` - długie frazy
+- `getPeopleAlsoAsk(keyword: string)` - pytania użytkowników
+
+##### 2.4.2 SERP Analyzer
+**Plik:** `lib/seo/serp-analyzer.ts`
+
+```typescript
+interface SERPResult {
+  position: number;
+  url: string;
+  title: string;
+  description: string;
+  domain: string;
+}
+
+interface SERPAnalysis {
+  keyword: string;
+  topResults: SERPResult[];        // Top 10-20 wyników
+  featuredSnippet?: string;
+  peopleAlsoAsk: string[];
+  relatedSearches: string[];
+  contentGaps: string[];           // AI-identified gaps
+  avgContentLength: number;
+  dominantIntent: string;
+}
+```
+
+**Opcje implementacji:**
+1. **SerpAPI Free Tier** - 100 searches/month (darmowe)
+2. **ValueSERP** - podobne limity
+3. **Własny scraper** (backup) - z proxy rotation
+
+**Funkcje:**
+- `analyzeSERP(keyword: string, locale: string)` - pełna analiza SERP
+- `getCompetitorContent(urls: string[])` - crawl top wyników
+- `identifyContentGaps(keyword: string, ourContent?: string)` - AI gap analysis
+
+##### 2.4.3 Competitor Analyzer
+**Plik:** `lib/seo/competitor-analyzer.ts`
+
+```typescript
+interface CompetitorPage {
+  url: string;
+  title: string;
+  metaDescription: string;
+  h1: string;
+  headings: { tag: string; text: string }[];
+  wordCount: number;
+  internalLinks: number;
+  externalLinks: number;
+  images: { src: string; alt: string }[];
+  loadTime: number;
+  mobileScore?: number;
+}
+
+interface CompetitorAnalysis {
+  url: string;
+  page: CompetitorPage;
+  seoScore: number;               // AI-calculated 0-100
+  strengths: string[];
+  weaknesses: string[];
+  recommendations: string[];       // How to outrank them
+}
+```
+
+**Funkcje:**
+- `crawlPage(url: string)` - pobierz i sparsuj stronę
+- `analyzeOnPageSEO(html: string)` - analiza on-page factors
+- `compareWithCompetitor(ourUrl: string, competitorUrl: string)` - porównanie
+- `generateOutrankStrategy(keyword: string, competitors: string[])` - AI strategy
+
+##### 2.4.4 Backlink Checker (dla naszej domeny)
+**Plik:** `lib/seo/backlink-checker.ts`
+
+```typescript
+interface BacklinkData {
+  sourceUrl: string;
+  targetUrl: string;
+  anchorText: string;
+  isDoFollow: boolean;
+  firstSeen: Date;
+  lastSeen: Date;
+  isActive: boolean;
+}
+```
+
+**Źródła:**
+- **Google Search Console API** - oficjalne backlinki (najlepsze!)
+- **Manual submission** - użytkownik może dodać ręcznie
+- **Link checker** - weryfikacja czy linki nadal działają
+
+**Funkcje:**
+- `importBacklinksFromGSC()` - sync z Google Search Console
+- `checkBacklinkStatus(url: string)` - czy link nadal istnieje
+- `analyzeAnchorTextDistribution()` - rozkład anchor textów
+- `detectToxicPatterns()` - AI detection of spammy patterns
+
+##### 2.4.5 Porównanie: DIY vs Płatne
+
+| Funkcja | DIY (darmowe) | DataForSEO ($50/mo) | Ahrefs ($99/mo) |
+|---------|---------------|---------------------|-----------------|
+| Keyword suggestions | ✅ Google Autocomplete | ✅ | ✅ |
+| Search volume (exact) | ❌ (relative only) | ✅ | ✅ |
+| Keyword difficulty | ✅ AI-estimated | ✅ Exact | ✅ Exact |
+| SERP analysis | ✅ 100/mo free | ✅ Unlimited | ✅ Unlimited |
+| Competitor content | ✅ Own crawler | ✅ | ✅ |
+| Own backlinks | ✅ GSC (best source!) | ✅ | ✅ |
+| Competitor backlinks | ❌ | ✅ | ✅ |
+| Domain Rating | ❌ | ✅ | ✅ |
+| Historical data | ❌ | ✅ | ✅ |
+
+**Wniosek:** DIY pokrywa ~70% funkcjonalności za $0. Brakuje głównie: exact search volume, competitor backlinks, domain ratings.
+
+---
+
+### **FAZA 2.5: DIY SEO Tools Implementation**
+
+#### Modele bazy danych dla DIY tools:
+
+```prisma
+model KeywordResearch {
+  id              String   @id @default(cuid())
+  keyword         String
+  locale          String
+  suggestions     String[] // JSON array of autocomplete suggestions
+  relatedQueries  String[] // From Google Trends
+  trendData       String?  @db.Text // JSON trend points
+  difficulty      String?  // easy, medium, hard (AI-estimated)
+  intent          String?  // informational, transactional, navigational
+  lastUpdated     DateTime @default(now())
+
+  @@unique([keyword, locale])
+}
+
+model SERPSnapshot {
+  id              String   @id @default(cuid())
+  keyword         String
+  locale          String
+  results         String   @db.Text // JSON array of SERP results
+  featuredSnippet String?
+  peopleAlsoAsk   String[]
+  relatedSearches String[]
+  capturedAt      DateTime @default(now())
+
+  @@index([keyword, locale])
+}
+
+model CompetitorAnalysis {
+  id              String   @id @default(cuid())
+  url             String
+  keyword         String?
+  title           String?
+  metaDescription String?
+  h1              String?
+  wordCount       Int?
+  seoScore        Int?     // 0-100
+  strengths       String[]
+  weaknesses      String[]
+  recommendations String[]
+  analyzedAt      DateTime @default(now())
+
+  @@index([url])
+}
+```
+
+#### API Endpoints dla DIY tools:
+
+```
+app/api/admin/seo/
+├── keywords/
+│   ├── research/route.ts      # Keyword research (autocomplete + trends)
+│   ├── analyze/route.ts       # AI keyword analysis
+│   └── suggestions/route.ts   # Get keyword suggestions
+├── serp/
+│   ├── analyze/route.ts       # SERP analysis
+│   └── snapshot/route.ts      # Save/get SERP snapshot
+├── competitors/
+│   ├── crawl/route.ts         # Crawl competitor page
+│   ├── analyze/route.ts       # AI competitor analysis
+│   └── compare/route.ts       # Compare with our content
+└── backlinks/
+    ├── import-gsc/route.ts    # Import from GSC
+    ├── check/route.ts         # Check if backlink active
+    └── analyze/route.ts       # Anchor text analysis
+```
+
+#### Pliki bibliotek:
+
+```
+lib/seo/
+├── keyword-research.ts        # Keyword research engine
+├── google-autocomplete.ts     # Google Autocomplete scraper
+├── google-trends.ts           # Google Trends integration
+├── serp-analyzer.ts           # SERP analysis
+├── serp-api.ts               # SerpAPI integration (free tier)
+├── competitor-analyzer.ts     # Competitor page crawler
+├── backlink-checker.ts        # Backlink verification
+└── ai-seo-assistant.ts        # AI-powered SEO analysis (Claude)
 ```
 
 ---
@@ -466,12 +681,22 @@ app/[locale]/admin/seo/
 |--------|-------|---------|
 | Google Search Console API | **Darmowe** | Wymaga weryfikacji domeny |
 | Google Analytics 4 API | **Darmowe** | Wymaga GA4 setup |
+| Google Autocomplete | **Darmowe** | Scraping (szara strefa, ale powszechne) |
+| Google Trends | **Darmowe** | Oficjalne API lub scraping |
+| SerpAPI (SERP analysis) | **Darmowe** | 100 searches/month free tier |
 | Claude API (Anthropic) | ~$0.015/1K tokens | ~$0.30-1.00 za artykuł |
 | OpenAI GPT-4 | ~$0.03/1K tokens | ~$0.50-2.00 za artykuł |
-| DataForSEO (opcja) | od $50/mo | Real keyword data |
-| Moz/Ahrefs API (opcja) | od $99/mo | Premium backlink data |
 
-**Szacowany koszt na 30 artykułów/miesiąc:** $15-60 (tylko AI)
+### Porównanie kosztów:
+
+| Podejście | Koszt miesięczny | Pokrycie funkcji |
+|-----------|------------------|------------------|
+| **DIY (nasze)** | ~$15-60 (tylko AI) | ~70% |
+| DataForSEO | $50-200/mo | 90% |
+| Ahrefs | $99-999/mo | 100% |
+| Semrush | $120-450/mo | 100% |
+
+**Szacowany koszt na 30 artykułów/miesiąc:** $15-60 (tylko AI za generowanie treści)
 
 ---
 
@@ -488,9 +713,8 @@ GA4_PROPERTY_ID=
 GOOGLE_SERVICE_ACCOUNT_EMAIL=
 GOOGLE_SERVICE_ACCOUNT_KEY=
 
-# DataForSEO (opcjonalne)
-DATAFORSEO_LOGIN=
-DATAFORSEO_PASSWORD=
+# SerpAPI (darmowe 100/mo)
+SERPAPI_API_KEY=
 
 # Content Generation Settings
 AI_CONTENT_MODEL=claude-3-sonnet # lub gpt-4
