@@ -128,6 +128,15 @@ export default function SEODashboardPage() {
       stats: 'Score 0-100',
     },
     {
+      id: 'ideas',
+      title: 'Content Ideas',
+      description: 'AI-powered article ideas & outlines',
+      icon: '💡',
+      color: 'amber',
+      href: `/${locale}/admin/seo/ideas`,
+      stats: 'AI Generator',
+    },
+    {
       id: 'reports',
       title: 'SEO Reports',
       description: 'Automated weekly and monthly reports',
@@ -158,6 +167,7 @@ export default function SEODashboardPage() {
       orange: { bg: 'from-orange-500/20 to-orange-600/20', border: 'border-orange-500/30', text: 'text-orange-400' },
       pink: { bg: 'from-pink-500/20 to-pink-600/20', border: 'border-pink-500/30', text: 'text-pink-400' },
       emerald: { bg: 'from-emerald-500/20 to-emerald-600/20', border: 'border-emerald-500/30', text: 'text-emerald-400' },
+      amber: { bg: 'from-amber-500/20 to-amber-600/20', border: 'border-amber-500/30', text: 'text-amber-400' },
     };
     return colors[color] || colors.green;
   };
