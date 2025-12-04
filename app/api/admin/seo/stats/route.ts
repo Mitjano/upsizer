@@ -101,8 +101,11 @@ export async function GET() {
     };
 
     for (const history of recentHistory) {
+      // Skip if keyword was deleted
+      if (!history.keyword) continue;
+
       const current = history.position;
-      const previous = history.keyword?.previousPosition;
+      const previous = history.keyword.previousPosition;
 
       if (current === null && previous !== null) {
         recentChanges.lost++;
