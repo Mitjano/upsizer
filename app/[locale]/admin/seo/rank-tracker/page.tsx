@@ -82,11 +82,15 @@ export default function RankTrackerPage() {
       const localesData = await localesRes.json();
       const keywordsData = await keywordsRes.json();
 
-      setLocales(localesData);
-      setKeywords(keywordsData);
+      // API returns { locales: [...] } or array directly
+      const localesArray = Array.isArray(localesData) ? localesData : localesData.locales || [];
+      const keywordsArray = Array.isArray(keywordsData) ? keywordsData : keywordsData.keywords || [];
+
+      setLocales(localesArray);
+      setKeywords(keywordsArray);
 
       // Set default selected locales to active ones
-      const activeLocaleCodes = localesData
+      const activeLocaleCodes = localesArray
         .filter((l: Locale) => l.isActive)
         .map((l: Locale) => l.code);
       setSelectedLocales(activeLocaleCodes);

@@ -31,6 +31,11 @@ const navigation = [
     icon: "🎯",
   },
   {
+    name: "Social Media",
+    href: "/admin/social",
+    icon: "📱",
+  },
+  {
     name: "Finance",
     href: "/admin/finance",
     icon: "💰",

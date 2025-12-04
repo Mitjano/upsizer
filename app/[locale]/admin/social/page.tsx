@@ -135,7 +135,6 @@ export default function SocialHubPage() {
       color: "from-green-500/20 to-emerald-500/20",
       borderColor: "border-green-500/30",
       stats: `${stats.scheduledPosts} scheduled`,
-      comingSoon: true,
     },
     {
       name: "Analytics",
@@ -145,7 +144,6 @@ export default function SocialHubPage() {
       color: "from-orange-500/20 to-amber-500/20",
       borderColor: "border-orange-500/30",
       stats: "View reports",
-      comingSoon: true,
     },
   ];
 
@@ -225,14 +223,9 @@ export default function SocialHubPage() {
         {modules.map((module) => (
           <Link
             key={module.name}
-            href={module.comingSoon ? "#" : module.href}
-            className={`relative block bg-gradient-to-br ${module.color} rounded-xl p-6 border ${module.borderColor} hover:scale-[1.02] transition group ${module.comingSoon ? "opacity-60 cursor-not-allowed" : ""}`}
+            href={module.href}
+            className={`relative block bg-gradient-to-br ${module.color} rounded-xl p-6 border ${module.borderColor} hover:scale-[1.02] transition group`}
           >
-            {module.comingSoon && (
-              <span className="absolute top-3 right-3 px-2 py-0.5 bg-yellow-500/20 text-yellow-400 text-xs font-medium rounded border border-yellow-500/30">
-                Coming Soon
-              </span>
-            )}
             <div className="text-4xl mb-4">{module.icon}</div>
             <h3 className="text-xl font-semibold text-white mb-1">
               {module.name}

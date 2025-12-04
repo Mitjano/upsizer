@@ -1,19 +1,20 @@
 import { MetadataRoute } from 'next';
-import { locales, defaultLocale } from '@/i18n/config';
+import { locales } from '@/i18n/config';
 import { getPublishedPosts } from '@/lib/blog';
 import { getAllArticles } from '@/lib/knowledge';
+import fs from 'fs';
+import path from 'path';
 
 const baseUrl = 'https://pixelift.pl';
 
 // Helper to generate URL for a given locale
-// All locales have prefix since we use localePrefix: 'always'
-function getUrlForLocale(locale: string, path: string): string {
-  return `${baseUrl}/${locale}${path}`;
+function getUrlForLocale(locale: string, pagePath: string): string {
+  return `${baseUrl}/${locale}${pagePath}`;
 }
 
 // Helper to generate URLs for all locales with alternates
 function generateLocaleUrls(
-  path: string,
+  pagePath: string,
   options: {
     lastModified?: Date;
     changeFrequency?: 'always' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'never';
@@ -21,76 +22,170 @@ function generateLocaleUrls(
   }
 ): MetadataRoute.Sitemap {
   return locales.map((locale) => ({
-    url: getUrlForLocale(locale, path),
+    url: getUrlForLocale(locale, pagePath),
     lastModified: options.lastModified || new Date(),
     changeFrequency: options.changeFrequency || 'weekly',
     priority: options.priority || 0.5,
     alternates: {
       languages: Object.fromEntries(
-        locales.map((l) => [l, getUrlForLocale(l, path)])
+        locales.map((l) => [l, getUrlForLocale(l, pagePath)])
       ),
     },
   }));
 }
 
+// Automatically discover all static pages from file system
+function discoverStaticPages(): string[] {
+  const appDir = path.join(process.cwd(), 'app', '[locale]');
+  const pages: string[] = [];
+
+  // Paths to exclude from sitemap
+  const excludePaths = [
+    '/admin',           // Admin pages - not public
+    '/auth/error',      // Error pages
+    '/dashboard',       // Dashboard - requires auth
+    '/support/tickets', // Tickets - requires auth
+  ];
+
+  // Dynamic route patterns to exclude (will be handled separately)
+  const dynamicPatterns = [
+    '[slug]',
+    '[id]',
+    '[category]',
+    '[tag]',
+  ];
+
+  function scanDirectory(dir: string, currentPath: string = '') {
+    try {
+      const entries = fs.readdirSync(dir, { withFileTypes: true });
+
+      for (const entry of entries) {
+        const fullPath = path.join(dir, entry.name);
+
+        if (entry.isDirectory()) {
+          // Skip dynamic route directories
+          if (dynamicPatterns.some(pattern => entry.name.includes(pattern))) {
+            continue;
+          }
+
+          scanDirectory(fullPath, `${currentPath}/${entry.name}`);
+        } else if (entry.name === 'page.tsx' || entry.name === 'page.ts') {
+          // Found a page file
+          const pagePath = currentPath || '/';
+
+          // Check if path should be excluded
+          const shouldExclude = excludePaths.some(exclude =>
+            pagePath === exclude || pagePath.startsWith(exclude + '/')
+          );
+
+          if (!shouldExclude) {
+            pages.push(pagePath === '' ? '/' : pagePath);
+          }
+        }
+      }
+    } catch (error) {
+      // Directory doesn't exist or can't be read
+    }
+  }
+
+  scanDirectory(appDir);
+  return pages;
+}
+
+// Automatically discover all tools from file system
+function discoverTools(): string[] {
+  const toolsDir = path.join(process.cwd(), 'app', '[locale]', 'tools');
+  const tools: string[] = [];
+
+  try {
+    const entries = fs.readdirSync(toolsDir, { withFileTypes: true });
+
+    for (const entry of entries) {
+      if (entry.isDirectory() && !entry.name.includes('[')) {
+        const pagePath = path.join(toolsDir, entry.name, 'page.tsx');
+        if (fs.existsSync(pagePath)) {
+          tools.push(entry.name);
+        }
+      }
+    }
+  } catch (error) {
+    // Tools directory doesn't exist
+  }
+
+  return tools;
+}
+
+// Priority configuration based on page type
+function getPriorityConfig(pagePath: string): { priority: number; changeFrequency: 'always' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'never' } {
+  // Homepage
+  if (pagePath === '' || pagePath === '/') {
+    return { priority: 1.0, changeFrequency: 'daily' };
+  }
+
+  // Tools - highest priority (main product)
+  if (pagePath.startsWith('/tools/') && pagePath !== '/tools') {
+    return { priority: 0.95, changeFrequency: 'weekly' };
+  }
+
+  // Tools index
+  if (pagePath === '/tools') {
+    return { priority: 0.9, changeFrequency: 'weekly' };
+  }
+
+  // AI Image generator
+  if (pagePath === '/ai-image') {
+    return { priority: 0.9, changeFrequency: 'daily' };
+  }
+
+  // Pricing
+  if (pagePath === '/pricing') {
+    return { priority: 0.9, changeFrequency: 'weekly' };
+  }
+
+  // Blog
+  if (pagePath === '/blog') {
+    return { priority: 0.8, changeFrequency: 'daily' };
+  }
+
+  // Knowledge base
+  if (pagePath === '/knowledge') {
+    return { priority: 0.8, changeFrequency: 'weekly' };
+  }
+
+  // Auth pages
+  if (pagePath.startsWith('/auth/')) {
+    return { priority: 0.7, changeFrequency: 'monthly' };
+  }
+
+  // Support, FAQ, About
+  if (['/support', '/faq', '/about', '/api-docs', '/use-cases'].includes(pagePath)) {
+    return { priority: 0.6, changeFrequency: 'weekly' };
+  }
+
+  // Legal pages
+  if (['/privacy', '/terms', '/gdpr', '/cookies'].includes(pagePath)) {
+    return { priority: 0.3, changeFrequency: 'monthly' };
+  }
+
+  // Default
+  return { priority: 0.5, changeFrequency: 'weekly' };
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const currentDate = new Date();
 
-  // Main pages - highest priority
-  const mainPages = generateLocaleUrls('', {
-    lastModified: currentDate,
-    changeFrequency: 'daily',
-    priority: 1,
-  });
+  // 1. Discover all static pages automatically
+  const staticPages = discoverStaticPages();
 
-  const pricingPages = generateLocaleUrls('/pricing', {
-    lastModified: currentDate,
-    changeFrequency: 'weekly',
-    priority: 0.9,
-  });
-
-  // Tool pages - very high priority (main product)
-  const tools = [
-    'upscaler',
-    'remove-background',
-    'packshot-generator',
-    'image-expand',
-    'image-compressor',
-    'colorize',
-    'restore',
-    'object-removal',
-    'background-generator',
-  ];
-
-  const toolPages = tools.flatMap((tool) =>
-    generateLocaleUrls(`/tools/${tool}`, {
+  const staticPageEntries = staticPages.flatMap((pagePath) => {
+    const config = getPriorityConfig(pagePath);
+    return generateLocaleUrls(pagePath === '/' ? '' : pagePath, {
       lastModified: currentDate,
-      changeFrequency: 'weekly',
-      priority: 0.95,
-    })
-  );
-
-  const toolsIndexPages = generateLocaleUrls('/tools', {
-    lastModified: currentDate,
-    changeFrequency: 'weekly',
-    priority: 0.9,
+      ...config,
+    });
   });
 
-  // AI Image Generator
-  const aiImagePages = generateLocaleUrls('/ai-image', {
-    lastModified: currentDate,
-    changeFrequency: 'daily',
-    priority: 0.9,
-  });
-
-  // Blog pages
-  const blogIndexPages = generateLocaleUrls('/blog', {
-    lastModified: currentDate,
-    changeFrequency: 'daily',
-    priority: 0.8,
-  });
-
-  // Dynamic blog posts
+  // 2. Dynamic blog posts from database
   let blogPostPages: MetadataRoute.Sitemap = [];
   try {
     const posts = await getPublishedPosts();
@@ -105,14 +200,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Blog posts loading failed - continue without them
   }
 
-  // Knowledge base pages
-  const knowledgeIndexPages = generateLocaleUrls('/knowledge', {
-    lastModified: currentDate,
-    changeFrequency: 'weekly',
-    priority: 0.8,
-  });
-
-  // Dynamic knowledge articles
+  // 3. Dynamic knowledge articles from database
   let knowledgeArticlePages: MetadataRoute.Sitemap = [];
   try {
     const articles = await getAllArticles();
@@ -127,88 +215,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Knowledge articles loading failed - continue without them
   }
 
-  // Auth pages
-  const authPages = [
-    ...generateLocaleUrls('/auth/signin', {
-      lastModified: currentDate,
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    }),
-    ...generateLocaleUrls('/auth/signup', {
-      lastModified: currentDate,
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    }),
-  ];
-
-  // Dashboard pages (lower priority - requires auth, but still indexable)
-  const dashboardPages = [
-    ...generateLocaleUrls('/dashboard', {
-      lastModified: currentDate,
-      changeFrequency: 'daily',
-      priority: 0.5,
-    }),
-    ...generateLocaleUrls('/dashboard/api', {
-      lastModified: currentDate,
-      changeFrequency: 'monthly',
-      priority: 0.4,
-    }),
-    ...generateLocaleUrls('/dashboard/settings', {
-      lastModified: currentDate,
-      changeFrequency: 'monthly',
-      priority: 0.4,
-    }),
-    ...generateLocaleUrls('/dashboard/images', {
-      lastModified: currentDate,
-      changeFrequency: 'daily',
-      priority: 0.4,
-    }),
-  ];
-
-  // Legal pages
-  const legalPages = [
-    ...generateLocaleUrls('/privacy', {
-      lastModified: currentDate,
-      changeFrequency: 'monthly',
-      priority: 0.3,
-    }),
-    ...generateLocaleUrls('/terms', {
-      lastModified: currentDate,
-      changeFrequency: 'monthly',
-      priority: 0.3,
-    }),
-    ...generateLocaleUrls('/gdpr', {
-      lastModified: currentDate,
-      changeFrequency: 'monthly',
-      priority: 0.3,
-    }),
-    ...generateLocaleUrls('/cookies', {
-      lastModified: currentDate,
-      changeFrequency: 'monthly',
-      priority: 0.3,
-    }),
-  ];
-
-  // Support pages
-  const supportPages = generateLocaleUrls('/support', {
-    lastModified: currentDate,
-    changeFrequency: 'weekly',
-    priority: 0.6,
-  });
-
-  return [
-    ...mainPages,
-    ...pricingPages,
-    ...toolPages,
-    ...toolsIndexPages,
-    ...aiImagePages,
-    ...blogIndexPages,
+  // Combine all pages and remove duplicates
+  const allPages = [
+    ...staticPageEntries,
     ...blogPostPages,
-    ...knowledgeIndexPages,
     ...knowledgeArticlePages,
-    ...authPages,
-    ...dashboardPages,
-    ...legalPages,
-    ...supportPages,
   ];
+
+  // Remove duplicates based on URL
+  const uniquePages = allPages.filter((page, index, self) =>
+    index === self.findIndex((p) => p.url === page.url)
+  );
+
+  return uniquePages;
 }

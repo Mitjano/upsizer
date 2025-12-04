@@ -1493,3 +1493,88 @@ model CaptionTemplate {
 
   @@index([userId])
 }
+
+// ===================
+// Google Integrations
+// ===================
+
+model GoogleIntegration {
+  id                String   @id @default(cuid())
+
+  // Service Account credentials (JSON)
+  serviceAccountEmail String?
+  serviceAccountKey   String?  @db.Text // Private key
+
+  // Search Console
+  searchConsoleEnabled   Boolean  @default(false)
+  searchConsoleSiteUrl   String?  // e.g., https://pixelift.pl/
+  searchConsoleVerified  Boolean  @default(false)
+
+  // Analytics
+  analyticsEnabled       Boolean  @default(false)
+  analyticsPropertyId    String?  // GA4 property ID
+  analyticsVerified      Boolean  @default(false)
+
+  // OAuth tokens (alternative to service account)
+  accessToken            String?  @db.Text
+  refreshToken           String?  @db.Text
+  tokenExpiry            DateTime?
+
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+}
+
+// Search Console data cache
+model SearchConsoleData {
+  id              String   @id @default(cuid())
+
+  date            DateTime
+  query           String   // Search query/keyword
+  page            String   // Landing page URL
+  country         String   @default("") // Country code
+  device          String   @default("") // desktop, mobile, tablet
+
+  clicks          Int      @default(0)
+  impressions     Int      @default(0)
+  ctr             Float    @default(0)  // Click-through rate
+  position        Float    @default(0)  // Average position
+
+  createdAt       DateTime @default(now())
+
+  @@unique([date, query, page, country, device])
+  @@index([date])
+  @@index([query])
+  @@index([page])
+}
+
+// Analytics data cache
+model AnalyticsData {
+  id              String   @id @default(cuid())
+
+  date            DateTime
+  source          String   @default("") // Traffic source
+  medium          String   @default("") // Traffic medium
+  campaign        String   @default("") // Campaign name
+  landingPage     String   @default("") // Landing page
+  country         String   @default("") // Country
+  device          String   @default("") // Device category
+
+  sessions        Int      @default(0)
+  users           Int      @default(0)
+  newUsers        Int      @default(0)
+  pageviews       Int      @default(0)
+  bounceRate      Float    @default(0)
+  avgSessionDuration Float @default(0)
+
+  // Conversions
+  conversions     Int      @default(0)
+  conversionRate  Float    @default(0)
+  revenue         Float    @default(0)
+
+  createdAt       DateTime @default(now())
+
+  @@unique([date, source, medium, landingPage, country, device])
+  @@index([date])
+  @@index([source])
+  @@index([landingPage])
+}

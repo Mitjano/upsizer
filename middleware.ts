@@ -21,12 +21,14 @@ const intlMiddleware = createIntlMiddleware({
 export default auth((req) => {
   const { pathname } = req.nextUrl;
 
-  // Skip locale handling for API routes and static files
+  // Skip locale handling for API routes, static files, and SEO files
   if (
     pathname.startsWith('/api/') ||
     pathname.startsWith('/_next/') ||
     pathname.startsWith('/favicon.ico') ||
-    pathname.match(/\.(svg|png|jpg|jpeg|gif|webp|ico|css|js)$/)
+    pathname === '/sitemap.xml' ||
+    pathname === '/robots.txt' ||
+    pathname.match(/\.(svg|png|jpg|jpeg|gif|webp|ico|css|js|xml|txt)$/)
   ) {
     const response = NextResponse.next();
 

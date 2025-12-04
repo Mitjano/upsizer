@@ -107,7 +107,7 @@ export default function SEODashboardPage() {
       icon: '🎯',
       color: 'red',
       href: `/${locale}/admin/seo/competitors`,
-      stats: 'Coming soon',
+      stats: 'Track rivals',
     },
     {
       id: 'reports',
@@ -116,7 +116,16 @@ export default function SEODashboardPage() {
       icon: '📈',
       color: 'cyan',
       href: `/${locale}/admin/seo/reports`,
-      stats: 'Coming soon',
+      stats: 'Generate',
+    },
+    {
+      id: 'google',
+      title: 'Google Integration',
+      description: 'Search Console & Analytics data',
+      icon: '🔗',
+      color: 'orange',
+      href: `/${locale}/admin/seo/google`,
+      stats: 'Connect',
     },
   ];
 
@@ -128,6 +137,7 @@ export default function SEODashboardPage() {
       yellow: { bg: 'from-yellow-500/20 to-yellow-600/20', border: 'border-yellow-500/30', text: 'text-yellow-400' },
       red: { bg: 'from-red-500/20 to-red-600/20', border: 'border-red-500/30', text: 'text-red-400' },
       cyan: { bg: 'from-cyan-500/20 to-cyan-600/20', border: 'border-cyan-500/30', text: 'text-cyan-400' },
+      orange: { bg: 'from-orange-500/20 to-orange-600/20', border: 'border-orange-500/30', text: 'text-orange-400' },
     };
     return colors[color] || colors.green;
   };
