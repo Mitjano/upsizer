@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import RichTextEditor from "@/components/admin/RichTextEditor";
-import SEOTagAssistant from "@/components/admin/SEOTagAssistant";
+import BlogSEOAssistant from "@/components/admin/BlogSEOAssistant";
 import { generateSlug } from "@/lib/blog-utils";
 
 interface BlogPost {
@@ -33,6 +33,8 @@ export default function EditBlogPostPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [showSEOPanel, setShowSEOPanel] = useState(true);
+  const [targetKeyword, setTargetKeyword] = useState("");
   const [formData, setFormData] = useState({
     title: "",
     slug: "",
@@ -155,185 +157,210 @@ export default function EditBlogPostPage() {
   }
 
   return (
-    <div className="p-8 max-w-6xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white mb-2">Edit Post</h1>
-        <p className="text-gray-400">Update your blog post</p>
+    <div className="p-8">
+      <div className="mb-8 flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-white mb-2">Edit Post</h1>
+          <p className="text-gray-400">Update your blog post</p>
+        </div>
+        <button
+          type="button"
+          onClick={() => setShowSEOPanel(!showSEOPanel)}
+          className={`px-4 py-2 rounded-lg font-medium transition flex items-center gap-2 ${
+            showSEOPanel
+              ? "bg-emerald-600 text-white"
+              : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+          }`}
+        >
+          <span>📊</span>
+          <span>{showSEOPanel ? "Hide SEO Panel" : "Show SEO Panel"}</span>
+        </button>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Title */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-300 mb-2">
-            Title <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            required
-            value={formData.title}
-            onChange={(e) => handleTitleChange(e.target.value)}
-            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-green-500"
-            placeholder="Enter post title..."
-          />
-        </div>
-
-        {/* Slug */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-300 mb-2">
-            Slug <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            required
-            value={formData.slug}
-            onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-green-500"
-            placeholder="post-url-slug"
-          />
-          <p className="text-xs text-gray-500 mt-1">URL-friendly version of the title</p>
-        </div>
-
-        {/* Excerpt */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-300 mb-2">
-            Excerpt <span className="text-red-500">*</span>
-          </label>
-          <textarea
-            required
-            value={formData.excerpt}
-            onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
-            rows={3}
-            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-green-500"
-            placeholder="Brief description of the post..."
-          />
-        </div>
-
-        {/* Content */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-300 mb-2">
-            Content <span className="text-red-500">*</span>
-          </label>
-          <RichTextEditor
-            content={formData.content}
-            onChange={(content) => setFormData({ ...formData, content })}
-          />
-        </div>
-
-        {/* Featured Image */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-300 mb-2">Featured Image URL</label>
-          <input
-            type="url"
-            value={formData.featuredImage}
-            onChange={(e) => setFormData({ ...formData, featuredImage: e.target.value })}
-            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-green-500"
-            placeholder="https://example.com/image.jpg"
-          />
-        </div>
-
-        {/* Author */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className={`flex gap-6`}>
+        {/* Main Form */}
+        <form onSubmit={handleSubmit} className={`space-y-6 ${showSEOPanel ? "flex-1" : "max-w-4xl mx-auto w-full"}`}>
+          {/* Title */}
           <div>
             <label className="block text-sm font-semibold text-gray-300 mb-2">
-              Author Name <span className="text-red-500">*</span>
+              Title <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
               required
-              value={formData.author.name}
-              onChange={(e) => setFormData({ ...formData, author: { ...formData.author, name: e.target.value } })}
+              value={formData.title}
+              onChange={(e) => handleTitleChange(e.target.value)}
               className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-green-500"
-              placeholder="John Doe"
+              placeholder="Enter post title..."
             />
           </div>
+
+          {/* Slug */}
           <div>
             <label className="block text-sm font-semibold text-gray-300 mb-2">
-              Author Email <span className="text-red-500">*</span>
+              Slug <span className="text-red-500">*</span>
             </label>
             <input
-              type="email"
+              type="text"
               required
-              value={formData.author.email}
-              onChange={(e) => setFormData({ ...formData, author: { ...formData.author, email: e.target.value } })}
+              value={formData.slug}
+              onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
               className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-green-500"
-              placeholder="john@example.com"
+              placeholder="post-url-slug"
             />
+            <p className="text-xs text-gray-500 mt-1">URL-friendly version of the title</p>
           </div>
-        </div>
 
-        {/* Categories and Tags */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Excerpt */}
           <div>
-            <label className="block text-sm font-semibold text-gray-300 mb-2">Categories</label>
-            <input
-              type="text"
-              value={formData.categories}
-              onChange={(e) => setFormData({ ...formData, categories: e.target.value })}
+            <label className="block text-sm font-semibold text-gray-300 mb-2">
+              Excerpt <span className="text-red-500">*</span>
+            </label>
+            <textarea
+              required
+              value={formData.excerpt}
+              onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
+              rows={3}
               className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-green-500"
-              placeholder="AI, Technology, Tips (comma-separated)"
+              placeholder="Brief description of the post..."
             />
           </div>
+
+          {/* Content */}
           <div>
-            <label className="block text-sm font-semibold text-gray-300 mb-2">Tags</label>
-            <input
-              type="text"
-              value={formData.tags}
-              onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-green-500"
-              placeholder="image-upscaling, ai, tutorial (comma-separated)"
-            />
-            {/* SEO Tag Assistant */}
-            <SEOTagAssistant
-              title={formData.title}
+            <label className="block text-sm font-semibold text-gray-300 mb-2">
+              Content <span className="text-red-500">*</span>
+            </label>
+            <RichTextEditor
               content={formData.content}
-              currentTags={formData.tags}
-              onTagsChange={(tags) => setFormData({ ...formData, tags })}
+              onChange={(content) => setFormData({ ...formData, content })}
             />
           </div>
-        </div>
 
-        {/* Status */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-300 mb-2">Status</label>
-          <select
-            value={formData.status}
-            onChange={(e) => setFormData({ ...formData, status: e.target.value as "draft" | "published" })}
-            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-green-500"
-          >
-            <option value="draft">Draft</option>
-            <option value="published">Published</option>
-          </select>
-        </div>
+          {/* Featured Image */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-300 mb-2">Featured Image URL</label>
+            <input
+              type="url"
+              value={formData.featuredImage}
+              onChange={(e) => setFormData({ ...formData, featuredImage: e.target.value })}
+              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-green-500"
+              placeholder="https://example.com/image.jpg"
+            />
+          </div>
 
-        {/* Actions */}
-        <div className="flex justify-between items-center pt-4">
-          <button
-            type="button"
-            onClick={handleDelete}
-            disabled={deleting}
-            className="bg-red-500 hover:bg-red-600 disabled:bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold transition"
-          >
-            {deleting ? "Deleting..." : "Delete Post"}
-          </button>
+          {/* Author */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-semibold text-gray-300 mb-2">
+                Author Name <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                required
+                value={formData.author.name}
+                onChange={(e) => setFormData({ ...formData, author: { ...formData.author, name: e.target.value } })}
+                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-green-500"
+                placeholder="John Doe"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-300 mb-2">
+                Author Email <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="email"
+                required
+                value={formData.author.email}
+                onChange={(e) => setFormData({ ...formData, author: { ...formData.author, email: e.target.value } })}
+                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-green-500"
+                placeholder="john@example.com"
+              />
+            </div>
+          </div>
 
-          <div className="flex gap-4">
+          {/* Categories and Tags */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-semibold text-gray-300 mb-2">Categories</label>
+              <input
+                type="text"
+                value={formData.categories}
+                onChange={(e) => setFormData({ ...formData, categories: e.target.value })}
+                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-green-500"
+                placeholder="AI, Technology, Tips (comma-separated)"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-300 mb-2">Tags</label>
+              <input
+                type="text"
+                value={formData.tags}
+                onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
+                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-green-500"
+                placeholder="image-upscaling, ai, tutorial (comma-separated)"
+              />
+            </div>
+          </div>
+
+          {/* Status */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-300 mb-2">Status</label>
+            <select
+              value={formData.status}
+              onChange={(e) => setFormData({ ...formData, status: e.target.value as "draft" | "published" })}
+              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-green-500"
+            >
+              <option value="draft">Draft</option>
+              <option value="published">Published</option>
+            </select>
+          </div>
+
+          {/* Actions */}
+          <div className="flex justify-between items-center pt-4">
             <button
               type="button"
-              onClick={() => router.push("/admin/blog")}
-              className="bg-gray-700 hover:bg-gray-600 text-white px-8 py-3 rounded-lg font-semibold transition"
+              onClick={handleDelete}
+              disabled={deleting}
+              className="bg-red-500 hover:bg-red-600 disabled:bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold transition"
             >
-              Cancel
+              {deleting ? "Deleting..." : "Delete Post"}
             </button>
-            <button
-              type="submit"
-              disabled={saving}
-              className="bg-green-500 hover:bg-green-600 disabled:bg-gray-600 text-white px-8 py-3 rounded-lg font-semibold transition"
-            >
-              {saving ? "Saving..." : "Update Post"}
-            </button>
+
+            <div className="flex gap-4">
+              <button
+                type="button"
+                onClick={() => router.push("/admin/blog")}
+                className="bg-gray-700 hover:bg-gray-600 text-white px-8 py-3 rounded-lg font-semibold transition"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={saving}
+                className="bg-green-500 hover:bg-green-600 disabled:bg-gray-600 text-white px-8 py-3 rounded-lg font-semibold transition"
+              >
+                {saving ? "Saving..." : "Update Post"}
+              </button>
+            </div>
           </div>
-        </div>
-      </form>
+        </form>
+
+        {/* SEO Assistant Sidebar */}
+        {showSEOPanel && (
+          <div className="w-[380px] flex-shrink-0 sticky top-8 self-start">
+            <BlogSEOAssistant
+              title={formData.title}
+              content={formData.content}
+              excerpt={formData.excerpt}
+              currentTags={formData.tags}
+              targetKeyword={targetKeyword}
+              onTagsChange={(tags) => setFormData({ ...formData, tags })}
+              onKeywordChange={setTargetKeyword}
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 }
