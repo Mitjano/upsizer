@@ -1298,3 +1298,198 @@ model SEOReport {
   @@index([createdAt])
   @@index([periodStart])
 }
+
+// =====================
+// SOCIAL MEDIA HUB
+// =====================
+
+// Connected social accounts
+model SocialAccount {
+  id              String   @id @default(cuid())
+  userId          String   // Owner
+
+  platform        String   // facebook, instagram, twitter, linkedin, pinterest, tiktok, youtube, threads
+  platformType    String   // page, profile, group, business
+  accountId       String   // Platform-specific ID
+  accountName     String
+  accountHandle   String?  // @username
+  avatarUrl       String?
+
+  // Auth tokens (encrypted)
+  accessToken     String
+  refreshToken    String?
+  tokenExpiry     DateTime?
+
+  // Platform-specific data
+  metadata        Json?    // followers, etc.
+
+  isActive        Boolean  @default(true)
+  isPrimary       Boolean  @default(false)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  posts           SocialPost[]
+  analytics       SocialAnalytics[]
+
+  @@unique([platform, accountId])
+  @@index([userId])
+  @@index([platform])
+}
+
+// Social posts
+model SocialPost {
+  id              String   @id @default(cuid())
+  userId          String
+
+  // Content
+  content         String
+  mediaUrls       String[]           // Images/videos
+  mediaTypes      String[]           // image, video, carousel
+  link            String?
+  linkPreview     Json?              // title, description, image
+
+  // Hashtags & mentions
+  hashtags        String[]
+  mentions        String[]
+
+  // Location
+  locationName    String?
+  locationId      String?  // Platform location ID
+
+  // Targeting
+  accountId       String?
+  account         SocialAccount? @relation(fields: [accountId], references: [id])
+
+  // Status
+  status          String   @default("draft") // draft, scheduled, publishing, published, failed, archived
+  scheduledAt     DateTime?
+  publishedAt     DateTime?
+
+  // Platform-specific post IDs after publishing
+  platformPostIds Json?    // { accountId: postId }
+
+  // Engagement (updated periodically)
+  totalLikes      Int      @default(0)
+  totalComments   Int      @default(0)
+  totalShares     Int      @default(0)
+  totalReach      Int      @default(0)
+  totalImpressions Int     @default(0)
+  engagementRate  Float    @default(0)
+
+  // Metadata
+  isRecurring     Boolean  @default(false)
+  recurringRule   String?  // RRULE format
+  parentPostId    String?  // For recurring posts
+
+  // AI-generated content tracking
+  isAIGenerated   Boolean  @default(false)
+  aiPrompt        String?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([scheduledAt])
+  @@index([accountId])
+}
+
+// Social Analytics (daily snapshots)
+model SocialAnalytics {
+  id              String   @id @default(cuid())
+  accountId       String
+  account         SocialAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  date            DateTime
+
+  // Follower metrics
+  followers       Int      @default(0)
+  followersGrowth Int      @default(0)
+  following       Int      @default(0)
+
+  // Content metrics
+  postsCount      Int      @default(0)
+
+  // Engagement metrics
+  totalLikes      Int      @default(0)
+  totalComments   Int      @default(0)
+  totalShares     Int      @default(0)
+
+  // Reach metrics
+  reach           Int      @default(0)
+  impressions     Int      @default(0)
+  profileVisits   Int      @default(0)
+  websiteClicks   Int      @default(0)
+
+  // Engagement rate
+  engagementRate  Float    @default(0)
+
+  @@unique([accountId, date])
+  @@index([accountId])
+  @@index([date])
+}
+
+// Brand Kit for Social Media
+model BrandKit {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+
+  // Logo
+  logoUrl         String?
+  logoLightUrl    String?  // For dark backgrounds
+  logoDarkUrl     String?  // For light backgrounds
+
+  // Colors
+  primaryColor    String?
+  secondaryColor  String?
+  accentColor     String?
+  backgroundColor String?
+  textColor       String?
+  customColors    String[] // Additional brand colors
+
+  // Typography
+  headingFont     String?
+  bodyFont        String?
+
+  // Social defaults
+  defaultHashtags String[]
+  brandVoice      String?  // AI prompt for brand voice
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// Hashtag Collections
+model HashtagCollection {
+  id              String   @id @default(cuid())
+  userId          String
+
+  name            String
+  hashtags        String[]
+
+  usageCount      Int      @default(0)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([userId])
+}
+
+// Caption Templates
+model CaptionTemplate {
+  id              String   @id @default(cuid())
+  userId          String
+
+  name            String
+  category        String?  // promotional, educational, engagement, etc.
+  content         String
+
+  variables       String[] // [name], [product], [link], etc.
+  usageCount      Int      @default(0)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([userId])
+}
