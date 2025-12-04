@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import RichTextEditor from "@/components/admin/RichTextEditor";
+import SEOTagAssistant from "@/components/admin/SEOTagAssistant";
 import { generateSlug } from "@/lib/blog-utils";
 
 interface BlogPost {
@@ -280,6 +281,13 @@ export default function EditBlogPostPage() {
               onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
               className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-green-500"
               placeholder="image-upscaling, ai, tutorial (comma-separated)"
+            />
+            {/* SEO Tag Assistant */}
+            <SEOTagAssistant
+              title={formData.title}
+              content={formData.content}
+              currentTags={formData.tags}
+              onTagsChange={(tags) => setFormData({ ...formData, tags })}
             />
           </div>
         </div>

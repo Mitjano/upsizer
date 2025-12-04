@@ -110,11 +110,20 @@ export default function SEODashboardPage() {
       stats: 'Track rivals',
     },
     {
+      id: 'tags',
+      title: 'Tag Recommender',
+      description: 'VidIQ-style tag suggestions with AI',
+      icon: '🏷️',
+      color: 'cyan',
+      href: `/${locale}/admin/seo/tags`,
+      stats: 'AI-powered',
+    },
+    {
       id: 'reports',
       title: 'SEO Reports',
       description: 'Automated weekly and monthly reports',
       icon: '📈',
-      color: 'cyan',
+      color: 'pink',
       href: `/${locale}/admin/seo/reports`,
       stats: 'Generate',
     },
@@ -138,6 +147,7 @@ export default function SEODashboardPage() {
       red: { bg: 'from-red-500/20 to-red-600/20', border: 'border-red-500/30', text: 'text-red-400' },
       cyan: { bg: 'from-cyan-500/20 to-cyan-600/20', border: 'border-cyan-500/30', text: 'text-cyan-400' },
       orange: { bg: 'from-orange-500/20 to-orange-600/20', border: 'border-orange-500/30', text: 'text-orange-400' },
+      pink: { bg: 'from-pink-500/20 to-pink-600/20', border: 'border-pink-500/30', text: 'text-pink-400' },
     };
     return colors[color] || colors.green;
   };
