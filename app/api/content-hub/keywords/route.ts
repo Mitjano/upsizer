@@ -175,7 +175,7 @@ export async function POST(request: NextRequest) {
 
         results.added++;
       } catch (err) {
-        results.errors.push(`Failed to add ${keyword}: ${err}`);
+        results.errors.push(`Failed to add ${keywordData.keyword}: ${err}`);
       }
     }
 
