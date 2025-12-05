@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 
 interface TagRecommendation {
   tag: string;
@@ -8,6 +8,22 @@ interface TagRecommendation {
   category: 'highly_relevant' | 'related' | 'trending' | 'low_competition';
   difficulty: 'easy' | 'medium' | 'hard';
   searchIntent: 'informational' | 'navigational' | 'transactional' | 'commercial';
+  source: string;
+  // Volume data (optional, fetched separately)
+  searchVolume?: number | null;
+  searchVolumeFormatted?: string;
+  searchVolumeCategory?: 'very_high' | 'high' | 'medium' | 'low' | 'very_low';
+  trend?: 'rising' | 'stable' | 'declining';
+  trendPercentage?: number;
+}
+
+interface VolumeData {
+  keyword: string;
+  searchVolume: number | null;
+  searchVolumeFormatted: string;
+  searchVolumeCategory: 'very_high' | 'high' | 'medium' | 'low' | 'very_low';
+  trend: 'rising' | 'stable' | 'declining';
+  trendPercentage: number;
   source: string;
 }
 
@@ -75,6 +91,11 @@ export default function TagRecommenderPage() {
   const [scoreResult, setScoreResult] = useState<ScoreResult | null>(null);
   const [calculatingScore, setCalculatingScore] = useState(false);
 
+  // Volume data
+  const [volumeData, setVolumeData] = useState<Map<string, VolumeData>>(new Map());
+  const [loadingVolume, setLoadingVolume] = useState(false);
+  const [volumeSource, setVolumeSource] = useState<string>('');
+
   // Fetch recommendations
   const fetchRecommendations = async () => {
     if (!title.trim()) {
@@ -130,6 +151,56 @@ export default function TagRecommenderPage() {
     } finally {
       setLoadingTrending(false);
     }
+  };
+
+  // Fetch volume data for selected tags
+  const fetchVolumeData = useCallback(async (tags: string[]) => {
+    if (tags.length === 0) return;
+
+    setLoadingVolume(true);
+
+    try {
+      // Fetch in batches of 20
+      const batches = [];
+      for (let i = 0; i < tags.length; i += 20) {
+        batches.push(tags.slice(i, i + 20));
+      }
+
+      const newVolumeData = new Map(volumeData);
+
+      for (const batch of batches) {
+        // Filter out keywords we already have data for
+        const needsData = batch.filter(tag => !volumeData.has(tag.toLowerCase()));
+        if (needsData.length === 0) continue;
+
+        const response = await fetch('/api/admin/seo/keywords/volume', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ keywords: needsData, locale }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setVolumeSource(data.source || 'unknown');
+
+          for (const kw of data.keywords || []) {
+            newVolumeData.set(kw.keyword.toLowerCase(), kw);
+          }
+        }
+      }
+
+      setVolumeData(newVolumeData);
+    } catch (err) {
+      console.error('Volume fetch error:', err);
+    } finally {
+      setLoadingVolume(false);
+    }
+  }, [volumeData, locale]);
+
+  // Fetch volume for all recommendations
+  const fetchAllVolumes = async () => {
+    const allTags = recommendations.map(r => r.tag);
+    await fetchVolumeData(allTags);
   };
 
   // Toggle tag selection
@@ -236,6 +307,32 @@ export default function TagRecommenderPage() {
     }
   };
 
+  // Get trend color
+  const getTrendColor = (trend: string) => {
+    switch (trend) {
+      case 'rising': return 'text-green-400';
+      case 'declining': return 'text-red-400';
+      default: return 'text-gray-400';
+    }
+  };
+
+  // Get volume category color
+  const getVolumeCategoryColor = (category: string) => {
+    switch (category) {
+      case 'very_high': return 'bg-purple-500/20 text-purple-400 border-purple-500/50';
+      case 'high': return 'bg-blue-500/20 text-blue-400 border-blue-500/50';
+      case 'medium': return 'bg-cyan-500/20 text-cyan-400 border-cyan-500/50';
+      case 'low': return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/50';
+      case 'very_low': return 'bg-gray-500/20 text-gray-400 border-gray-500/50';
+      default: return 'bg-gray-500/20 text-gray-400 border-gray-500/50';
+    }
+  };
+
+  // Get volume for a tag
+  const getVolumeForTag = (tag: string): VolumeData | undefined => {
+    return volumeData.get(tag.toLowerCase());
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -248,7 +345,34 @@ export default function TagRecommenderPage() {
             VidIQ-style tag recommendations with AI analysis
           </p>
         </div>
+        {recommendations.length > 0 && (
+          <button
+            onClick={fetchAllVolumes}
+            disabled={loadingVolume}
+            className="px-4 py-2 bg-purple-500/20 border border-purple-500/50 text-purple-400 rounded-xl hover:bg-purple-500/30 transition flex items-center gap-2"
+          >
+            {loadingVolume ? (
+              <>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-purple-400"></div>
+                Fetching...
+              </>
+            ) : (
+              <>
+                <span>📊</span> Fetch Search Volume
+              </>
+            )}
+          </button>
+        )}
       </div>
+
+      {/* Volume Source Info */}
+      {volumeSource && volumeData.size > 0 && (
+        <div className="text-xs text-gray-500 flex items-center gap-2">
+          <span>Data source: {volumeSource === 'google_ads' ? 'Google Ads (accurate)' : 'Google Trends (estimated)'}</span>
+          <span>•</span>
+          <span>{volumeData.size} keywords with volume data</span>
+        </div>
+      )}
 
       {/* Input Form */}
       <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6">
@@ -355,34 +479,65 @@ export default function TagRecommenderPage() {
                   </div>
 
                   <div className="flex flex-wrap gap-2">
-                    {group.tags.map(tag => (
-                      <button
-                        key={tag.tag}
-                        onClick={() => toggleTag(tag.tag)}
-                        className={`group relative px-3 py-1.5 rounded-lg text-sm transition flex items-center gap-2 ${
-                          selectedTags.has(tag.tag)
-                            ? 'bg-green-500/20 border border-green-500/50 text-green-400'
-                            : 'bg-gray-700/50 border border-gray-600 text-gray-300 hover:border-gray-500'
-                        }`}
-                      >
-                        <span>{tag.tag}</span>
-                        <span className={`text-xs px-1.5 py-0.5 rounded ${getDifficultyColor(tag.difficulty)}`}>
-                          {tag.relevancyScore}
-                        </span>
-                        {/* Tooltip */}
-                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-10">
-                          <div className="bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs whitespace-nowrap shadow-lg">
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className={`px-1.5 py-0.5 rounded ${getDifficultyColor(tag.difficulty)}`}>
-                                {tag.difficulty}
+                    {group.tags.map(tag => {
+                      const volume = getVolumeForTag(tag.tag);
+                      return (
+                        <button
+                          key={tag.tag}
+                          onClick={() => toggleTag(tag.tag)}
+                          className={`group relative px-3 py-1.5 rounded-lg text-sm transition flex items-center gap-2 ${
+                            selectedTags.has(tag.tag)
+                              ? 'bg-green-500/20 border border-green-500/50 text-green-400'
+                              : 'bg-gray-700/50 border border-gray-600 text-gray-300 hover:border-gray-500'
+                          }`}
+                        >
+                          <span>{tag.tag}</span>
+                          <span className={`text-xs px-1.5 py-0.5 rounded ${getDifficultyColor(tag.difficulty)}`}>
+                            {tag.relevancyScore}
+                          </span>
+                          {/* Volume & Trend */}
+                          {volume && (
+                            <>
+                              <span className={`text-xs px-1.5 py-0.5 rounded border ${getVolumeCategoryColor(volume.searchVolumeCategory)}`}>
+                                {volume.searchVolumeFormatted}
                               </span>
-                              <span>{getIntentIcon(tag.searchIntent)} {tag.searchIntent}</span>
+                              <span className={`text-xs ${getTrendColor(volume.trend)}`}>
+                                {getGrowthIcon(volume.trend)}
+                                {volume.trendPercentage !== 0 && (
+                                  <span className="ml-0.5">
+                                    {volume.trendPercentage > 0 ? '+' : ''}{volume.trendPercentage}%
+                                  </span>
+                                )}
+                              </span>
+                            </>
+                          )}
+                          {/* Tooltip */}
+                          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-10">
+                            <div className="bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs whitespace-nowrap shadow-lg">
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className={`px-1.5 py-0.5 rounded ${getDifficultyColor(tag.difficulty)}`}>
+                                  {tag.difficulty}
+                                </span>
+                                <span>{getIntentIcon(tag.searchIntent)} {tag.searchIntent}</span>
+                              </div>
+                              {volume && (
+                                <div className="flex items-center gap-2 mb-1">
+                                  <span className={`px-1.5 py-0.5 rounded border ${getVolumeCategoryColor(volume.searchVolumeCategory)}`}>
+                                    Vol: {volume.searchVolumeFormatted}
+                                  </span>
+                                  <span className={getTrendColor(volume.trend)}>
+                                    {getGrowthIcon(volume.trend)} {volume.trend}
+                                    {volume.trendPercentage !== 0 && ` (${volume.trendPercentage > 0 ? '+' : ''}${volume.trendPercentage}%)`}
+                                  </span>
+                                </div>
+                              )}
+                              <div className="text-gray-400">Source: {tag.source}</div>
+                              {volume && <div className="text-gray-400">Volume source: {volume.source}</div>}
                             </div>
-                            <div className="text-gray-400">Source: {tag.source}</div>
                           </div>
-                        </div>
-                      </button>
-                    ))}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               ))}
