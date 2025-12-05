@@ -89,12 +89,30 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
 
-    // Support both single keyword and array of keywords
-    const keywordsToAdd = Array.isArray(body.keywords) ? body.keywords : [body];
+    // Get default locale and cluster from body
+    const defaultLocale = body.locale || 'en';
+    const defaultCluster = body.cluster;
+
+    // Support multiple formats:
+    // 1. { keywords: ["kw1", "kw2"], locale: "en" } - array of strings
+    // 2. { keywords: [{keyword: "kw1"}, {keyword: "kw2"}] } - array of objects
+    // 3. { keyword: "kw1", locale: "en" } - single keyword
+    let keywordsToAdd: Array<{ keyword: string; locale?: string; cluster?: string }> = [];
+
+    if (Array.isArray(body.keywords)) {
+      keywordsToAdd = body.keywords.map((k: string | { keyword: string }) => {
+        if (typeof k === 'string') {
+          return { keyword: k, locale: defaultLocale, cluster: defaultCluster };
+        }
+        return { ...k, locale: k.locale || defaultLocale, cluster: k.cluster || defaultCluster };
+      });
+    } else if (body.keyword) {
+      keywordsToAdd = [{ keyword: body.keyword, locale: defaultLocale, cluster: defaultCluster }];
+    }
 
     const results = {
-      created: [] as string[],
-      duplicates: [] as string[],
+      added: 0,
+      duplicates: 0,
       errors: [] as string[]
     };
 
@@ -102,18 +120,19 @@ export async function POST(request: NextRequest) {
       try {
         const {
           keyword,
-          locale = 'en',
-          searchVolume,
-          difficulty,
-          cpc,
-          intent,
-          cluster,
-          source = 'manual',
-          relatedKeywords = [],
-          serpFeatures = [],
-          trend,
-          priority = 0
+          locale = defaultLocale,
+          cluster = defaultCluster,
         } = keywordData;
+
+        const searchVolume = (keywordData as Record<string, unknown>).searchVolume as number | undefined;
+        const difficulty = (keywordData as Record<string, unknown>).difficulty as number | undefined;
+        const cpc = (keywordData as Record<string, unknown>).cpc as number | undefined;
+        const intent = (keywordData as Record<string, unknown>).intent as string | undefined;
+        const source = ((keywordData as Record<string, unknown>).source as string) || 'manual';
+        const relatedKeywords = ((keywordData as Record<string, unknown>).relatedKeywords as string[]) || [];
+        const serpFeatures = ((keywordData as Record<string, unknown>).serpFeatures as string[]) || [];
+        const trend = (keywordData as Record<string, unknown>).trend as string | undefined;
+        const priority = ((keywordData as Record<string, unknown>).priority as number) || 0;
 
         if (!keyword || typeof keyword !== 'string') {
           results.errors.push(`Invalid keyword: ${keyword}`);
@@ -131,7 +150,7 @@ export async function POST(request: NextRequest) {
         });
 
         if (existing) {
-          results.duplicates.push(keyword);
+          results.duplicates++;
           continue;
         }
 
@@ -154,9 +173,9 @@ export async function POST(request: NextRequest) {
           }
         });
 
-        results.created.push(keyword);
+        results.added++;
       } catch (err) {
-        results.errors.push(`Failed to add ${keywordData.keyword}: ${err}`);
+        results.errors.push(`Failed to add ${keyword}: ${err}`);
       }
     }
 
