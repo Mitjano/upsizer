@@ -7,7 +7,8 @@ import { z } from 'zod';
 
 // Common schemas
 export const emailSchema = z.string().email('Invalid email address');
-export const nanoidSchema = z.string().length(21, 'Invalid ID format');
+// Support both nanoid (21 chars) and cuid (25-26 chars) formats
+export const nanoidSchema = z.string().min(21).max(26).regex(/^[a-zA-Z0-9_-]+$/, 'Invalid ID format');
 export const urlSchema = z.string().url('Invalid URL');
 
 // User schemas

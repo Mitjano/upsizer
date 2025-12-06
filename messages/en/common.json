@@ -2430,6 +2430,8 @@
           "You may cancel your subscription at any time",
           "Cancellation takes effect at the end of the current billing period",
           "No refunds for partial months or unused credits",
+          "One-time purchased credits are valid for 1 year from purchase date and expire after this period",
+          "Due to the high cost of AI processing, we do not offer refunds. Please try the free plan before upgrading",
           "Enterprise contracts may have specific cancellation terms"
         ]
       },

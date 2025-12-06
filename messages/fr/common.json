@@ -2411,6 +2411,8 @@
           "Vous pouvez annuler votre abonnement à tout moment",
           "L'annulation prend effet à la fin de la période de facturation en cours",
           "Pas de remboursement pour les mois partiels ou les crédits non utilisés",
+          "Les crédits achetés en paiement unique sont valables 1 an à compter de la date d'achat et expirent après cette période",
+          "En raison du coût élevé du traitement IA, nous n'offrons pas de remboursements. Essayez le plan gratuit avant de passer à un plan supérieur",
           "Les contrats Enterprise peuvent avoir des conditions d'annulation spécifiques"
         ]
       },
