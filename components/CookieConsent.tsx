@@ -31,18 +31,32 @@ export default function CookieConsent() {
     }
   }, []);
 
-  const saveConsent = (prefs: typeof preferences) => {
+  const saveConsent = async (prefs: typeof preferences) => {
     localStorage.setItem("cookie-consent", JSON.stringify(prefs));
     setPreferences(prefs);
     setShowBanner(false);
     setShowSettings(false);
 
-    // Here you would initialize analytics/marketing scripts based on consent
-    if (prefs.analytics) {
-      // Initialize Google Analytics, etc.
-    }
+    // Dispatch custom event to notify Analytics component
+    window.dispatchEvent(new CustomEvent('cookie-consent-changed'));
+
+    // If marketing consent is given, update newsletter subscription in database
+    // This will be picked up on next login/page load if user is authenticated
     if (prefs.marketing) {
-      // Initialize marketing pixels, etc.
+      try {
+        // Try to sync marketing consent with newsletter subscription
+        await fetch('/api/user/preferences', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            newsletterFromCookieConsent: true
+          }),
+        }).catch(() => {
+          // Silently fail if not logged in - will sync on next login
+        });
+      } catch {
+        // User not logged in, will sync on login
+      }
     }
   };
 

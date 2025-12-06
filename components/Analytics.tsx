@@ -2,10 +2,36 @@
 
 import Script from 'next/script';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { useEffect, Suspense } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 
 // Google Analytics Measurement ID
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+
+// Check if user has consented to analytics cookies
+function hasAnalyticsConsent(): boolean {
+  if (typeof window === 'undefined') return false;
+  try {
+    const consent = localStorage.getItem('cookie-consent');
+    if (!consent) return false;
+    const prefs = JSON.parse(consent);
+    return prefs.analytics === true;
+  } catch {
+    return false;
+  }
+}
+
+// Check if user has consented to marketing cookies
+export function hasMarketingConsent(): boolean {
+  if (typeof window === 'undefined') return false;
+  try {
+    const consent = localStorage.getItem('cookie-consent');
+    if (!consent) return false;
+    const prefs = JSON.parse(consent);
+    return prefs.marketing === true;
+  } catch {
+    return false;
+  }
+}
 
 // Track page views
 function usePageTracking() {
@@ -155,7 +181,38 @@ function PageTracker() {
 
 // Main Analytics Provider
 export default function Analytics() {
-  if (!GA_MEASUREMENT_ID) {
+  const [analyticsEnabled, setAnalyticsEnabled] = useState(false);
+
+  useEffect(() => {
+    // Check consent on mount and listen for changes
+    const checkConsent = () => {
+      setAnalyticsEnabled(hasAnalyticsConsent());
+    };
+
+    checkConsent();
+
+    // Listen for storage changes (when user updates consent)
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'cookie-consent') {
+        checkConsent();
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    // Also listen for custom consent event
+    const handleConsentChange = () => checkConsent();
+    window.addEventListener('cookie-consent-changed', handleConsentChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('cookie-consent-changed', handleConsentChange);
+    };
+  }, []);
+
+  // Always run internal page tracking (doesn't use cookies)
+  // GA only loads if user consented
+  if (!GA_MEASUREMENT_ID || !analyticsEnabled) {
     return (
       <Suspense fallback={null}>
         <PageTracker />
@@ -165,7 +222,7 @@ export default function Analytics() {
 
   return (
     <>
-      {/* Google Analytics */}
+      {/* Google Analytics - only loaded with consent */}
       <Script
         src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
         strategy="afterInteractive"

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { getUserByEmail, updateUser } from '@/lib/db';
+import { prisma } from '@/lib/prisma';
 
 export interface EmailPreferences {
   marketing: boolean;
@@ -90,6 +91,24 @@ export async function PUT(request: NextRequest) {
     }
 
     const body = await request.json();
+
+    // Handle newsletter subscription from cookie consent
+    if (body.newsletterFromCookieConsent === true) {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          newsletterSubscribed: true,
+          marketingConsent: true,
+          marketingConsentAt: new Date(),
+        },
+      });
+
+      return NextResponse.json({
+        success: true,
+        message: 'Newsletter subscription updated from cookie consent',
+      });
+    }
+
     const { preferences } = body as { preferences: Partial<EmailPreferences> };
 
     // Validate preferences
@@ -127,6 +146,20 @@ export async function PUT(request: NextRequest) {
 
     allPrefs[user.id] = finalPreferences;
     await fs.writeFile(prefsFile, JSON.stringify(allPrefs, null, 2));
+
+    // Sync marketing preference with newsletterSubscribed in database
+    if (finalPreferences.marketing !== undefined) {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          newsletterSubscribed: finalPreferences.marketing,
+          marketingConsent: finalPreferences.marketing,
+          marketingConsentAt: finalPreferences.marketing ? new Date() : null,
+        },
+      }).catch(err => {
+        console.error('Failed to sync newsletter preference:', err);
+      });
+    }
 
     return NextResponse.json({
       success: true,
