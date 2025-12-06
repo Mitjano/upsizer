@@ -56,7 +56,15 @@ export function CreditCostBadge({
   const isDynamic = config?.isDynamic ?? false;
   const minCost = config?.minCost;
   const maxCost = config?.maxCost;
-  const costDescription = description ?? config?.costDescription;
+
+  // Pobierz zlokalizowany opis kosztu
+  const getCostDescription = () => {
+    if (description) return description;
+    if (!config?.costDescription) return undefined;
+    const localeKey = (locale === 'pl' ? 'pl' : 'en') as 'en' | 'pl';
+    return config.costDescription[localeKey];
+  };
+  const costDescription = getCostDescription();
 
   // Określ wariant automatycznie na podstawie kosztu
   const autoVariant = (() => {

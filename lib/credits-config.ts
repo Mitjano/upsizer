@@ -30,8 +30,8 @@ export interface ToolCreditConfig {
   maxCost?: number;
   /** Czy koszt jest zmienny (np. zależy od opcji) */
   isDynamic?: boolean;
-  /** Opis jak obliczany jest koszt (dla tooltipów) */
-  costDescription?: string;
+  /** Opis jak obliczany jest koszt (dla tooltipów) - zlokalizowany */
+  costDescription?: { en: string; pl: string };
   /** Nazwa narzędzia do wyświetlenia */
   displayName: string;
   /** Krótki opis narzędzia */
@@ -47,7 +47,10 @@ export const CREDIT_COSTS: Record<ToolType, ToolCreditConfig> = {
     minCost: 1,
     maxCost: 2,
     isDynamic: true,
-    costDescription: '+1 kredyt za Quality Boost',
+    costDescription: {
+      en: '+1 credit for Quality Boost',
+      pl: '+1 kredyt za Quality Boost',
+    },
     displayName: 'Upscaler',
     description: 'Powiększ obraz do 4x bez utraty jakości',
   },
@@ -96,7 +99,10 @@ export const CREDIT_COSTS: Record<ToolType, ToolCreditConfig> = {
     minCost: 3,
     maxCost: 12,
     isDynamic: true,
-    costDescription: '3 kredyty × liczba wariantów (1-4)',
+    costDescription: {
+      en: '3 credits × number of variants (1-4)',
+      pl: '3 kredyty × liczba wariantów (1-4)',
+    },
     displayName: 'Reimagine',
     description: 'Wygeneruj warianty obrazu',
   },
