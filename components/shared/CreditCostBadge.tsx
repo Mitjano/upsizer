@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useLocale } from 'next-intl';
 import {
   CREDIT_COSTS,
   ToolType,
@@ -27,8 +27,6 @@ export interface CreditCostBadgeProps {
   className?: string;
   /** Pokaż ikonę monety */
   showIcon?: boolean;
-  /** Język (domyślnie z kontekstu) */
-  locale?: string;
 }
 
 /**
@@ -48,9 +46,9 @@ export function CreditCostBadge({
   description,
   className = '',
   showIcon = true,
-  locale = 'pl',
 }: CreditCostBadgeProps) {
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
+  const locale = useLocale();
 
   // Pobierz konfigurację narzędzia lub użyj bezpośredniego kosztu
   const config = tool ? getToolConfig(tool) : null;
@@ -154,6 +152,7 @@ export interface CreditsRemainingProps {
 }
 
 export function CreditsRemaining({ credits, size = 'sm', className = '' }: CreditsRemainingProps) {
+  const locale = useLocale();
   const sizeStyles = {
     xs: 'text-[10px] px-1.5 py-0.5',
     sm: 'text-xs px-2 py-1',
@@ -166,6 +165,10 @@ export function CreditsRemaining({ credits, size = 'sm', className = '' }: Credi
     ? 'bg-amber-500/20 text-amber-400 border-amber-500/30'
     : 'bg-gray-700/50 text-gray-300 border-gray-600';
 
+  const creditsLabel = locale === 'pl'
+    ? (credits === 1 ? 'kredyt' : (credits >= 2 && credits <= 4 ? 'kredyty' : 'kredytów'))
+    : (credits === 1 ? 'credit' : 'credits');
+
   return (
     <div
       className={`
@@ -176,7 +179,7 @@ export function CreditsRemaining({ credits, size = 'sm', className = '' }: Credi
       `}
     >
       <span>{credits}</span>
-      <span className="opacity-70">kredytów</span>
+      <span className="opacity-70">{creditsLabel}</span>
     </div>
   );
 }
@@ -192,9 +195,19 @@ export interface CreditCostInfoProps {
 }
 
 export function CreditCostInfo({ tool, cost: directCost, userCredits, className = '' }: CreditCostInfoProps) {
+  const locale = useLocale();
   const config = tool ? getToolConfig(tool) : null;
   const cost = directCost ?? config?.cost ?? 0;
   const hasEnough = userCredits !== undefined ? userCredits >= cost : true;
+
+  const getCreditsText = (count: number) => {
+    if (locale === 'pl') {
+      if (count === 1) return 'kredyt';
+      if (count >= 2 && count <= 4) return 'kredyty';
+      return 'kredytów';
+    }
+    return count === 1 ? 'credit' : 'credits';
+  };
 
   return (
     <div className={`flex items-center gap-2 ${className}`}>
@@ -202,8 +215,12 @@ export function CreditCostInfo({ tool, cost: directCost, userCredits, className 
       {userCredits !== undefined && (
         <span className={`text-xs ${hasEnough ? 'text-gray-400' : 'text-red-400'}`}>
           {hasEnough
-            ? `(masz ${userCredits} kredytów)`
-            : `(brakuje ${cost - userCredits} kredytów)`
+            ? locale === 'pl'
+              ? `(masz ${userCredits} ${getCreditsText(userCredits)})`
+              : `(you have ${userCredits} ${getCreditsText(userCredits)})`
+            : locale === 'pl'
+              ? `(brakuje ${cost - userCredits} ${getCreditsText(cost - userCredits)})`
+              : `(need ${cost - userCredits} more ${getCreditsText(cost - userCredits)})`
           }
         </span>
       )}

@@ -149,7 +149,7 @@ export function BackgroundRemover({ userRole = 'user' }: BackgroundRemoverProps)
                 </p>
                 <div className="flex items-center justify-center gap-2 text-sm text-gray-500 dark:text-gray-500">
                   <span>Supports JPG, PNG, WEBP • Max 10MB •</span>
-                  <CreditCostBadge tool="remove_background" size="sm" />
+                  <CreditCostBadge tool="remove_background" size="md" />
                 </div>
               </>
             )}

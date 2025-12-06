@@ -224,7 +224,7 @@ export default function ImageDenoiser() {
               <div className="mt-6 text-sm text-gray-500">
                 <p className="mb-2">Supported formats: png | jpeg | jpg | webp</p>
                 <p className="mb-2">Maximum file size: 20MB</p>
-                <CreditCostBadge tool="denoise" size="sm" />
+                <CreditCostBadge tool="denoise" size="md" />
               </div>
             </div>
           </div>

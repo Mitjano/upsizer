@@ -287,7 +287,7 @@ export default function BackgroundGenerator() {
             <div className="mt-6 text-sm text-gray-500">
               <p className="mb-2">Best results with transparent PNG or images with removed background</p>
               <p className="mb-2">Maximum file size: 20MB</p>
-              <CreditCostBadge tool="background_generate" size="sm" />
+              <CreditCostBadge tool="background_generate" size="md" />
             </div>
           </div>
         </div>

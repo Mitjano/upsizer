@@ -191,7 +191,7 @@ export default function ImageColorizer() {
             <div className="mt-6 text-sm text-gray-500">
               <p className="mb-2">Supported formats: png | jpeg | jpg | webp</p>
               <p className="mb-2">Maximum file size: 20MB</p>
-              <CreditCostBadge tool="colorize" size="sm" />
+              <CreditCostBadge tool="colorize" size="md" />
             </div>
           </div>
         </div>

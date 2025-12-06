@@ -193,7 +193,7 @@ export default function ImageCompressor() {
           </div>
           <p className="text-lg font-medium mb-2">Click or drag image to compress</p>
           <p className="text-sm text-gray-400 mb-2">JPG, PNG, WebP up to 20MB</p>
-          <CreditCostBadge tool="compress" size="sm" />
+          <CreditCostBadge tool="compress" size="md" />
         </div>
       ) : (
         <div>

@@ -124,13 +124,13 @@ export default function DropZone({
             <>
               <p className="mb-2">{t('batchInfo')}</p>
               <p className="mb-2">{t('batchSettings')}</p>
-              <CreditCostBadge tool="upscale" size="sm" />
+              <CreditCostBadge tool="upscale" size="md" />
             </>
           ) : (
             <>
               <p className="mb-2">{t('paste')}</p>
               <p className="mb-2">{t('formats')}</p>
-              <CreditCostBadge tool="upscale" size="sm" />
+              <CreditCostBadge tool="upscale" size="md" />
             </>
           )}
         </div>
