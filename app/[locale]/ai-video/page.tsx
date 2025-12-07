@@ -6,7 +6,7 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import ToolsLayout from '@/components/ToolsLayout';
 import Link from 'next/link';
-import { VIDEO_MODELS, getActiveModels, type VideoModelId } from '@/lib/ai-video/models';
+import { VIDEO_MODELS, getActiveModels, type VideoModelId, type Duration } from '@/lib/ai-video/models';
 import { getToolCost, type ToolType } from '@/lib/credits-config';
 
 // Lazy load heavy components
@@ -73,12 +73,13 @@ export default function AIVideoPage() {
   // Get min credit cost
   const getMinCost = (modelId: VideoModelId) => {
     const model = VIDEO_MODELS[modelId];
-    const minDuration = Math.min(...model.durations);
+    const minDuration = Math.min(...model.durations) as Duration;
     const toolType = `video_${modelId.replace('-', '_').replace('.', '_')}_${minDuration}s` as ToolType;
     try {
       return getToolCost(toolType);
     } catch {
-      return model.costPerGeneration[minDuration] ? Math.ceil(model.costPerGeneration[minDuration]! * 10) : 10;
+      const cost = model.costPerGeneration[minDuration];
+      return cost ? Math.ceil(cost * 10) : 10;
     }
   };
 
