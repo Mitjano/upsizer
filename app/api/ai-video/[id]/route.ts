@@ -75,8 +75,12 @@ export async function GET(
       aspectRatio: video.aspectRatio,
       resolution: video.resolution,
       status: video.status,
-      videoUrl: video.localPath ? video.localPath.replace('./public', '') : video.videoUrl,
-      thumbnailUrl: video.thumbnailPath ? video.thumbnailPath.replace('./public', '') : video.thumbnailUrl,
+      videoUrl: video.localPath
+        ? '/' + video.localPath.replace(/^\.?\/?(public\/)?/, '')
+        : video.videoUrl,
+      thumbnailUrl: video.thumbnailPath
+        ? '/' + video.thumbnailPath.replace(/^\.?\/?(public\/)?/, '')
+        : video.thumbnailUrl,
       fileSize: video.fileSize,
       processingTime: video.processingTime,
       isPublic: video.isPublic,

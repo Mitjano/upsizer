@@ -77,8 +77,12 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       videos: videos.map(video => ({
         ...video,
-        videoUrl: video.localPath ? video.localPath.replace('./public', '') : video.videoUrl,
-        thumbnailUrl: video.thumbnailPath ? video.thumbnailPath.replace('./public', '') : video.thumbnailUrl,
+        videoUrl: video.localPath
+          ? '/' + video.localPath.replace(/^\.?\/?(public\/)?/, '')
+          : video.videoUrl,
+        thumbnailUrl: video.thumbnailPath
+          ? '/' + video.thumbnailPath.replace(/^\.?\/?(public\/)?/, '')
+          : video.thumbnailUrl,
       })),
       total,
       limit,

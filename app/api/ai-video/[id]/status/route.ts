@@ -54,8 +54,12 @@ export async function GET(
       return NextResponse.json({
         id: video.id,
         status: video.status,
-        videoUrl: video.localPath ? video.localPath.replace('./public', '') : video.videoUrl,
-        thumbnailUrl: video.thumbnailPath ? video.thumbnailPath.replace('./public', '') : video.thumbnailUrl,
+        videoUrl: video.localPath
+          ? '/' + video.localPath.replace(/^\.?\/?(public\/)?/, '')
+          : video.videoUrl,
+        thumbnailUrl: video.thumbnailPath
+          ? '/' + video.thumbnailPath.replace(/^\.?\/?(public\/)?/, '')
+          : video.thumbnailUrl,
         progress: video.progress,
         errorMessage: video.errorMessage,
         createdAt: video.createdAt,
@@ -121,7 +125,9 @@ export async function GET(
         id: video.id,
         status: 'completed',
         videoUrl: videoSaveResult.publicUrl || result.videoUrl,
-        thumbnailUrl: thumbnailPath?.replace('./public', '') || result.thumbnailUrl,
+        thumbnailUrl: thumbnailPath
+          ? '/' + thumbnailPath.replace(/^\.?\/?(public\/)?/, '')
+          : result.thumbnailUrl,
         progress: 100,
         processingTime,
         completedAt: new Date(),
