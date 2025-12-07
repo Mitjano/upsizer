@@ -2876,6 +2876,37 @@
     },
     "euNote": "Niniejsza polityka zwrotów jest zgodna z Dyrektywą UE w sprawie praw konsumentów 2011/83/UE oraz obowiązującymi przepisami o ochronie konsumentów."
   },
+  "aiVideo": {
+    "title": "Generator wideo AI",
+    "promptLabel": "Opisz swoje wideo",
+    "promptPlaceholder": "Golden retriever biegnący przez pole słoneczników o zachodzie słońca, kinowe oświetlenie...",
+    "modelLabel": "Model",
+    "durationLabel": "Czas trwania",
+    "aspectRatioLabel": "Proporcje",
+    "resolutionLabel": "Rozdzielczość",
+    "seconds": "sekund",
+    "estimatedTime": "Szacowany czas",
+    "withAudio": "Z dźwiękiem",
+    "supportsImage": "Obsługuje obraz-do-wideo",
+    "cost": "Koszt",
+    "credits": "kredytów",
+    "yourCredits": "Twoje kredyty",
+    "generate": "Generuj wideo",
+    "generating": "Generowanie...",
+    "generationInProgress": "Generowanie w toku",
+    "pleaseWait": "Proszę czekać, może to potrwać kilka minut",
+    "videoReady": "Twoje wideo jest gotowe!",
+    "download": "Pobierz",
+    "yourVideos": "Twoje wideo",
+    "failed": "Niepowodzenie",
+    "confirmDelete": "Czy na pewno chcesz usunąć to wideo?",
+    "errors": {
+      "timeout": "Generowanie przekroczyło limit czasu. Spróbuj ponownie.",
+      "generationFailed": "Generowanie wideo nie powiodło się. Spróbuj ponownie.",
+      "promptRequired": "Wprowadź opis",
+      "insufficientCredits": "Za mało kredytów. Kup więcej."
+    }
+  },
   "aiVideoPage": {
     "badge": "Generowanie wideo z AI",
     "hero": {

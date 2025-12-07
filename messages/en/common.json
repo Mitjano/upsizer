@@ -2876,6 +2876,37 @@
     },
     "euNote": "This refund policy complies with EU Consumer Protection Directive 2011/83/EU and applicable consumer protection laws."
   },
+  "aiVideo": {
+    "title": "AI Video Generator",
+    "promptLabel": "Describe your video",
+    "promptPlaceholder": "A golden retriever running through a field of sunflowers at sunset, cinematic lighting...",
+    "modelLabel": "Model",
+    "durationLabel": "Duration",
+    "aspectRatioLabel": "Aspect Ratio",
+    "resolutionLabel": "Resolution",
+    "seconds": "seconds",
+    "estimatedTime": "Estimated time",
+    "withAudio": "With audio",
+    "supportsImage": "Supports image-to-video",
+    "cost": "Cost",
+    "credits": "credits",
+    "yourCredits": "Your credits",
+    "generate": "Generate Video",
+    "generating": "Generating...",
+    "generationInProgress": "Generation in Progress",
+    "pleaseWait": "Please wait, this may take a few minutes",
+    "videoReady": "Your Video is Ready!",
+    "download": "Download",
+    "yourVideos": "Your Videos",
+    "failed": "Failed",
+    "confirmDelete": "Are you sure you want to delete this video?",
+    "errors": {
+      "timeout": "Generation timed out. Please try again.",
+      "generationFailed": "Video generation failed. Please try again.",
+      "promptRequired": "Please enter a prompt",
+      "insufficientCredits": "Not enough credits. Please purchase more."
+    }
+  },
   "aiVideoPage": {
     "badge": "AI-Powered Video Generation",
     "hero": {

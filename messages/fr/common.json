@@ -2959,6 +2959,37 @@
     },
     "euNote": "Cette politique de remboursement est conforme à la Directive UE sur les Droits des Consommateurs 2011/83/UE et aux lois applicables de protection des consommateurs."
   },
+  "aiVideo": {
+    "title": "Générateur de vidéo IA",
+    "promptLabel": "Décrivez votre vidéo",
+    "promptPlaceholder": "Un golden retriever courant à travers un champ de tournesols au coucher du soleil, éclairage cinématographique...",
+    "modelLabel": "Modèle",
+    "durationLabel": "Durée",
+    "aspectRatioLabel": "Proportion",
+    "resolutionLabel": "Résolution",
+    "seconds": "secondes",
+    "estimatedTime": "Temps estimé",
+    "withAudio": "Avec audio",
+    "supportsImage": "Supporte image vers vidéo",
+    "cost": "Coût",
+    "credits": "crédits",
+    "yourCredits": "Vos crédits",
+    "generate": "Générer la vidéo",
+    "generating": "Génération...",
+    "generationInProgress": "Génération en cours",
+    "pleaseWait": "Veuillez patienter, cela peut prendre quelques minutes",
+    "videoReady": "Votre vidéo est prête !",
+    "download": "Télécharger",
+    "yourVideos": "Vos vidéos",
+    "failed": "Échec",
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer cette vidéo ?",
+    "errors": {
+      "timeout": "La génération a dépassé le délai. Veuillez réessayer.",
+      "generationFailed": "La génération de la vidéo a échoué. Veuillez réessayer.",
+      "promptRequired": "Veuillez entrer une description",
+      "insufficientCredits": "Crédits insuffisants. Achetez-en plus."
+    }
+  },
   "aiVideoPage": {
     "badge": "Génération de vidéo par IA",
     "hero": {
