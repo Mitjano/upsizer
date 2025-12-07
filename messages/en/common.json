@@ -2209,6 +2209,33 @@
       "tryTools": "Try All Tools",
       "viewPricing": "View Pricing",
       "noCard": "No credit card required"
+    },
+    "aiStudio": {
+      "badge": "AI Creative Studio",
+      "title1": "Create with ",
+      "titleHighlight": "AI Power",
+      "subtitle": "Generate stunning images and videos with state-of-the-art AI models",
+      "more": "more",
+      "aiImage": {
+        "badge": "12+ Models",
+        "title": "AI Image Generation",
+        "description": "Create stunning images from text prompts using FLUX, Stable Diffusion, and more. Transform your ideas into visual reality.",
+        "feature1": "Text-to-image with FLUX Pro & Dev",
+        "feature2": "Style transfer & artistic effects",
+        "feature3": "Image-to-image transformations",
+        "feature4": "Community gallery & inspiration",
+        "cta": "Start Creating"
+      },
+      "aiVideo": {
+        "badge": "5+ Models",
+        "title": "AI Video Generation",
+        "description": "Generate cinematic videos from text with Runway, PixVerse, Veo and more. Bring your stories to life.",
+        "feature1": "Text-to-video with premium models",
+        "feature2": "Up to 10 seconds video length",
+        "feature3": "Multiple aspect ratios & resolutions",
+        "feature4": "Prompt enhancement with AI",
+        "cta": "Generate Videos"
+      }
     }
   },
   "imageCompressorPage": {

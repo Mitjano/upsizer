@@ -6,7 +6,7 @@ import { Link } from '@/i18n/navigation';
 import {
   FaCamera, FaShoppingCart, FaPrint, FaGamepad,
   FaImage, FaBuilding, FaHeart, FaFilm,
-  FaArrowRight, FaCheck, FaStar
+  FaArrowRight, FaCheck, FaStar, FaVideo, FaMagic, FaPlay
 } from 'react-icons/fa';
 import { HiSparkles, HiLightningBolt, HiPhotograph } from 'react-icons/hi';
 
@@ -282,6 +282,168 @@ export default function UseCasesPage() {
               </div>
             );
           })}
+        </div>
+      </section>
+
+      {/* AI Creative Studio Section - AI Image & AI Video */}
+      <section className="py-20 relative overflow-hidden">
+        {/* Background effects */}
+        <div className="absolute inset-0">
+          <div className="absolute top-1/4 left-0 w-[600px] h-[600px] bg-purple-500/10 rounded-full blur-3xl" />
+          <div className="absolute bottom-1/4 right-0 w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-3xl" />
+        </div>
+
+        <div className="max-w-7xl mx-auto px-6 relative">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 bg-gradient-to-r from-purple-500/20 to-cyan-500/20 border border-purple-500/30 rounded-full">
+              <HiSparkles className="w-4 h-4 text-purple-400" />
+              <span className="text-sm font-semibold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
+                {t('aiStudio.badge') || 'AI Creative Studio'}
+              </span>
+            </div>
+            <h2 className="text-3xl md:text-5xl font-bold mb-4">
+              <span className="text-white">{t('aiStudio.title1') || 'Create with '}</span>
+              <span className="bg-gradient-to-r from-purple-400 via-pink-500 to-cyan-400 bg-clip-text text-transparent">
+                {t('aiStudio.titleHighlight') || 'AI Power'}
+              </span>
+            </h2>
+            <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+              {t('aiStudio.subtitle') || 'Generate stunning images and videos with state-of-the-art AI models'}
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* AI Image Card */}
+            <Link
+              href="/ai-image"
+              className="group relative bg-gradient-to-br from-purple-900/40 via-gray-900 to-pink-900/40 border border-purple-500/30 hover:border-purple-500/60 rounded-3xl p-8 transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl hover:shadow-purple-500/20"
+            >
+              {/* Glow effect */}
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 rounded-3xl transition-opacity duration-500" />
+
+              <div className="relative">
+                {/* Icon & Badge */}
+                <div className="flex items-start justify-between mb-6">
+                  <div className="p-4 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl shadow-lg shadow-purple-500/30">
+                    <FaMagic className="w-8 h-8 text-white" />
+                  </div>
+                  <div className="flex items-center gap-2 px-3 py-1.5 bg-purple-500/20 border border-purple-500/30 rounded-full">
+                    <span className="w-2 h-2 bg-purple-400 rounded-full animate-pulse" />
+                    <span className="text-xs font-medium text-purple-300">{t('aiStudio.aiImage.badge') || '12+ Models'}</span>
+                  </div>
+                </div>
+
+                {/* Title */}
+                <h3 className="text-2xl md:text-3xl font-bold text-white mb-3 group-hover:text-purple-300 transition-colors">
+                  {t('aiStudio.aiImage.title') || 'AI Image Generation'}
+                </h3>
+                <p className="text-gray-400 mb-6">
+                  {t('aiStudio.aiImage.description') || 'Create stunning images from text prompts using FLUX, Stable Diffusion, and more. Transform your ideas into visual reality.'}
+                </p>
+
+                {/* Features */}
+                <div className="space-y-3 mb-6">
+                  {[
+                    t('aiStudio.aiImage.feature1') || 'Text-to-image with FLUX Pro & Dev',
+                    t('aiStudio.aiImage.feature2') || 'Style transfer & artistic effects',
+                    t('aiStudio.aiImage.feature3') || 'Image-to-image transformations',
+                    t('aiStudio.aiImage.feature4') || 'Community gallery & inspiration',
+                  ].map((feature, i) => (
+                    <div key={i} className="flex items-center gap-3 text-gray-300">
+                      <div className="w-5 h-5 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0">
+                        <FaCheck className="w-3 h-3 text-purple-400" />
+                      </div>
+                      <span className="text-sm">{feature}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Models preview */}
+                <div className="flex flex-wrap gap-2 mb-6">
+                  {['FLUX Pro', 'FLUX Dev', 'SD 3.5', 'SDXL'].map((model) => (
+                    <span key={model} className="px-3 py-1 bg-gray-800/80 border border-gray-700 rounded-lg text-xs font-medium text-gray-300">
+                      {model}
+                    </span>
+                  ))}
+                  <span className="px-3 py-1 bg-purple-500/20 border border-purple-500/30 rounded-lg text-xs font-medium text-purple-300">
+                    +8 {t('aiStudio.more') || 'more'}
+                  </span>
+                </div>
+
+                {/* CTA */}
+                <div className="flex items-center gap-2 text-purple-400 font-semibold group-hover:text-purple-300 transition-colors">
+                  <span>{t('aiStudio.aiImage.cta') || 'Start Creating'}</span>
+                  <FaArrowRight className="w-4 h-4 group-hover:translate-x-2 transition-transform" />
+                </div>
+              </div>
+            </Link>
+
+            {/* AI Video Card */}
+            <Link
+              href="/ai-video"
+              className="group relative bg-gradient-to-br from-cyan-900/40 via-gray-900 to-blue-900/40 border border-cyan-500/30 hover:border-cyan-500/60 rounded-3xl p-8 transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl hover:shadow-cyan-500/20"
+            >
+              {/* Glow effect */}
+              <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-blue-500/10 opacity-0 group-hover:opacity-100 rounded-3xl transition-opacity duration-500" />
+
+              <div className="relative">
+                {/* Icon & Badge */}
+                <div className="flex items-start justify-between mb-6">
+                  <div className="p-4 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl shadow-lg shadow-cyan-500/30">
+                    <FaVideo className="w-8 h-8 text-white" />
+                  </div>
+                  <div className="flex items-center gap-2 px-3 py-1.5 bg-cyan-500/20 border border-cyan-500/30 rounded-full">
+                    <span className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse" />
+                    <span className="text-xs font-medium text-cyan-300">{t('aiStudio.aiVideo.badge') || '5+ Models'}</span>
+                  </div>
+                </div>
+
+                {/* Title */}
+                <h3 className="text-2xl md:text-3xl font-bold text-white mb-3 group-hover:text-cyan-300 transition-colors">
+                  {t('aiStudio.aiVideo.title') || 'AI Video Generation'}
+                </h3>
+                <p className="text-gray-400 mb-6">
+                  {t('aiStudio.aiVideo.description') || 'Generate cinematic videos from text with Runway, PixVerse, Veo and more. Bring your stories to life.'}
+                </p>
+
+                {/* Features */}
+                <div className="space-y-3 mb-6">
+                  {[
+                    t('aiStudio.aiVideo.feature1') || 'Text-to-video with premium models',
+                    t('aiStudio.aiVideo.feature2') || 'Up to 10 seconds video length',
+                    t('aiStudio.aiVideo.feature3') || 'Multiple aspect ratios & resolutions',
+                    t('aiStudio.aiVideo.feature4') || 'Prompt enhancement with AI',
+                  ].map((feature, i) => (
+                    <div key={i} className="flex items-center gap-3 text-gray-300">
+                      <div className="w-5 h-5 rounded-full bg-cyan-500/20 flex items-center justify-center flex-shrink-0">
+                        <FaCheck className="w-3 h-3 text-cyan-400" />
+                      </div>
+                      <span className="text-sm">{feature}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Models preview */}
+                <div className="flex flex-wrap gap-2 mb-6">
+                  {['Runway Gen4', 'Veo 3.1', 'PixVerse V5', 'Kling'].map((model) => (
+                    <span key={model} className="px-3 py-1 bg-gray-800/80 border border-gray-700 rounded-lg text-xs font-medium text-gray-300">
+                      {model}
+                    </span>
+                  ))}
+                  <span className="px-3 py-1 bg-cyan-500/20 border border-cyan-500/30 rounded-lg text-xs font-medium text-cyan-300">
+                    +2 {t('aiStudio.more') || 'more'}
+                  </span>
+                </div>
+
+                {/* CTA */}
+                <div className="flex items-center gap-2 text-cyan-400 font-semibold group-hover:text-cyan-300 transition-colors">
+                  <FaPlay className="w-3 h-3" />
+                  <span>{t('aiStudio.aiVideo.cta') || 'Generate Videos'}</span>
+                  <FaArrowRight className="w-4 h-4 group-hover:translate-x-2 transition-transform" />
+                </div>
+              </div>
+            </Link>
+          </div>
         </div>
       </section>
 

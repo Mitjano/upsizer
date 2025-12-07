@@ -2292,6 +2292,33 @@
       "tryTools": "Essayer les Outils",
       "viewPricing": "Voir les Tarifs",
       "noCard": "Sans carte de crédit"
+    },
+    "aiStudio": {
+      "badge": "Studio Créatif AI",
+      "title1": "Créez avec ",
+      "titleHighlight": "la Puissance AI",
+      "subtitle": "Générez des images et vidéos époustouflantes avec des modèles AI de pointe",
+      "more": "plus",
+      "aiImage": {
+        "badge": "12+ Modèles",
+        "title": "Génération d'Images AI",
+        "description": "Créez des images époustouflantes à partir de prompts texte en utilisant FLUX, Stable Diffusion et plus. Parfait pour les artistes, designers et créateurs.",
+        "feature1": "Texte vers image avec FLUX Pro et Dev",
+        "feature2": "Transfert de style et effets artistiques",
+        "feature3": "Transformations image vers image",
+        "feature4": "Galerie communautaire et inspiration",
+        "cta": "Commencer à Créer"
+      },
+      "aiVideo": {
+        "badge": "5+ Modèles",
+        "title": "Génération de Vidéos AI",
+        "description": "Générez des vidéos cinématographiques à partir de texte avec Runway, PixVerse, Veo et plus. Transformez vos idées en vidéos époustouflantes.",
+        "feature1": "Texte vers vidéo avec modèles premium",
+        "feature2": "Jusqu'à 10 secondes de durée",
+        "feature3": "Multiples formats et résolutions",
+        "feature4": "Amélioration des prompts avec AI",
+        "cta": "Générer des Vidéos"
+      }
     }
   },
   "privacyPage": {

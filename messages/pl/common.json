@@ -2209,6 +2209,33 @@
       "tryTools": "Wypróbuj Narzędzia",
       "viewPricing": "Zobacz Cennik",
       "noCard": "Bez karty kredytowej"
+    },
+    "aiStudio": {
+      "badge": "Kreatywne Studio AI",
+      "title1": "Twórz z ",
+      "titleHighlight": "Mocą AI",
+      "subtitle": "Generuj niesamowite obrazy i filmy za pomocą najnowocześniejszych modeli AI",
+      "more": "więcej",
+      "aiImage": {
+        "badge": "12+ Modeli",
+        "title": "Generowanie Obrazów AI",
+        "description": "Twórz niesamowite obrazy z promptów tekstowych używając FLUX, Stable Diffusion i innych. Przekształć swoje pomysły w rzeczywistość wizualną.",
+        "feature1": "Text-to-image z FLUX Pro & Dev",
+        "feature2": "Transfer stylu i efekty artystyczne",
+        "feature3": "Transformacje image-to-image",
+        "feature4": "Galeria społeczności i inspiracje",
+        "cta": "Zacznij Tworzyć"
+      },
+      "aiVideo": {
+        "badge": "5+ Modeli",
+        "title": "Generowanie Wideo AI",
+        "description": "Generuj kinematograficzne filmy z tekstu za pomocą Runway, PixVerse, Veo i innych. Ożyw swoje historie.",
+        "feature1": "Text-to-video z premium modelami",
+        "feature2": "Długość wideo do 10 sekund",
+        "feature3": "Wiele proporcji i rozdzielczości",
+        "feature4": "Ulepszanie promptów z AI",
+        "cta": "Generuj Wideo"
+      }
     }
   },
   "imageCompressorPage": {
