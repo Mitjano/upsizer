@@ -5,13 +5,16 @@
  * Obsługuje wielu dostawców: Replicate, PiAPI, Runway
  */
 
-export type VideoProvider = 'replicate' | 'piapi' | 'runway';
+export type VideoProvider = 'replicate' | 'piapi' | 'runway' | 'fal';
 
 export type VideoModelId =
   | 'pixverse-v5'
   | 'kling-2.5'
   | 'veo-3.1'
-  | 'runway-gen4';
+  | 'runway-gen4'
+  | 'hailuo-02'
+  | 'hailuo-02-pro'
+  | 'luma-ray2-flash';
 
 export type AspectRatio = '16:9' | '9:16' | '1:1' | '4:3' | '3:4';
 export type Resolution = '360p' | '540p' | '720p' | '1080p';
@@ -150,6 +153,72 @@ export const VIDEO_MODELS: Record<VideoModelId, VideoModelConfig> = {
     isActive: false, // Włącz gdy skonfigurowany
     isPremium: true,
   },
+  'hailuo-02': {
+    id: 'hailuo-02',
+    name: 'MiniMax Hailuo 02',
+    description: '#2 model wideo na świecie. Świetna jakość ruchu i realizm w przystępnej cenie.',
+    provider: 'fal',
+    modelIdentifier: 'fal-ai/minimax-video',
+    durations: [6],
+    aspectRatios: ['16:9', '9:16', '1:1'],
+    resolutions: ['720p'],
+    supportsImageToVideo: true,
+    supportsAudio: false,
+    estimatedProcessingTime: {
+      min: 120,
+      max: 300,
+    },
+    costPerGeneration: {
+      6: 0.27,
+    },
+    tags: ['quality', 'budget', 'top-ranked'],
+    isActive: true,
+    isPremium: false,
+  },
+  'hailuo-02-pro': {
+    id: 'hailuo-02-pro',
+    name: 'MiniMax Hailuo 02 Pro',
+    description: 'Wersja Pro z rozdzielczością 1080p. Najlepsza jakość od MiniMax.',
+    provider: 'fal',
+    modelIdentifier: 'fal-ai/minimax-video/video-01-live',
+    durations: [6],
+    aspectRatios: ['16:9', '9:16', '1:1'],
+    resolutions: ['1080p'],
+    supportsImageToVideo: true,
+    supportsAudio: false,
+    estimatedProcessingTime: {
+      min: 180,
+      max: 360,
+    },
+    costPerGeneration: {
+      6: 0.48,
+    },
+    tags: ['quality', 'pro', '1080p'],
+    isActive: true,
+    isPremium: false,
+  },
+  'luma-ray2-flash': {
+    id: 'luma-ray2-flash',
+    name: 'Luma Ray2 Flash',
+    description: 'Szybki i tani model od Luma. Idealny do szybkich iteracji.',
+    provider: 'fal',
+    modelIdentifier: 'fal-ai/luma-dream-machine',
+    durations: [5],
+    aspectRatios: ['16:9', '9:16', '1:1'],
+    resolutions: ['720p', '1080p'],
+    supportsImageToVideo: true,
+    supportsAudio: false,
+    estimatedProcessingTime: {
+      min: 60,
+      max: 180,
+    },
+    costPerGeneration: {
+      5: 0.20,
+    },
+    tags: ['fast', 'budget', 'iterations'],
+    isActive: true,
+    isPremium: false,
+  },
 };
 
 /**
@@ -212,6 +281,12 @@ export function getToolTypeForModel(modelId: VideoModelId, duration: Duration): 
       if (duration === 4) return 'video_veo_4s';
       if (duration === 6) return 'video_veo_6s';
       return 'video_veo_8s';
+    case 'hailuo-02':
+      return 'video_hailuo_6s';
+    case 'hailuo-02-pro':
+      return 'video_hailuo_pro_6s';
+    case 'luma-ray2-flash':
+      return 'video_luma_ray2_5s';
     default:
       return 'video_pixverse_5s';
   }

@@ -27,7 +27,10 @@ export type ToolType =
   | 'video_kling_10s'
   | 'video_veo_4s'
   | 'video_veo_6s'
-  | 'video_veo_8s';
+  | 'video_veo_8s'
+  | 'video_hailuo_6s'
+  | 'video_hailuo_pro_6s'
+  | 'video_luma_ray2_5s';
 
 export interface ToolCreditConfig {
   /** Bazowy koszt w kredytach */
@@ -170,6 +173,21 @@ export const CREDIT_COSTS: Record<ToolType, ToolCreditConfig> = {
     displayName: 'Google Veo 3 (8s)',
     description: 'Premium wideo AI z dźwiękiem - 8 sekund (Veo)',
   },
+  video_hailuo_6s: {
+    cost: 6,
+    displayName: 'MiniMax Hailuo 02 (6s)',
+    description: 'Wideo AI #2 na świecie - 6 sekund, 720p',
+  },
+  video_hailuo_pro_6s: {
+    cost: 11,
+    displayName: 'MiniMax Hailuo 02 Pro (6s)',
+    description: 'Wideo AI premium - 6 sekund, 1080p',
+  },
+  video_luma_ray2_5s: {
+    cost: 5,
+    displayName: 'Luma Ray2 Flash (5s)',
+    description: 'Szybkie wideo AI - 5 sekund',
+  },
 };
 
 /**
@@ -265,6 +283,9 @@ export const TOOL_API_KEYS: Record<string, ToolType> = {
   'video-veo-4s': 'video_veo_4s',
   'video-veo-6s': 'video_veo_6s',
   'video-veo-8s': 'video_veo_8s',
+  'video-hailuo-6s': 'video_hailuo_6s',
+  'video-hailuo-pro-6s': 'video_hailuo_pro_6s',
+  'video-luma-ray2-5s': 'video_luma_ray2_5s',
 };
 
 /**

@@ -203,6 +203,100 @@ async function generateViaPiAPI(
 }
 
 /**
+ * Generuj wideo przez Fal.ai (Hailuo, Luma)
+ */
+async function generateViaFal(
+  input: VideoGenerationInput
+): Promise<VideoGenerationResult> {
+  const apiKey = process.env.FAL_API_KEY;
+  if (!apiKey) {
+    return {
+      success: false,
+      provider: 'fal',
+      status: 'failed',
+      error: 'FAL_API_KEY is not configured',
+    };
+  }
+
+  const modelConfig = getModelConfig(input.model);
+  if (!modelConfig || modelConfig.provider !== 'fal') {
+    return {
+      success: false,
+      provider: 'fal',
+      status: 'failed',
+      error: 'Invalid model for Fal provider',
+    };
+  }
+
+  try {
+    // Fal.ai uses different endpoints based on model
+    let endpoint: string;
+    let requestBody: Record<string, unknown>;
+
+    if (input.model.startsWith('hailuo')) {
+      // MiniMax Hailuo
+      endpoint = 'https://queue.fal.run/fal-ai/minimax-video';
+      requestBody = {
+        prompt: input.prompt,
+        prompt_optimizer: true,
+      };
+      if (input.sourceImageUrl) {
+        requestBody.first_frame_image = input.sourceImageUrl;
+      }
+    } else if (input.model === 'luma-ray2-flash') {
+      // Luma Dream Machine
+      endpoint = 'https://queue.fal.run/fal-ai/luma-dream-machine';
+      requestBody = {
+        prompt: input.prompt,
+        aspect_ratio: input.aspectRatio,
+      };
+      if (input.sourceImageUrl) {
+        requestBody.image_url = input.sourceImageUrl;
+      }
+    } else {
+      return {
+        success: false,
+        provider: 'fal',
+        status: 'failed',
+        error: `Unknown Fal model: ${input.model}`,
+      };
+    }
+
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Key ${apiKey}`,
+      },
+      body: JSON.stringify(requestBody),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.detail || 'Fal.ai request failed');
+    }
+
+    const data = await response.json();
+
+    return {
+      success: true,
+      jobId: data.request_id,
+      provider: 'fal',
+      status: 'processing',
+      estimatedTime: modelConfig.estimatedProcessingTime.max,
+    };
+  } catch (error) {
+    console.error('Fal.ai generation error:', error);
+    return {
+      success: false,
+      provider: 'fal',
+      status: 'failed',
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
+}
+
+/**
  * Generuj wideo przez Runway
  */
 async function generateViaRunway(
@@ -326,6 +420,8 @@ export async function generateVideo(
       return generateViaPiAPI(input);
     case 'runway':
       return generateViaRunway(input);
+    case 'fal':
+      return generateViaFal(input);
     default:
       return {
         success: false,
@@ -350,6 +446,8 @@ export async function checkGenerationStatus(
       return checkPiAPIStatus(jobId);
     case 'runway':
       return checkRunwayStatus(jobId);
+    case 'fal':
+      return checkFalStatus(jobId);
     default:
       return {
         success: false,
@@ -530,6 +628,75 @@ async function checkRunwayStatus(jobId: string): Promise<VideoGenerationResult> 
   }
 }
 
+async function checkFalStatus(jobId: string): Promise<VideoGenerationResult> {
+  const apiKey = process.env.FAL_API_KEY;
+  if (!apiKey) {
+    return {
+      success: false,
+      provider: 'fal',
+      status: 'failed',
+      error: 'FAL_API_KEY is not configured',
+    };
+  }
+
+  try {
+    const response = await fetch(`https://queue.fal.run/fal-ai/requests/${jobId}/status`, {
+      headers: {
+        'Authorization': `Key ${apiKey}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to check Fal.ai status');
+    }
+
+    const data = await response.json();
+
+    if (data.status === 'COMPLETED') {
+      // Fetch the result
+      const resultResponse = await fetch(`https://queue.fal.run/fal-ai/requests/${jobId}`, {
+        headers: {
+          'Authorization': `Key ${apiKey}`,
+        },
+      });
+      const result = await resultResponse.json();
+
+      return {
+        success: true,
+        jobId,
+        provider: 'fal',
+        status: 'completed',
+        videoUrl: result.video?.url || result.output?.video_url,
+      };
+    }
+
+    if (data.status === 'FAILED') {
+      return {
+        success: false,
+        jobId,
+        provider: 'fal',
+        status: 'failed',
+        error: data.error || 'Generation failed',
+      };
+    }
+
+    return {
+      success: true,
+      jobId,
+      provider: 'fal',
+      status: 'processing',
+    };
+  } catch (error) {
+    return {
+      success: false,
+      jobId,
+      provider: 'fal',
+      status: 'failed',
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
+}
+
 /**
  * Anuluj generację (jeśli obsługiwane)
  */
@@ -556,6 +723,15 @@ export async function cancelGeneration(
       case 'runway':
         // Runway doesn't support cancellation via API
         return false;
+      case 'fal': {
+        const apiKey = process.env.FAL_API_KEY;
+        if (!apiKey) return false;
+        await fetch(`https://queue.fal.run/fal-ai/requests/${jobId}/cancel`, {
+          method: 'PUT',
+          headers: { 'Authorization': `Key ${apiKey}` },
+        });
+        return true;
+      }
       default:
         return false;
     }
