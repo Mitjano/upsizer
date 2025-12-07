@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
 // Temporary debug endpoint to check video status
@@ -53,5 +53,37 @@ export async function GET() {
     });
   } catch (error) {
     return NextResponse.json({ error: String(error) });
+  }
+}
+
+// POST endpoint to make all completed videos public (for testing)
+export async function POST(request: NextRequest) {
+  try {
+    if (!prisma) {
+      return NextResponse.json({ error: 'Prisma not configured' });
+    }
+
+    const { action } = await request.json();
+
+    if (action === 'make-public') {
+      const result = await prisma.generatedVideo.updateMany({
+        where: {
+          status: 'completed',
+          videoUrl: { not: null },
+        },
+        data: {
+          isPublic: true,
+        },
+      });
+
+      return NextResponse.json({
+        success: true,
+        updated: result.count,
+      });
+    }
+
+    return NextResponse.json({ error: 'Unknown action' }, { status: 400 });
+  } catch (error) {
+    return NextResponse.json({ error: String(error) }, { status: 500 });
   }
 }
