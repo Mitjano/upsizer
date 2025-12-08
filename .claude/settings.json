@@ -4,7 +4,12 @@
       "Bash(*)",
       "Edit(*)",
       "Write(*)",
-      "Read(*)"
+      "Read(*)",
+      "WebFetch(*)",
+      "WebSearch(*)",
+      "Grep(*)",
+      "Glob(*)",
+      "Task(*)"
     ]
   }
 }
