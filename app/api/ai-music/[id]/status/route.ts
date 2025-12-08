@@ -71,7 +71,7 @@ export async function GET(
       return NextResponse.json({
         id: music.id,
         status: music.status,
-        progress: music.progress,
+        progress: calculateEstimatedProgress(music.createdAt),
       });
     }
 
@@ -82,7 +82,7 @@ export async function GET(
       return NextResponse.json({
         id: music.id,
         status: 'processing',
-        progress: music.progress,
+        progress: calculateEstimatedProgress(music.createdAt),
         estimatedTimeRemaining: calculateRemainingTime(music.createdAt),
       });
     }
@@ -156,7 +156,16 @@ export async function GET(
 
 function calculateRemainingTime(createdAt: Date): number {
   const elapsed = (Date.now() - createdAt.getTime()) / 1000;
-  // Assume max 5 minutes, return remaining
-  const maxTime = 300;
+  // Assume max 3 minutes for MiniMax (~60s generation)
+  const maxTime = 180;
   return Math.max(0, maxTime - elapsed);
+}
+
+function calculateEstimatedProgress(createdAt: Date): number {
+  const elapsed = (Date.now() - createdAt.getTime()) / 1000;
+  // MiniMax typically takes ~60-120 seconds
+  // Use 90 seconds as estimated time, cap at 95% until actually complete
+  const estimatedTime = 90;
+  const progress = Math.min(95, Math.round((elapsed / estimatedTime) * 100));
+  return progress;
 }
