@@ -1,0 +1,221 @@
+{
+  "pageTitle": "Générateur de Musique AI - Créez des chansons avec l'AI",
+  "pageDescription": "Générez de la musique professionnelle avec des voix grâce à l'AI. Créez des chansons jusqu'à 5 minutes avec des paroles, choisissez parmi différents styles et ambiances. Mastering professionnel disponible.",
+  "heading": "Générateur de Musique AI",
+  "subheading": "Créez des chansons professionnelles avec des voix et instruments générés par AI",
+
+  "tabs": {
+    "generate": "Générer",
+    "library": "Ma Bibliothèque",
+    "explore": "Explorer"
+  },
+
+  "generator": {
+    "title": "Créer une nouvelle chanson",
+    "promptLabel": "Décrivez votre chanson",
+    "promptPlaceholder": "Une chanson pop accrocheuse sur l'amour d'été avec une mélodie entraînante et des voix féminines...",
+    "lyricsLabel": "Paroles (optionnel)",
+    "lyricsPlaceholder": "[Couplet 1]\nÉcrivez vos paroles ici...\n\n[Refrain]\nLe refrain va ici...\n\n[Couplet 2]\nDeuxième couplet...",
+    "lyricsHint": "Utilisez les balises [Couplet], [Refrain], [Pont], [Outro] pour structurer votre chanson",
+    "styleLabel": "Style musical",
+    "moodLabel": "Ambiance",
+    "durationLabel": "Durée",
+    "instrumentalLabel": "Instrumental uniquement",
+    "instrumentalHint": "Générer sans voix",
+    "advancedOptions": "Options avancées",
+    "bpmLabel": "BPM (Tempo)",
+    "keyLabel": "Tonalité",
+    "genreLabel": "Genre",
+    "titleLabel": "Titre de la chanson",
+    "titlePlaceholder": "Ma super chanson",
+    "folderLabel": "Enregistrer dans le dossier"
+  },
+
+  "styles": {
+    "pop": "Pop",
+    "rock": "Rock",
+    "hiphop": "Hip-Hop",
+    "rnb": "R&B",
+    "jazz": "Jazz",
+    "electronic": "Électronique",
+    "classical": "Classique",
+    "country": "Country",
+    "folk": "Folk",
+    "metal": "Métal",
+    "reggae": "Reggae",
+    "blues": "Blues",
+    "latin": "Latin",
+    "indie": "Indie"
+  },
+
+  "moods": {
+    "happy": "Joyeux",
+    "sad": "Triste",
+    "energetic": "Énergique",
+    "calm": "Calme",
+    "romantic": "Romantique",
+    "melancholic": "Mélancolique",
+    "uplifting": "Inspirant",
+    "dark": "Sombre",
+    "dreamy": "Rêveur",
+    "aggressive": "Agressif",
+    "nostalgic": "Nostalgique",
+    "epic": "Épique"
+  },
+
+  "durations": {
+    "60": "1 minute",
+    "120": "2 minutes",
+    "180": "3 minutes",
+    "240": "4 minutes",
+    "300": "5 minutes"
+  },
+
+  "keys": {
+    "C": "Do Majeur",
+    "Cm": "Do Mineur",
+    "D": "Ré Majeur",
+    "Dm": "Ré Mineur",
+    "E": "Mi Majeur",
+    "Em": "Mi Mineur",
+    "F": "Fa Majeur",
+    "Fm": "Fa Mineur",
+    "G": "Sol Majeur",
+    "Gm": "Sol Mineur",
+    "A": "La Majeur",
+    "Am": "La Mineur",
+    "B": "Si Majeur",
+    "Bm": "Si Mineur"
+  },
+
+  "cost": "Coût",
+  "credits": "crédits",
+  "yourCredits": "Vos crédits",
+  "generate": "Générer la chanson",
+  "generating": "Génération...",
+  "generationInProgress": "Création de votre chanson",
+  "pleaseWait": "Cela peut prendre quelques minutes. L'AI compose votre musique.",
+  "songReady": "Votre chanson est prête !",
+
+  "player": {
+    "play": "Lecture",
+    "pause": "Pause",
+    "download": "Télécharger",
+    "downloadOriginal": "Télécharger l'original",
+    "downloadMastered": "Télécharger masterisé",
+    "share": "Partager",
+    "addToPlaylist": "Ajouter à la playlist"
+  },
+
+  "mastering": {
+    "title": "Mastering Professionnel",
+    "description": "Améliorez votre piste avec un mastering professionnel alimenté par AI",
+    "intensity": "Intensité du mastering",
+    "lo": "Léger",
+    "loDesc": "Amélioration subtile, préserve la dynamique originale",
+    "med": "Moyen",
+    "medDesc": "Mastering équilibré pour la plupart des genres",
+    "hi": "Intense",
+    "hiDesc": "Volume et punch maximum, idéal pour EDM/Rock",
+    "master": "Masteriser la piste",
+    "mastering": "Mastering...",
+    "masteringInProgress": "Traitement audio...",
+    "completed": "Mastering terminé !",
+    "preview": "Aperçu masterisé",
+    "compare": "Comparer original vs masterisé"
+  },
+
+  "library": {
+    "title": "Ma Bibliothèque Musicale",
+    "allSongs": "Toutes les chansons",
+    "folders": "Dossiers",
+    "newFolder": "Nouveau dossier",
+    "createFolder": "Créer un dossier",
+    "folderName": "Nom du dossier",
+    "folderColor": "Couleur",
+    "editFolder": "Modifier le dossier",
+    "deleteFolder": "Supprimer le dossier",
+    "deleteFolderConfirm": "Êtes-vous sûr ? Les chansons de ce dossier seront déplacées vers \"Toutes les chansons\".",
+    "emptyLibrary": "Pas encore de chansons",
+    "emptyLibraryHint": "Générez votre première chanson pour la voir ici",
+    "emptyFolder": "Ce dossier est vide",
+    "moveToFolder": "Déplacer vers le dossier",
+    "removeFromFolder": "Retirer du dossier",
+    "sort": "Trier par",
+    "sortDate": "Date de création",
+    "sortName": "Nom",
+    "sortDuration": "Durée",
+    "filter": "Filtrer",
+    "filterAll": "Toutes",
+    "filterMastered": "Masterisées",
+    "filterNotMastered": "Non masterisées"
+  },
+
+  "explore": {
+    "title": "Explorez les chansons de la communauté",
+    "trending": "Tendances",
+    "newest": "Plus récentes",
+    "mostLiked": "Plus aimées"
+  },
+
+  "actions": {
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer cette chanson ?",
+    "rename": "Renommer",
+    "duplicate": "Dupliquer",
+    "makePublic": "Rendre public",
+    "makePrivate": "Rendre privé"
+  },
+
+  "stats": {
+    "plays": "lectures",
+    "likes": "j'aime",
+    "duration": "durée"
+  },
+
+  "status": {
+    "pending": "En file d'attente...",
+    "processing": "Génération...",
+    "completed": "Prêt",
+    "failed": "Échec",
+    "masteringPending": "Mastering en file d'attente...",
+    "masteringProcessing": "Mastering en cours..."
+  },
+
+  "errors": {
+    "promptRequired": "Veuillez décrire quel type de chanson vous souhaitez créer",
+    "promptTooShort": "Veuillez fournir une description plus détaillée",
+    "insufficientCredits": "Crédits insuffisants. Veuillez acheter plus de crédits.",
+    "generationFailed": "La génération de la chanson a échoué. Veuillez réessayer.",
+    "masteringFailed": "Le mastering a échoué. Veuillez réessayer.",
+    "timeout": "Délai de génération dépassé. Veuillez réessayer.",
+    "invalidLyrics": "Veuillez vérifier le format des paroles",
+    "folderExists": "Un dossier avec ce nom existe déjà",
+    "songNotFound": "Chanson non trouvée"
+  },
+
+  "features": {
+    "vocals": {
+      "title": "Voix AI",
+      "description": "Générez des voix réalistes avec des paroles dans n'importe quel style. Voix masculines, féminines ou personnalisées."
+    },
+    "duration": {
+      "title": "Jusqu'à 5 minutes",
+      "description": "Créez des chansons complètes jusqu'à 5 minutes. Parfait pour des pistes complètes avec couplets et refrains."
+    },
+    "mastering": {
+      "title": "Mastering Professionnel",
+      "description": "Améliorez vos pistes avec un mastering alimenté par AI. Trois niveaux d'intensité pour un son parfait."
+    },
+    "styles": {
+      "title": "Multiples styles",
+      "description": "Choisissez parmi pop, rock, électronique, jazz, classique et bien d'autres styles musicaux."
+    }
+  },
+
+  "enhancePrompt": "Améliorer le prompt",
+  "enhancing": "Amélioration...",
+  "estimatedTime": "Temps est.",
+  "minutes": "min"
+}

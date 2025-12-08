@@ -1,0 +1,221 @@
+{
+  "pageTitle": "Generador de Música AI - Crea canciones con AI",
+  "pageDescription": "Genera música profesional con voces usando AI. Crea canciones de hasta 5 minutos con letras, elige entre varios estilos y estados de ánimo. Masterización profesional disponible.",
+  "heading": "Generador de Música AI",
+  "subheading": "Crea canciones profesionales con voces e instrumentos generados por AI",
+
+  "tabs": {
+    "generate": "Generar",
+    "library": "Mi Biblioteca",
+    "explore": "Explorar"
+  },
+
+  "generator": {
+    "title": "Crear nueva canción",
+    "promptLabel": "Describe tu canción",
+    "promptPlaceholder": "Una canción pop pegadiza sobre el amor de verano con melodía alegre y voces femeninas...",
+    "lyricsLabel": "Letra (opcional)",
+    "lyricsPlaceholder": "[Verso 1]\nEscribe tu letra aquí...\n\n[Coro]\nEl coro va aquí...\n\n[Verso 2]\nSegundo verso...",
+    "lyricsHint": "Usa etiquetas [Verso], [Coro], [Puente], [Outro] para estructurar tu canción",
+    "styleLabel": "Estilo musical",
+    "moodLabel": "Estado de ánimo",
+    "durationLabel": "Duración",
+    "instrumentalLabel": "Solo instrumental",
+    "instrumentalHint": "Generar sin voces",
+    "advancedOptions": "Opciones avanzadas",
+    "bpmLabel": "BPM (Tempo)",
+    "keyLabel": "Tonalidad",
+    "genreLabel": "Género",
+    "titleLabel": "Título de la canción",
+    "titlePlaceholder": "Mi canción genial",
+    "folderLabel": "Guardar en carpeta"
+  },
+
+  "styles": {
+    "pop": "Pop",
+    "rock": "Rock",
+    "hiphop": "Hip-Hop",
+    "rnb": "R&B",
+    "jazz": "Jazz",
+    "electronic": "Electrónica",
+    "classical": "Clásica",
+    "country": "Country",
+    "folk": "Folk",
+    "metal": "Metal",
+    "reggae": "Reggae",
+    "blues": "Blues",
+    "latin": "Latin",
+    "indie": "Indie"
+  },
+
+  "moods": {
+    "happy": "Feliz",
+    "sad": "Triste",
+    "energetic": "Energético",
+    "calm": "Tranquilo",
+    "romantic": "Romántico",
+    "melancholic": "Melancólico",
+    "uplifting": "Inspirador",
+    "dark": "Oscuro",
+    "dreamy": "Soñador",
+    "aggressive": "Agresivo",
+    "nostalgic": "Nostálgico",
+    "epic": "Épico"
+  },
+
+  "durations": {
+    "60": "1 minuto",
+    "120": "2 minutos",
+    "180": "3 minutos",
+    "240": "4 minutos",
+    "300": "5 minutos"
+  },
+
+  "keys": {
+    "C": "Do Mayor",
+    "Cm": "Do Menor",
+    "D": "Re Mayor",
+    "Dm": "Re Menor",
+    "E": "Mi Mayor",
+    "Em": "Mi Menor",
+    "F": "Fa Mayor",
+    "Fm": "Fa Menor",
+    "G": "Sol Mayor",
+    "Gm": "Sol Menor",
+    "A": "La Mayor",
+    "Am": "La Menor",
+    "B": "Si Mayor",
+    "Bm": "Si Menor"
+  },
+
+  "cost": "Coste",
+  "credits": "créditos",
+  "yourCredits": "Tus créditos",
+  "generate": "Generar canción",
+  "generating": "Generando...",
+  "generationInProgress": "Creando tu canción",
+  "pleaseWait": "Esto puede tardar unos minutos. La AI está componiendo tu música.",
+  "songReady": "¡Tu canción está lista!",
+
+  "player": {
+    "play": "Reproducir",
+    "pause": "Pausar",
+    "download": "Descargar",
+    "downloadOriginal": "Descargar original",
+    "downloadMastered": "Descargar masterizado",
+    "share": "Compartir",
+    "addToPlaylist": "Añadir a playlist"
+  },
+
+  "mastering": {
+    "title": "Masterización Profesional",
+    "description": "Mejora tu pista con masterización profesional impulsada por AI",
+    "intensity": "Intensidad de masterización",
+    "lo": "Ligero",
+    "loDesc": "Mejora sutil, preserva la dinámica original",
+    "med": "Medio",
+    "medDesc": "Masterización equilibrada para la mayoría de géneros",
+    "hi": "Intenso",
+    "hiDesc": "Máxima potencia y volumen, ideal para EDM/Rock",
+    "master": "Masterizar pista",
+    "mastering": "Masterizando...",
+    "masteringInProgress": "Procesando audio...",
+    "completed": "¡Masterización completada!",
+    "preview": "Vista previa masterizado",
+    "compare": "Comparar original vs masterizado"
+  },
+
+  "library": {
+    "title": "Mi Biblioteca Musical",
+    "allSongs": "Todas las canciones",
+    "folders": "Carpetas",
+    "newFolder": "Nueva carpeta",
+    "createFolder": "Crear carpeta",
+    "folderName": "Nombre de carpeta",
+    "folderColor": "Color",
+    "editFolder": "Editar carpeta",
+    "deleteFolder": "Eliminar carpeta",
+    "deleteFolderConfirm": "¿Estás seguro? Las canciones de esta carpeta se moverán a \"Todas las canciones\".",
+    "emptyLibrary": "Sin canciones aún",
+    "emptyLibraryHint": "Genera tu primera canción para verla aquí",
+    "emptyFolder": "Esta carpeta está vacía",
+    "moveToFolder": "Mover a carpeta",
+    "removeFromFolder": "Quitar de carpeta",
+    "sort": "Ordenar por",
+    "sortDate": "Fecha de creación",
+    "sortName": "Nombre",
+    "sortDuration": "Duración",
+    "filter": "Filtrar",
+    "filterAll": "Todas",
+    "filterMastered": "Masterizadas",
+    "filterNotMastered": "Sin masterizar"
+  },
+
+  "explore": {
+    "title": "Explora canciones de la comunidad",
+    "trending": "Tendencias",
+    "newest": "Más recientes",
+    "mostLiked": "Más gustadas"
+  },
+
+  "actions": {
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "confirmDelete": "¿Estás seguro de que quieres eliminar esta canción?",
+    "rename": "Renombrar",
+    "duplicate": "Duplicar",
+    "makePublic": "Hacer público",
+    "makePrivate": "Hacer privado"
+  },
+
+  "stats": {
+    "plays": "reproducciones",
+    "likes": "me gusta",
+    "duration": "duración"
+  },
+
+  "status": {
+    "pending": "En cola...",
+    "processing": "Generando...",
+    "completed": "Listo",
+    "failed": "Error",
+    "masteringPending": "Masterización en cola...",
+    "masteringProcessing": "Masterización en progreso..."
+  },
+
+  "errors": {
+    "promptRequired": "Por favor describe qué tipo de canción quieres crear",
+    "promptTooShort": "Por favor proporciona una descripción más detallada",
+    "insufficientCredits": "Créditos insuficientes. Por favor compra más créditos.",
+    "generationFailed": "La generación de la canción falló. Por favor intenta de nuevo.",
+    "masteringFailed": "La masterización falló. Por favor intenta de nuevo.",
+    "timeout": "Tiempo de generación agotado. Por favor intenta de nuevo.",
+    "invalidLyrics": "Por favor verifica el formato de la letra",
+    "folderExists": "Ya existe una carpeta con este nombre",
+    "songNotFound": "Canción no encontrada"
+  },
+
+  "features": {
+    "vocals": {
+      "title": "Voces AI",
+      "description": "Genera voces realistas con letras en cualquier estilo. Voces masculinas, femeninas o personalizadas."
+    },
+    "duration": {
+      "title": "Hasta 5 minutos",
+      "description": "Crea canciones completas de hasta 5 minutos. Perfecto para pistas completas con versos y coros."
+    },
+    "mastering": {
+      "title": "Masterización Profesional",
+      "description": "Mejora tus pistas con masterización impulsada por AI. Tres niveles de intensidad para un sonido perfecto."
+    },
+    "styles": {
+      "title": "Múltiples estilos",
+      "description": "Elige entre pop, rock, electrónica, jazz, clásica y muchos más estilos musicales."
+    }
+  },
+
+  "enhancePrompt": "Mejorar prompt",
+  "enhancing": "Mejorando...",
+  "estimatedTime": "Tiempo est.",
+  "minutes": "min"
+}

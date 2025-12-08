@@ -1981,3 +1981,145 @@ model GeneratedVideo {
   @@index([isPublic, createdAt])
   @@index([jobId])
 }
+
+// ===================
+// AI Music Generation
+// ===================
+
+enum MusicGenerationStatus {
+  pending
+  processing
+  completed
+  failed
+  cancelled
+}
+
+enum MasteringStatus {
+  none
+  pending
+  processing
+  completed
+  failed
+}
+
+model GeneratedMusic {
+  id                String                @id @default(cuid())
+
+  // Ownership
+  userId            String
+  userEmail         String
+  userName          String?
+
+  // Input parameters
+  prompt            String                @db.Text
+  enhancedPrompt    String?               @db.Text
+  lyrics            String?               @db.Text  // Full lyrics with [Verse], [Chorus], etc.
+  style             String?               // pop, rock, jazz, electronic, classical, etc.
+  mood              String?               // happy, sad, energetic, calm, etc.
+  referenceTrackUrl String?               // Optional reference track
+
+  // Model & Provider
+  model             String                // minimax-music-2.0
+  provider          String                // fal
+  modelVersion      String?
+
+  // Music settings
+  duration          Int                   // 60-300 seconds (1-5 min)
+  bpm               Int?                  // beats per minute (60-200)
+  key               String?               // C, D, E, F, G, A, B (major/minor)
+  tempo             String?               // slow, medium, fast
+  genre             String?               // More specific genre
+  instrumental      Boolean               @default(false) // true = no vocals
+
+  // Generation status
+  status            MusicGenerationStatus @default(pending)
+  progress          Int                   @default(0) // 0-100
+  jobId             String?               // Provider job ID
+  webhookUrl        String?
+
+  // Output - Original
+  audioUrl          String?               // Provider CDN URL
+  localPath         String?               // Local file path
+  waveformUrl       String?               // Waveform image
+  coverImageUrl     String?               // AI-generated cover art
+
+  // Mastering
+  masteringStatus   MasteringStatus       @default(none)
+  masteringIntensity String?              // lo, med, hi
+  masteredUrl       String?               // Mastered audio URL
+  masteredLocalPath String?               // Mastered audio local path
+  masteringProvider String?               // landr, ai-mastering
+  masteringJobId    String?               // Mastering job ID
+  masteringCost     Float?                // USD cost for mastering
+
+  // Metadata
+  fileSize          Int?                  // bytes
+  actualDuration    Float?                // actual duration in seconds
+  processingTime    Int?                  // processing time in ms
+  sampleRate        Int?                  // 44100, 48000 Hz
+  bitDepth          Int?                  // 16, 24, 32 bit
+  format            String?               // mp3, wav, flac
+  seed              Int?
+
+  // Billing
+  creditsUsed       Int                   @default(0)
+  creditsReserved   Int                   @default(0)
+  costUSD           Float?                // actual API cost
+
+  // Organization
+  folderId          String?               // Optional folder organization
+  title             String?               // User-defined title
+  description       String?               // User description
+
+  // Social/Gallery
+  isPublic          Boolean               @default(true)
+  likes             Int                   @default(0)
+  views             Int                   @default(0)
+  plays             Int                   @default(0)
+  likedBy           String[]              @default([])
+
+  // Error handling
+  errorMessage      String?
+  errorCode         String?
+  retryCount        Int                   @default(0)
+
+  // Timestamps
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
+  completedAt       DateTime?
+  masteredAt        DateTime?
+
+  // Relations
+  folder            MusicFolder?          @relation(fields: [folderId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([status])
+  @@index([model])
+  @@index([provider])
+  @@index([isPublic, createdAt])
+  @@index([folderId])
+  @@index([jobId])
+}
+
+model MusicFolder {
+  id          String    @id @default(cuid())
+  userId      String
+  name        String
+  description String?
+  color       String?   // hex color for UI
+  coverImage  String?   // folder cover image
+  isDefault   Boolean   @default(false)
+
+  // Metadata
+  trackCount  Int       @default(0)
+  totalDuration Int     @default(0) // total seconds
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  tracks      GeneratedMusic[]
+
+  @@unique([userId, name])
+  @@index([userId])
+}

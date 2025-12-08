@@ -1,0 +1,221 @@
+{
+  "pageTitle": "AI Music Generator - Create Songs with AI",
+  "pageDescription": "Generate professional quality music with vocals using AI. Create songs up to 5 minutes with lyrics, choose from various styles and moods. Professional mastering available.",
+  "heading": "AI Music Generator",
+  "subheading": "Create professional songs with AI-generated vocals and instrumentals",
+
+  "tabs": {
+    "generate": "Generate",
+    "library": "My Library",
+    "explore": "Explore"
+  },
+
+  "generator": {
+    "title": "Create New Song",
+    "promptLabel": "Describe your song",
+    "promptPlaceholder": "A catchy pop song about summer love with upbeat melody and female vocals...",
+    "lyricsLabel": "Lyrics (optional)",
+    "lyricsPlaceholder": "[Verse 1]\nWrite your lyrics here...\n\n[Chorus]\nThe chorus goes here...\n\n[Verse 2]\nSecond verse...",
+    "lyricsHint": "Use [Verse], [Chorus], [Bridge], [Outro] tags to structure your song",
+    "styleLabel": "Music Style",
+    "moodLabel": "Mood",
+    "durationLabel": "Duration",
+    "instrumentalLabel": "Instrumental only",
+    "instrumentalHint": "Generate without vocals",
+    "advancedOptions": "Advanced Options",
+    "bpmLabel": "BPM (Tempo)",
+    "keyLabel": "Musical Key",
+    "genreLabel": "Genre",
+    "titleLabel": "Song Title",
+    "titlePlaceholder": "My awesome song",
+    "folderLabel": "Save to Folder"
+  },
+
+  "styles": {
+    "pop": "Pop",
+    "rock": "Rock",
+    "hiphop": "Hip-Hop",
+    "rnb": "R&B",
+    "jazz": "Jazz",
+    "electronic": "Electronic",
+    "classical": "Classical",
+    "country": "Country",
+    "folk": "Folk",
+    "metal": "Metal",
+    "reggae": "Reggae",
+    "blues": "Blues",
+    "latin": "Latin",
+    "indie": "Indie"
+  },
+
+  "moods": {
+    "happy": "Happy",
+    "sad": "Sad",
+    "energetic": "Energetic",
+    "calm": "Calm",
+    "romantic": "Romantic",
+    "melancholic": "Melancholic",
+    "uplifting": "Uplifting",
+    "dark": "Dark",
+    "dreamy": "Dreamy",
+    "aggressive": "Aggressive",
+    "nostalgic": "Nostalgic",
+    "epic": "Epic"
+  },
+
+  "durations": {
+    "60": "1 minute",
+    "120": "2 minutes",
+    "180": "3 minutes",
+    "240": "4 minutes",
+    "300": "5 minutes"
+  },
+
+  "keys": {
+    "C": "C Major",
+    "Cm": "C Minor",
+    "D": "D Major",
+    "Dm": "D Minor",
+    "E": "E Major",
+    "Em": "E Minor",
+    "F": "F Major",
+    "Fm": "F Minor",
+    "G": "G Major",
+    "Gm": "G Minor",
+    "A": "A Major",
+    "Am": "A Minor",
+    "B": "B Major",
+    "Bm": "B Minor"
+  },
+
+  "cost": "Cost",
+  "credits": "credits",
+  "yourCredits": "Your credits",
+  "generate": "Generate Song",
+  "generating": "Generating...",
+  "generationInProgress": "Creating Your Song",
+  "pleaseWait": "This may take a few minutes. AI is composing your music.",
+  "songReady": "Your Song is Ready!",
+
+  "player": {
+    "play": "Play",
+    "pause": "Pause",
+    "download": "Download",
+    "downloadOriginal": "Download Original",
+    "downloadMastered": "Download Mastered",
+    "share": "Share",
+    "addToPlaylist": "Add to Playlist"
+  },
+
+  "mastering": {
+    "title": "Professional Mastering",
+    "description": "Enhance your track with AI-powered professional mastering",
+    "intensity": "Mastering Intensity",
+    "lo": "Light",
+    "loDesc": "Subtle enhancement, preserves original dynamics",
+    "med": "Medium",
+    "medDesc": "Balanced mastering for most genres",
+    "hi": "Heavy",
+    "hiDesc": "Maximum loudness and punch, great for EDM/Rock",
+    "master": "Master Track",
+    "mastering": "Mastering...",
+    "masteringInProgress": "Processing audio...",
+    "completed": "Mastering Complete!",
+    "preview": "Preview Mastered",
+    "compare": "Compare Original vs Mastered"
+  },
+
+  "library": {
+    "title": "My Music Library",
+    "allSongs": "All Songs",
+    "folders": "Folders",
+    "newFolder": "New Folder",
+    "createFolder": "Create Folder",
+    "folderName": "Folder name",
+    "folderColor": "Color",
+    "editFolder": "Edit Folder",
+    "deleteFolder": "Delete Folder",
+    "deleteFolderConfirm": "Are you sure? Songs in this folder will be moved to \"All Songs\".",
+    "emptyLibrary": "No songs yet",
+    "emptyLibraryHint": "Generate your first song to see it here",
+    "emptyFolder": "This folder is empty",
+    "moveToFolder": "Move to Folder",
+    "removeFromFolder": "Remove from Folder",
+    "sort": "Sort by",
+    "sortDate": "Date created",
+    "sortName": "Name",
+    "sortDuration": "Duration",
+    "filter": "Filter",
+    "filterAll": "All",
+    "filterMastered": "Mastered",
+    "filterNotMastered": "Not Mastered"
+  },
+
+  "explore": {
+    "title": "Explore Community Songs",
+    "trending": "Trending",
+    "newest": "Newest",
+    "mostLiked": "Most Liked"
+  },
+
+  "actions": {
+    "edit": "Edit",
+    "delete": "Delete",
+    "confirmDelete": "Are you sure you want to delete this song?",
+    "rename": "Rename",
+    "duplicate": "Duplicate",
+    "makePublic": "Make Public",
+    "makePrivate": "Make Private"
+  },
+
+  "stats": {
+    "plays": "plays",
+    "likes": "likes",
+    "duration": "duration"
+  },
+
+  "status": {
+    "pending": "In queue...",
+    "processing": "Generating...",
+    "completed": "Ready",
+    "failed": "Failed",
+    "masteringPending": "Mastering queued...",
+    "masteringProcessing": "Mastering in progress..."
+  },
+
+  "errors": {
+    "promptRequired": "Please describe what kind of song you want to create",
+    "promptTooShort": "Please provide a more detailed description",
+    "insufficientCredits": "Not enough credits. Please purchase more credits.",
+    "generationFailed": "Song generation failed. Please try again.",
+    "masteringFailed": "Mastering failed. Please try again.",
+    "timeout": "Generation timed out. Please try again.",
+    "invalidLyrics": "Please check your lyrics format",
+    "folderExists": "A folder with this name already exists",
+    "songNotFound": "Song not found"
+  },
+
+  "features": {
+    "vocals": {
+      "title": "AI Vocals",
+      "description": "Generate realistic vocals with lyrics in any style. Male, female, or custom voices."
+    },
+    "duration": {
+      "title": "Up to 5 Minutes",
+      "description": "Create full-length songs up to 5 minutes. Perfect for complete tracks with verses and choruses."
+    },
+    "mastering": {
+      "title": "Professional Mastering",
+      "description": "Enhance your tracks with AI-powered mastering. Three intensity levels for perfect sound."
+    },
+    "styles": {
+      "title": "Multiple Styles",
+      "description": "Choose from pop, rock, electronic, jazz, classical and many more musical styles."
+    }
+  },
+
+  "enhancePrompt": "Enhance prompt",
+  "enhancing": "Enhancing...",
+  "estimatedTime": "Est. time",
+  "minutes": "min"
+}

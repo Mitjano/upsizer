@@ -288,6 +288,15 @@ export default function Header() {
             <span className="text-sm" aria-hidden="true">🎬</span>
             {t('nav.aiVideo')}
           </Link>
+          <Link
+            href="/ai-music"
+            className={`flex items-center gap-1 transition font-medium ${
+              pathname?.includes('/ai-music') ? 'text-pink-400' : 'text-white hover:text-pink-400'
+            }`}
+          >
+            <span className="text-sm" aria-hidden="true">🎵</span>
+            {t('nav.aiMusic')}
+          </Link>
           <Link href="/use-cases" className="text-white hover:text-green-400 transition">
             {t('nav.useCases')}
           </Link>
@@ -461,6 +470,13 @@ export default function Header() {
               onClick={() => setMobileMenuOpen(false)}
             >
               <span aria-hidden="true">🎬</span> {t('nav.aiVideo')}
+            </Link>
+            <Link
+              href="/ai-music"
+              className="block py-2 text-pink-400 hover:text-pink-300 transition font-medium"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <span aria-hidden="true">🎵</span> {t('nav.aiMusic')}
             </Link>
             <Link
               href="/use-cases"
