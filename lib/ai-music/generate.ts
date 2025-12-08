@@ -4,32 +4,18 @@
  * Obsługuje generowanie muzyki przez Fal.ai (MiniMax Music 2.0)
  */
 
-import {
-  MusicModelId,
-  MusicProvider,
-  MusicStyle,
-  MusicMood,
-  MusicDuration,
-  getModelConfig,
-} from './models';
-
 export interface MusicGenerationInput {
-  prompt: string;
-  lyrics?: string;
-  style?: MusicStyle;
-  mood?: MusicMood;
-  duration: MusicDuration;
+  prompt: string;        // Tekst piosenki / lyrics (dla custom) lub opis (dla simple)
+  stylePrompt: string;   // Style of music description
   instrumental?: boolean;
-  bpm?: number;
-  key?: string;
-  model: MusicModelId;
-  referenceTrackUrl?: string;
+  title?: string;
+  mode?: 'simple' | 'custom';
 }
 
 export interface MusicGenerationResult {
   success: boolean;
   jobId?: string;
-  provider: MusicProvider;
+  provider: 'fal';
   status: 'pending' | 'processing' | 'completed' | 'failed';
   audioUrl?: string;
   error?: string;
@@ -37,44 +23,9 @@ export interface MusicGenerationResult {
 }
 
 /**
- * Build the prompt for MiniMax Music based on input parameters
- */
-function buildMusicPrompt(input: MusicGenerationInput): string {
-  const parts: string[] = [];
-
-  // Add style and mood
-  if (input.style) {
-    parts.push(input.style);
-  }
-  if (input.mood) {
-    parts.push(input.mood);
-  }
-
-  // Add user prompt
-  parts.push(input.prompt);
-
-  // Add BPM if specified
-  if (input.bpm) {
-    parts.push(`${input.bpm} BPM`);
-  }
-
-  // Add key if specified
-  if (input.key) {
-    parts.push(`in ${input.key}`);
-  }
-
-  // Add instrumental flag
-  if (input.instrumental) {
-    parts.push('instrumental, no vocals');
-  }
-
-  return parts.join(', ');
-}
-
-/**
  * Generate music via Fal.ai (MiniMax Music 2.0)
  */
-async function generateViaFal(
+export async function generateMusic(
   input: MusicGenerationInput
 ): Promise<MusicGenerationResult> {
   const apiKey = process.env.FAL_API_KEY;
@@ -87,35 +38,48 @@ async function generateViaFal(
     };
   }
 
-  const modelConfig = getModelConfig(input.model);
-  if (!modelConfig || modelConfig.provider !== 'fal') {
-    return {
-      success: false,
-      provider: 'fal',
-      status: 'failed',
-      error: 'Invalid model for Fal provider',
-    };
-  }
-
   try {
-    const prompt = buildMusicPrompt(input);
+    // MiniMax Music 2.0 API parameters:
+    // - prompt: Lyrics with structure tags (10-600 chars) - TEKST PIOSENKI
+    // - lyrics_prompt: Style/mood description (10-3000 chars) - OPIS STYLU MUZYKI
+
+    // Prepare prompt (lyrics/song content)
+    let promptContent = input.prompt;
+
+    // If instrumental, add marker
+    if (input.instrumental) {
+      promptContent = `[Instrumental]\n${promptContent}`;
+    }
+
+    // Ensure prompt is within limits
+    if (promptContent.length > 600) {
+      promptContent = promptContent.slice(0, 600);
+    }
+    if (promptContent.length < 10) {
+      promptContent = promptContent.padEnd(10, '.');
+    }
+
+    // Prepare style prompt
+    let styleContent = input.stylePrompt;
+    if (input.instrumental) {
+      styleContent = `${styleContent}, instrumental, no vocals`;
+    }
+
+    // Ensure style is within limits
+    if (styleContent.length > 3000) {
+      styleContent = styleContent.slice(0, 3000);
+    }
+    if (styleContent.length < 10) {
+      styleContent = styleContent.padEnd(10, '.');
+    }
 
     // MiniMax Music 2.0 API request body
-    const requestBody: Record<string, unknown> = {
-      prompt,
-      // Duration in seconds
-      duration: input.duration,
+    const requestBody = {
+      prompt: promptContent,
+      lyrics_prompt: styleContent,
     };
 
-    // Add lyrics if provided (with song structure tags)
-    if (input.lyrics && !input.instrumental) {
-      requestBody.lyrics = input.lyrics;
-    }
-
-    // Add reference track if provided
-    if (input.referenceTrackUrl) {
-      requestBody.reference_audio_url = input.referenceTrackUrl;
-    }
+    console.log('MiniMax Music request:', JSON.stringify(requestBody, null, 2));
 
     const endpoint = 'https://queue.fal.run/fal-ai/minimax-music';
 
@@ -129,18 +93,27 @@ async function generateViaFal(
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.detail || 'Fal.ai request failed');
+      const errorText = await response.text();
+      console.error('MiniMax Music error response:', errorText);
+      let errorMessage = 'Fal.ai request failed';
+      try {
+        const errorData = JSON.parse(errorText);
+        errorMessage = errorData.detail || errorData.message || errorMessage;
+      } catch {
+        errorMessage = errorText || errorMessage;
+      }
+      throw new Error(errorMessage);
     }
 
     const data = await response.json();
+    console.log('MiniMax Music response:', JSON.stringify(data, null, 2));
 
     return {
       success: true,
       jobId: data.request_id,
       provider: 'fal',
       status: 'processing',
-      estimatedTime: modelConfig.estimatedProcessingTime.max,
+      estimatedTime: 120, // ~2 minutes
     };
   } catch (error) {
     console.error('Fal.ai music generation error:', error);
@@ -154,75 +127,11 @@ async function generateViaFal(
 }
 
 /**
- * Main music generation function
- */
-export async function generateMusic(
-  input: MusicGenerationInput
-): Promise<MusicGenerationResult> {
-  const modelConfig = getModelConfig(input.model);
-
-  if (!modelConfig) {
-    return {
-      success: false,
-      provider: 'fal',
-      status: 'failed',
-      error: `Unknown model: ${input.model}`,
-    };
-  }
-
-  if (!modelConfig.isActive) {
-    return {
-      success: false,
-      provider: modelConfig.provider,
-      status: 'failed',
-      error: `Model ${input.model} is not currently active`,
-    };
-  }
-
-  // Validate duration
-  if (!modelConfig.durations.includes(input.duration)) {
-    return {
-      success: false,
-      provider: modelConfig.provider,
-      status: 'failed',
-      error: `Duration ${input.duration}s not supported for ${input.model}`,
-    };
-  }
-
-  // Select provider
-  switch (modelConfig.provider) {
-    case 'fal':
-      return generateViaFal(input);
-    default:
-      return {
-        success: false,
-        provider: 'fal',
-        status: 'failed',
-        error: `Unknown provider: ${modelConfig.provider}`,
-      };
-  }
-}
-
-/**
  * Check music generation status
  */
 export async function checkMusicGenerationStatus(
-  jobId: string,
-  provider: MusicProvider = 'fal'
+  jobId: string
 ): Promise<MusicGenerationResult> {
-  if (provider === 'fal') {
-    return checkFalMusicStatus(jobId);
-  }
-
-  return {
-    success: false,
-    provider,
-    status: 'failed',
-    error: `Unknown provider: ${provider}`,
-  };
-}
-
-async function checkFalMusicStatus(jobId: string): Promise<MusicGenerationResult> {
   const apiKey = process.env.FAL_API_KEY;
   if (!apiKey) {
     return {
@@ -249,6 +158,7 @@ async function checkFalMusicStatus(jobId: string): Promise<MusicGenerationResult
     }
 
     const data = await response.json();
+    console.log('MiniMax status:', data.status, 'for job:', jobId);
 
     if (data.status === 'COMPLETED') {
       // Fetch the result
@@ -258,13 +168,17 @@ async function checkFalMusicStatus(jobId: string): Promise<MusicGenerationResult
         },
       });
       const result = await resultResponse.json();
+      console.log('MiniMax result:', JSON.stringify(result, null, 2));
+
+      // MiniMax returns audio in different formats depending on version
+      const audioUrl = result.audio?.url || result.audio_url || result.output?.audio_url;
 
       return {
         success: true,
         jobId,
         provider: 'fal',
         status: 'completed',
-        audioUrl: result.audio?.url || result.audio_url,
+        audioUrl,
       };
     }
 
@@ -278,6 +192,7 @@ async function checkFalMusicStatus(jobId: string): Promise<MusicGenerationResult
       };
     }
 
+    // IN_QUEUE or IN_PROGRESS
     return {
       success: true,
       jobId,
@@ -298,22 +213,16 @@ async function checkFalMusicStatus(jobId: string): Promise<MusicGenerationResult
 /**
  * Cancel music generation (if supported)
  */
-export async function cancelMusicGeneration(
-  jobId: string,
-  provider: MusicProvider = 'fal'
-): Promise<boolean> {
+export async function cancelMusicGeneration(jobId: string): Promise<boolean> {
   try {
-    if (provider === 'fal') {
-      const apiKey = process.env.FAL_API_KEY;
-      if (!apiKey) return false;
+    const apiKey = process.env.FAL_API_KEY;
+    if (!apiKey) return false;
 
-      await fetch(`https://queue.fal.run/fal-ai/minimax-music/requests/${jobId}/cancel`, {
-        method: 'PUT',
-        headers: { 'Authorization': `Key ${apiKey}` },
-      });
-      return true;
-    }
-    return false;
+    await fetch(`https://queue.fal.run/fal-ai/minimax-music/requests/${jobId}/cancel`, {
+      method: 'PUT',
+      headers: { 'Authorization': `Key ${apiKey}` },
+    });
+    return true;
   } catch (error) {
     console.error('Cancel music generation error:', error);
     return false;

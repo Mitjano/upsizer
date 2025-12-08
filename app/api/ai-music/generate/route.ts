@@ -4,12 +4,9 @@ import { prisma } from '@/lib/prisma';
 import {
   generateMusic,
   createMusicRecord,
-  calculateMusicCost,
-  type MusicDuration,
-  type MusicStyle,
-  type MusicMood,
-  type MusicModelId,
 } from '@/lib/ai-music';
+
+const CREDIT_COST = 10; // Fixed cost for MiniMax Music (~60s generation)
 
 export async function POST(request: NextRequest) {
   try {
@@ -42,45 +39,45 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
     const {
-      prompt,
-      lyrics,
-      style,
-      mood,
-      duration,
+      prompt,        // For simple mode: description; for custom mode: lyrics
+      stylePrompt,   // Style description (tags, genre, mood)
       instrumental,
-      bpm,
-      key,
       title,
+      mode = 'simple',
       folderId,
-      model = 'minimax-music-2.0',
     } = body;
 
-    // Validate prompt
-    if (!prompt || typeof prompt !== 'string' || prompt.trim().length < 10) {
+    // Validate inputs based on mode
+    if (mode === 'simple') {
+      if (!prompt || typeof prompt !== 'string' || prompt.trim().length < 10) {
+        return NextResponse.json(
+          { error: 'Please provide a detailed description of your song (at least 10 characters)' },
+          { status: 400 }
+        );
+      }
+    } else {
+      // Custom mode - need either lyrics or instrumental with style
+      if (!instrumental && (!prompt || prompt.trim().length < 10)) {
+        return NextResponse.json(
+          { error: 'Please provide lyrics (at least 10 characters) or enable instrumental mode' },
+          { status: 400 }
+        );
+      }
+    }
+
+    if (!stylePrompt || typeof stylePrompt !== 'string' || stylePrompt.trim().length < 5) {
       return NextResponse.json(
-        { error: 'Please provide a detailed description of your song (at least 10 characters)' },
+        { error: 'Please provide a style description (at least 5 characters)' },
         { status: 400 }
       );
     }
-
-    // Validate duration
-    const validDurations: MusicDuration[] = [60, 120, 180, 240, 300];
-    if (!validDurations.includes(duration)) {
-      return NextResponse.json(
-        { error: 'Invalid duration. Allowed: 60, 120, 180, 240, 300 seconds' },
-        { status: 400 }
-      );
-    }
-
-    // Calculate cost
-    const creditCost = calculateMusicCost(model as MusicModelId, duration);
 
     // Check credits
-    if (user.credits < creditCost) {
+    if (user.credits < CREDIT_COST) {
       return NextResponse.json(
         {
           error: 'Insufficient credits',
-          required: creditCost,
+          required: CREDIT_COST,
           available: user.credits,
         },
         { status: 402 }
@@ -90,7 +87,7 @@ export async function POST(request: NextRequest) {
     // Reserve credits
     await prisma.user.update({
       where: { id: user.id },
-      data: { credits: { decrement: creditCost } },
+      data: { credits: { decrement: CREDIT_COST } },
     });
 
     // Create music record
@@ -98,39 +95,33 @@ export async function POST(request: NextRequest) {
       userId: user.id,
       userEmail: user.email,
       userName: user.name || undefined,
-      prompt: prompt.trim(),
-      lyrics: lyrics?.trim() || undefined,
-      style: style as MusicStyle,
-      mood: mood as MusicMood,
-      model: model as MusicModelId,
+      prompt: prompt?.trim() || '[Instrumental]',
+      lyrics: mode === 'custom' && !instrumental ? prompt?.trim() : undefined,
+      style: stylePrompt?.trim() as any,
+      mood: 'energetic' as any,
+      model: 'minimax-music-2.0' as any,
       provider: 'fal',
-      duration: duration as MusicDuration,
+      duration: 60, // MiniMax generates ~60s
       instrumental: instrumental || false,
-      bpm: bpm || undefined,
-      key: key || undefined,
       title: title?.trim() || undefined,
       folderId: folderId || undefined,
-      creditsReserved: creditCost,
+      creditsReserved: CREDIT_COST,
     });
 
-    // Start generation
+    // Start generation with new simplified interface
     const result = await generateMusic({
-      prompt: prompt.trim(),
-      lyrics: lyrics?.trim(),
-      style: style as MusicStyle,
-      mood: mood as MusicMood,
-      duration: duration as MusicDuration,
+      prompt: prompt?.trim() || '',
+      stylePrompt: stylePrompt.trim(),
       instrumental: instrumental || false,
-      bpm: bpm,
-      key: key,
-      model: model as MusicModelId,
+      title: title?.trim(),
+      mode: mode as 'simple' | 'custom',
     });
 
     if (!result.success) {
       // Refund credits on failure
       await prisma.user.update({
         where: { id: user.id },
-        data: { credits: { increment: creditCost } },
+        data: { credits: { increment: CREDIT_COST } },
       });
 
       // Update record status
@@ -163,7 +154,7 @@ export async function POST(request: NextRequest) {
       jobId: result.jobId,
       status: 'processing',
       estimatedTime: result.estimatedTime,
-      creditsUsed: creditCost,
+      creditsUsed: CREDIT_COST,
     });
   } catch (error) {
     console.error('Music generation error:', error);

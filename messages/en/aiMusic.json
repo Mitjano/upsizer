@@ -10,18 +10,35 @@
     "explore": "Explore"
   },
 
+  "modes": {
+    "simple": "Simple",
+    "custom": "Custom"
+  },
+
   "generator": {
     "title": "Create New Song",
+    "describeLabel": "Describe your song",
+    "describePlaceholder": "A catchy pop song about summer love with upbeat melody and female vocals...",
+    "describeHint": "Describe what kind of song you want AI to create",
     "promptLabel": "Describe your song",
     "promptPlaceholder": "A catchy pop song about summer love with upbeat melody and female vocals...",
-    "lyricsLabel": "Lyrics (optional)",
-    "lyricsPlaceholder": "[Verse 1]\nWrite your lyrics here...\n\n[Chorus]\nThe chorus goes here...\n\n[Verse 2]\nSecond verse...",
-    "lyricsHint": "Use [Verse], [Chorus], [Bridge], [Outro] tags to structure your song",
+    "lyricsLabel": "Lyrics",
+    "lyricsPlaceholder": "[Verse]\nWrite your lyrics here...\n\n[Chorus]\nThe chorus goes here...",
+    "lyricsHint": "Use structure tags to organize your song",
+    "styleOfMusic": "Style of Music",
+    "genre": "Genre",
+    "mood": "Mood",
+    "vocals": "Vocals",
+    "customStyle": "Custom Tags",
+    "customStylePlaceholder": "e.g., 80s synth, ethereal, lo-fi beats...",
+    "orWriteStyle": "Or write your own style description",
+    "stylePromptPlaceholder": "Write a full description of the music style you want...",
     "styleLabel": "Music Style",
     "moodLabel": "Mood",
     "durationLabel": "Duration",
     "instrumentalLabel": "Instrumental only",
     "instrumentalHint": "Generate without vocals",
+    "instrumental": "Instrumental",
     "advancedOptions": "Advanced Options",
     "bpmLabel": "BPM (Tempo)",
     "keyLabel": "Musical Key",
@@ -96,6 +113,14 @@
   "generationInProgress": "Creating Your Song",
   "pleaseWait": "This may take a few minutes. AI is composing your music.",
   "songReady": "Your Song is Ready!",
+  "creating": "Creating your song...",
+  "yourSong": "Your Song",
+  "modelDescription": "High quality music generation with vocals and instrumentals",
+
+  "signInTitle": "Sign in to Create Music",
+  "signInDescription": "Create professional AI-generated songs with vocals and instrumentals",
+  "signIn": "Sign In",
+  "getMoreCredits": "Get more credits",
 
   "player": {
     "play": "Play",
@@ -185,8 +210,10 @@
 
   "errors": {
     "promptRequired": "Please describe what kind of song you want to create",
-    "promptTooShort": "Please provide a more detailed description",
-    "insufficientCredits": "Not enough credits. Please purchase more credits.",
+    "promptTooShort": "Please provide a more detailed description (at least 10 characters)",
+    "lyricsRequired": "Please provide lyrics (at least 10 characters)",
+    "styleRequired": "Please select or describe a music style",
+    "insufficientCredits": "Not enough credits.",
     "generationFailed": "Song generation failed. Please try again.",
     "masteringFailed": "Mastering failed. Please try again.",
     "timeout": "Generation timed out. Please try again.",

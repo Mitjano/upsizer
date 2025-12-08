@@ -5,7 +5,6 @@ import {
   checkMusicGenerationStatus,
   updateMusicRecord,
   downloadAndSaveMusic,
-  type MusicProvider,
 } from '@/lib/ai-music';
 
 export async function GET(
@@ -76,10 +75,7 @@ export async function GET(
       });
     }
 
-    const result = await checkMusicGenerationStatus(
-      music.jobId,
-      music.provider as MusicProvider
-    );
+    const result = await checkMusicGenerationStatus(music.jobId);
 
     // Update progress
     if (result.status === 'processing') {

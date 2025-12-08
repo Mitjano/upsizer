@@ -1,17 +1,9 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
-import {
-  MUSIC_MODELS,
-  type MusicModelId,
-  type MusicStyle,
-  type MusicMood,
-  type MusicDuration,
-  calculateMusicCost,
-} from '@/lib/ai-music/models';
 
 interface GeneratedTrack {
   id: string;
@@ -21,33 +13,75 @@ interface GeneratedTrack {
   errorMessage?: string;
 }
 
-const STYLES: MusicStyle[] = [
-  'pop', 'rock', 'hiphop', 'rnb', 'jazz', 'electronic',
-  'classical', 'country', 'folk', 'metal', 'reggae', 'blues', 'latin', 'indie'
+// Style tags jak w Suno
+const STYLE_PRESETS = [
+  { id: 'pop', label: 'Pop', tags: 'pop, catchy, radio-friendly' },
+  { id: 'rock', label: 'Rock', tags: 'rock, electric guitar, drums' },
+  { id: 'hiphop', label: 'Hip-Hop', tags: 'hip-hop, rap, beats, 808' },
+  { id: 'rnb', label: 'R&B', tags: 'r&b, soul, smooth, groovy' },
+  { id: 'electronic', label: 'Electronic', tags: 'electronic, synth, edm, dance' },
+  { id: 'jazz', label: 'Jazz', tags: 'jazz, saxophone, piano, swing' },
+  { id: 'classical', label: 'Classical', tags: 'classical, orchestral, strings, piano' },
+  { id: 'country', label: 'Country', tags: 'country, acoustic guitar, folk' },
+  { id: 'metal', label: 'Metal', tags: 'metal, heavy, distorted guitar, aggressive' },
+  { id: 'ambient', label: 'Ambient', tags: 'ambient, atmospheric, ethereal, soundscape' },
+  { id: 'indie', label: 'Indie', tags: 'indie, alternative, lo-fi' },
+  { id: 'latin', label: 'Latin', tags: 'latin, reggaeton, tropical, salsa' },
 ];
 
-const MOODS: MusicMood[] = [
-  'happy', 'sad', 'energetic', 'calm', 'romantic', 'melancholic',
-  'uplifting', 'dark', 'dreamy', 'aggressive', 'nostalgic', 'epic'
+const MOOD_TAGS = [
+  { id: 'happy', label: 'Happy', tag: 'happy, upbeat, cheerful' },
+  { id: 'sad', label: 'Sad', tag: 'sad, melancholic, emotional' },
+  { id: 'energetic', label: 'Energetic', tag: 'energetic, powerful, driving' },
+  { id: 'calm', label: 'Calm', tag: 'calm, peaceful, relaxing' },
+  { id: 'romantic', label: 'Romantic', tag: 'romantic, love, tender' },
+  { id: 'dark', label: 'Dark', tag: 'dark, mysterious, intense' },
+  { id: 'epic', label: 'Epic', tag: 'epic, cinematic, grand' },
+  { id: 'dreamy', label: 'Dreamy', tag: 'dreamy, ethereal, floating' },
 ];
 
-const DURATIONS: MusicDuration[] = [60, 120, 180, 240, 300];
+const VOCAL_STYLES = [
+  { id: 'male', label: 'Male Vocal', tag: 'male vocals' },
+  { id: 'female', label: 'Female Vocal', tag: 'female vocals' },
+  { id: 'duet', label: 'Duet', tag: 'duet, male and female vocals' },
+  { id: 'choir', label: 'Choir', tag: 'choir, harmony, group vocals' },
+];
+
+const STRUCTURE_TAGS = [
+  '[Intro]',
+  '[Verse]',
+  '[Pre-Chorus]',
+  '[Chorus]',
+  '[Bridge]',
+  '[Outro]',
+  '[Instrumental]',
+  '[Solo]',
+];
+
+// Stała cena za generację (MiniMax generuje ~60s)
+const CREDIT_COST = 10;
 
 export default function AIMusicGenerator() {
   const t = useTranslations('aiMusic');
   const { data: session } = useSession();
 
-  // Form state
-  const [prompt, setPrompt] = useState('');
+  // Tryb: 'simple' lub 'custom'
+  const [mode, setMode] = useState<'simple' | 'custom'>('simple');
+
+  // Simple mode state
+  const [simplePrompt, setSimplePrompt] = useState('');
+
+  // Custom mode state
   const [lyrics, setLyrics] = useState('');
-  const [style, setStyle] = useState<MusicStyle>('pop');
-  const [mood, setMood] = useState<MusicMood>('happy');
-  const [duration, setDuration] = useState<MusicDuration>(120);
-  const [instrumental, setInstrumental] = useState(false);
+  const [stylePrompt, setStylePrompt] = useState('');
+  const [selectedStyle, setSelectedStyle] = useState<string>('');
+  const [selectedMood, setSelectedMood] = useState<string>('');
+  const [selectedVocal, setSelectedVocal] = useState<string>('');
+  const [customTags, setCustomTags] = useState('');
+
+  // Common state
   const [title, setTitle] = useState('');
-  const [showAdvanced, setShowAdvanced] = useState(false);
-  const [bpm, setBpm] = useState<number | undefined>();
-  const [musicalKey, setMusicalKey] = useState<string>('');
+  const [instrumental, setInstrumental] = useState(false);
 
   // UI state
   const [isGenerating, setIsGenerating] = useState(false);
@@ -55,8 +89,9 @@ export default function AIMusicGenerator() {
   const [userCredits, setUserCredits] = useState<number>(0);
   const [currentTrack, setCurrentTrack] = useState<GeneratedTrack | null>(null);
 
-  const model: MusicModelId = 'minimax-music-2.0';
-  const creditCost = calculateMusicCost(model, duration);
+  // Ref dla zachowania stanu podczas unmount
+  const pollingRef = useRef<NodeJS.Timeout | null>(null);
+  const trackIdRef = useRef<string | null>(null);
 
   // Fetch user credits
   useEffect(() => {
@@ -72,15 +107,41 @@ export default function AIMusicGenerator() {
     }
   }, [session]);
 
+  // Restore polling on mount if there was an active generation
+  useEffect(() => {
+    const savedTrackId = sessionStorage.getItem('aiMusicGeneratingId');
+    if (savedTrackId && session?.user?.email) {
+      trackIdRef.current = savedTrackId;
+      setCurrentTrack({
+        id: savedTrackId,
+        status: 'processing',
+        progress: 0,
+      });
+      setIsGenerating(true);
+    }
+  }, [session]);
+
   // Poll for generation status
   useEffect(() => {
     if (!currentTrack || currentTrack.status === 'completed' || currentTrack.status === 'failed') {
+      if (pollingRef.current) {
+        clearInterval(pollingRef.current);
+        pollingRef.current = null;
+      }
+      sessionStorage.removeItem('aiMusicGeneratingId');
       return;
     }
 
-    const interval = setInterval(async () => {
+    // Save to session storage for persistence
+    sessionStorage.setItem('aiMusicGeneratingId', currentTrack.id);
+    trackIdRef.current = currentTrack.id;
+
+    pollingRef.current = setInterval(async () => {
       try {
-        const res = await fetch(`/api/ai-music/${currentTrack.id}/status`);
+        const trackId = trackIdRef.current;
+        if (!trackId) return;
+
+        const res = await fetch(`/api/ai-music/${trackId}/status`);
         const data = await res.json();
 
         setCurrentTrack(prev => prev ? {
@@ -93,6 +154,7 @@ export default function AIMusicGenerator() {
 
         if (data.status === 'completed' || data.status === 'failed') {
           setIsGenerating(false);
+          sessionStorage.removeItem('aiMusicGeneratingId');
           if (data.status === 'completed') {
             // Refresh credits
             const creditsRes = await fetch('/api/user/credits');
@@ -107,45 +169,98 @@ export default function AIMusicGenerator() {
       }
     }, 3000);
 
-    return () => clearInterval(interval);
-  }, [currentTrack]);
+    return () => {
+      if (pollingRef.current) {
+        clearInterval(pollingRef.current);
+      }
+    };
+  }, [currentTrack?.id, currentTrack?.status]);
+
+  // Build style prompt from selections
+  const buildStylePrompt = useCallback(() => {
+    const parts: string[] = [];
+
+    if (selectedStyle) {
+      const style = STYLE_PRESETS.find(s => s.id === selectedStyle);
+      if (style) parts.push(style.tags);
+    }
+
+    if (selectedMood) {
+      const mood = MOOD_TAGS.find(m => m.id === selectedMood);
+      if (mood) parts.push(mood.tag);
+    }
+
+    if (selectedVocal && !instrumental) {
+      const vocal = VOCAL_STYLES.find(v => v.id === selectedVocal);
+      if (vocal) parts.push(vocal.tag);
+    }
+
+    if (instrumental) {
+      parts.push('instrumental, no vocals');
+    }
+
+    if (customTags.trim()) {
+      parts.push(customTags.trim());
+    }
+
+    return parts.join(', ');
+  }, [selectedStyle, selectedMood, selectedVocal, instrumental, customTags]);
 
   // Handle generation
   const handleGenerate = useCallback(async () => {
-    if (!prompt.trim()) {
-      setError(t('errors.promptRequired'));
-      return;
+    setError(null);
+
+    // Walidacja
+    if (mode === 'simple') {
+      if (!simplePrompt.trim() || simplePrompt.trim().length < 10) {
+        setError(t('errors.promptTooShort'));
+        return;
+      }
+    } else {
+      if (!lyrics.trim() || lyrics.trim().length < 10) {
+        setError(t('errors.lyricsRequired'));
+        return;
+      }
+      const style = stylePrompt.trim() || buildStylePrompt();
+      if (!style || style.length < 5) {
+        setError(t('errors.styleRequired'));
+        return;
+      }
     }
 
-    if (prompt.trim().length < 10) {
-      setError(t('errors.promptTooShort'));
-      return;
-    }
-
-    if (userCredits < creditCost) {
+    if (userCredits < CREDIT_COST) {
       setError(t('errors.insufficientCredits'));
       return;
     }
 
-    setError(null);
     setIsGenerating(true);
     setCurrentTrack(null);
 
     try {
+      // Przygotuj dane dla API
+      // MiniMax API: prompt = lyrics (tekst piosenki), lyrics_prompt = style (opis muzyczny)
+      let apiPrompt: string;
+      let apiStylePrompt: string;
+
+      if (mode === 'simple') {
+        // Simple mode: AI generuje tekst, użytkownik opisuje co chce
+        apiPrompt = simplePrompt.trim();
+        apiStylePrompt = simplePrompt.trim();
+      } else {
+        // Custom mode: użytkownik podaje tekst i styl osobno
+        apiPrompt = lyrics.trim();
+        apiStylePrompt = stylePrompt.trim() || buildStylePrompt();
+      }
+
       const res = await fetch('/api/ai-music/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          prompt: prompt.trim(),
-          lyrics: !instrumental ? lyrics.trim() : undefined,
-          style,
-          mood,
-          duration,
+          prompt: apiPrompt,
+          stylePrompt: apiStylePrompt,
           instrumental,
-          bpm,
-          key: musicalKey,
           title: title.trim() || undefined,
-          model,
+          mode,
         }),
       });
 
@@ -162,13 +277,23 @@ export default function AIMusicGenerator() {
       });
 
       // Deduct credits locally for immediate feedback
-      setUserCredits(prev => prev - creditCost);
+      setUserCredits(prev => prev - CREDIT_COST);
 
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Generation failed');
       setIsGenerating(false);
     }
-  }, [prompt, lyrics, style, mood, duration, instrumental, bpm, musicalKey, title, model, creditCost, userCredits, t]);
+  }, [mode, simplePrompt, lyrics, stylePrompt, buildStylePrompt, instrumental, title, userCredits, t]);
+
+  // Insert structure tag into lyrics
+  const insertTag = (tag: string) => {
+    setLyrics(prev => {
+      if (prev.endsWith('\n') || prev === '') {
+        return prev + tag + '\n';
+      }
+      return prev + '\n' + tag + '\n';
+    });
+  };
 
   // Handle audio playback
   const [isPlaying, setIsPlaying] = useState(false);
@@ -193,25 +318,35 @@ export default function AIMusicGenerator() {
     }
   }, [currentTrack, audioElement, isPlaying]);
 
+  // Cleanup audio on unmount
+  useEffect(() => {
+    return () => {
+      if (audioElement) {
+        audioElement.pause();
+        audioElement.src = '';
+      }
+    };
+  }, [audioElement]);
+
   if (!session) {
     return (
       <div className="text-center py-12">
-        <div className="text-5xl mb-4">🎵</div>
-        <h3 className="text-xl font-semibold mb-2">Sign in to Create Music</h3>
-        <p className="text-gray-400 mb-6">Create an account to start generating AI music</p>
+        <div className="text-6xl mb-4">🎵</div>
+        <h3 className="text-xl font-semibold mb-2">{t('signInTitle')}</h3>
+        <p className="text-gray-400 mb-6">{t('signInDescription')}</p>
         <Link
           href="/auth/signin"
           className="inline-flex items-center gap-2 px-6 py-3 bg-purple-600 hover:bg-purple-700 rounded-lg font-medium transition"
         >
-          Sign In to Get Started
+          {t('signIn')}
         </Link>
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto">
-      {/* Header */}
+    <div className="max-w-5xl mx-auto">
+      {/* Header with Credits */}
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold">{t('generator.title')}</h2>
         <div className="flex items-center gap-2 px-4 py-2 bg-gray-800 rounded-lg">
@@ -220,212 +355,231 @@ export default function AIMusicGenerator() {
         </div>
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-8">
-        {/* Left Column - Form */}
-        <div className="space-y-6">
-          {/* Prompt */}
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              {t('generator.promptLabel')} *
-            </label>
-            <textarea
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              placeholder={t('generator.promptPlaceholder')}
-              className="w-full h-24 px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
-              disabled={isGenerating}
-            />
-          </div>
+      {/* Mode Toggle - Suno style */}
+      <div className="flex gap-2 mb-6 p-1 bg-gray-800 rounded-xl w-fit">
+        <button
+          onClick={() => setMode('simple')}
+          className={`px-6 py-2.5 rounded-lg font-medium transition ${
+            mode === 'simple'
+              ? 'bg-purple-600 text-white'
+              : 'text-gray-400 hover:text-white'
+          }`}
+        >
+          {t('modes.simple')}
+        </button>
+        <button
+          onClick={() => setMode('custom')}
+          className={`px-6 py-2.5 rounded-lg font-medium transition ${
+            mode === 'custom'
+              ? 'bg-purple-600 text-white'
+              : 'text-gray-400 hover:text-white'
+          }`}
+        >
+          {t('modes.custom')}
+        </button>
+      </div>
 
-          {/* Title */}
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              {t('generator.titleLabel')}
-            </label>
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder={t('generator.titlePlaceholder')}
-              className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-              disabled={isGenerating}
-            />
-          </div>
-
-          {/* Lyrics (hidden if instrumental) */}
-          {!instrumental && (
+      <div className="grid lg:grid-cols-5 gap-8">
+        {/* Left Column - Form (3 cols) */}
+        <div className="lg:col-span-3 space-y-6">
+          {mode === 'simple' ? (
+            /* Simple Mode */
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
-                {t('generator.lyricsLabel')}
+                {t('generator.describeLabel')}
               </label>
               <textarea
-                value={lyrics}
-                onChange={(e) => setLyrics(e.target.value)}
-                placeholder={t('generator.lyricsPlaceholder')}
-                className="w-full h-32 px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none font-mono text-sm"
+                value={simplePrompt}
+                onChange={(e) => setSimplePrompt(e.target.value)}
+                placeholder={t('generator.describePlaceholder')}
+                className="w-full h-32 px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none text-lg"
                 disabled={isGenerating}
               />
-              <p className="text-xs text-gray-500 mt-1">{t('generator.lyricsHint')}</p>
+              <p className="text-xs text-gray-500 mt-2">
+                {t('generator.describeHint')}
+              </p>
             </div>
-          )}
+          ) : (
+            /* Custom Mode */
+            <>
+              {/* Style Tags */}
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-3">
+                  {t('generator.styleOfMusic')}
+                </label>
 
-          {/* Style & Mood */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                {t('generator.styleLabel')}
-              </label>
-              <select
-                value={style}
-                onChange={(e) => setStyle(e.target.value as MusicStyle)}
-                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                disabled={isGenerating}
-              >
-                {STYLES.map((s) => (
-                  <option key={s} value={s}>{t(`styles.${s}`)}</option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                {t('generator.moodLabel')}
-              </label>
-              <select
-                value={mood}
-                onChange={(e) => setMood(e.target.value as MusicMood)}
-                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                disabled={isGenerating}
-              >
-                {MOODS.map((m) => (
-                  <option key={m} value={m}>{t(`moods.${m}`)}</option>
-                ))}
-              </select>
-            </div>
-          </div>
+                {/* Genre Tags */}
+                <div className="mb-4">
+                  <p className="text-xs text-gray-500 mb-2">{t('generator.genre')}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {STYLE_PRESETS.map((style) => (
+                      <button
+                        key={style.id}
+                        onClick={() => setSelectedStyle(selectedStyle === style.id ? '' : style.id)}
+                        className={`px-3 py-1.5 rounded-full text-sm font-medium transition ${
+                          selectedStyle === style.id
+                            ? 'bg-purple-600 text-white'
+                            : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white'
+                        }`}
+                        disabled={isGenerating}
+                      >
+                        {style.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
 
-          {/* Duration */}
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              {t('generator.durationLabel')}
-            </label>
-            <div className="flex gap-2">
-              {DURATIONS.map((d) => (
-                <button
-                  key={d}
-                  onClick={() => setDuration(d)}
-                  className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition ${
-                    duration === d
-                      ? 'bg-purple-600 text-white'
-                      : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-                  }`}
-                  disabled={isGenerating}
-                >
-                  {t(`durations.${d}`)}
-                </button>
-              ))}
-            </div>
-          </div>
+                {/* Mood Tags */}
+                <div className="mb-4">
+                  <p className="text-xs text-gray-500 mb-2">{t('generator.mood')}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {MOOD_TAGS.map((mood) => (
+                      <button
+                        key={mood.id}
+                        onClick={() => setSelectedMood(selectedMood === mood.id ? '' : mood.id)}
+                        className={`px-3 py-1.5 rounded-full text-sm font-medium transition ${
+                          selectedMood === mood.id
+                            ? 'bg-pink-600 text-white'
+                            : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white'
+                        }`}
+                        disabled={isGenerating}
+                      >
+                        {mood.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
 
-          {/* Instrumental Toggle */}
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setInstrumental(!instrumental)}
-              className={`relative w-12 h-6 rounded-full transition ${
-                instrumental ? 'bg-purple-600' : 'bg-gray-700'
-              }`}
-              disabled={isGenerating}
-            >
-              <div
-                className={`absolute top-1 w-4 h-4 bg-white rounded-full transition ${
-                  instrumental ? 'left-7' : 'left-1'
-                }`}
-              />
-            </button>
-            <div>
-              <span className="text-sm font-medium text-gray-300">{t('generator.instrumentalLabel')}</span>
-              <p className="text-xs text-gray-500">{t('generator.instrumentalHint')}</p>
-            </div>
-          </div>
+                {/* Vocal Style (hidden if instrumental) */}
+                {!instrumental && (
+                  <div className="mb-4">
+                    <p className="text-xs text-gray-500 mb-2">{t('generator.vocals')}</p>
+                    <div className="flex flex-wrap gap-2">
+                      {VOCAL_STYLES.map((vocal) => (
+                        <button
+                          key={vocal.id}
+                          onClick={() => setSelectedVocal(selectedVocal === vocal.id ? '' : vocal.id)}
+                          className={`px-3 py-1.5 rounded-full text-sm font-medium transition ${
+                            selectedVocal === vocal.id
+                              ? 'bg-cyan-600 text-white'
+                              : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white'
+                          }`}
+                          disabled={isGenerating}
+                        >
+                          {vocal.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
-          {/* Advanced Options */}
-          <div>
-            <button
-              onClick={() => setShowAdvanced(!showAdvanced)}
-              className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition"
-            >
-              <svg
-                className={`w-4 h-4 transition ${showAdvanced ? 'rotate-180' : ''}`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-              {t('generator.advancedOptions')}
-            </button>
-
-            {showAdvanced && (
-              <div className="grid grid-cols-2 gap-4 mt-4 p-4 bg-gray-800/50 rounded-lg">
+                {/* Custom Style Input */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    {t('generator.bpmLabel')}
-                  </label>
+                  <p className="text-xs text-gray-500 mb-2">{t('generator.customStyle')}</p>
                   <input
-                    type="number"
-                    min={60}
-                    max={200}
-                    value={bpm || ''}
-                    onChange={(e) => setBpm(e.target.value ? parseInt(e.target.value) : undefined)}
-                    placeholder="60-200"
-                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500"
+                    type="text"
+                    value={customTags}
+                    onChange={(e) => setCustomTags(e.target.value)}
+                    placeholder={t('generator.customStylePlaceholder')}
+                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm"
                     disabled={isGenerating}
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    {t('generator.keyLabel')}
-                  </label>
-                  <select
-                    value={musicalKey}
-                    onChange={(e) => setMusicalKey(e.target.value)}
-                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500"
+
+                {/* Or write full style prompt */}
+                <div className="mt-4 pt-4 border-t border-gray-700">
+                  <p className="text-xs text-gray-500 mb-2">{t('generator.orWriteStyle')}</p>
+                  <textarea
+                    value={stylePrompt}
+                    onChange={(e) => setStylePrompt(e.target.value)}
+                    placeholder={t('generator.stylePromptPlaceholder')}
+                    className="w-full h-20 px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none text-sm"
                     disabled={isGenerating}
-                  >
-                    <option value="">Auto</option>
-                    {['C', 'Cm', 'D', 'Dm', 'E', 'Em', 'F', 'Fm', 'G', 'Gm', 'A', 'Am', 'B', 'Bm'].map((k) => (
-                      <option key={k} value={k}>{t(`keys.${k}`)}</option>
-                    ))}
-                  </select>
+                  />
                 </div>
               </div>
-            )}
+
+              {/* Lyrics Input */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="block text-sm font-medium text-gray-300">
+                    {t('generator.lyricsLabel')}
+                  </label>
+                  <span className="text-xs text-gray-500">{lyrics.length}/3000</span>
+                </div>
+
+                {/* Structure Tags */}
+                <div className="flex flex-wrap gap-1 mb-2">
+                  {STRUCTURE_TAGS.map((tag) => (
+                    <button
+                      key={tag}
+                      onClick={() => insertTag(tag)}
+                      className="px-2 py-1 bg-gray-700 hover:bg-gray-600 rounded text-xs font-mono transition"
+                      disabled={isGenerating}
+                    >
+                      {tag}
+                    </button>
+                  ))}
+                </div>
+
+                <textarea
+                  value={lyrics}
+                  onChange={(e) => setLyrics(e.target.value.slice(0, 3000))}
+                  placeholder={t('generator.lyricsPlaceholder')}
+                  className="w-full h-48 px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none font-mono text-sm"
+                  disabled={isGenerating}
+                />
+                <p className="text-xs text-gray-500 mt-1">{t('generator.lyricsHint')}</p>
+              </div>
+            </>
+          )}
+
+          {/* Common Options */}
+          <div className="flex flex-wrap items-center gap-6 pt-4 border-t border-gray-700">
+            {/* Title */}
+            <div className="flex-1 min-w-[200px]">
+              <label className="block text-xs text-gray-500 mb-1">{t('generator.titleLabel')}</label>
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder={t('generator.titlePlaceholder')}
+                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm"
+                disabled={isGenerating}
+              />
+            </div>
+
+            {/* Instrumental Toggle */}
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setInstrumental(!instrumental)}
+                className={`relative w-12 h-6 rounded-full transition ${
+                  instrumental ? 'bg-purple-600' : 'bg-gray-700'
+                }`}
+                disabled={isGenerating}
+              >
+                <div
+                  className={`absolute top-1 w-4 h-4 bg-white rounded-full transition ${
+                    instrumental ? 'left-7' : 'left-1'
+                  }`}
+                />
+              </button>
+              <span className="text-sm text-gray-300">{t('generator.instrumental')}</span>
+            </div>
           </div>
         </div>
 
-        {/* Right Column - Preview & Generate */}
-        <div className="space-y-6">
+        {/* Right Column - Preview & Generate (2 cols) */}
+        <div className="lg:col-span-2 space-y-4">
           {/* Preview Card */}
-          <div className="bg-gradient-to-br from-purple-900/30 to-pink-900/30 border border-purple-500/30 rounded-xl p-6">
-            <div className="text-center mb-6">
-              <div className="text-6xl mb-4">
-                {instrumental ? '🎹' : '🎤'}
-              </div>
-              <h3 className="text-xl font-semibold text-white mb-2">
-                {title || prompt.slice(0, 30) || 'Your Song'}
-                {prompt.length > 30 && !title ? '...' : ''}
-              </h3>
-              <div className="flex items-center justify-center gap-2 text-sm text-gray-400">
-                <span>{t(`styles.${style}`)}</span>
-                <span>•</span>
-                <span>{t(`moods.${mood}`)}</span>
-                <span>•</span>
-                <span>{t(`durations.${duration}`)}</span>
-              </div>
-            </div>
-
+          <div className="bg-gradient-to-br from-purple-900/40 to-pink-900/40 border border-purple-500/30 rounded-2xl p-6 sticky top-4">
             {/* Generation Progress */}
             {currentTrack && currentTrack.status !== 'completed' && currentTrack.status !== 'failed' && (
               <div className="mb-6">
+                <div className="w-20 h-20 mx-auto mb-4 rounded-xl bg-purple-600/30 flex items-center justify-center">
+                  <div className="w-12 h-12 border-4 border-purple-400 border-t-transparent rounded-full animate-spin" />
+                </div>
+                <h3 className="text-lg font-semibold text-center mb-2">{t('creating')}</h3>
                 <div className="flex items-center justify-between text-sm text-gray-400 mb-2">
                   <span>{t('generationInProgress')}</span>
                   <span>{currentTrack.progress}%</span>
@@ -433,7 +587,7 @@ export default function AIMusicGenerator() {
                 <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
                   <div
                     className="h-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-500"
-                    style={{ width: `${currentTrack.progress}%` }}
+                    style={{ width: `${Math.max(currentTrack.progress, 5)}%` }}
                   />
                 </div>
                 <p className="text-xs text-gray-500 mt-2 text-center">{t('pleaseWait')}</p>
@@ -443,10 +597,17 @@ export default function AIMusicGenerator() {
             {/* Completed Track */}
             {currentTrack && currentTrack.status === 'completed' && currentTrack.audioUrl && (
               <div className="mb-6">
+                <div className="w-20 h-20 mx-auto mb-4 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                  <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-semibold text-center mb-4">{title || t('yourSong')}</h3>
+
                 <div className="flex items-center justify-center gap-4 mb-4">
                   <button
                     onClick={togglePlayback}
-                    className="w-14 h-14 bg-purple-600 hover:bg-purple-700 rounded-full flex items-center justify-center transition"
+                    className="w-14 h-14 bg-purple-600 hover:bg-purple-700 rounded-full flex items-center justify-center transition shadow-lg shadow-purple-600/30"
                   >
                     {isPlaying ? (
                       <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
@@ -459,7 +620,8 @@ export default function AIMusicGenerator() {
                     )}
                   </button>
                 </div>
-                <div className="flex items-center justify-center gap-4">
+
+                <div className="flex items-center justify-center gap-3">
                   <a
                     href={currentTrack.audioUrl}
                     download
@@ -470,12 +632,6 @@ export default function AIMusicGenerator() {
                     </svg>
                     {t('player.download')}
                   </a>
-                  <Link
-                    href={`/ai-music/${currentTrack.id}`}
-                    className="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg text-sm transition flex items-center gap-2"
-                  >
-                    {t('mastering.master')}
-                  </Link>
                 </div>
               </div>
             )}
@@ -487,20 +643,38 @@ export default function AIMusicGenerator() {
               </div>
             )}
 
+            {/* Default State - Ready to Generate */}
+            {!currentTrack && !error && (
+              <div className="text-center mb-6">
+                <div className="w-20 h-20 mx-auto mb-4 rounded-xl bg-gray-800 flex items-center justify-center">
+                  <span className="text-4xl">{instrumental ? '🎹' : '🎤'}</span>
+                </div>
+                <h3 className="text-lg font-semibold mb-1">
+                  {title || (mode === 'simple' ? simplePrompt.slice(0, 30) : lyrics.slice(0, 30)) || t('yourSong')}
+                  {(simplePrompt.length > 30 || lyrics.length > 30) && !title ? '...' : ''}
+                </h3>
+                <p className="text-sm text-gray-400">
+                  {selectedStyle && STYLE_PRESETS.find(s => s.id === selectedStyle)?.label}
+                  {selectedStyle && selectedMood && ' • '}
+                  {selectedMood && MOOD_TAGS.find(m => m.id === selectedMood)?.label}
+                </p>
+              </div>
+            )}
+
             {/* Cost & Generate Button */}
-            <div className="space-y-4">
-              <div className="flex items-center justify-between text-sm">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between text-sm px-2">
                 <span className="text-gray-400">{t('cost')}:</span>
-                <span className="font-semibold text-white">{creditCost} {t('credits')}</span>
+                <span className="font-semibold text-white">{CREDIT_COST} {t('credits')}</span>
               </div>
 
               <button
                 onClick={handleGenerate}
-                disabled={isGenerating || userCredits < creditCost}
+                disabled={isGenerating || userCredits < CREDIT_COST}
                 className={`w-full py-4 rounded-xl font-semibold text-lg transition flex items-center justify-center gap-2 ${
-                  isGenerating || userCredits < creditCost
+                  isGenerating || userCredits < CREDIT_COST
                     ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
-                    : 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700'
+                    : 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-lg shadow-purple-600/30'
                 }`}
               >
                 {isGenerating ? (
@@ -521,11 +695,11 @@ export default function AIMusicGenerator() {
                 )}
               </button>
 
-              {userCredits < creditCost && (
+              {userCredits < CREDIT_COST && (
                 <p className="text-center text-sm text-gray-400">
                   {t('errors.insufficientCredits')}{' '}
                   <Link href="/pricing" className="text-purple-400 hover:underline">
-                    Get more credits
+                    {t('getMoreCredits')}
                   </Link>
                 </p>
               )}
@@ -534,22 +708,14 @@ export default function AIMusicGenerator() {
 
           {/* Model Info */}
           <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-4">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center text-lg">
                 🎵
               </div>
               <div>
-                <h4 className="font-semibold text-white">{MUSIC_MODELS[model].name}</h4>
-                <p className="text-xs text-gray-400">{MUSIC_MODELS[model].provider}</p>
+                <h4 className="font-semibold text-white">MiniMax Music 2.0</h4>
+                <p className="text-xs text-gray-400">{t('modelDescription')}</p>
               </div>
-            </div>
-            <p className="text-sm text-gray-400 mb-3">{MUSIC_MODELS[model].description}</p>
-            <div className="flex flex-wrap gap-2">
-              {MUSIC_MODELS[model].features.slice(0, 3).map((feature, idx) => (
-                <span key={idx} className="px-2 py-1 bg-purple-600/20 text-purple-400 text-xs rounded-full">
-                  {feature}
-                </span>
-              ))}
             </div>
           </div>
         </div>

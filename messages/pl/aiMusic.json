@@ -10,18 +10,35 @@
     "explore": "Odkrywaj"
   },
 
+  "modes": {
+    "simple": "Prosty",
+    "custom": "Własny"
+  },
+
   "generator": {
     "title": "Utwórz nową piosenkę",
+    "describeLabel": "Opisz swoją piosenkę",
+    "describePlaceholder": "Chwytliwa piosenka pop o letniej miłości z pogodną melodią i żeńskim wokalem...",
+    "describeHint": "Opisz jaką piosenkę ma stworzyć dla Ciebie AI",
     "promptLabel": "Opisz swoją piosenkę",
     "promptPlaceholder": "Chwytliwa piosenka pop o letniej miłości z pogodną melodią i żeńskim wokalem...",
-    "lyricsLabel": "Tekst (opcjonalnie)",
-    "lyricsPlaceholder": "[Zwrotka 1]\nTutaj wpisz tekst...\n\n[Refren]\nTutaj refren...\n\n[Zwrotka 2]\nDruga zwrotka...",
-    "lyricsHint": "Użyj znaczników [Zwrotka], [Refren], [Bridge], [Outro] aby ustrukturyzować piosenkę",
+    "lyricsLabel": "Tekst piosenki",
+    "lyricsPlaceholder": "[Verse]\nTutaj wpisz tekst...\n\n[Chorus]\nTutaj refren...",
+    "lyricsHint": "Użyj znaczników struktury aby zorganizować piosenkę",
+    "styleOfMusic": "Styl muzyki",
+    "genre": "Gatunek",
+    "mood": "Nastrój",
+    "vocals": "Wokal",
+    "customStyle": "Własne tagi",
+    "customStylePlaceholder": "np. synth z lat 80, eteryczny, lo-fi beaty...",
+    "orWriteStyle": "Lub napisz własny opis stylu",
+    "stylePromptPlaceholder": "Napisz pełny opis stylu muzycznego jaki chcesz...",
     "styleLabel": "Styl muzyczny",
     "moodLabel": "Nastrój",
     "durationLabel": "Długość",
     "instrumentalLabel": "Tylko instrumentalna",
     "instrumentalHint": "Generuj bez wokalu",
+    "instrumental": "Instrumentalna",
     "advancedOptions": "Opcje zaawansowane",
     "bpmLabel": "BPM (Tempo)",
     "keyLabel": "Tonacja",
@@ -96,6 +113,14 @@
   "generationInProgress": "Tworzenie Twojej piosenki",
   "pleaseWait": "To może potrwać kilka minut. AI komponuje Twoją muzykę.",
   "songReady": "Twoja piosenka jest gotowa!",
+  "creating": "Tworzenie piosenki...",
+  "yourSong": "Twoja piosenka",
+  "modelDescription": "Wysokiej jakości generowanie muzyki z wokalami i instrumentami",
+
+  "signInTitle": "Zaloguj się, aby tworzyć muzykę",
+  "signInDescription": "Twórz profesjonalne piosenki z wokalami i instrumentami generowanymi przez AI",
+  "signIn": "Zaloguj się",
+  "getMoreCredits": "Kup więcej kredytów",
 
   "player": {
     "play": "Odtwórz",
@@ -185,8 +210,10 @@
 
   "errors": {
     "promptRequired": "Opisz, jaką piosenkę chcesz utworzyć",
-    "promptTooShort": "Podaj bardziej szczegółowy opis",
-    "insufficientCredits": "Niewystarczająca liczba kredytów. Proszę dokupić kredyty.",
+    "promptTooShort": "Podaj bardziej szczegółowy opis (minimum 10 znaków)",
+    "lyricsRequired": "Podaj tekst piosenki (minimum 10 znaków)",
+    "styleRequired": "Wybierz lub opisz styl muzyczny",
+    "insufficientCredits": "Niewystarczająca liczba kredytów.",
     "generationFailed": "Generowanie piosenki nie powiodło się. Spróbuj ponownie.",
     "masteringFailed": "Mastering nie powiódł się. Spróbuj ponownie.",
     "timeout": "Przekroczono limit czasu generowania. Spróbuj ponownie.",
