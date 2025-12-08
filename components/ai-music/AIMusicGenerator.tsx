@@ -717,12 +717,12 @@ export default function AIMusicGenerator() {
                 🎵
               </div>
               <div>
-                <h4 className="font-semibold text-white">MiniMax Music 2.0</h4>
-                <p className="text-xs text-gray-400">{t('modelDescription')}</p>
+                <h4 className="font-semibold text-white">Suno AI v4</h4>
+                <p className="text-xs text-gray-400">Industry-leading AI music with exceptional vocals</p>
               </div>
             </div>
             <div className="mt-3 pt-3 border-t border-gray-700 text-xs text-gray-500">
-              <p>{t('durationNote')}</p>
+              <p>Generates 2 song variations • Up to 4 minutes</p>
             </div>
           </div>
         </div>
