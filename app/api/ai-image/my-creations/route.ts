@@ -23,7 +23,7 @@ interface CreationItem {
   createdAt: Date | string;
   user: {
     name: string;
-    image?: string;
+    image?: string | null;
   };
 }
 
