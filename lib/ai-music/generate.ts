@@ -12,7 +12,13 @@ import {
   cancelSunoGeneration,
 } from './suno-provider';
 
-export type MusicProviderType = 'suno' | 'fal';
+import {
+  generateMusicPiAPI,
+  checkPiAPIStatus,
+  cancelPiAPIGeneration,
+} from './piapi-provider';
+
+export type MusicProviderType = 'suno' | 'fal' | 'piapi';
 
 export interface MusicGenerationInput {
   prompt: string;        // Tekst piosenki / lyrics (dla custom) lub opis (dla simple)
@@ -40,12 +46,18 @@ export interface MusicGenerationResult {
 export async function generateMusic(
   input: MusicGenerationInput
 ): Promise<MusicGenerationResult> {
-  // Default to Fal.ai (MiniMax) since Suno/GoAPI has backend issues
-  // TODO: Switch back to Suno when GoAPI stabilizes
-  const provider = input.provider || (process.env.FAL_API_KEY ? 'fal' : 'suno');
+  // Provider priority: PiAPI (Udio) > Fal.ai (MiniMax) > Suno/GoAPI
+  // PiAPI uses the same GOAPI_API_KEY but with a different, working endpoint
+  const provider = input.provider ||
+    (process.env.GOAPI_API_KEY ? 'piapi' : // Use PiAPI (Udio) as default when GOAPI key is available
+     process.env.FAL_API_KEY ? 'fal' :     // Fallback to Fal.ai if no GOAPI key
+     'suno');                               // Legacy fallback
 
   if (provider === 'suno') {
     return generateMusicViaSuno(input);
+  }
+  if (provider === 'piapi') {
+    return generateMusicViaPiAPI(input);
   }
   return generateMusicViaFal(input);
 }
@@ -68,6 +80,30 @@ async function generateMusicViaSuno(
     success: result.success,
     jobId: result.taskId,
     provider: 'suno',
+    status: result.status,
+    audioUrls: result.audioUrls,
+    error: result.error,
+    estimatedTime: result.estimatedTime,
+  };
+}
+
+/**
+ * Generate music via PiAPI (Udio model)
+ */
+async function generateMusicViaPiAPI(
+  input: MusicGenerationInput
+): Promise<MusicGenerationResult> {
+  const result = await generateMusicPiAPI({
+    prompt: input.prompt,
+    stylePrompt: input.stylePrompt,
+    title: input.title,
+    instrumental: input.instrumental,
+  });
+
+  return {
+    success: result.success,
+    jobId: result.taskId,
+    provider: 'piapi',
     status: result.status,
     audioUrls: result.audioUrls,
     error: result.error,
@@ -184,10 +220,13 @@ async function generateMusicViaFal(
  */
 export async function checkMusicGenerationStatus(
   jobId: string,
-  provider: MusicProviderType = 'suno'
+  provider: MusicProviderType = 'piapi'
 ): Promise<MusicGenerationResult> {
   if (provider === 'suno') {
     return checkSunoStatusWrapper(jobId);
+  }
+  if (provider === 'piapi') {
+    return checkPiAPIStatusWrapper(jobId);
   }
   return checkFalStatus(jobId);
 }
@@ -204,6 +243,25 @@ async function checkSunoStatusWrapper(
     success: result.success,
     jobId: result.taskId,
     provider: 'suno',
+    status: result.status,
+    audioUrl: result.audioUrls?.[0],  // Primary clip
+    audioUrls: result.audioUrls,
+    error: result.error,
+  };
+}
+
+/**
+ * Check PiAPI (Udio) generation status
+ */
+async function checkPiAPIStatusWrapper(
+  jobId: string
+): Promise<MusicGenerationResult> {
+  const result = await checkPiAPIStatus(jobId);
+
+  return {
+    success: result.success,
+    jobId: result.taskId,
+    provider: 'piapi',
     status: result.status,
     audioUrl: result.audioUrls?.[0],  // Primary clip
     audioUrls: result.audioUrls,
@@ -300,10 +358,13 @@ async function checkFalStatus(
  */
 export async function cancelMusicGeneration(
   jobId: string,
-  provider: MusicProviderType = 'suno'
+  provider: MusicProviderType = 'piapi'
 ): Promise<boolean> {
   if (provider === 'suno') {
     return cancelSunoGeneration(jobId);
+  }
+  if (provider === 'piapi') {
+    return cancelPiAPIGeneration(jobId);
   }
   return cancelFalGeneration(jobId);
 }

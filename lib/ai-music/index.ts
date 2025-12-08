@@ -44,6 +44,17 @@ export {
   cancelSunoGeneration,
 } from './suno-provider';
 
+// PiAPI Provider (Udio via PiAPI)
+export {
+  type PiAPIGenerationInput,
+  type PiAPIGenerationResult,
+  type PiAPIStatusResult,
+  type PiAPISong,
+  generateMusicPiAPI,
+  checkPiAPIStatus,
+  cancelPiAPIGeneration,
+} from './piapi-provider';
+
 // Mastering
 export {
   type MasteringInput,
