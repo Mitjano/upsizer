@@ -129,10 +129,9 @@ export default function AIMusicLibrary() {
     return true;
   });
 
-  // Play/Pause track
+  // Play/Pause track - use stream endpoint to bypass CORS
   const togglePlay = useCallback((track: MusicTrack) => {
-    const audioUrl = track.masteredUrl || track.audioUrl || track.masteredLocalPath || track.localPath;
-    if (!audioUrl) return;
+    if (track.status !== 'completed') return;
 
     if (playingTrack === track.id) {
       audioRef.current?.pause();
@@ -141,9 +140,18 @@ export default function AIMusicLibrary() {
       if (audioRef.current) {
         audioRef.current.pause();
       }
-      audioRef.current = new Audio(audioUrl);
+      // Use stream endpoint to bypass CORS issues with external URLs
+      const streamUrl = `/api/ai-music/${track.id}/stream`;
+      audioRef.current = new Audio(streamUrl);
       audioRef.current.addEventListener('ended', () => setPlayingTrack(null));
-      audioRef.current.play();
+      audioRef.current.addEventListener('error', (e) => {
+        console.error('Audio playback error:', e);
+        setPlayingTrack(null);
+      });
+      audioRef.current.play().catch((err) => {
+        console.error('Failed to play audio:', err);
+        setPlayingTrack(null);
+      });
       setPlayingTrack(track.id);
 
       // Increment plays
@@ -527,16 +535,32 @@ export default function AIMusicLibrary() {
                     {track.status === 'completed' && (
                       <div className="flex items-center gap-2 flex-shrink-0 opacity-0 group-hover:opacity-100 transition">
                         {/* Download */}
-                        <a
-                          href={track.masteredUrl || track.audioUrl || track.masteredLocalPath || track.localPath}
-                          download
+                        <button
+                          onClick={async () => {
+                            try {
+                              const response = await fetch(`/api/ai-music/${track.id}/download`);
+                              if (!response.ok) throw new Error('Download failed');
+                              const blob = await response.blob();
+                              const url = window.URL.createObjectURL(blob);
+                              const a = document.createElement('a');
+                              a.href = url;
+                              a.download = `${track.title || 'song'}.mp3`;
+                              document.body.appendChild(a);
+                              a.click();
+                              window.URL.revokeObjectURL(url);
+                              document.body.removeChild(a);
+                            } catch (err) {
+                              console.error('Download error:', err);
+                              setError('Failed to download track');
+                            }
+                          }}
                           className="p-2 hover:bg-gray-700 rounded-lg transition"
                           title={t('player.download')}
                         >
                           <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                           </svg>
-                        </a>
+                        </button>
 
                         {/* Master */}
                         {track.masteringStatus !== 'completed' && (

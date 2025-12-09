@@ -2,9 +2,9 @@
  * AI Music Generation Module
  *
  * Obsługuje generowanie muzyki przez:
- * - Fal.ai (MiniMax Music v1.5) - Domyślny, stabilny provider
+ * - Suno AI (via GoAPI) - Główny provider, najlepsza jakość, do 4-8 min
+ * - Fal.ai (MiniMax Music v2) - Fallback, do 4 min
  * - PiAPI (Udio) - Alternatywa (obecnie problemy z backendem)
- * - Suno AI (via GoAPI) - Legacy fallback
  */
 
 import {
@@ -47,12 +47,12 @@ export interface MusicGenerationResult {
 export async function generateMusic(
   input: MusicGenerationInput
 ): Promise<MusicGenerationResult> {
-  // Provider priority: Fal.ai (MiniMax v1.5) > PiAPI (Udio) > Suno/GoAPI
-  // Fal.ai is now the default because PiAPI/GoAPI have backend issues (error 1001)
+  // Provider priority: Suno/GoAPI > Fal.ai (MiniMax v2) > PiAPI
+  // Suno is the default - best quality, up to 4-8 min songs
   const provider = input.provider ||
-    (process.env.FAL_API_KEY ? 'fal' :       // Use Fal.ai MiniMax v1.5 as default (stable)
-     process.env.GOAPI_API_KEY ? 'piapi' :   // Fallback to PiAPI if no FAL key
-     'suno');                                 // Legacy fallback
+    (process.env.GOAPI_API_KEY ? 'suno' :    // Suno as primary (best quality, long songs)
+     process.env.FAL_API_KEY ? 'fal' :        // MiniMax v2 as fallback
+     'suno');                                 // Default to suno
 
   if (provider === 'suno') {
     return generateMusicViaSuno(input);

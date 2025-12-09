@@ -58,7 +58,7 @@ const STRUCTURE_TAGS = [
   '[Solo]',
 ];
 
-// Stała cena za generację (MiniMax generuje ~60s)
+// Stała cena za generację (Suno generuje do 4 min)
 const CREDIT_COST = 10;
 
 export default function AIMusicGenerator() {
@@ -303,6 +303,8 @@ export default function AIMusicGenerator() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null);
   const [audioError, setAudioError] = useState<string | null>(null);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
 
   const togglePlayback = useCallback(() => {
     if (!currentTrack?.id) return;
@@ -323,7 +325,10 @@ export default function AIMusicGenerator() {
       setIsPlaying(!isPlaying);
     } else {
       const audio = new Audio(streamUrl);
-      audio.addEventListener('ended', () => setIsPlaying(false));
+      audio.addEventListener('ended', () => {
+        setIsPlaying(false);
+        setCurrentTime(0);
+      });
       audio.addEventListener('error', (e) => {
         console.error('Audio load error:', e);
         setAudioError('Failed to load audio file');
@@ -331,6 +336,12 @@ export default function AIMusicGenerator() {
       });
       audio.addEventListener('canplaythrough', () => {
         setAudioError(null);
+      });
+      audio.addEventListener('loadedmetadata', () => {
+        setDuration(audio.duration);
+      });
+      audio.addEventListener('timeupdate', () => {
+        setCurrentTime(audio.currentTime);
       });
       audio.play().catch(err => {
         console.error('Audio playback error:', err);
@@ -340,6 +351,22 @@ export default function AIMusicGenerator() {
       setIsPlaying(true);
     }
   }, [currentTrack, audioElement, isPlaying]);
+
+  // Seek handler
+  const handleSeek = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const time = parseFloat(e.target.value);
+    if (audioElement) {
+      audioElement.currentTime = time;
+      setCurrentTime(time);
+    }
+  }, [audioElement]);
+
+  // Format time helper
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
 
   // Handle download via API endpoint (bypasses CORS)
   const handleDownload = useCallback(async () => {
@@ -656,21 +683,44 @@ export default function AIMusicGenerator() {
                 </div>
                 <h3 className="text-lg font-semibold text-center mb-4">{title || t('yourSong')}</h3>
 
-                <div className="flex items-center justify-center gap-4 mb-4">
-                  <button
-                    onClick={togglePlayback}
-                    className="w-14 h-14 bg-purple-600 hover:bg-purple-700 rounded-full flex items-center justify-center transition shadow-lg shadow-purple-600/30"
-                  >
-                    {isPlaying ? (
-                      <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
-                      </svg>
-                    ) : (
-                      <svg className="w-6 h-6 ml-1" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M8 5v14l11-7z"/>
-                      </svg>
-                    )}
-                  </button>
+                {/* Embedded Player with Seek Bar */}
+                <div className="bg-gray-800/60 rounded-xl p-4 mb-4">
+                  <div className="flex items-center gap-4">
+                    {/* Play/Pause Button */}
+                    <button
+                      onClick={togglePlayback}
+                      className="w-12 h-12 bg-purple-600 hover:bg-purple-700 rounded-full flex items-center justify-center transition shadow-lg shadow-purple-600/30 flex-shrink-0"
+                    >
+                      {isPlaying ? (
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+                        </svg>
+                      ) : (
+                        <svg className="w-5 h-5 ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M8 5v14l11-7z"/>
+                        </svg>
+                      )}
+                    </button>
+
+                    {/* Progress Bar & Time */}
+                    <div className="flex-1">
+                      <input
+                        type="range"
+                        min={0}
+                        max={duration || 100}
+                        value={currentTime}
+                        onChange={handleSeek}
+                        className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-purple-500"
+                        style={{
+                          background: `linear-gradient(to right, #a855f7 ${(currentTime / (duration || 1)) * 100}%, #374151 ${(currentTime / (duration || 1)) * 100}%)`
+                        }}
+                      />
+                      <div className="flex justify-between text-xs text-gray-400 mt-1">
+                        <span>{formatTime(currentTime)}</span>
+                        <span>{formatTime(duration)}</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 {audioError && (
