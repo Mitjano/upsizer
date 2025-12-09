@@ -302,25 +302,73 @@ export default function AIMusicGenerator() {
   // Handle audio playback
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null);
+  const [audioError, setAudioError] = useState<string | null>(null);
 
   const togglePlayback = useCallback(() => {
-    if (!currentTrack?.audioUrl) return;
+    if (!currentTrack?.id) return;
+    setAudioError(null);
+
+    // Use our stream endpoint to bypass CORS
+    const streamUrl = `/api/ai-music/${currentTrack.id}/stream`;
 
     if (audioElement) {
       if (isPlaying) {
         audioElement.pause();
       } else {
-        audioElement.play();
+        audioElement.play().catch(err => {
+          console.error('Audio playback error:', err);
+          setAudioError('Failed to play audio');
+        });
       }
       setIsPlaying(!isPlaying);
     } else {
-      const audio = new Audio(currentTrack.audioUrl);
+      const audio = new Audio(streamUrl);
       audio.addEventListener('ended', () => setIsPlaying(false));
-      audio.play();
+      audio.addEventListener('error', (e) => {
+        console.error('Audio load error:', e);
+        setAudioError('Failed to load audio file');
+        setIsPlaying(false);
+      });
+      audio.addEventListener('canplaythrough', () => {
+        setAudioError(null);
+      });
+      audio.play().catch(err => {
+        console.error('Audio playback error:', err);
+        setAudioError('Failed to play audio');
+      });
       setAudioElement(audio);
       setIsPlaying(true);
     }
   }, [currentTrack, audioElement, isPlaying]);
+
+  // Handle download via API endpoint (bypasses CORS)
+  const handleDownload = useCallback(async () => {
+    if (!currentTrack?.id) return;
+
+    try {
+      // Use our API endpoint to download (bypasses CORS issues)
+      const response = await fetch(`/api/ai-music/${currentTrack.id}/download`);
+      if (!response.ok) {
+        throw new Error('Failed to download audio');
+      }
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${title || 'song'}.mp3`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Download error:', err);
+      // Fallback: try direct URL if API fails
+      if (currentTrack.audioUrl) {
+        window.open(currentTrack.audioUrl, '_blank');
+      }
+    }
+  }, [currentTrack, title]);
 
   // Cleanup audio on unmount
   useEffect(() => {
@@ -625,17 +673,20 @@ export default function AIMusicGenerator() {
                   </button>
                 </div>
 
+                {audioError && (
+                  <p className="text-red-400 text-xs text-center mb-2">{audioError}</p>
+                )}
+
                 <div className="flex items-center justify-center gap-3">
-                  <a
-                    href={currentTrack.audioUrl}
-                    download
+                  <button
+                    onClick={handleDownload}
                     className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm transition flex items-center gap-2"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                     </svg>
                     {t('player.download')}
-                  </a>
+                  </button>
                 </div>
               </div>
             )}
