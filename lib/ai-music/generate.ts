@@ -27,6 +27,7 @@ export interface MusicGenerationInput {
   instrumental?: boolean;
   title?: string;
   mode?: 'simple' | 'custom';
+  duration?: number;     // Duration in seconds (60, 120, 180, 240)
   provider?: MusicProviderType;  // 'suno' (default) or 'fal' (MiniMax)
 }
 
@@ -75,6 +76,7 @@ async function generateMusicViaSuno(
     title: input.title,
     instrumental: input.instrumental,
     mode: input.mode,
+    duration: input.duration,
   });
 
   return {

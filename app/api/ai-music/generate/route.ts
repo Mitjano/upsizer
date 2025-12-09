@@ -124,11 +124,13 @@ export async function POST(request: NextRequest) {
 
     // Start generation with new simplified interface
     const result = await generateMusic({
+
       prompt: prompt?.trim() || '',
       stylePrompt: stylePrompt.trim(),
       instrumental: instrumental || false,
       title: title?.trim(),
       mode: mode as 'simple' | 'custom',
+            duration, // Pass user-selected duration (60, 120, 180, 240 seconds)
       provider, // Use determined provider
     });
 

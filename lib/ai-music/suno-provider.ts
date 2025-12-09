@@ -11,6 +11,7 @@ export interface SunoGenerationInput {
   title?: string;           // Song title
   instrumental?: boolean;   // Generate without vocals
   mode?: 'simple' | 'custom';
+  duration?: number;        // Duration in seconds (60-240)
 }
 
 export interface SunoGenerationResult {
@@ -72,6 +73,7 @@ export async function generateMusicSuno(
     }
 
     // Build request body for GoAPI unified task API
+    // Duration: GoAPI expects duration in seconds (max 240 for Suno v4)
     const requestBody: Record<string, unknown> = {
       model: 'music-u',
       task_type: 'generate_music',
@@ -79,6 +81,7 @@ export async function generateMusicSuno(
         lyrics_type: lyricsType,
         prompt: input.stylePrompt || input.prompt, // Style/mood description
         title: input.title || undefined,
+        duration: input.duration || 120, // Default 2 minutes
       },
     };
 
