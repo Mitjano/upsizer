@@ -63,32 +63,44 @@ export async function generateMusicSuno(
 
   try {
     // Determine lyrics type based on input
+    // - 'instrumental': no vocals
+    // - 'user': user provides lyrics, AI generates music to match
+    // - 'generate': AI generates both lyrics and music from prompt
     let lyricsType: 'generate' | 'instrumental' | 'user';
     if (input.instrumental) {
       lyricsType = 'instrumental';
-    } else if (input.mode === 'custom' && input.prompt) {
+    } else if (input.mode === 'custom' && input.prompt && input.prompt.trim().length > 0) {
       lyricsType = 'user';
     } else {
       lyricsType = 'generate';
     }
 
     // Build request body for GoAPI unified task API
-    // Note: Duration is NOT supported by GoAPI - removed from request
+    // IMPORTANT: 'prompt' field = style/genre/mood TAGS (not lyrics!)
+    // 'lyrics' field = actual song lyrics (when lyrics_type: user)
+    // 'gpt_description_prompt' = description for AI when using user lyrics
     const requestBody: Record<string, unknown> = {
       model: 'music-u',
       task_type: 'generate_music',
       input: {
         lyrics_type: lyricsType,
-        prompt: input.stylePrompt || input.prompt, // Style/mood description
+        // 'prompt' is for STYLE TAGS like "electronic, dark, synth, edm"
+        prompt: input.stylePrompt || input.prompt,
         title: input.title || undefined,
-        // Duration NOT supported - Suno generates ~2-3 min tracks automatically
       },
     };
 
     // Add lyrics for custom mode with user-provided lyrics
     if (lyricsType === 'user' && input.prompt) {
-      (requestBody.input as Record<string, unknown>).lyrics = input.prompt;
-      (requestBody.input as Record<string, unknown>).gpt_description_prompt = input.stylePrompt || 'Create a song';
+      const inputObj = requestBody.input as Record<string, unknown>;
+      inputObj.lyrics = input.prompt;  // User's lyrics text
+      inputObj.gpt_description_prompt = input.stylePrompt || 'Create a song matching the lyrics';
+    }
+
+    // For 'generate' mode (simple), use gpt_description_prompt for better results
+    if (lyricsType === 'generate') {
+      const inputObj = requestBody.input as Record<string, unknown>;
+      inputObj.gpt_description_prompt = input.prompt || input.stylePrompt;
     }
 
     console.log('GoAPI music request:', JSON.stringify(requestBody, null, 2));
