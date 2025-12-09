@@ -306,7 +306,7 @@ export default function AIMusicGenerator() {
   const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null);
   const [audioError, setAudioError] = useState<string | null>(null);
   const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
+  const [audioDuration, setAudioDuration] = useState(0);
 
   const togglePlayback = useCallback(() => {
     if (!currentTrack?.id) return;
@@ -340,7 +340,7 @@ export default function AIMusicGenerator() {
         setAudioError(null);
       });
       audio.addEventListener('loadedmetadata', () => {
-        setDuration(audio.duration);
+        setAudioDuration(audio.duration);
       });
       audio.addEventListener('timeupdate', () => {
         setCurrentTime(audio.currentTime);
@@ -738,7 +738,7 @@ export default function AIMusicGenerator() {
                         onChange={handleSeek}
                         className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-purple-500"
                         style={{
-                          background: `linear-gradient(to right, #a855f7 ${(currentTime / (duration || 1)) * 100}%, #374151 ${(currentTime / (duration || 1)) * 100}%)`
+                          background: `linear-gradient(to right, #a855f7 ${(currentTime / (audioDuration || 1)) * 100}%, #374151 ${(currentTime / (audioDuration || 1)) * 100}%)`
                         }}
                       />
                       <div className="flex justify-between text-xs text-gray-400 mt-1">
