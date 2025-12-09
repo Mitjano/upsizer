@@ -82,6 +82,7 @@ export default function AIMusicGenerator() {
   // Common state
   const [title, setTitle] = useState('');
   const [instrumental, setInstrumental] = useState(false);
+  const [duration, setDuration] = useState<number>(120); // 60, 120, 180, 240 seconds
 
   // UI state
   const [isGenerating, setIsGenerating] = useState(false);
@@ -265,6 +266,7 @@ export default function AIMusicGenerator() {
           instrumental,
           title: title.trim() || undefined,
           mode,
+          duration,
         }),
       });
 
@@ -287,7 +289,7 @@ export default function AIMusicGenerator() {
       setError(err instanceof Error ? err.message : 'Generation failed');
       setIsGenerating(false);
     }
-  }, [mode, simplePrompt, lyrics, stylePrompt, buildStylePrompt, instrumental, title, userCredits, t]);
+  }, [mode, simplePrompt, lyrics, stylePrompt, buildStylePrompt, instrumental, title, duration, userCredits, t]);
 
   // Insert structure tag into lyrics
   const insertTag = (tag: string) => {
@@ -628,6 +630,30 @@ export default function AIMusicGenerator() {
               />
             </div>
 
+            {/* Duration Selector */}
+            <div className="flex-1 min-w-[180px]">
+              <label className="block text-xs text-gray-500 mb-1">{t('generator.durationLabel') || 'Duration'}</label>
+              <div className="flex gap-1">
+                {[60, 120, 180, 240].map((d) => (
+                  <button
+                    key={d}
+                    onClick={() => setDuration(d)}
+                    className={`flex-1 px-2 py-2 rounded-lg text-xs font-medium transition ${
+                      duration === d
+                        ? 'bg-purple-600 text-white'
+                        : 'bg-gray-800 border border-gray-700 text-gray-400 hover:border-purple-500/50'
+                    }`}
+                    disabled={isGenerating}
+                  >
+                    {d / 60}m
+                  </button>
+                ))}
+              </div>
+              <p className="text-xs text-gray-500 mt-1">
+                {instrumental && duration < 180 && (t('generator.durationHintInstrumental') || 'Tip: Instrumentals sound better at 3+ minutes')}
+              </p>
+            </div>
+
             {/* Instrumental Toggle */}
             <div className="flex items-center gap-3">
               <button
@@ -762,6 +788,8 @@ export default function AIMusicGenerator() {
                   {selectedStyle && STYLE_PRESETS.find(s => s.id === selectedStyle)?.label}
                   {selectedStyle && selectedMood && ' • '}
                   {selectedMood && MOOD_TAGS.find(m => m.id === selectedMood)?.label}
+                  {(selectedStyle || selectedMood) && ' • '}
+                  {duration / 60}:{(duration % 60).toString().padStart(2, '0')}
                 </p>
               </div>
             )}
@@ -823,7 +851,7 @@ export default function AIMusicGenerator() {
               </div>
             </div>
             <div className="mt-3 pt-3 border-t border-gray-700 text-xs text-gray-500">
-              <p>Generates 2 song variations • Up to 4 minutes</p>
+              <p>Generates 2 song variations • {duration / 60} minute{duration > 60 ? 's' : ''}</p>
             </div>
           </div>
         </div>

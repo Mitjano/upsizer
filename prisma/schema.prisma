@@ -1039,8 +1039,8 @@ model PageView {
 model SEOLocale {
   id              String   @id @default(cuid())
   code            String   @unique  // pl, en, es, fr, de, it...
-  name            String            // Polski, English, Español...
-  nativeName      String?           // Polski, English, Español...
+  name            String            // Polski, English, EspaĂ±ol...
+  nativeName      String?           // Polski, English, EspaĂ±ol...
   googleDomain    String            // google.pl, google.com...
   googleHL        String            // hl parameter
   googleGL        String            // gl parameter (country)
@@ -2083,6 +2083,13 @@ model GeneratedMusic {
   errorCode         String?
   retryCount        Int                   @default(0)
 
+  // Extension/Continuation
+  parentTrackId     String?               // Parent track for extensions
+  extendedFromTime  Int?                  // Timestamp (seconds) where extension starts
+  extensionNumber   Int?                  // 1, 2, 3... for chain tracking
+  isExtension       Boolean               @default(false)
+  sunoClipId        String?               // Suno clip ID for extend API
+
   // Timestamps
   createdAt         DateTime              @default(now())
   updatedAt         DateTime              @updatedAt
@@ -2091,6 +2098,8 @@ model GeneratedMusic {
 
   // Relations
   folder            MusicFolder?          @relation(fields: [folderId], references: [id], onDelete: SetNull)
+  parentTrack       GeneratedMusic?       @relation("TrackExtensions", fields: [parentTrackId], references: [id], onDelete: SetNull)
+  extensions        GeneratedMusic[]      @relation("TrackExtensions")
 
   @@index([userId])
   @@index([status])
@@ -2099,6 +2108,7 @@ model GeneratedMusic {
   @@index([isPublic, createdAt])
   @@index([folderId])
   @@index([jobId])
+  @@index([parentTrackId])
 }
 
 model MusicFolder {

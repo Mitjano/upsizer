@@ -110,3 +110,22 @@ export {
   deleteFolder,
   updateFolderStats,
 } from './db';
+
+// Conversion
+export {
+  type ConversionOptions,
+  type ConversionResult,
+  convertAudio,
+  convertToWav,
+  convertToFlac,
+  checkFfmpeg,
+  getFormatCreditCost,
+  deleteConvertedFile,
+} from './convert';
+
+// Extend
+export {
+  type SunoExtendInput,
+  type SunoExtendResult,
+  extendMusicSuno,
+} from './suno-provider';

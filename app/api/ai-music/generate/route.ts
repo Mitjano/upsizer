@@ -46,7 +46,12 @@ export async function POST(request: NextRequest) {
       title,
       mode = 'simple',
       folderId,
+      duration: requestedDuration,
     } = body;
+
+    // Validate and clamp duration to allowed values (60, 120, 180, 240 seconds)
+    const allowedDurations = [60, 120, 180, 240];
+    const duration = allowedDurations.includes(requestedDuration) ? requestedDuration : 120;
 
     // Validate inputs based on mode
     if (mode === 'simple') {
@@ -110,7 +115,7 @@ export async function POST(request: NextRequest) {
       mood: 'energetic' as any,
       model: model as any,
       provider,
-      duration: provider === 'suno' ? 120 : 60, // Suno generates ~2min, MiniMax ~60s
+      duration, // Use user-selected duration
       instrumental: instrumental || false,
       title: title?.trim() || undefined,
       folderId: folderId || undefined,

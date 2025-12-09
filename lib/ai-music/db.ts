@@ -135,6 +135,7 @@ export async function getUserMusic(
     offset?: number;
     orderBy?: 'createdAt' | 'title' | 'duration';
     order?: 'asc' | 'desc';
+    search?: string;
   } = {}
 ) {
   const {
@@ -145,6 +146,7 @@ export async function getUserMusic(
     offset = 0,
     orderBy = 'createdAt',
     order = 'desc',
+    search,
   } = options;
 
   const where: Record<string, unknown> = {
@@ -161,6 +163,16 @@ export async function getUserMusic(
 
   if (masteringStatus) {
     where.masteringStatus = masteringStatus;
+  }
+
+  // Search in title, prompt, style, mood
+  if (search) {
+    where.OR = [
+      { title: { contains: search, mode: 'insensitive' } },
+      { prompt: { contains: search, mode: 'insensitive' } },
+      { style: { contains: search, mode: 'insensitive' } },
+      { mood: { contains: search, mode: 'insensitive' } },
+    ];
   }
 
   return prisma.generatedMusic.findMany({
@@ -182,6 +194,7 @@ export async function countUserMusic(
   options: {
     folderId?: string | null;
     status?: MusicGenerationStatus;
+    search?: string;
   } = {}
 ) {
   const where: Record<string, unknown> = {
@@ -194,6 +207,16 @@ export async function countUserMusic(
 
   if (options.status) {
     where.status = options.status;
+  }
+
+  // Search in title, prompt, style, mood
+  if (options.search) {
+    where.OR = [
+      { title: { contains: options.search, mode: 'insensitive' } },
+      { prompt: { contains: options.search, mode: 'insensitive' } },
+      { style: { contains: options.search, mode: 'insensitive' } },
+      { mood: { contains: options.search, mode: 'insensitive' } },
+    ];
   }
 
   return prisma.generatedMusic.count({ where });

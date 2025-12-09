@@ -267,3 +267,105 @@ export async function cancelSunoGeneration(taskId: string): Promise<boolean> {
   console.log('Suno cancellation requested for:', taskId);
   return true;
 }
+
+// ==================
+// Extend Music API
+// ==================
+
+export interface SunoExtendInput {
+  clipId: string;           // Suno clip ID from previous generation
+  continueAt: number;       // Timestamp in seconds to continue from
+  prompt?: string;          // Continuation lyrics (optional)
+  style?: string;           // Style override (optional)
+  title?: string;           // Title for extended track
+}
+
+export interface SunoExtendResult {
+  success: boolean;
+  taskId?: string;
+  status: 'pending' | 'processing' | 'completed' | 'failed';
+  error?: string;
+  estimatedTime?: number;
+}
+
+/**
+ * Extend/continue music via GoAPI
+ * Uses task_type: "extend_music" to continue from a specific point in an existing track
+ */
+export async function extendMusicSuno(
+  input: SunoExtendInput
+): Promise<SunoExtendResult> {
+  const apiKey = process.env.GOAPI_API_KEY;
+  if (!apiKey) {
+    return {
+      success: false,
+      status: 'failed',
+      error: 'GOAPI_API_KEY is not configured',
+    };
+  }
+
+  try {
+    // Build request body for extend_music task
+    const requestBody: Record<string, unknown> = {
+      model: 'music-u',
+      task_type: 'extend_music',
+      input: {
+        audio_id: input.clipId,
+        continue_at: input.continueAt,
+        prompt: input.style || input.prompt || '',
+        title: input.title || undefined,
+      },
+    };
+
+    // Add lyrics if provided
+    if (input.prompt) {
+      (requestBody.input as Record<string, unknown>).lyrics = input.prompt;
+    }
+
+    console.log('GoAPI extend request:', JSON.stringify(requestBody, null, 2));
+
+    const response = await fetch(`${GOAPI_BASE_URL}/task`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-API-Key': apiKey,
+      },
+      body: JSON.stringify(requestBody),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('GoAPI extend error response:', errorText);
+      let errorMessage = 'Music extension failed';
+      try {
+        const errorData = JSON.parse(errorText);
+        errorMessage = errorData.error?.message || errorData.message || errorData.detail || errorMessage;
+      } catch {
+        errorMessage = errorText || errorMessage;
+      }
+      throw new Error(errorMessage);
+    }
+
+    const data = await response.json();
+    console.log('GoAPI extend response:', JSON.stringify(data, null, 2));
+
+    const taskId = data.data?.task_id || data.task_id;
+    if (!taskId) {
+      throw new Error(data.error?.message || data.message || 'Failed to create extend task');
+    }
+
+    return {
+      success: true,
+      taskId: taskId,
+      status: 'processing',
+      estimatedTime: 120,
+    };
+  } catch (error) {
+    console.error('GoAPI extend error:', error);
+    return {
+      success: false,
+      status: 'failed',
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
+}

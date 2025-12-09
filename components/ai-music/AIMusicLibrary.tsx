@@ -4,6 +4,17 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
+
+// Lazy load ExtendPanel
+const ExtendPanel = dynamic(() => import('./ExtendPanel'),
+  { loading: () => null, ssr: false }
+);
+
+const DownloadDropdown = dynamic(() => import('./DownloadDropdown'), {
+  loading: () => null,
+  ssr: false,
+});
 
 interface MusicTrack {
   id: string;
@@ -12,6 +23,7 @@ interface MusicTrack {
   style?: string;
   mood?: string;
   duration: number;
+  actualDuration?: number;
   instrumental: boolean;
   status: 'pending' | 'processing' | 'completed' | 'failed';
   masteringStatus: 'none' | 'pending' | 'processing' | 'completed' | 'failed';
@@ -74,11 +86,14 @@ export default function AIMusicLibrary() {
   // UI State
   const [sortBy, setSortBy] = useState<SortOption>('createdAt');
   const [filterBy, setFilterBy] = useState<FilterOption>('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [showFolderModal, setShowFolderModal] = useState(false);
   const [editingFolder, setEditingFolder] = useState<MusicFolder | null>(null);
   const [showMoveModal, setShowMoveModal] = useState<string | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
   const [showFolderDeleteConfirm, setShowFolderDeleteConfirm] = useState<string | null>(null);
+  const [extendingTrack, setExtendingTrack] = useState<MusicTrack | null>(null);
 
   // Folder form state
   const [folderName, setFolderName] = useState('');
@@ -89,6 +104,14 @@ export default function AIMusicLibrary() {
   const [playingTrack, setPlayingTrack] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  // Debounce search query
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
   // Fetch tracks and folders
   const fetchData = useCallback(async () => {
     if (!session) return;
@@ -97,8 +120,13 @@ export default function AIMusicLibrary() {
     setError(null);
 
     try {
+      const params = new URLSearchParams();
+      if (selectedFolder) params.set('folderId', selectedFolder);
+      params.set('orderBy', sortBy);
+      if (debouncedSearch.trim()) params.set('search', debouncedSearch.trim());
+
       const [tracksRes, foldersRes] = await Promise.all([
-        fetch(`/api/ai-music/list?folderId=${selectedFolder || ''}&orderBy=${sortBy}`),
+        fetch(`/api/ai-music/list?${params}`),
         fetch('/api/ai-music/folders'),
       ]);
 
@@ -116,7 +144,7 @@ export default function AIMusicLibrary() {
     } finally {
       setIsLoading(false);
     }
-  }, [session, selectedFolder, sortBy]);
+  }, [session, selectedFolder, sortBy, debouncedSearch]);
 
   useEffect(() => {
     fetchData();
@@ -267,6 +295,13 @@ export default function AIMusicLibrary() {
     }
   };
 
+// Handle extend started
+  const handleExtendStarted = (extensionId: string) => {
+    setExtendingTrack(null);
+    fetchData(); // Refresh to show the new extension in progress
+  };
+
+
   // Open edit folder modal
   const openEditFolder = (folder: MusicFolder) => {
     setEditingFolder(folder);
@@ -401,8 +436,39 @@ export default function AIMusicLibrary() {
 
         {/* Main Content - Tracks */}
         <div className="lg:col-span-3">
-          {/* Filters & Sort */}
+          {/* Search & Filters */}
           <div className="flex flex-wrap items-center gap-4 mb-4">
+            {/* Search Input */}
+            <div className="flex-1 min-w-[200px]">
+              <div className="relative">
+                <svg
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder={t('library.searchPlaceholder') || 'Search tracks...'}
+                  className="w-full pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                )}
+              </div>
+            </div>
+
             <div className="flex items-center gap-2">
               <span className="text-sm text-gray-400">{t('library.sort')}:</span>
               <select
@@ -534,33 +600,23 @@ export default function AIMusicLibrary() {
                     {/* Actions */}
                     {track.status === 'completed' && (
                       <div className="flex items-center gap-2 flex-shrink-0 opacity-0 group-hover:opacity-100 transition">
-                        {/* Download */}
+                        {/* Extend */}
                         <button
-                          onClick={async () => {
-                            try {
-                              const response = await fetch(`/api/ai-music/${track.id}/download`);
-                              if (!response.ok) throw new Error('Download failed');
-                              const blob = await response.blob();
-                              const url = window.URL.createObjectURL(blob);
-                              const a = document.createElement('a');
-                              a.href = url;
-                              a.download = `${track.title || 'song'}.mp3`;
-                              document.body.appendChild(a);
-                              a.click();
-                              window.URL.revokeObjectURL(url);
-                              document.body.removeChild(a);
-                            } catch (err) {
-                              console.error('Download error:', err);
-                              setError('Failed to download track');
-                            }
-                          }}
+                          onClick={() => setExtendingTrack(track)}
                           className="p-2 hover:bg-gray-700 rounded-lg transition"
-                          title={t('player.download')}
+                          title={t('extend.title') || 'Extend Track'}
                         >
-                          <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                          <svg className="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                           </svg>
                         </button>
+
+                        {/* Download with Format Selection */}
+                        <DownloadDropdown
+                          trackId={track.id}
+                          trackTitle={track.title || track.prompt.slice(0, 30)}
+                          onError={setError}
+                        />
 
                         {/* Master */}
                         {track.masteringStatus !== 'completed' && (
@@ -782,6 +838,15 @@ export default function AIMusicLibrary() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Extend Panel Modal */}
+      {extendingTrack && (
+        <ExtendPanel
+          track={extendingTrack}
+          onClose={() => setExtendingTrack(null)}
+          onExtendStarted={handleExtendStarted}
+        />
       )}
     </div>
   );

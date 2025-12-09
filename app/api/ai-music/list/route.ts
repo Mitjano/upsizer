@@ -28,25 +28,38 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const limit = parseInt(searchParams.get('limit') || '20', 10);
     const offset = parseInt(searchParams.get('offset') || '0', 10);
-    const folderId = searchParams.get('folderId');
+    const folderIdParam = searchParams.get('folderId');
     const status = searchParams.get('status') as 'pending' | 'processing' | 'completed' | 'failed' | null;
     const masteringStatus = searchParams.get('masteringStatus') as 'none' | 'pending' | 'processing' | 'completed' | 'failed' | null;
     const orderBy = (searchParams.get('orderBy') || 'createdAt') as 'createdAt' | 'title' | 'duration';
     const order = (searchParams.get('order') || 'desc') as 'asc' | 'desc';
+    const search = searchParams.get('search')?.trim();
+
+    // Parse folderId: 'null' -> null (root folder only), empty/undefined -> undefined (all tracks)
+    let folderId: string | null | undefined;
+    if (folderIdParam === 'null') {
+      folderId = null; // Show only tracks without folder
+    } else if (folderIdParam && folderIdParam.trim() !== '') {
+      folderId = folderIdParam; // Show tracks in specific folder
+    } else {
+      folderId = undefined; // Show ALL tracks (no folder filter)
+    }
 
     const [tracks, total, stats] = await Promise.all([
       getUserMusic(user.id, {
-        folderId: folderId === 'null' ? null : folderId || undefined,
+        folderId,
         status: status || undefined,
         masteringStatus: masteringStatus || undefined,
         limit,
         offset,
         orderBy,
         order,
+        search,
       }),
       countUserMusic(user.id, {
-        folderId: folderId === 'null' ? null : folderId || undefined,
+        folderId,
         status: status || undefined,
+        search,
       }),
       getUserMusicStats(user.id),
     ]);

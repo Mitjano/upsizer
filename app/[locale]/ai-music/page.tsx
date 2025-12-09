@@ -20,6 +20,19 @@ const AIMusicGenerator = dynamic(
   }
 );
 
+// Lazy load the explore gallery component
+const ExploreGallery = dynamic(
+  () => import('@/components/ai-music/ExploreGallery'),
+  {
+    loading: () => (
+      <div className="flex items-center justify-center p-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
+      </div>
+    ),
+    ssr: false,
+  }
+);
+
 // Stats component
 function AnimatedStat({ value, label, suffix = '' }: { value: number; label: string; suffix?: string }) {
   const [count, setCount] = useState(0);
@@ -215,13 +228,7 @@ export default function AIMusicPage() {
                 </div>
               )
             )}
-            {activeTab === 'explore' && (
-              <div className="text-center py-12">
-                <div className="text-5xl mb-4">🌍</div>
-                <h3 className="text-xl font-semibold mb-2">{t('explore.title')}</h3>
-                <p className="text-gray-400">Coming soon...</p>
-              </div>
-            )}
+            {activeTab === 'explore' && <ExploreGallery />}
           </div>
         </div>
       </section>
