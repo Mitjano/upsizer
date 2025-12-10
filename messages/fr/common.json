@@ -857,6 +857,11 @@
     },
     "tools": {
       "title": "Outils IA",
+      "available": "outils disponibles",
+      "credits": "crédits",
+      "free": "Gratuit",
+      "startUsing": "Commencer à utiliser",
+      "comingSoon": "BIENTÔT",
       "upscaler": {
         "name": "Agrandisseur d'Images",
         "description": "Améliorez et agrandissez les images jusqu'à 8x"
@@ -865,12 +870,34 @@
         "name": "Suppresseur de Fond",
         "description": "Supprimez les fonds avec l'IA"
       },
-      "faceRestore": {
-        "name": "Restauration Faciale",
-        "description": "Restaurez et améliorez les photos de visages"
+      "colorize": {
+        "name": "Colorisateur de Photos",
+        "description": "Colorisez les photos noir et blanc"
       },
-      "startUsing": "Commencer à utiliser",
-      "comingSoon": "BIENTÔT"
+      "restore": {
+        "name": "Restaurateur d'Images",
+        "description": "Supprimez le bruit et les artefacts"
+      },
+      "objectRemoval": {
+        "name": "Suppression d'Objets",
+        "description": "Supprimez les objets indésirables"
+      },
+      "bgGenerator": {
+        "name": "Générateur de Fonds",
+        "description": "Générez des fonds avec l'IA"
+      },
+      "compressor": {
+        "name": "Compresseur d'Images",
+        "description": "Réduisez la taille du fichier"
+      },
+      "packshot": {
+        "name": "Générateur de Packshot",
+        "description": "Photos produits professionnelles"
+      },
+      "expand": {
+        "name": "Expandeur d'Images",
+        "description": "Étendez les images avec l'IA"
+      }
     },
     "activity": {
       "title": "Activité Récente",

@@ -774,6 +774,11 @@
     },
     "tools": {
       "title": "Narzędzia AI",
+      "available": "dostępnych narzędzi",
+      "credits": "kredytów",
+      "free": "Darmowe",
+      "startUsing": "Zacznij używać",
+      "comingSoon": "WKRÓTCE",
       "upscaler": {
         "name": "Powiększanie Obrazów",
         "description": "Popraw i powiększ obrazy do 8x"
@@ -782,12 +787,34 @@
         "name": "Usuwanie Tła",
         "description": "Usuń tło dzięki AI"
       },
-      "faceRestore": {
-        "name": "Restauracja Twarzy",
-        "description": "Przywróć i popraw zdjęcia twarzy"
+      "colorize": {
+        "name": "Kolorowanie Zdjęć",
+        "description": "Pokoloruj czarno-białe zdjęcia"
       },
-      "startUsing": "Zacznij używać",
-      "comingSoon": "WKRÓTCE"
+      "restore": {
+        "name": "Restauracja Obrazów",
+        "description": "Usuń szum i artefakty"
+      },
+      "objectRemoval": {
+        "name": "Usuwanie Obiektów",
+        "description": "Usuń niechciane obiekty"
+      },
+      "bgGenerator": {
+        "name": "Generator Tła",
+        "description": "Generuj tła AI"
+      },
+      "compressor": {
+        "name": "Kompresor Obrazów",
+        "description": "Zmniejsz rozmiar pliku"
+      },
+      "packshot": {
+        "name": "Generator Packshot",
+        "description": "Profesjonalne zdjęcia produktów"
+      },
+      "expand": {
+        "name": "Rozszerzanie Obrazu",
+        "description": "Rozszerz obrazy z AI"
+      }
     },
     "activity": {
       "title": "Ostatnia Aktywność",

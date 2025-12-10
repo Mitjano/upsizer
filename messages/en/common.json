@@ -774,6 +774,11 @@
     },
     "tools": {
       "title": "AI Tools",
+      "available": "tools available",
+      "credits": "credits",
+      "free": "Free",
+      "startUsing": "Start using",
+      "comingSoon": "SOON",
       "upscaler": {
         "name": "Image Upscaler",
         "description": "Enhance and enlarge images up to 8x"
@@ -782,12 +787,34 @@
         "name": "Background Remover",
         "description": "Remove backgrounds with AI"
       },
-      "faceRestore": {
-        "name": "Face Restoration",
-        "description": "Restore and enhance face photos"
+      "colorize": {
+        "name": "Photo Colorizer",
+        "description": "Colorize black & white photos"
       },
-      "startUsing": "Start using",
-      "comingSoon": "SOON"
+      "restore": {
+        "name": "Image Restore",
+        "description": "Remove noise & artifacts"
+      },
+      "objectRemoval": {
+        "name": "Object Removal",
+        "description": "Erase unwanted objects"
+      },
+      "bgGenerator": {
+        "name": "Background Generator",
+        "description": "Generate AI backgrounds"
+      },
+      "compressor": {
+        "name": "Image Compressor",
+        "description": "Reduce file size smartly"
+      },
+      "packshot": {
+        "name": "Packshot Generator",
+        "description": "Professional product photos"
+      },
+      "expand": {
+        "name": "Image Expand",
+        "description": "Extend images with AI"
+      }
     },
     "activity": {
       "title": "Recent Activity",
