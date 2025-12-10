@@ -47,14 +47,14 @@ export default async function BlogPostPage({ params }: PageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-black to-gray-900">
+    <div className="min-h-screen bg-gradient-to-b from-gray-100 to-white dark:from-gray-900 dark:via-black dark:to-gray-900 text-gray-900 dark:text-white">
       <BlogViewTracker slug={post.slug} />
       {/* Hero Section */}
-      <div className="border-b border-gray-800">
+      <div className="border-b border-gray-200 dark:border-gray-800">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           {/* Breadcrumb */}
           <div className="mb-6">
-            <Link href={`/${locale}/blog`} className="text-green-400 hover:text-green-300 text-sm">
+            <Link href={`/${locale}/blog`} className="text-green-600 dark:text-green-400 hover:text-green-500 dark:hover:text-green-300 text-sm">
               ← {t('backToBlog')}
             </Link>
           </div>
@@ -66,7 +66,7 @@ export default async function BlogPostPage({ params }: PageProps) {
                 <Link
                   key={category}
                   href={`/${locale}/blog/category/${encodeURIComponent(category)}`}
-                  className="text-sm px-3 py-1 bg-green-500/20 text-green-400 rounded-full hover:bg-green-500/30 transition-colors"
+                  className="text-sm px-3 py-1 bg-green-500/20 text-green-600 dark:text-green-400 rounded-full hover:bg-green-500/30 transition-colors"
                 >
                   {category}
                 </Link>
@@ -75,12 +75,12 @@ export default async function BlogPostPage({ params }: PageProps) {
           )}
 
           {/* Title */}
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">{post.title}</h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">{post.title}</h1>
 
           {/* Meta */}
-          <div className="flex items-center gap-6 text-gray-400 text-sm">
+          <div className="flex items-center gap-6 text-gray-600 dark:text-gray-400 text-sm">
             <div className="flex items-center gap-2">
-              <span className="text-green-400">👤</span>
+              <span className="text-green-600 dark:text-green-400">👤</span>
               <span>{post.author.name}</span>
             </div>
           </div>
@@ -106,36 +106,36 @@ export default async function BlogPostPage({ params }: PageProps) {
       <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <SafeHTML
           html={post.content}
-          className="prose prose-invert prose-lg max-w-none
-            prose-headings:text-white prose-headings:font-bold
+          className="prose prose-lg dark:prose-invert max-w-none
+            prose-headings:text-gray-900 dark:prose-headings:text-white prose-headings:font-bold
             prose-h1:text-4xl prose-h1:mb-6
             prose-h2:text-3xl prose-h2:mb-4
             prose-h3:text-2xl prose-h3:mb-3
-            prose-p:text-gray-100 prose-p:leading-relaxed prose-p:mb-6
-            prose-a:text-green-400 prose-a:no-underline hover:prose-a:text-green-300
-            prose-strong:text-white prose-strong:font-semibold
+            prose-p:text-gray-700 dark:prose-p:text-gray-100 prose-p:leading-relaxed prose-p:mb-6
+            prose-a:text-green-600 dark:prose-a:text-green-400 prose-a:no-underline hover:prose-a:text-green-500 dark:hover:prose-a:text-green-300
+            prose-strong:text-gray-900 dark:prose-strong:text-white prose-strong:font-semibold
             prose-ul:list-disc prose-ul:ml-6 prose-ul:mb-6
             prose-ol:list-decimal prose-ol:ml-6 prose-ol:mb-6
-            prose-li:text-gray-100 prose-li:mb-2
+            prose-li:text-gray-700 dark:prose-li:text-gray-100 prose-li:mb-2
             prose-blockquote:border-l-4 prose-blockquote:border-green-500
-            prose-blockquote:pl-6 prose-blockquote:italic prose-blockquote:text-gray-300
-            prose-code:bg-gray-800 prose-code:px-2 prose-code:py-1
-            prose-code:rounded prose-code:text-green-400 prose-code:font-mono prose-code:before:content-none prose-code:after:content-none
-            prose-pre:bg-gray-800 prose-pre:border prose-pre:border-gray-700 prose-pre:text-gray-200
+            prose-blockquote:pl-6 prose-blockquote:italic prose-blockquote:text-gray-600 dark:prose-blockquote:text-gray-300
+            prose-code:bg-gray-200 dark:prose-code:bg-gray-800 prose-code:px-2 prose-code:py-1
+            prose-code:rounded prose-code:text-green-600 dark:prose-code:text-green-400 prose-code:font-mono prose-code:before:content-none prose-code:after:content-none
+            prose-pre:bg-gray-200 dark:prose-pre:bg-gray-800 prose-pre:border prose-pre:border-gray-300 dark:prose-pre:border-gray-700 prose-pre:text-gray-800 dark:prose-pre:text-gray-200
             prose-img:rounded-lg prose-img:shadow-lg"
         />
       </article>
 
       {/* Tags */}
       {post.tags.length > 0 && (
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 border-t border-gray-800">
-          <h3 className="text-sm font-semibold text-gray-400 mb-4">TAGS</h3>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 border-t border-gray-200 dark:border-gray-800">
+          <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-4">TAGS</h3>
           <div className="flex flex-wrap gap-2">
             {post.tags.map((tag) => (
               <Link
                 key={tag}
                 href={`/${locale}/blog/tag/${encodeURIComponent(tag)}`}
-                className="px-3 py-1 bg-gray-800 border border-gray-700 text-gray-300 rounded-lg text-sm hover:border-green-500 hover:text-green-400 transition-colors"
+                className="px-3 py-1 bg-gray-200 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-lg text-sm hover:border-green-500 hover:text-green-600 dark:hover:text-green-400 transition-colors"
               >
                 #{tag}
               </Link>
@@ -145,11 +145,11 @@ export default async function BlogPostPage({ params }: PageProps) {
       )}
 
       {/* Author Bio */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 border-t border-gray-800">
-        <div className="bg-gray-800 border border-gray-700 rounded-xl p-6">
-          <h3 className="text-lg font-semibold text-white mb-2">{t('aboutAuthor')}</h3>
-          <p className="text-gray-400">
-            <strong className="text-white">{post.author.name}</strong>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 border-t border-gray-200 dark:border-gray-800">
+        <div className="bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">{t('aboutAuthor')}</h3>
+          <p className="text-gray-600 dark:text-gray-400">
+            <strong className="text-gray-900 dark:text-white">{post.author.name}</strong>
           </p>
           <p className="text-sm text-gray-500 mt-1">{post.author.email}</p>
         </div>

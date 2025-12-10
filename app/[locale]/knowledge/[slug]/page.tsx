@@ -169,19 +169,19 @@ export default async function KnowledgeArticlePage({ params }: PageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
-      <div className="min-h-screen bg-gradient-to-b from-gray-900 via-black to-gray-900">
+      <div className="min-h-screen bg-gradient-to-b from-gray-100 to-white dark:from-gray-900 dark:via-black dark:to-gray-900 text-gray-900 dark:text-white">
       {/* Hero Section */}
-      <div className="border-b border-gray-800">
+      <div className="border-b border-gray-200 dark:border-gray-800">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           {/* Breadcrumb */}
           <div className="mb-6 flex items-center gap-2 text-sm">
-            <Link href={`/${locale}/knowledge`} className="text-purple-400 hover:text-purple-300">
+            <Link href={`/${locale}/knowledge`} className="text-purple-600 dark:text-purple-400 hover:text-purple-500 dark:hover:text-purple-300">
               {t('breadcrumbKnowledge')}
             </Link>
-            <span className="text-gray-600">/</span>
+            <span className="text-gray-400 dark:text-gray-600">/</span>
             <Link
               href={`/${locale}/knowledge/category/${article.category}`}
-              className="text-purple-400 hover:text-purple-300"
+              className="text-purple-600 dark:text-purple-400 hover:text-purple-500 dark:hover:text-purple-300"
             >
               {categoryName}
             </Link>
@@ -190,16 +190,16 @@ export default async function KnowledgeArticlePage({ params }: PageProps) {
           {/* Category Badge */}
           <div className="flex items-center gap-2 mb-4">
             <span className="text-2xl">{category?.icon}</span>
-            <span className="text-sm px-3 py-1 bg-purple-500/20 text-purple-400 rounded-full">
+            <span className="text-sm px-3 py-1 bg-purple-500/20 text-purple-600 dark:text-purple-400 rounded-full">
               {categoryName}
             </span>
           </div>
 
           {/* Title */}
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">{article.title}</h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">{article.title}</h1>
 
           {/* Excerpt */}
-          <p className="text-xl text-gray-400">{article.excerpt}</p>
+          <p className="text-xl text-gray-600 dark:text-gray-400">{article.excerpt}</p>
         </div>
       </div>
 
@@ -220,32 +220,32 @@ export default async function KnowledgeArticlePage({ params }: PageProps) {
       <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <SafeHTML
           html={article.content}
-          className="prose prose-lg prose-invert max-w-none
-            prose-headings:text-white prose-headings:font-bold
+          className="prose prose-lg dark:prose-invert max-w-none
+            prose-headings:text-gray-900 dark:prose-headings:text-white prose-headings:font-bold
             prose-h2:text-3xl prose-h2:mt-12 prose-h2:mb-6
             prose-h3:text-2xl prose-h3:mt-8 prose-h3:mb-4
-            prose-p:text-gray-300 prose-p:leading-relaxed
-            prose-a:text-purple-400 prose-a:no-underline hover:prose-a:text-purple-300
-            prose-strong:text-white
-            prose-ul:text-gray-300 prose-ol:text-gray-300
-            prose-li:marker:text-purple-400
-            prose-blockquote:border-l-purple-500 prose-blockquote:text-gray-400 prose-blockquote:italic
-            prose-code:text-purple-300 prose-code:bg-gray-800 prose-code:px-2 prose-code:py-0.5 prose-code:rounded
-            prose-pre:bg-gray-800 prose-pre:border prose-pre:border-gray-700 prose-pre:text-gray-200
+            prose-p:text-gray-700 dark:prose-p:text-gray-300 prose-p:leading-relaxed
+            prose-a:text-purple-600 dark:prose-a:text-purple-400 prose-a:no-underline hover:prose-a:text-purple-500 dark:hover:prose-a:text-purple-300
+            prose-strong:text-gray-900 dark:prose-strong:text-white
+            prose-ul:text-gray-700 dark:prose-ul:text-gray-300 prose-ol:text-gray-700 dark:prose-ol:text-gray-300
+            prose-li:marker:text-purple-600 dark:prose-li:marker:text-purple-400
+            prose-blockquote:border-l-purple-500 prose-blockquote:text-gray-600 dark:prose-blockquote:text-gray-400 prose-blockquote:italic
+            prose-code:text-purple-600 dark:prose-code:text-purple-300 prose-code:bg-gray-200 dark:prose-code:bg-gray-800 prose-code:px-2 prose-code:py-0.5 prose-code:rounded
+            prose-pre:bg-gray-200 dark:prose-pre:bg-gray-800 prose-pre:border prose-pre:border-gray-300 dark:prose-pre:border-gray-700 prose-pre:text-gray-800 dark:prose-pre:text-gray-200
             prose-img:rounded-lg prose-img:shadow-lg"
         />
       </article>
 
       {/* Tags */}
       {article.tags.length > 0 && (
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 border-t border-gray-800">
-          <h3 className="text-sm font-semibold text-gray-400 mb-4">{t('tags')}</h3>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 border-t border-gray-200 dark:border-gray-800">
+          <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-4">{t('tags')}</h3>
           <div className="flex flex-wrap gap-2">
             {article.tags.map((tag) => (
               <Link
                 key={tag}
                 href={`/${locale}/knowledge/tag/${encodeURIComponent(tag)}`}
-                className="px-3 py-1 bg-gray-800 border border-gray-700 text-gray-300 rounded-lg text-sm hover:bg-purple-600 hover:border-purple-600 hover:text-white transition-colors"
+                className="px-3 py-1 bg-gray-200 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-lg text-sm hover:bg-purple-600 hover:border-purple-600 hover:text-white transition-colors"
               >
                 #{tag}
               </Link>
@@ -256,8 +256,8 @@ export default async function KnowledgeArticlePage({ params }: PageProps) {
 
       {/* Related Articles */}
       {relatedArticles.length > 0 && (
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 border-t border-gray-800">
-          <h3 className="text-xl font-semibold text-white mb-6">{t('relatedArticles')}</h3>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 border-t border-gray-200 dark:border-gray-800">
+          <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">{t('relatedArticles')}</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {relatedArticles.map((related) => {
               const relatedCat = getCategoryById(related.category);
@@ -266,13 +266,13 @@ export default async function KnowledgeArticlePage({ params }: PageProps) {
                 <Link
                   key={related.id}
                   href={`/${locale}/knowledge/${related.slug}`}
-                  className="group bg-gray-800/50 border border-gray-700 rounded-lg p-4 hover:border-purple-500 transition"
+                  className="group bg-gray-100 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-purple-500 transition"
                 >
                   <div className="flex items-center gap-2 mb-2">
                     <span className="text-sm">{relatedCat?.icon}</span>
                     <span className="text-xs text-gray-500">{relatedCatName}</span>
                   </div>
-                  <h4 className="font-medium text-white group-hover:text-purple-400 transition line-clamp-2">
+                  <h4 className="font-medium text-gray-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 transition line-clamp-2">
                     {related.title}
                   </h4>
                 </Link>
