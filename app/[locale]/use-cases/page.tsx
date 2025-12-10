@@ -316,10 +316,10 @@ export default function UseCasesPage() {
             {/* AI Image Card */}
             <Link
               href="/ai-image"
-              className="group relative bg-gradient-to-br from-purple-900/40 via-gray-900 to-pink-900/40 border border-purple-500/30 hover:border-purple-500/60 rounded-3xl p-8 transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl hover:shadow-purple-500/20"
+              className="group relative bg-gradient-to-br from-purple-600 via-purple-800 to-pink-700 dark:from-purple-900/80 dark:via-gray-900 dark:to-pink-900/80 border border-purple-400/50 dark:border-purple-500/30 hover:border-purple-300 dark:hover:border-purple-500/60 rounded-3xl p-8 transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl hover:shadow-purple-500/30"
             >
               {/* Glow effect */}
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 rounded-3xl transition-opacity duration-500" />
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 to-pink-500/20 opacity-0 group-hover:opacity-100 rounded-3xl transition-opacity duration-500" />
 
               <div className="relative">
                 {/* Icon & Badge */}
@@ -334,10 +334,10 @@ export default function UseCasesPage() {
                 </div>
 
                 {/* Title */}
-                <h3 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-purple-500 dark:group-hover:text-purple-300 transition-colors">
+                <h3 className="text-2xl md:text-3xl font-bold text-white mb-3 group-hover:text-purple-200 transition-colors">
                   {t('aiStudio.aiImage.title') || 'AI Image Generation'}
                 </h3>
-                <p className="text-gray-600 dark:text-gray-400 mb-6">
+                <p className="text-purple-100/80 dark:text-gray-400 mb-6">
                   {t('aiStudio.aiImage.description') || 'Create stunning images from text prompts using FLUX, Stable Diffusion, and more. Transform your ideas into visual reality.'}
                 </p>
 
@@ -349,9 +349,9 @@ export default function UseCasesPage() {
                     t('aiStudio.aiImage.feature3') || 'Image-to-image transformations',
                     t('aiStudio.aiImage.feature4') || 'Community gallery & inspiration',
                   ].map((feature, i) => (
-                    <div key={i} className="flex items-center gap-3 text-gray-700 dark:text-gray-300">
-                      <div className="w-5 h-5 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0">
-                        <FaCheck className="w-3 h-3 text-purple-400" />
+                    <div key={i} className="flex items-center gap-3 text-purple-100 dark:text-gray-300">
+                      <div className="w-5 h-5 rounded-full bg-white/20 dark:bg-purple-500/20 flex items-center justify-center flex-shrink-0">
+                        <FaCheck className="w-3 h-3 text-green-300 dark:text-purple-400" />
                       </div>
                       <span className="text-sm">{feature}</span>
                     </div>
@@ -361,17 +361,17 @@ export default function UseCasesPage() {
                 {/* Models preview */}
                 <div className="flex flex-wrap gap-2 mb-6">
                   {['FLUX Pro', 'FLUX Dev', 'SD 3.5', 'SDXL'].map((model) => (
-                    <span key={model} className="px-3 py-1 bg-gray-200/80 dark:bg-gray-800/80 border border-gray-300 dark:border-gray-700 rounded-lg text-xs font-medium text-gray-700 dark:text-gray-300">
+                    <span key={model} className="px-3 py-1 bg-white/20 dark:bg-gray-800/80 border border-white/30 dark:border-gray-700 rounded-lg text-xs font-medium text-white dark:text-gray-300">
                       {model}
                     </span>
                   ))}
-                  <span className="px-3 py-1 bg-purple-500/20 border border-purple-500/30 rounded-lg text-xs font-medium text-purple-300">
+                  <span className="px-3 py-1 bg-purple-400/30 border border-purple-300/50 rounded-lg text-xs font-medium text-purple-100">
                     +8 {t('aiStudio.more') || 'more'}
                   </span>
                 </div>
 
                 {/* CTA */}
-                <div className="flex items-center gap-2 text-purple-400 font-semibold group-hover:text-purple-300 transition-colors">
+                <div className="flex items-center gap-2 text-purple-200 font-semibold group-hover:text-white transition-colors">
                   <span>{t('aiStudio.aiImage.cta') || 'Start Creating'}</span>
                   <FaArrowRight className="w-4 h-4 group-hover:translate-x-2 transition-transform" />
                 </div>
@@ -381,10 +381,10 @@ export default function UseCasesPage() {
             {/* AI Video Card */}
             <Link
               href="/ai-video"
-              className="group relative bg-gradient-to-br from-cyan-900/40 via-gray-900 to-blue-900/40 border border-cyan-500/30 hover:border-cyan-500/60 rounded-3xl p-8 transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl hover:shadow-cyan-500/20"
+              className="group relative bg-gradient-to-br from-cyan-600 via-blue-700 to-indigo-700 dark:from-cyan-900/80 dark:via-gray-900 dark:to-blue-900/80 border border-cyan-400/50 dark:border-cyan-500/30 hover:border-cyan-300 dark:hover:border-cyan-500/60 rounded-3xl p-8 transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl hover:shadow-cyan-500/30"
             >
               {/* Glow effect */}
-              <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-blue-500/10 opacity-0 group-hover:opacity-100 rounded-3xl transition-opacity duration-500" />
+              <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 opacity-0 group-hover:opacity-100 rounded-3xl transition-opacity duration-500" />
 
               <div className="relative">
                 {/* Icon & Badge */}
@@ -399,10 +399,10 @@ export default function UseCasesPage() {
                 </div>
 
                 {/* Title */}
-                <h3 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-cyan-500 dark:group-hover:text-cyan-300 transition-colors">
+                <h3 className="text-2xl md:text-3xl font-bold text-white mb-3 group-hover:text-cyan-200 transition-colors">
                   {t('aiStudio.aiVideo.title') || 'AI Video Generation'}
                 </h3>
-                <p className="text-gray-600 dark:text-gray-400 mb-6">
+                <p className="text-cyan-100/80 dark:text-gray-400 mb-6">
                   {t('aiStudio.aiVideo.description') || 'Generate cinematic videos from text with Runway, PixVerse, Veo and more. Bring your stories to life.'}
                 </p>
 
@@ -414,9 +414,9 @@ export default function UseCasesPage() {
                     t('aiStudio.aiVideo.feature3') || 'Multiple aspect ratios & resolutions',
                     t('aiStudio.aiVideo.feature4') || 'Prompt enhancement with AI',
                   ].map((feature, i) => (
-                    <div key={i} className="flex items-center gap-3 text-gray-700 dark:text-gray-300">
-                      <div className="w-5 h-5 rounded-full bg-cyan-500/20 flex items-center justify-center flex-shrink-0">
-                        <FaCheck className="w-3 h-3 text-cyan-400" />
+                    <div key={i} className="flex items-center gap-3 text-cyan-100 dark:text-gray-300">
+                      <div className="w-5 h-5 rounded-full bg-white/20 dark:bg-cyan-500/20 flex items-center justify-center flex-shrink-0">
+                        <FaCheck className="w-3 h-3 text-green-300 dark:text-cyan-400" />
                       </div>
                       <span className="text-sm">{feature}</span>
                     </div>
@@ -426,17 +426,17 @@ export default function UseCasesPage() {
                 {/* Models preview */}
                 <div className="flex flex-wrap gap-2 mb-6">
                   {['Runway Gen4', 'Veo 3.1', 'PixVerse V5', 'Kling'].map((model) => (
-                    <span key={model} className="px-3 py-1 bg-gray-200/80 dark:bg-gray-800/80 border border-gray-300 dark:border-gray-700 rounded-lg text-xs font-medium text-gray-700 dark:text-gray-300">
+                    <span key={model} className="px-3 py-1 bg-white/20 dark:bg-gray-800/80 border border-white/30 dark:border-gray-700 rounded-lg text-xs font-medium text-white dark:text-gray-300">
                       {model}
                     </span>
                   ))}
-                  <span className="px-3 py-1 bg-cyan-500/20 border border-cyan-500/30 rounded-lg text-xs font-medium text-cyan-300">
+                  <span className="px-3 py-1 bg-cyan-400/30 border border-cyan-300/50 rounded-lg text-xs font-medium text-cyan-100">
                     +2 {t('aiStudio.more') || 'more'}
                   </span>
                 </div>
 
                 {/* CTA */}
-                <div className="flex items-center gap-2 text-cyan-400 font-semibold group-hover:text-cyan-300 transition-colors">
+                <div className="flex items-center gap-2 text-cyan-200 font-semibold group-hover:text-white transition-colors">
                   <FaPlay className="w-3 h-3" />
                   <span>{t('aiStudio.aiVideo.cta') || 'Generate Videos'}</span>
                   <FaArrowRight className="w-4 h-4 group-hover:translate-x-2 transition-transform" />
@@ -587,36 +587,36 @@ export default function UseCasesPage() {
 
       {/* Final CTA */}
       <section className="max-w-5xl mx-auto px-6 py-20">
-        <div className="relative overflow-hidden bg-gradient-to-br from-green-900/40 via-gray-900 to-blue-900/40 border border-green-500/20 rounded-3xl p-8 md:p-12 text-center">
+        <div className="relative overflow-hidden bg-gradient-to-br from-green-600 via-teal-700 to-blue-700 dark:from-green-900/80 dark:via-gray-900 dark:to-blue-900/80 border border-green-400/50 dark:border-green-500/20 rounded-3xl p-8 md:p-12 text-center">
           {/* Background effects */}
-          <div className="absolute top-0 left-1/4 w-64 h-64 bg-green-500/20 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-blue-500/20 rounded-full blur-3xl" />
+          <div className="absolute top-0 left-1/4 w-64 h-64 bg-green-400/30 dark:bg-green-500/20 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-blue-400/30 dark:bg-blue-500/20 rounded-full blur-3xl" />
 
           <div className="relative">
             <h2 className="text-3xl md:text-5xl font-bold mb-4">
-              <span className="text-gray-900 dark:text-white">{t('cta.title')}</span>
+              <span className="text-white">{t('cta.title')}</span>
             </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-400 mb-8 max-w-2xl mx-auto">
+            <p className="text-xl text-green-100/80 dark:text-gray-400 mb-8 max-w-2xl mx-auto">
               {t('cta.subtitle')}
             </p>
 
             <div className="flex flex-wrap items-center justify-center gap-4">
               <Link
                 href="/tools"
-                className="group flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl font-semibold text-lg hover:shadow-2xl hover:shadow-green-500/30 transition-all duration-300 hover:scale-105"
+                className="group flex items-center gap-2 px-8 py-4 bg-white text-green-700 hover:bg-green-50 rounded-xl font-semibold text-lg hover:shadow-2xl hover:shadow-white/30 transition-all duration-300 hover:scale-105"
               >
                 <span>{t('cta.tryTools')}</span>
                 <FaArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
               <Link
                 href="/pricing"
-                className="flex items-center gap-2 px-8 py-4 bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 border border-gray-400 dark:border-gray-600 rounded-xl font-semibold text-lg transition-all duration-300"
+                className="flex items-center gap-2 px-8 py-4 bg-white/20 dark:bg-gray-800 hover:bg-white/30 dark:hover:bg-gray-700 border border-white/40 dark:border-gray-600 rounded-xl font-semibold text-lg text-white transition-all duration-300"
               >
                 {t('cta.viewPricing')}
               </Link>
             </div>
 
-            <p className="mt-6 text-sm text-gray-500">
+            <p className="mt-6 text-sm text-green-200/80 dark:text-gray-500">
               {t('cta.noCard') || 'No credit card required. 3 free credits to start.'}
             </p>
           </div>
