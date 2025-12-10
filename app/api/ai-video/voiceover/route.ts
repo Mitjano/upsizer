@@ -4,25 +4,33 @@ import { getToolCost, type ToolType } from '@/lib/credits-config';
 import { prisma } from '@/lib/prisma';
 import { createUsage } from '@/lib/db';
 
-// MiniMax Speech-02 voice options via Fal.ai
+// MiniMax Speech-02-HD voice options via Fal.ai
+// Available voices: Wise_Woman, Friendly_Person, Inspirational_girl, Deep_Voice_Man,
+// Calm_Woman, Casual_Guy, Lively_Girl, Patient_Man, Young_Knight, Determined_Man,
+// Lovely_Girl, Decent_Boy, Imposing_Manner, Elegant_Man, Abbess, Sweet_Girl_2, Exuberant_Girl
 const VOICE_OPTIONS = {
-  // English voices
-  'en-male-1': { name: 'English Male (Adam)', language: 'en', gender: 'male' },
-  'en-male-2': { name: 'English Male (Brian)', language: 'en', gender: 'male' },
-  'en-female-1': { name: 'English Female (Emily)', language: 'en', gender: 'female' },
-  'en-female-2': { name: 'English Female (Sarah)', language: 'en', gender: 'female' },
+  // English voices (MiniMax supports multilingual text)
+  'Deep_Voice_Man': { name: 'Deep Voice Man', language: 'en', gender: 'male' },
+  'Casual_Guy': { name: 'Casual Guy', language: 'en', gender: 'male' },
+  'Patient_Man': { name: 'Patient Man', language: 'en', gender: 'male' },
+  'Elegant_Man': { name: 'Elegant Man', language: 'en', gender: 'male' },
+  'Wise_Woman': { name: 'Wise Woman', language: 'en', gender: 'female' },
+  'Calm_Woman': { name: 'Calm Woman', language: 'en', gender: 'female' },
+  'Lively_Girl': { name: 'Lively Girl', language: 'en', gender: 'female' },
+  'Inspirational_girl': { name: 'Inspirational Girl', language: 'en', gender: 'female' },
   // Polish voices
-  'pl-male-1': { name: 'Polish Male (Jan)', language: 'pl', gender: 'male' },
-  'pl-female-1': { name: 'Polish Female (Anna)', language: 'pl', gender: 'female' },
+  'Friendly_Person': { name: 'Friendly Person', language: 'pl', gender: 'male' },
+  'Young_Knight': { name: 'Young Knight', language: 'pl', gender: 'male' },
+  'Sweet_Girl_2': { name: 'Sweet Girl', language: 'pl', gender: 'female' },
+  'Lovely_Girl': { name: 'Lovely Girl', language: 'pl', gender: 'female' },
   // Spanish voices
-  'es-male-1': { name: 'Spanish Male (Carlos)', language: 'es', gender: 'male' },
-  'es-female-1': { name: 'Spanish Female (Maria)', language: 'es', gender: 'female' },
+  'Determined_Man': { name: 'Determined Man', language: 'es', gender: 'male' },
+  'Exuberant_Girl': { name: 'Exuberant Girl', language: 'es', gender: 'female' },
   // French voices
-  'fr-male-1': { name: 'French Male (Pierre)', language: 'fr', gender: 'male' },
-  'fr-female-1': { name: 'French Female (Claire)', language: 'fr', gender: 'female' },
+  'Decent_Boy': { name: 'Decent Boy', language: 'fr', gender: 'male' },
+  'Abbess': { name: 'Abbess', language: 'fr', gender: 'female' },
   // German voices
-  'de-male-1': { name: 'German Male (Hans)', language: 'de', gender: 'male' },
-  'de-female-1': { name: 'German Female (Greta)', language: 'de', gender: 'female' },
+  'Imposing_Manner': { name: 'Imposing Manner', language: 'de', gender: 'male' },
 };
 
 type VoiceId = keyof typeof VOICE_OPTIONS;
@@ -44,7 +52,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const {
       text,
-      voiceId = 'en-female-1',
+      voiceId = 'Calm_Woman',
       speed = 1.0,
     } = body;
 
@@ -117,7 +125,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Call Fal.ai MiniMax Speech-02
+    // Call Fal.ai MiniMax Speech-02-HD
     const apiKey = process.env.FAL_API_KEY;
     if (!apiKey) {
       return NextResponse.json(
@@ -128,8 +136,8 @@ export async function POST(request: NextRequest) {
 
     const voiceConfig = VOICE_OPTIONS[voiceId as VoiceId];
 
-    // Use Fal.ai's MiniMax Speech-02 API
-    const response = await fetch('https://fal.run/fal-ai/minimax-speech', {
+    // Use Fal.ai's MiniMax Speech-02-HD API
+    const response = await fetch('https://fal.run/fal-ai/minimax/speech-02-hd', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -137,9 +145,13 @@ export async function POST(request: NextRequest) {
       },
       body: JSON.stringify({
         text: text.trim(),
-        voice_id: voiceId,
-        speed: speed,
-        language: voiceConfig.language,
+        voice_setting: {
+          voice_id: voiceId,
+          speed: speed,
+          vol: 1,
+          pitch: 0,
+        },
+        output_format: 'url',
       }),
     });
 
@@ -165,12 +177,12 @@ export async function POST(request: NextRequest) {
       userId: user.id,
       type: 'voiceover',
       creditsUsed: creditCost,
-      model: 'minimax-speech-02',
+      model: 'minimax-speech-02-hd',
     });
 
     return NextResponse.json({
       success: true,
-      audioUrl: result.audio?.url || result.audio_url,
+      audioUrl: result.audio?.url || result.audio_url || result.audio,
       duration: result.duration,
       metadata: {
         text: text.substring(0, 100) + (text.length > 100 ? '...' : ''),

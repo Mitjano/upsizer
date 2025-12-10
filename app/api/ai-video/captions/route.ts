@@ -60,6 +60,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Validate URL format - must be direct audio/video file URL
+    if (mediaUrl) {
+      const url = mediaUrl.toLowerCase();
+      const isYouTube = url.includes('youtube.com') || url.includes('youtu.be');
+      const isVimeo = url.includes('vimeo.com');
+      const isTikTok = url.includes('tiktok.com');
+
+      if (isYouTube || isVimeo || isTikTok) {
+        return NextResponse.json(
+          { error: 'YouTube, Vimeo, and TikTok URLs are not supported. Please upload the audio/video file directly or provide a direct URL to an audio file (mp3, wav, m4a, etc.)' },
+          { status: 400 }
+        );
+      }
+    }
+
     // Validate output format
     if (!OUTPUT_FORMATS.includes(outputFormat as OutputFormat)) {
       return NextResponse.json(
@@ -144,7 +159,7 @@ export async function POST(request: NextRequest) {
     }
 
     const output = await replicate.run(
-      'openai/whisper:4d50797290df275329f202e48c76360b3f22b08d28c196cbc54600319435f8d2',
+      'openai/whisper:8099696689d249cf8b122d833c36ac3f75505c666a395ca40ef26f68e7d3d16e',
       { input }
     ) as { transcription?: string; segments?: Array<{ start: number; end: number; text: string }> };
 
@@ -205,8 +220,26 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('Captions generation error:', error);
+
+    // Handle specific errors
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+
+    if (errorMessage.includes('REPLICATE_API_TOKEN')) {
+      return NextResponse.json(
+        { error: 'Transcription service not configured' },
+        { status: 500 }
+      );
+    }
+
+    if (errorMessage.includes('Invalid') || errorMessage.includes('URL')) {
+      return NextResponse.json(
+        { error: 'Invalid audio URL. Please provide a direct link to an audio file (mp3, wav, m4a, etc.)' },
+        { status: 400 }
+      );
+    }
+
     return NextResponse.json(
-      { error: 'Failed to generate captions' },
+      { error: 'Failed to generate captions. Please try uploading the file directly.' },
       { status: 500 }
     );
   }

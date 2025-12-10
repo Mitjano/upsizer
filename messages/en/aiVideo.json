@@ -164,6 +164,7 @@
     "feature3Title": "Multiple Formats",
     "feature3Desc": "Export as SRT, VTT, JSON, or plain text. Compatible with all video editors.",
     "backToAIVideo": "Back to AI Video",
+    "urlWarning": "Direct audio/video file URLs only (mp3, wav, mp4, etc.). YouTube, Vimeo, and TikTok links are not supported - please upload the file instead.",
     "errors": {
       "fileRequired": "Please upload an audio or video file",
       "urlRequired": "Please enter a media URL",

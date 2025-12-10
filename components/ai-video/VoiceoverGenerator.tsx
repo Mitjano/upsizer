@@ -52,7 +52,7 @@ export default function VoiceoverGenerator() {
 
   const [config, setConfig] = useState<VoiceoverConfig | null>(null);
   const [text, setText] = useState('');
-  const [voiceId, setVoiceId] = useState('en-female-1');
+  const [voiceId, setVoiceId] = useState('Calm_Woman');
   const [speed, setSpeed] = useState(1.0);
   const [selectedLanguage, setSelectedLanguage] = useState('en');
 
@@ -236,7 +236,7 @@ export default function VoiceoverGenerator() {
                 }`}
               >
                 <span>{voice.gender === 'male' ? '👨' : '👩'}</span>
-                {voice.name.split('(')[1]?.replace(')', '') || voice.name}
+                {voice.name}
               </button>
             ))}
           </div>

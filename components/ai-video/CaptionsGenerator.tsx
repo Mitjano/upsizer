@@ -249,9 +249,12 @@ export default function CaptionsGenerator() {
               type="url"
               value={mediaUrl}
               onChange={(e) => setMediaUrl(e.target.value)}
-              placeholder={t('urlPlaceholder')}
+              placeholder="https://example.com/audio.mp3"
               className="w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-xl text-white placeholder-gray-500 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition"
             />
+            <p className="text-xs text-yellow-500 mt-2">
+              ⚠️ {t('urlWarning') || 'Direct audio/video file URLs only (mp3, wav, mp4, etc.). YouTube, Vimeo, and TikTok links are not supported - please upload the file instead.'}
+            </p>
           </div>
         )}
 
