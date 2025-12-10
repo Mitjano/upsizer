@@ -71,12 +71,6 @@ const trustBadges = [
   },
 ];
 
-const partnerLogos = [
-  { name: 'TechCrunch', opacity: 'opacity-40 hover:opacity-70' },
-  { name: 'ProductHunt', opacity: 'opacity-40 hover:opacity-70' },
-  { name: 'Forbes', opacity: 'opacity-40 hover:opacity-70' },
-  { name: 'Wired', opacity: 'opacity-40 hover:opacity-70' },
-];
 
 export default function TrustBadges() {
   const t = useTranslations('trustBadges');
@@ -84,7 +78,7 @@ export default function TrustBadges() {
     <section className="py-16 border-t border-b border-gray-200 dark:border-gray-800">
       <div className="container mx-auto px-4">
         {/* Trust Badges Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6 mb-12">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
           {trustBadges.map((badge) => (
             <div
               key={badge.id}
@@ -97,39 +91,6 @@ export default function TrustBadges() {
               <p className="text-gray-500 text-xs">{t(`badges.${badge.id}.description`)}</p>
             </div>
           ))}
-        </div>
-
-        {/* Divider with text */}
-        <div className="flex items-center justify-center gap-4 mb-8">
-          <div className="h-px bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-700 to-transparent flex-1 max-w-[200px]"></div>
-          <span className="text-gray-500 text-sm font-medium">{t('trustedBy')}</span>
-          <div className="h-px bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-700 to-transparent flex-1 max-w-[200px]"></div>
-        </div>
-
-        {/* Partner/Press Logos Placeholder */}
-        <div className="flex items-center justify-center gap-8 md:gap-12 flex-wrap">
-          {partnerLogos.map((logo) => (
-            <div
-              key={logo.name}
-              className={`${logo.opacity} transition-opacity duration-300`}
-            >
-              <span className="text-2xl md:text-3xl font-bold text-gray-400 tracking-wider">
-                {logo.name}
-              </span>
-            </div>
-          ))}
-        </div>
-
-        {/* Security Note */}
-        <div className="mt-12 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100/50 dark:bg-gray-800/50 rounded-full border border-gray-200 dark:border-gray-700">
-            <svg className="w-4 h-4 text-green-500 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-            </svg>
-            <span className="text-sm text-gray-500 dark:text-gray-400">
-              {t('securityNote')}
-            </span>
-          </div>
         </div>
       </div>
     </section>

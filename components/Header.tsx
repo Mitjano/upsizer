@@ -292,17 +292,11 @@ export default function Header() {
             <span className="text-sm" aria-hidden="true">🎬</span>
             {t('nav.aiVideo')}
           </Link>
-          <Link href="/use-cases" className="text-gray-700 dark:text-white hover:text-green-500 dark:hover:text-green-400 transition">
-            {t('nav.useCases')}
-          </Link>
           <Link href="/pricing" className="text-gray-700 dark:text-white hover:text-green-500 dark:hover:text-green-400 transition">
             {t('nav.pricing')}
           </Link>
           <Link href="/blog" className="text-gray-700 dark:text-white hover:text-green-500 dark:hover:text-green-400 transition">
             {t('nav.blog')}
-          </Link>
-          <Link href="/#faq" className="text-gray-700 dark:text-white hover:text-green-500 dark:hover:text-green-400 transition">
-            {t('nav.faq')}
           </Link>
         </div>
 
@@ -483,13 +477,6 @@ export default function Header() {
               <span aria-hidden="true">🎬</span> {t('nav.aiVideo')}
             </Link>
             <Link
-              href="/use-cases"
-              className="block py-2 text-gray-700 dark:text-white hover:text-green-500 dark:hover:text-green-400 transition"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              {t('nav.useCases')}
-            </Link>
-            <Link
               href="/pricing"
               className="block py-2 text-gray-700 dark:text-white hover:text-green-500 dark:hover:text-green-400 transition"
               onClick={() => setMobileMenuOpen(false)}
@@ -502,13 +489,6 @@ export default function Header() {
               onClick={() => setMobileMenuOpen(false)}
             >
               {t('nav.blog')}
-            </Link>
-            <Link
-              href="/#faq"
-              className="block py-2 text-gray-700 dark:text-white hover:text-green-500 dark:hover:text-green-400 transition"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              {t('nav.faq')}
             </Link>
             {session && (
               <>
