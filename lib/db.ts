@@ -842,7 +842,30 @@ export function getUnreadNotifications(): Notification[] {
 
 export function createNotification(data: Omit<Notification, 'id' | 'createdAt' | 'read'>): Notification {
   if (USE_POSTGRES) {
-    throw new Error('Use PostgreSQL version');
+    // For PostgreSQL, create notification asynchronously but return immediately
+    // This is a fire-and-forget pattern to not block the caller
+    const newNotification: Notification = {
+      ...data,
+      id: nanoid(),
+      read: false,
+      createdAt: new Date().toISOString(),
+    };
+
+    // Fire and forget - don't await
+    getPrisma().then(prisma => {
+      prisma.notification.create({
+        data: {
+          type: data.type,
+          category: data.category,
+          title: data.title,
+          message: data.message,
+          metadata: data.metadata as any,
+          read: false,
+        },
+      }).catch(err => console.error('[createNotification] Prisma error:', err));
+    }).catch(err => console.error('[createNotification] getPrisma error:', err));
+
+    return newNotification;
   }
   const notifications = getAllNotifications();
   const newNotification: Notification = {
