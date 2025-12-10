@@ -1,14 +1,33 @@
 'use client';
 
-import FAQ from "@/components/FAQ";
-import UseCases from "@/components/UseCases";
-import EnterpriseSolutions from "@/components/EnterpriseSolutions";
-import SEOContent from "@/components/SEOContent";
-import Testimonials from "@/components/Testimonials";
-import TrustBadges from "@/components/TrustBadges";
-import ToolsShowcase from "@/components/ToolsShowcase";
+import dynamic from 'next/dynamic';
 import Link from "next/link";
 import { useTranslations } from 'next-intl';
+
+// Above-the-fold components - load immediately
+import TrustBadges from "@/components/TrustBadges";
+import ToolsShowcase from "@/components/ToolsShowcase";
+
+// Below-the-fold components - lazy load for better initial page load
+const UseCases = dynamic(() => import("@/components/UseCases"), {
+  loading: () => <div className="h-96 animate-pulse bg-gray-800/50 rounded-lg" />,
+});
+
+const Testimonials = dynamic(() => import("@/components/Testimonials"), {
+  loading: () => <div className="h-64 animate-pulse bg-gray-800/50 rounded-lg" />,
+});
+
+const EnterpriseSolutions = dynamic(() => import("@/components/EnterpriseSolutions"), {
+  loading: () => <div className="h-64 animate-pulse bg-gray-800/50 rounded-lg" />,
+});
+
+const FAQ = dynamic(() => import("@/components/FAQ"), {
+  loading: () => <div className="h-64 animate-pulse bg-gray-800/50 rounded-lg" />,
+});
+
+const SEOContent = dynamic(() => import("@/components/SEOContent"), {
+  loading: () => <div className="h-32 animate-pulse bg-gray-800/50 rounded-lg" />,
+});
 
 export default function Home() {
   const t = useTranslations('home');

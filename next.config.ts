@@ -124,6 +124,46 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+      // Cache static assets aggressively (JS, CSS, fonts)
+      {
+        source: '/_next/static/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      // Cache images with moderate TTL
+      {
+        source: '/images/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=86400, stale-while-revalidate=604800',
+          },
+        ],
+      },
+      // Cache API gallery/explore endpoints (public data)
+      {
+        source: '/api/ai-image/gallery',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=60, stale-while-revalidate=300',
+          },
+        ],
+      },
+      // Cache blog content
+      {
+        source: '/:locale/blog/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=3600, stale-while-revalidate=86400',
+          },
+        ],
+      },
     ];
   },
 };
