@@ -66,7 +66,7 @@ export default function LanguageSwitcher() {
         ref={buttonRef}
         onClick={() => setIsOpen((prev) => !prev)}
         onKeyDown={handleButtonKeyDown}
-        className={`flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-800 transition ${
+        className={`flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition ${
           isPending ? 'opacity-50' : ''
         }`}
         disabled={isPending}
@@ -76,7 +76,7 @@ export default function LanguageSwitcher() {
         aria-label={`Select language. Current: ${localeNames[locale]}`}
       >
         <span className="text-lg" aria-hidden="true">{localeFlags[locale]}</span>
-        <span className="hidden lg:inline text-sm text-white">{localeNames[locale]}</span>
+        <span className="hidden lg:inline text-sm text-gray-900 dark:text-white">{localeNames[locale]}</span>
         <svg
           className={`w-3 h-3 text-gray-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
           fill="none"
@@ -97,7 +97,7 @@ export default function LanguageSwitcher() {
         aria-activedescendant={activeIndex >= 0 ? `lang-option-${locales[activeIndex]}` : undefined}
         onKeyDown={handleKeyDown}
         tabIndex={isOpen ? 0 : -1}
-        className={`absolute right-0 mt-2 bg-gray-800 border border-gray-700 rounded-lg shadow-xl z-50 min-w-[140px] transition-all duration-200 ${
+        className={`absolute right-0 mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-50 min-w-[140px] transition-all duration-200 ${
           isOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
         }`}
       >
@@ -110,11 +110,11 @@ export default function LanguageSwitcher() {
             data-index={index}
             onClick={() => switchLocale(loc)}
             disabled={isPending}
-            className={`flex items-center gap-3 w-full px-4 py-2.5 hover:bg-gray-700 transition first:rounded-t-lg last:rounded-b-lg ${
+            className={`flex items-center gap-3 w-full px-4 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-700 transition first:rounded-t-lg last:rounded-b-lg ${
               loc === locale
-                ? 'text-green-400 bg-gray-700/50'
-                : 'text-white'
-            } ${activeIndex === index ? 'bg-gray-700' : ''}`}
+                ? 'text-green-600 dark:text-green-400 bg-gray-100 dark:bg-gray-700/50'
+                : 'text-gray-900 dark:text-white'
+            } ${activeIndex === index ? 'bg-gray-100 dark:bg-gray-700' : ''}`}
           >
             <span className="text-lg" aria-hidden="true">{localeFlags[loc]}</span>
             <span className="text-sm">{localeNames[loc]}</span>
