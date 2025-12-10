@@ -161,7 +161,7 @@ export default function ToolsShowcase() {
         <h2 className="text-4xl md:text-5xl font-extrabold mb-4">
           {t('title')} <span className="bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">{t('titleHighlight')}</span>
         </h2>
-        <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+        <p className="text-xl text-gray-500 dark:text-gray-400 max-w-3xl mx-auto">
           {t('subtitle')}
         </p>
       </div>
@@ -172,7 +172,7 @@ export default function ToolsShowcase() {
           <Link
             key={tool.href}
             href={tool.href}
-            className="group relative bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-sm rounded-2xl border border-gray-700 hover:border-gray-500 p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl overflow-hidden"
+            className="group relative bg-gradient-to-br from-gray-100/80 to-gray-200/80 dark:from-gray-800/80 dark:to-gray-900/80 backdrop-blur-sm rounded-2xl border border-gray-300 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-500 p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl overflow-hidden"
           >
             {/* Gradient overlay on hover */}
             <div className={`absolute inset-0 bg-gradient-to-br ${tool.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}></div>
@@ -188,26 +188,26 @@ export default function ToolsShowcase() {
 
             <div className="relative">
               {/* Icon */}
-              <div className={`w-14 h-14 ${tool.bgColor} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 border border-white/5`}>
+              <div className={`w-14 h-14 ${tool.bgColor} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 border border-gray-200/50 dark:border-white/5`}>
                 <div className={tool.iconColor}>
                   {tool.icon}
                 </div>
               </div>
 
               {/* Content */}
-              <h3 className="text-xl font-bold mb-2 group-hover:text-white transition-colors">
+              <h3 className="text-xl font-bold mb-2 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
                 {t(`tools.${tool.nameKey}.name`)}
               </h3>
-              <p className="text-gray-400 text-sm mb-4 leading-relaxed">
+              <p className="text-gray-500 dark:text-gray-400 text-sm mb-4 leading-relaxed">
                 {t(`tools.${tool.descriptionKey}.description`)}
               </p>
 
               {/* Footer */}
               <div className="flex items-center justify-between">
-                <span className="text-xs font-medium text-gray-500 bg-gray-800 px-3 py-1 rounded-full">
+                <span className="text-xs font-medium text-gray-500 bg-gray-200 dark:bg-gray-800 px-3 py-1 rounded-full">
                   {t(`credits.${tool.creditsKey}`)}
                 </span>
-                <div className="flex items-center gap-1 text-sm font-medium text-gray-400 group-hover:text-green-400 transition-colors">
+                <div className="flex items-center gap-1 text-sm font-medium text-gray-500 dark:text-gray-400 group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">
                   <span>{t('tryNow')}</span>
                   <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -222,11 +222,11 @@ export default function ToolsShowcase() {
       {/* Bottom CTA */}
       <div className="text-center mt-12">
         <p className="text-gray-500 mb-4">
-          {t('bottomCta.text')} <span className="text-green-400 font-semibold">{t('bottomCta.highlight')}</span> {t('bottomCta.suffix')}
+          {t('bottomCta.text')} <span className="text-green-600 dark:text-green-400 font-semibold">{t('bottomCta.highlight')}</span> {t('bottomCta.suffix')}
         </p>
         <Link
           href="/tools/upscaler"
-          className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-400 hover:to-blue-400 rounded-xl font-bold text-lg shadow-xl shadow-green-500/25 hover:shadow-green-500/40 transition-all duration-300 hover:scale-105"
+          className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-400 hover:to-blue-400 rounded-xl font-bold text-lg text-white shadow-xl shadow-green-500/25 hover:shadow-green-500/40 transition-all duration-300 hover:scale-105"
         >
           <span>{t('bottomCta.button')}</span>
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

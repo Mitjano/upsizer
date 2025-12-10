@@ -68,19 +68,19 @@ export default function Testimonials() {
   return (
     <section className="relative py-20 overflow-hidden">
       {/* Background decoration */}
-      <div className="absolute inset-0 bg-gradient-to-b from-gray-900/50 to-transparent"></div>
+      <div className="absolute inset-0 bg-gradient-to-b from-gray-100/50 dark:from-gray-900/50 to-transparent"></div>
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-green-500/5 rounded-full blur-3xl"></div>
 
       <div className="container mx-auto px-4 relative z-10">
         {/* Section Header */}
         <div className="text-center mb-16">
           <div className="inline-block mb-4 px-4 py-2 bg-green-500/10 border border-green-500/20 rounded-full">
-            <span className="text-sm font-semibold text-green-400">{t('badge')}</span>
+            <span className="text-sm font-semibold text-green-600 dark:text-green-400">{t('badge')}</span>
           </div>
           <h2 className="text-4xl md:text-5xl font-extrabold mb-4">
             {t('title')} <span className="bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">{t('titleHighlight')}</span> {t('titleSuffix')}
           </h2>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
             {t('subtitle')}
           </p>
         </div>
@@ -91,19 +91,19 @@ export default function Testimonials() {
             <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
               50K+
             </div>
-            <div className="text-gray-400 mt-1">{t('stats.imagesProcessed')}</div>
+            <div className="text-gray-500 dark:text-gray-400 mt-1">{t('stats.imagesProcessed')}</div>
           </div>
           <div className="text-center">
             <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
               10K+
             </div>
-            <div className="text-gray-400 mt-1">{t('stats.happyUsers')}</div>
+            <div className="text-gray-500 dark:text-gray-400 mt-1">{t('stats.happyUsers')}</div>
           </div>
           <div className="text-center">
             <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
               4.9/5
             </div>
-            <div className="text-gray-400 mt-1">{t('stats.averageRating')}</div>
+            <div className="text-gray-500 dark:text-gray-400 mt-1">{t('stats.averageRating')}</div>
           </div>
         </div>
 
@@ -113,25 +113,25 @@ export default function Testimonials() {
             {/* Navigation Arrows */}
             <button
               onClick={prevSlide}
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-12 z-10 p-3 bg-gray-800/80 hover:bg-gray-700 border border-gray-700 rounded-full transition-all hover:scale-110"
+              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-12 z-10 p-3 bg-gray-200/80 dark:bg-gray-800/80 hover:bg-gray-300 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-700 rounded-full transition-all hover:scale-110"
               aria-label="Previous testimonial"
             >
-              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 text-gray-900 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
             </button>
             <button
               onClick={nextSlide}
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-12 z-10 p-3 bg-gray-800/80 hover:bg-gray-700 border border-gray-700 rounded-full transition-all hover:scale-110"
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-12 z-10 p-3 bg-gray-200/80 dark:bg-gray-800/80 hover:bg-gray-300 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-700 rounded-full transition-all hover:scale-110"
               aria-label="Next testimonial"
             >
-              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 text-gray-900 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </button>
 
             {/* Testimonial Card */}
-            <div className="relative bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-sm border border-gray-700 rounded-3xl p-8 md:p-12">
+            <div className="relative bg-gradient-to-br from-gray-100/80 to-gray-200/80 dark:from-gray-800/80 dark:to-gray-900/80 backdrop-blur-sm border border-gray-300 dark:border-gray-700 rounded-3xl p-8 md:p-12">
               {/* Quote Icon */}
               <div className="absolute top-6 right-8 text-green-500/20">
                 <svg className="w-16 h-16" fill="currentColor" viewBox="0 0 24 24">
@@ -146,7 +146,7 @@ export default function Testimonials() {
                 </div>
 
                 {/* Quote */}
-                <blockquote className="text-xl md:text-2xl text-gray-200 leading-relaxed mb-8 min-h-[120px]">
+                <blockquote className="text-xl md:text-2xl text-gray-700 dark:text-gray-200 leading-relaxed mb-8 min-h-[120px]">
                   &quot;{t(`items.${testimonialKeys[currentIndex]}.quote`)}&quot;
                 </blockquote>
 
@@ -156,9 +156,9 @@ export default function Testimonials() {
                     {testimonialMeta[currentIndex].initials}
                   </div>
                   <div>
-                    <div className="font-semibold text-white text-lg">{t(`items.${testimonialKeys[currentIndex]}.name`)}</div>
-                    <div className="text-gray-400">{t(`items.${testimonialKeys[currentIndex]}.role`)}</div>
-                    <div className="text-green-400 text-sm">{t(`items.${testimonialKeys[currentIndex]}.company`)}</div>
+                    <div className="font-semibold text-gray-900 dark:text-white text-lg">{t(`items.${testimonialKeys[currentIndex]}.name`)}</div>
+                    <div className="text-gray-500 dark:text-gray-400">{t(`items.${testimonialKeys[currentIndex]}.role`)}</div>
+                    <div className="text-green-600 dark:text-green-400 text-sm">{t(`items.${testimonialKeys[currentIndex]}.company`)}</div>
                   </div>
                 </div>
               </div>
@@ -174,7 +174,7 @@ export default function Testimonials() {
                 className={`w-2.5 h-2.5 rounded-full transition-all ${
                   index === currentIndex
                     ? 'w-8 bg-green-500'
-                    : 'bg-gray-600 hover:bg-gray-500'
+                    : 'bg-gray-400 dark:bg-gray-600 hover:bg-gray-500'
                 }`}
                 aria-label={`Go to testimonial ${index + 1}`}
               />
@@ -187,18 +187,18 @@ export default function Testimonials() {
           {testimonialKeys.slice(0, 3).map((key, index) => (
             <div
               key={key}
-              className={`group p-6 bg-gray-800/50 border border-gray-700 rounded-2xl hover:border-green-500/50 transition-all duration-300 ${
+              className={`group p-6 bg-gray-100/50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-2xl hover:border-green-500/50 transition-all duration-300 ${
                 index === currentIndex ? 'ring-2 ring-green-500/30' : ''
               }`}
             >
               <StarRating rating={5} />
-              <p className="text-gray-300 mt-4 mb-6 line-clamp-3">&quot;{t(`items.${key}.quote`)}&quot;</p>
+              <p className="text-gray-600 dark:text-gray-300 mt-4 mb-6 line-clamp-3">&quot;{t(`items.${key}.quote`)}&quot;</p>
               <div className="flex items-center gap-3">
                 <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${testimonialMeta[index].color} flex items-center justify-center text-white font-bold text-sm`}>
                   {testimonialMeta[index].initials}
                 </div>
                 <div>
-                  <div className="font-medium text-white text-sm">{t(`items.${key}.name`)}</div>
+                  <div className="font-medium text-gray-900 dark:text-white text-sm">{t(`items.${key}.name`)}</div>
                   <div className="text-gray-500 text-xs">{t(`items.${key}.role`)}</div>
                 </div>
               </div>

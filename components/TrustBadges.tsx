@@ -81,19 +81,19 @@ const partnerLogos = [
 export default function TrustBadges() {
   const t = useTranslations('trustBadges');
   return (
-    <section className="py-16 border-t border-b border-gray-800">
+    <section className="py-16 border-t border-b border-gray-200 dark:border-gray-800">
       <div className="container mx-auto px-4">
         {/* Trust Badges Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6 mb-12">
           {trustBadges.map((badge) => (
             <div
               key={badge.id}
-              className="group flex flex-col items-center text-center p-4 rounded-xl bg-gray-800/30 border border-gray-800 hover:border-gray-700 hover:bg-gray-800/50 transition-all duration-300"
+              className="group flex flex-col items-center text-center p-4 rounded-xl bg-gray-100/50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700 hover:bg-gray-200/50 dark:hover:bg-gray-800/50 transition-all duration-300"
             >
               <div className={`${badge.color} mb-3 group-hover:scale-110 transition-transform`}>
                 {badge.icon}
               </div>
-              <h3 className="font-semibold text-white text-sm mb-1">{t(`badges.${badge.id}.title`)}</h3>
+              <h3 className="font-semibold text-gray-900 dark:text-white text-sm mb-1">{t(`badges.${badge.id}.title`)}</h3>
               <p className="text-gray-500 text-xs">{t(`badges.${badge.id}.description`)}</p>
             </div>
           ))}
@@ -101,9 +101,9 @@ export default function TrustBadges() {
 
         {/* Divider with text */}
         <div className="flex items-center justify-center gap-4 mb-8">
-          <div className="h-px bg-gradient-to-r from-transparent via-gray-700 to-transparent flex-1 max-w-[200px]"></div>
+          <div className="h-px bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-700 to-transparent flex-1 max-w-[200px]"></div>
           <span className="text-gray-500 text-sm font-medium">{t('trustedBy')}</span>
-          <div className="h-px bg-gradient-to-r from-transparent via-gray-700 to-transparent flex-1 max-w-[200px]"></div>
+          <div className="h-px bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-700 to-transparent flex-1 max-w-[200px]"></div>
         </div>
 
         {/* Partner/Press Logos Placeholder */}
@@ -122,11 +122,11 @@ export default function TrustBadges() {
 
         {/* Security Note */}
         <div className="mt-12 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-800/50 rounded-full border border-gray-700">
-            <svg className="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100/50 dark:bg-gray-800/50 rounded-full border border-gray-200 dark:border-gray-700">
+            <svg className="w-4 h-4 text-green-500 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
             </svg>
-            <span className="text-sm text-gray-400">
+            <span className="text-sm text-gray-500 dark:text-gray-400">
               {t('securityNote')}
             </span>
           </div>

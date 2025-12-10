@@ -18,9 +18,9 @@ export default function UseCases() {
     <section id="use-cases" className="container mx-auto px-4 py-20">
       <div className="text-center mb-12">
         <h2 className="text-4xl font-bold mb-4">
-          {t('title')} <span className="text-green-400">{t('titleHighlight')}</span>
+          {t('title')} <span className="text-green-600 dark:text-green-400">{t('titleHighlight')}</span>
         </h2>
-        <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+        <p className="text-xl text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
           {t('subtitle')}
         </p>
       </div>
@@ -34,7 +34,7 @@ export default function UseCases() {
             className={`px-6 py-3 rounded-lg font-semibold transition-all ${
               activeTab === id
                 ? "bg-gradient-to-r from-green-500 to-blue-500 text-white shadow-lg"
-                : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+                : "bg-gray-200 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700"
             }`}
           >
             <span className="mr-2">{useCaseIcons[id]}</span>
@@ -44,7 +44,7 @@ export default function UseCases() {
       </div>
 
       {/* Tab Content */}
-      <div className="bg-gray-800/50 rounded-2xl border border-gray-700 p-8 md:p-12">
+      <div className="bg-gray-100/50 dark:bg-gray-800/50 rounded-2xl border border-gray-200 dark:border-gray-700 p-8 md:p-12">
         <div className="grid md:grid-cols-2 gap-8">
           {/* Left Column - Benefits */}
           <div>
@@ -52,16 +52,16 @@ export default function UseCases() {
               <span className="text-4xl">{useCaseIcons[activeTab]}</span>
               {t(`cases.${activeTab}.title`)}
             </h3>
-            <p className="text-gray-400 mb-6 text-lg">
+            <p className="text-gray-500 dark:text-gray-400 mb-6 text-lg">
               {t(`cases.${activeTab}.description`)}
             </p>
 
-            <h4 className="text-lg font-semibold mb-3 text-green-400">{t('keyBenefits')}</h4>
+            <h4 className="text-lg font-semibold mb-3 text-green-600 dark:text-green-400">{t('keyBenefits')}</h4>
             <ul className="space-y-3">
               {[1, 2, 3, 4, 5].map((index) => (
                 <li key={index} className="flex items-start gap-3">
                   <svg
-                    className="w-6 h-6 text-green-400 flex-shrink-0 mt-0.5"
+                    className="w-6 h-6 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -73,7 +73,7 @@ export default function UseCases() {
                       d="M5 13l4 4L19 7"
                     />
                   </svg>
-                  <span className="text-gray-300">{t(`cases.${activeTab}.benefits.b${index}`)}</span>
+                  <span className="text-gray-600 dark:text-gray-300">{t(`cases.${activeTab}.benefits.b${index}`)}</span>
                 </li>
               ))}
             </ul>
@@ -81,12 +81,12 @@ export default function UseCases() {
 
           {/* Right Column - Examples */}
           <div>
-            <h4 className="text-lg font-semibold mb-4 text-blue-400">{t('perfectFor')}</h4>
+            <h4 className="text-lg font-semibold mb-4 text-blue-600 dark:text-blue-400">{t('perfectFor')}</h4>
             <div className="grid grid-cols-2 gap-4">
               {[1, 2, 3, 4].map((index) => (
                 <div
                   key={index}
-                  className="bg-gray-900/50 border border-gray-700 rounded-lg p-4 text-center hover:border-blue-500 transition-all hover:shadow-lg hover:shadow-blue-500/10"
+                  className="bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg p-4 text-center hover:border-blue-500 transition-all hover:shadow-lg hover:shadow-blue-500/10"
                 >
                   <p className="font-medium">{t(`cases.${activeTab}.examples.e${index}`)}</p>
                 </div>
@@ -96,7 +96,7 @@ export default function UseCases() {
             {/* CTA Box */}
             <div className="mt-8 bg-gradient-to-r from-green-500/10 to-blue-500/10 border border-green-500/50 rounded-xl p-6">
               <h5 className="font-bold text-lg mb-2">{t('cta.title')}</h5>
-              <p className="text-gray-400 text-sm mb-4">
+              <p className="text-gray-500 dark:text-gray-400 text-sm mb-4">
                 {t('cta.subtitle')}
               </p>
               <button
@@ -112,21 +112,21 @@ export default function UseCases() {
 
       {/* Stats Row */}
       <div className="grid md:grid-cols-4 gap-6 mt-12">
-        <div className="bg-gray-800/30 rounded-xl p-6 text-center border border-gray-700">
-          <div className="text-3xl font-bold text-green-400 mb-2">10M+</div>
-          <div className="text-sm text-gray-400">{t('stats.imagesEnhanced')}</div>
+        <div className="bg-gray-100/30 dark:bg-gray-800/30 rounded-xl p-6 text-center border border-gray-200 dark:border-gray-700">
+          <div className="text-3xl font-bold text-green-600 dark:text-green-400 mb-2">10M+</div>
+          <div className="text-sm text-gray-500 dark:text-gray-400">{t('stats.imagesEnhanced')}</div>
         </div>
-        <div className="bg-gray-800/30 rounded-xl p-6 text-center border border-gray-700">
-          <div className="text-3xl font-bold text-blue-400 mb-2">500K+</div>
-          <div className="text-sm text-gray-400">{t('stats.happyUsers')}</div>
+        <div className="bg-gray-100/30 dark:bg-gray-800/30 rounded-xl p-6 text-center border border-gray-200 dark:border-gray-700">
+          <div className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">500K+</div>
+          <div className="text-sm text-gray-500 dark:text-gray-400">{t('stats.happyUsers')}</div>
         </div>
-        <div className="bg-gray-800/30 rounded-xl p-6 text-center border border-gray-700">
-          <div className="text-3xl font-bold text-purple-400 mb-2">4.9/5</div>
-          <div className="text-sm text-gray-400">{t('stats.averageRating')}</div>
+        <div className="bg-gray-100/30 dark:bg-gray-800/30 rounded-xl p-6 text-center border border-gray-200 dark:border-gray-700">
+          <div className="text-3xl font-bold text-purple-600 dark:text-purple-400 mb-2">4.9/5</div>
+          <div className="text-sm text-gray-500 dark:text-gray-400">{t('stats.averageRating')}</div>
         </div>
-        <div className="bg-gray-800/30 rounded-xl p-6 text-center border border-gray-700">
-          <div className="text-3xl font-bold text-yellow-400 mb-2">8x</div>
-          <div className="text-sm text-gray-400">{t('stats.maxUpscaling')}</div>
+        <div className="bg-gray-100/30 dark:bg-gray-800/30 rounded-xl p-6 text-center border border-gray-200 dark:border-gray-700">
+          <div className="text-3xl font-bold text-yellow-600 dark:text-yellow-400 mb-2">8x</div>
+          <div className="text-sm text-gray-500 dark:text-gray-400">{t('stats.maxUpscaling')}</div>
         </div>
       </div>
     </section>

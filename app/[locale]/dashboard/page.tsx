@@ -138,7 +138,7 @@ export default function DashboardPage() {
 
   if (status === "loading") {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-b from-gray-100 to-white dark:from-gray-900 dark:to-black text-gray-900 dark:text-white flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500"></div>
       </div>
     );
@@ -149,7 +149,7 @@ export default function DashboardPage() {
   const isLowCredits = stats && stats.credits < 5;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
+    <div className="min-h-screen bg-gradient-to-b from-gray-100 to-white dark:from-gray-900 dark:to-black text-gray-900 dark:text-white">
       {showWelcomeModal && session?.user?.name && (
         <WelcomeModal
           userName={session.user.name}
@@ -170,18 +170,18 @@ export default function DashboardPage() {
         {/* Stats Bar - Compact horizontal layout */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
           {/* Credits */}
-          <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700/50 p-4">
+          <div className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-200/50 dark:border-gray-700/50 p-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-blue-500 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
               <div>
                 {loading ? (
-                  <div className="h-6 w-16 bg-gray-700 animate-pulse rounded"></div>
+                  <div className="h-6 w-16 bg-gray-300 dark:bg-gray-700 animate-pulse rounded"></div>
                 ) : (
-                  <div className={`text-xl font-bold ${isLowCredits ? 'text-orange-400' : 'text-blue-400'}`}>
+                  <div className={`text-xl font-bold ${isLowCredits ? 'text-orange-500 dark:text-orange-400' : 'text-blue-500 dark:text-blue-400'}`}>
                     {stats?.credits?.toLocaleString() || 0}
                   </div>
                 )}
@@ -189,25 +189,25 @@ export default function DashboardPage() {
               </div>
             </div>
             {isLowCredits && (
-              <Link href="/pricing" className="mt-2 block text-xs text-orange-400 hover:text-orange-300">
+              <Link href="/pricing" className="mt-2 block text-xs text-orange-500 dark:text-orange-400 hover:text-orange-600 dark:hover:text-orange-300">
                 + {t('quickActions.getMoreCredits')}
               </Link>
             )}
           </div>
 
           {/* Images Processed */}
-          <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700/50 p-4">
+          <div className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-200/50 dark:border-gray-700/50 p-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-green-500/20 rounded-lg flex items-center justify-center">
-                <svg className="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-green-500 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
               </div>
               <div>
                 {loading ? (
-                  <div className="h-6 w-12 bg-gray-700 animate-pulse rounded"></div>
+                  <div className="h-6 w-12 bg-gray-300 dark:bg-gray-700 animate-pulse rounded"></div>
                 ) : (
-                  <div className="text-xl font-bold text-green-400">{stats?.totalImages || 0}</div>
+                  <div className="text-xl font-bold text-green-500 dark:text-green-400">{stats?.totalImages || 0}</div>
                 )}
                 <div className="text-xs text-gray-500">{t('stats.imagesProcessed')}</div>
               </div>
@@ -215,18 +215,18 @@ export default function DashboardPage() {
           </div>
 
           {/* Current Plan */}
-          <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700/50 p-4">
+          <div className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-200/50 dark:border-gray-700/50 p-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center">
-                <svg className="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-purple-500 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
                 </svg>
               </div>
               <div>
                 {loading ? (
-                  <div className="h-6 w-16 bg-gray-700 animate-pulse rounded"></div>
+                  <div className="h-6 w-16 bg-gray-300 dark:bg-gray-700 animate-pulse rounded"></div>
                 ) : (
-                  <div className="text-xl font-bold text-purple-400 capitalize">
+                  <div className="text-xl font-bold text-purple-500 dark:text-purple-400 capitalize">
                     {stats?.role === 'user' ? t('plans.free') : stats?.role || t('plans.free')}
                   </div>
                 )}
@@ -236,15 +236,15 @@ export default function DashboardPage() {
           </div>
 
           {/* Tools Available */}
-          <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700/50 p-4">
+          <div className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-200/50 dark:border-gray-700/50 p-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-cyan-500/20 rounded-lg flex items-center justify-center">
-                <svg className="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-cyan-500 dark:text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
                 </svg>
               </div>
               <div>
-                <div className="text-xl font-bold text-cyan-400">{allTools.length}</div>
+                <div className="text-xl font-bold text-cyan-500 dark:text-cyan-400">{allTools.length}</div>
                 <div className="text-xs text-gray-500">{t('tools.available')}</div>
               </div>
             </div>
@@ -259,7 +259,7 @@ export default function DashboardPage() {
               <Link
                 key={tool.href}
                 href={tool.href}
-                className={`group relative bg-gradient-to-br ${tool.bgGradient} backdrop-blur-sm rounded-2xl border border-gray-700/50 hover:border-gray-600 p-6 transition-all duration-300 hover:scale-[1.02] overflow-hidden`}
+                className={`group relative bg-gradient-to-br ${tool.bgGradient} backdrop-blur-sm rounded-2xl border border-gray-200/50 dark:border-gray-700/50 hover:border-gray-300 dark:hover:border-gray-600 p-6 transition-all duration-300 hover:scale-[1.02] overflow-hidden`}
               >
                 {/* Badge */}
                 {tool.badge && (
@@ -276,15 +276,15 @@ export default function DashboardPage() {
                   <div className="text-white">{tool.icon}</div>
                 </div>
 
-                <h3 className="text-lg font-bold mb-1 group-hover:text-white transition-colors">
+                <h3 className="text-lg font-bold mb-1 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
                   {t(`tools.${tool.nameKey}.name`)}
                 </h3>
-                <p className="text-gray-400 text-sm mb-3">
+                <p className="text-gray-500 dark:text-gray-400 text-sm mb-3">
                   {t(`tools.${tool.nameKey}.description`)}
                 </p>
 
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-gray-500 bg-gray-800/80 px-2 py-1 rounded-full">
+                  <span className="text-xs text-gray-500 bg-gray-200/80 dark:bg-gray-800/80 px-2 py-1 rounded-full">
                     {tool.credits === 'free' ? t('tools.free') : `${tool.credits} ${t('tools.credits')}`}
                   </span>
                   <span className={`text-sm font-medium ${tool.iconColor} group-hover:translate-x-1 transition-transform inline-flex items-center gap-1`}>
@@ -299,15 +299,15 @@ export default function DashboardPage() {
         {/* All Tools - Compact Grid */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-medium text-gray-400">All Tools ({allTools.length})</h3>
-            <Link href="/tools" className="text-xs text-gray-500 hover:text-gray-300">Explore tools →</Link>
+            <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">All Tools ({allTools.length})</h3>
+            <Link href="/tools" className="text-xs text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">Explore tools →</Link>
           </div>
           <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-7 lg:grid-cols-13 gap-2">
             {allTools.map((tool) => (
               <Link
                 key={tool.href}
                 href={tool.href}
-                className="group relative bg-gray-800/30 hover:bg-gray-800/60 rounded-xl p-3 text-center transition-all border border-transparent hover:border-gray-700/50"
+                className="group relative bg-gray-100/30 dark:bg-gray-800/30 hover:bg-gray-200/60 dark:hover:bg-gray-800/60 rounded-xl p-3 text-center transition-all border border-transparent hover:border-gray-300/50 dark:hover:border-gray-700/50"
               >
                 {tool.badge && (
                   <div className="absolute -top-1 -right-1 w-2 h-2 bg-orange-500 rounded-full"></div>
@@ -317,7 +317,7 @@ export default function DashboardPage() {
                   {t(`tools.${tool.nameKey}.name`)}
                 </div>
                 {/* Tooltip on hover */}
-                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 rounded text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white rounded text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
                   {tool.credits === 'free' ? t('tools.free') : `${tool.credits} ${t('tools.credits')}`}
                 </div>
               </Link>
@@ -329,13 +329,13 @@ export default function DashboardPage() {
         <div className="grid md:grid-cols-2 gap-6">
           {/* Quick Actions */}
           <div>
-            <h3 className="text-sm font-medium text-gray-400 mb-3">{t('quickActions.title')}</h3>
+            <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">{t('quickActions.title')}</h3>
             <div className="grid grid-cols-2 gap-2">
               {quickActions.map((action) => (
                 <Link
                   key={action.href}
                   href={action.href}
-                  className="flex items-center gap-3 p-3 bg-gray-800/30 hover:bg-gray-800/60 rounded-xl transition-all border border-transparent hover:border-gray-700/50"
+                  className="flex items-center gap-3 p-3 bg-gray-100/30 dark:bg-gray-800/30 hover:bg-gray-200/60 dark:hover:bg-gray-800/60 rounded-xl transition-all border border-transparent hover:border-gray-300/50 dark:hover:border-gray-700/50"
                 >
                   <span className="text-xl">{action.icon}</span>
                   <span className="text-sm font-medium">{t(`quickActions.${action.nameKey}`)}</span>
@@ -346,25 +346,25 @@ export default function DashboardPage() {
 
           {/* Recent Activity */}
           <div>
-            <h3 className="text-sm font-medium text-gray-400 mb-3">{t('activity.title')}</h3>
+            <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">{t('activity.title')}</h3>
             {loading ? (
-              <div className="bg-gray-800/30 rounded-xl p-4">
+              <div className="bg-gray-100/30 dark:bg-gray-800/30 rounded-xl p-4">
                 <div className="space-y-3">
                   {[1, 2, 3].map(i => (
-                    <div key={i} className="h-10 bg-gray-700/50 animate-pulse rounded-lg"></div>
+                    <div key={i} className="h-10 bg-gray-300/50 dark:bg-gray-700/50 animate-pulse rounded-lg"></div>
                   ))}
                 </div>
               </div>
             ) : stats?.recentActivity && stats.recentActivity.length > 0 ? (
-              <div className="bg-gray-800/30 rounded-xl overflow-hidden">
-                <div className="divide-y divide-gray-700/30">
+              <div className="bg-gray-100/30 dark:bg-gray-800/30 rounded-xl overflow-hidden">
+                <div className="divide-y divide-gray-200/30 dark:divide-gray-700/30">
                   {stats.recentActivity.slice(0, 4).map((activity) => (
-                    <div key={activity.id} className="p-3 hover:bg-gray-800/50 transition flex items-center justify-between">
+                    <div key={activity.id} className="p-3 hover:bg-gray-200/50 dark:hover:bg-gray-800/50 transition flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm ${
                           activity.type === 'Image Upscaler'
-                            ? 'bg-green-500/20 text-green-400'
-                            : 'bg-blue-500/20 text-blue-400'
+                            ? 'bg-green-500/20 text-green-500 dark:text-green-400'
+                            : 'bg-blue-500/20 text-blue-500 dark:text-blue-400'
                         }`}>
                           {activity.type === 'Image Upscaler' ? '📈' : '🖼️'}
                         </div>
@@ -388,19 +388,19 @@ export default function DashboardPage() {
                 </div>
                 <Link
                   href="/dashboard/images"
-                  className="block text-center py-2 text-xs text-gray-500 hover:text-gray-300 border-t border-gray-700/30"
+                  className="block text-center py-2 text-xs text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 border-t border-gray-200/30 dark:border-gray-700/30"
                 >
                   View all activity →
                 </Link>
               </div>
             ) : (
-              <div className="bg-gray-800/30 rounded-xl p-6 text-center">
+              <div className="bg-gray-100/30 dark:bg-gray-800/30 rounded-xl p-6 text-center">
                 <div className="text-3xl mb-2">📷</div>
                 <h4 className="font-medium mb-1">{t('activity.noActivity')}</h4>
                 <p className="text-gray-500 text-xs mb-3">{t('activity.noActivityDesc')}</p>
                 <Link
                   href="/tools/upscaler"
-                  className="inline-flex items-center gap-1 px-3 py-1.5 bg-green-500 hover:bg-green-600 rounded-lg text-xs font-medium transition"
+                  className="inline-flex items-center gap-1 px-3 py-1.5 bg-green-500 hover:bg-green-600 text-white rounded-lg text-xs font-medium transition"
                 >
                   {t('activity.tryUpscaler')} →
                 </Link>

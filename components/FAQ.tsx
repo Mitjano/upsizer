@@ -30,12 +30,12 @@ export default function FAQ() {
   };
 
   return (
-    <section id="faq" className="py-20 bg-gray-900/50">
+    <section id="faq" className="py-20 bg-gray-100/50 dark:bg-gray-900/50">
       <div className="container mx-auto px-4">
         <h2 className="text-4xl font-bold text-center mb-4">
-          {t('title')} <span className="text-green-400">{t('titleHighlight')}</span>
+          {t('title')} <span className="text-green-600 dark:text-green-400">{t('titleHighlight')}</span>
         </h2>
-        <p className="text-gray-400 text-center mb-12 max-w-2xl mx-auto">
+        <p className="text-gray-500 dark:text-gray-400 text-center mb-12 max-w-2xl mx-auto">
           {t('subtitle')}
         </p>
 
@@ -43,11 +43,11 @@ export default function FAQ() {
           {faqKeys.map((key, index) => (
             <div
               key={key}
-              className="bg-gray-800/50 rounded-lg border border-gray-700 overflow-hidden"
+              className="bg-white/50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden"
             >
               <button
                 onClick={() => toggleFAQ(index)}
-                className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-800/70 transition"
+                className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-100/70 dark:hover:bg-gray-800/70 transition"
               >
                 <span className="font-medium text-lg">{t(`items.${key}.question`)}</span>
                 <svg
@@ -68,7 +68,7 @@ export default function FAQ() {
               </button>
 
               {openIndex === index && (
-                <div className="px-6 pb-4 text-gray-300">
+                <div className="px-6 pb-4 text-gray-600 dark:text-gray-300">
                   {t(`items.${key}.answer`)}
                 </div>
               )}

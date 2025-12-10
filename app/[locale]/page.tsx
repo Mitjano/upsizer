@@ -13,7 +13,7 @@ import { useTranslations } from 'next-intl';
 export default function Home() {
   const t = useTranslations('home');
   return (
-    <main className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
+    <main className="min-h-screen bg-gradient-to-b from-gray-100 to-white dark:from-gray-900 dark:to-black text-gray-900 dark:text-white">
 
       {/* Hero Section - Modern Multi-Tool Focus */}
       <section className="relative container mx-auto px-4 py-20 md:py-28 text-center overflow-hidden">
@@ -38,36 +38,36 @@ export default function Home() {
 
           {/* Main Heading */}
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold mb-6 leading-tight">
-            <span className="block text-white">{t('headline.line1')}</span>
+            <span className="block text-gray-900 dark:text-white">{t('headline.line1')}</span>
             <span className="bg-gradient-to-r from-green-400 via-blue-500 to-purple-500 bg-clip-text text-transparent">
               {t('headline.line2')}
             </span>
           </h1>
 
           {/* Subheading */}
-          <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-4xl mx-auto leading-relaxed">
+          <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8 max-w-4xl mx-auto leading-relaxed">
             {t('subheadline')}
           </p>
 
           {/* Feature Pills */}
           <div className="flex items-center justify-center gap-3 mb-10 flex-wrap">
-            <div className="group px-4 py-2 bg-gray-800/50 backdrop-blur-sm border border-gray-700 hover:border-green-500 rounded-full transition-all duration-300">
-              <span className="text-sm font-medium text-gray-300 group-hover:text-green-400 transition">
+            <div className="group px-4 py-2 bg-gray-200/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-300 dark:border-gray-700 hover:border-green-500 rounded-full transition-all duration-300">
+              <span className="text-sm font-medium text-gray-600 dark:text-gray-300 group-hover:text-green-600 dark:group-hover:text-green-400 transition">
                 {t('features.proTools')}
               </span>
             </div>
-            <div className="group px-4 py-2 bg-gray-800/50 backdrop-blur-sm border border-gray-700 hover:border-blue-500 rounded-full transition-all duration-300">
-              <span className="text-sm font-medium text-gray-300 group-hover:text-blue-400 transition">
+            <div className="group px-4 py-2 bg-gray-200/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-300 dark:border-gray-700 hover:border-blue-500 rounded-full transition-all duration-300">
+              <span className="text-sm font-medium text-gray-600 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition">
                 {t('features.instantResults')}
               </span>
             </div>
-            <div className="group px-4 py-2 bg-gray-800/50 backdrop-blur-sm border border-gray-700 hover:border-purple-500 rounded-full transition-all duration-300">
-              <span className="text-sm font-medium text-gray-300 group-hover:text-purple-400 transition">
+            <div className="group px-4 py-2 bg-gray-200/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-300 dark:border-gray-700 hover:border-purple-500 rounded-full transition-all duration-300">
+              <span className="text-sm font-medium text-gray-600 dark:text-gray-300 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition">
                 {t('features.private')}
               </span>
             </div>
-            <div className="group px-4 py-2 bg-gray-800/50 backdrop-blur-sm border border-gray-700 hover:border-yellow-500 rounded-full transition-all duration-300">
-              <span className="text-sm font-medium text-gray-300 group-hover:text-yellow-400 transition">
+            <div className="group px-4 py-2 bg-gray-200/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-300 dark:border-gray-700 hover:border-yellow-500 rounded-full transition-all duration-300">
+              <span className="text-sm font-medium text-gray-600 dark:text-gray-300 group-hover:text-yellow-600 dark:group-hover:text-yellow-400 transition">
                 {t('features.noWatermarks')}
               </span>
             </div>
@@ -118,7 +118,7 @@ export default function Home() {
           {/* See All Tools Link */}
           <Link
             href="#tools"
-            className="inline-flex items-center gap-2 text-gray-400 hover:text-green-400 transition-colors group"
+            className="inline-flex items-center gap-2 text-gray-500 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition-colors group"
           >
             <span>{t('cta.seeAllTools')}</span>
             <svg className="w-4 h-4 group-hover:translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -130,22 +130,22 @@ export default function Home() {
           <div className="mt-12 flex items-center justify-center gap-8 flex-wrap">
             <div className="flex items-center gap-2">
               <div className="flex -space-x-2">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-xs font-bold">J</div>
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-xs font-bold">M</div>
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center text-xs font-bold">K</div>
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-xs font-bold">+</div>
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-xs font-bold text-white">J</div>
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-xs font-bold text-white">M</div>
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center text-xs font-bold text-white">K</div>
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-xs font-bold text-white">+</div>
               </div>
-              <span className="text-sm text-gray-400">
-                <span className="text-green-400 font-semibold">10,000+</span> {t('socialProof.happyUsers')}
+              <span className="text-sm text-gray-500 dark:text-gray-400">
+                <span className="text-green-600 dark:text-green-400 font-semibold">10,000+</span> {t('socialProof.happyUsers')}
               </span>
             </div>
             <div className="flex items-center gap-1">
               {[...Array(5)].map((_, i) => (
-                <svg key={i} className="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                <svg key={i} className="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                 </svg>
               ))}
-              <span className="text-sm text-gray-400 ml-1">{t('socialProof.rating')}</span>
+              <span className="text-sm text-gray-500 dark:text-gray-400 ml-1">{t('socialProof.rating')}</span>
             </div>
           </div>
         </div>
@@ -163,50 +163,50 @@ export default function Home() {
           <h2 className="text-4xl md:text-5xl font-extrabold mb-4">
             {t('whyChoose.title')} <span className="bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">Pixelift</span>?
           </h2>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
             {t('whyChoose.subtitle')}
           </p>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
-          <div className="group relative bg-gradient-to-br from-gray-800 to-gray-900 p-6 rounded-2xl border border-gray-700 hover:border-green-500 transition-all duration-300 hover:scale-105">
+          <div className="group relative bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 p-6 rounded-2xl border border-gray-300 dark:border-gray-700 hover:border-green-500 transition-all duration-300 hover:scale-105">
             <div className="w-12 h-12 mb-4 bg-green-500/10 rounded-xl flex items-center justify-center group-hover:bg-green-500/20 transition-colors">
-              <svg className="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6 text-green-500 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>
             <h3 className="text-xl font-bold mb-2">{t('whyChoose.fast.title')}</h3>
-            <p className="text-gray-400 text-sm">{t('whyChoose.fast.description')}</p>
+            <p className="text-gray-500 dark:text-gray-400 text-sm">{t('whyChoose.fast.description')}</p>
           </div>
 
-          <div className="group relative bg-gradient-to-br from-gray-800 to-gray-900 p-6 rounded-2xl border border-gray-700 hover:border-blue-500 transition-all duration-300 hover:scale-105">
+          <div className="group relative bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 p-6 rounded-2xl border border-gray-300 dark:border-gray-700 hover:border-blue-500 transition-all duration-300 hover:scale-105">
             <div className="w-12 h-12 mb-4 bg-blue-500/10 rounded-xl flex items-center justify-center group-hover:bg-blue-500/20 transition-colors">
-              <svg className="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6 text-blue-500 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
               </svg>
             </div>
             <h3 className="text-xl font-bold mb-2">{t('whyChoose.private.title')}</h3>
-            <p className="text-gray-400 text-sm">{t('whyChoose.private.description')}</p>
+            <p className="text-gray-500 dark:text-gray-400 text-sm">{t('whyChoose.private.description')}</p>
           </div>
 
-          <div className="group relative bg-gradient-to-br from-gray-800 to-gray-900 p-6 rounded-2xl border border-gray-700 hover:border-purple-500 transition-all duration-300 hover:scale-105">
+          <div className="group relative bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 p-6 rounded-2xl border border-gray-300 dark:border-gray-700 hover:border-purple-500 transition-all duration-300 hover:scale-105">
             <div className="w-12 h-12 mb-4 bg-purple-500/10 rounded-xl flex items-center justify-center group-hover:bg-purple-500/20 transition-colors">
-              <svg className="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6 text-purple-500 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
               </svg>
             </div>
             <h3 className="text-xl font-bold mb-2">{t('whyChoose.proTools.title')}</h3>
-            <p className="text-gray-400 text-sm">{t('whyChoose.proTools.description')}</p>
+            <p className="text-gray-500 dark:text-gray-400 text-sm">{t('whyChoose.proTools.description')}</p>
           </div>
 
-          <div className="group relative bg-gradient-to-br from-gray-800 to-gray-900 p-6 rounded-2xl border border-gray-700 hover:border-orange-500 transition-all duration-300 hover:scale-105">
+          <div className="group relative bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 p-6 rounded-2xl border border-gray-300 dark:border-gray-700 hover:border-orange-500 transition-all duration-300 hover:scale-105">
             <div className="w-12 h-12 mb-4 bg-orange-500/10 rounded-xl flex items-center justify-center group-hover:bg-orange-500/20 transition-colors">
-              <svg className="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6 text-orange-500 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
             <h3 className="text-xl font-bold mb-2">{t('whyChoose.payPerUse.title')}</h3>
-            <p className="text-gray-400 text-sm">{t('whyChoose.payPerUse.description')}</p>
+            <p className="text-gray-500 dark:text-gray-400 text-sm">{t('whyChoose.payPerUse.description')}</p>
           </div>
         </div>
       </section>
@@ -223,7 +223,7 @@ export default function Home() {
           <div className="relative group">
             <div className="absolute -inset-1 bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 rounded-3xl blur-xl opacity-30 group-hover:opacity-50 transition duration-500"></div>
 
-            <div className="relative bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 rounded-3xl p-12 md:p-16 text-center overflow-hidden">
+            <div className="relative bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 border border-gray-300 dark:border-gray-700 rounded-3xl p-12 md:p-16 text-center overflow-hidden">
               <div className="absolute top-0 right-0 w-64 h-64 bg-green-500/10 rounded-full blur-3xl"></div>
               <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl"></div>
 
@@ -234,13 +234,13 @@ export default function Home() {
                   </span>
                 </h2>
 
-                <p className="text-xl text-gray-300 mb-10 max-w-2xl mx-auto">
+                <p className="text-xl text-gray-600 dark:text-gray-300 mb-10 max-w-2xl mx-auto">
                   {t('ctaSection.description')}
                 </p>
 
                 <Link
                   href="/tools/upscaler"
-                  className="group/btn inline-flex items-center gap-3 px-12 py-6 bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-400 hover:to-blue-400 rounded-2xl text-xl font-bold shadow-2xl shadow-green-500/30 hover:shadow-green-500/50 transition-all duration-300 hover:scale-105"
+                  className="group/btn inline-flex items-center gap-3 px-12 py-6 bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-400 hover:to-blue-400 rounded-2xl text-xl font-bold text-white shadow-2xl shadow-green-500/30 hover:shadow-green-500/50 transition-all duration-300 hover:scale-105"
                 >
                   <span>{t('ctaSection.button')}</span>
                   <svg className="w-6 h-6 group-hover/btn:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -249,20 +249,20 @@ export default function Home() {
                 </Link>
 
                 <div className="flex items-center justify-center gap-6 mt-8 flex-wrap">
-                  <div className="flex items-center gap-2 text-gray-400">
-                    <svg className="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                  <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
+                    <svg className="w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>
                     <span className="text-sm font-medium">{t('ctaSection.freeCredits')}</span>
                   </div>
-                  <div className="flex items-center gap-2 text-gray-400">
-                    <svg className="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                  <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
+                    <svg className="w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>
                     <span className="text-sm font-medium">{t('ctaSection.noCard')}</span>
                   </div>
-                  <div className="flex items-center gap-2 text-gray-400">
-                    <svg className="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                  <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
+                    <svg className="w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>
                     <span className="text-sm font-medium">{t('ctaSection.allTools')}</span>
