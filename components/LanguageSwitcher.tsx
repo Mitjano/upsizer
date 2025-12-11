@@ -97,7 +97,7 @@ export default function LanguageSwitcher() {
         aria-activedescendant={activeIndex >= 0 ? `lang-option-${locales[activeIndex]}` : undefined}
         onKeyDown={handleKeyDown}
         tabIndex={isOpen ? 0 : -1}
-        className={`absolute right-0 mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-50 min-w-[140px] transition-all duration-200 ${
+        className={`absolute right-0 mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-[9999] min-w-[140px] transition-all duration-200 ${
           isOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
         }`}
       >
