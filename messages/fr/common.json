@@ -515,7 +515,7 @@
     }
   },
   "toolsPage": {
-    "badge": "9 Outils IA",
+    "badge": "13 Outils IA",
     "title": "Outils d'Images",
     "titleHighlight": "IA",
     "subtitle": "Édition d'images professionnelle propulsée par l'IA de pointe. Supprimez les fonds, agrandissez, restaurez, colorisez et plus encore - tout en un seul endroit.",
@@ -592,6 +592,26 @@
         "name": "Compresseur d'Images",
         "description": "Réduisez la taille des fichiers tout en maintenant la qualité. Parfait pour l'optimisation web.",
         "credits": "1 crédit"
+      },
+      "styleTransfer": {
+        "name": "Transfert de Style",
+        "description": "Transformez vos photos avec des styles artistiques. Appliquez l'apparence de peintures célèbres ou de styles personnalisés.",
+        "credits": "2 crédits"
+      },
+      "reimagine": {
+        "name": "Réimaginer",
+        "description": "Créez des variations de vos images avec l'IA. Générez de nouvelles interprétations tout en gardant l'essence.",
+        "credits": "2 crédits"
+      },
+      "structureControl": {
+        "name": "Contrôle de Structure",
+        "description": "Générez des images en préservant la structure et la composition. Parfait pour l'architecture et le design.",
+        "credits": "2 crédits"
+      },
+      "inpainting": {
+        "name": "Inpainting",
+        "description": "Remplissez ou remplacez des parties d'images avec du contenu généré par l'IA. Parfait pour les éditions créatives.",
+        "credits": "2 crédits"
       }
     },
     "upscaler": {

@@ -515,7 +515,7 @@
     }
   },
   "toolsPage": {
-    "badge": "9 AI-Powered Tools",
+    "badge": "13 AI-Powered Tools",
     "title": "AI Image",
     "titleHighlight": "Tools",
     "subtitle": "Professional image editing powered by cutting-edge AI. Remove backgrounds, upscale, restore, colorize, and more - all in one place.",
@@ -583,6 +583,22 @@
       "imageCompressor": {
         "name": "Image Compressor",
         "description": "Reduce file size while maintaining quality. Perfect for web optimization."
+      },
+      "styleTransfer": {
+        "name": "Style Transfer",
+        "description": "Transform your photos with artistic styles. Apply the look of famous paintings or custom styles."
+      },
+      "reimagine": {
+        "name": "Reimagine",
+        "description": "Create variations of your images with AI. Generate new interpretations while keeping the essence."
+      },
+      "structureControl": {
+        "name": "Structure Control",
+        "description": "Generate images while preserving structure and composition. Perfect for architectural and design work."
+      },
+      "inpainting": {
+        "name": "Inpainting",
+        "description": "Fill in or replace parts of images with AI-generated content. Perfect for creative edits."
       }
     },
     "upscaler": {

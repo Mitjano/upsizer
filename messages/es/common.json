@@ -515,7 +515,7 @@
     }
   },
   "toolsPage": {
-    "badge": "9 Herramientas AI",
+    "badge": "13 Herramientas AI",
     "title": "Herramientas de",
     "titleHighlight": "Imágenes AI",
     "subtitle": "Edición de imágenes profesional impulsada por IA de vanguardia. Elimina fondos, escala, restaura, colorea y más.",
@@ -583,6 +583,22 @@
       "imageCompressor": {
         "name": "Compresor de Imágenes",
         "description": "Reduce el tamaño del archivo manteniendo la calidad."
+      },
+      "styleTransfer": {
+        "name": "Transferencia de Estilo",
+        "description": "Transforma tus fotos con estilos artísticos. Aplica el aspecto de pinturas famosas o estilos personalizados."
+      },
+      "reimagine": {
+        "name": "Reimaginar",
+        "description": "Crea variaciones de tus imágenes con IA. Genera nuevas interpretaciones manteniendo la esencia."
+      },
+      "structureControl": {
+        "name": "Control de Estructura",
+        "description": "Genera imágenes preservando estructura y composición. Perfecto para trabajo arquitectónico y diseño."
+      },
+      "inpainting": {
+        "name": "Inpainting",
+        "description": "Rellena o reemplaza partes de imágenes con contenido generado por IA. Perfecto para ediciones creativas."
       }
     },
     "upscaler": {

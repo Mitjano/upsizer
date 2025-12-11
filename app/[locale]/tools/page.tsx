@@ -113,26 +113,79 @@ const toolsData = [
     credits: '1 credit',
     aiModel: 'Sharp AI',
   },
+  {
+    id: 'style-transfer',
+    name: 'Style Transfer',
+    description: 'Transform your photos with artistic styles. Apply the look of famous paintings or custom styles.',
+    icon: '🎭',
+    href: '/tools/style-transfer',
+    color: 'from-amber-500 to-orange-500',
+    bgColor: 'from-amber-900/20 to-orange-900/20',
+    borderColor: 'border-amber-700/30',
+    credits: '2 credits',
+    aiModel: 'FLUX Redux',
+  },
+  {
+    id: 'reimagine',
+    name: 'Reimagine',
+    description: 'Create variations of your images with AI. Generate new interpretations while keeping the essence.',
+    icon: '✨',
+    href: '/tools/reimagine',
+    color: 'from-violet-500 to-purple-500',
+    bgColor: 'from-violet-900/20 to-purple-900/20',
+    borderColor: 'border-violet-700/30',
+    credits: '2 credits',
+    aiModel: 'FLUX Redux',
+  },
+  {
+    id: 'structure-control',
+    name: 'Structure Control',
+    description: 'Generate images while preserving structure and composition. Perfect for architectural and design work.',
+    icon: '🏗️',
+    href: '/tools/structure-control',
+    color: 'from-teal-500 to-cyan-500',
+    bgColor: 'from-teal-900/20 to-cyan-900/20',
+    borderColor: 'border-teal-700/30',
+    credits: '2 credits',
+    aiModel: 'FLUX Depth',
+  },
+  {
+    id: 'inpainting',
+    name: 'Inpainting',
+    description: 'Fill in or replace parts of images with AI-generated content. Perfect for creative edits.',
+    icon: '🖌️',
+    href: '/tools/inpainting',
+    color: 'from-rose-500 to-pink-500',
+    bgColor: 'from-rose-900/20 to-pink-900/20',
+    borderColor: 'border-rose-700/30',
+    credits: '2 credits',
+    aiModel: 'FLUX Fill',
+  },
 ];
 
 export default function ToolsPage() {
   const t = useTranslations('toolsPage');
 
+  // Map tool IDs to translation keys
+  const getTranslationKey = (id: string) => {
+    const keyMap: Record<string, string> = {
+      'remove-background': 'removeBackground',
+      'image-expand': 'imageExpand',
+      'object-removal': 'objectRemoval',
+      'packshot-generator': 'packshotGenerator',
+      'background-generator': 'backgroundGenerator',
+      'image-compressor': 'imageCompressor',
+      'style-transfer': 'styleTransfer',
+      'structure-control': 'structureControl',
+    };
+    return keyMap[id] || id;
+  };
+
   // Get translated tool data
   const tools = toolsData.map(tool => ({
     ...tool,
-    name: t(`tools.${tool.id === 'remove-background' ? 'removeBackground' :
-             tool.id === 'image-expand' ? 'imageExpand' :
-             tool.id === 'object-removal' ? 'objectRemoval' :
-             tool.id === 'packshot-generator' ? 'packshotGenerator' :
-             tool.id === 'background-generator' ? 'backgroundGenerator' :
-             tool.id === 'image-compressor' ? 'imageCompressor' : tool.id}.name`),
-    description: t(`tools.${tool.id === 'remove-background' ? 'removeBackground' :
-                    tool.id === 'image-expand' ? 'imageExpand' :
-                    tool.id === 'object-removal' ? 'objectRemoval' :
-                    tool.id === 'packshot-generator' ? 'packshotGenerator' :
-                    tool.id === 'background-generator' ? 'backgroundGenerator' :
-                    tool.id === 'image-compressor' ? 'imageCompressor' : tool.id}.description`),
+    name: t(`tools.${getTranslationKey(tool.id)}.name`),
+    description: t(`tools.${getTranslationKey(tool.id)}.description`),
   }));
 
   return (
@@ -168,7 +221,7 @@ export default function ToolsPage() {
             {/* Stats */}
             <div className="flex flex-wrap justify-center gap-8 mb-8">
               <div className="text-center">
-                <div className="text-3xl font-bold text-purple-400">9</div>
+                <div className="text-3xl font-bold text-purple-400">13</div>
                 <div className="text-sm text-gray-500">{t('stats.tools')}</div>
               </div>
               <div className="text-center">

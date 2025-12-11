@@ -515,7 +515,7 @@
     }
   },
   "toolsPage": {
-    "badge": "9 Narzędzi AI",
+    "badge": "13 Narzędzi AI",
     "title": "Narzędzia do",
     "titleHighlight": "Obrazów AI",
     "subtitle": "Profesjonalna edycja obrazów napędzana najnowszą AI. Usuwanie tła, powiększanie, restauracja, kolorowanie i więcej - w jednym miejscu.",
@@ -583,6 +583,22 @@
       "imageCompressor": {
         "name": "Kompresor Obrazów",
         "description": "Zmniejsz rozmiar pliku zachowując jakość."
+      },
+      "styleTransfer": {
+        "name": "Transfer Stylu",
+        "description": "Przekształć swoje zdjęcia w artystyczne style. Zastosuj wygląd słynnych obrazów lub własne style."
+      },
+      "reimagine": {
+        "name": "Reimagine",
+        "description": "Twórz wariacje swoich obrazów dzięki AI. Generuj nowe interpretacje zachowując esencję."
+      },
+      "structureControl": {
+        "name": "Kontrola Struktury",
+        "description": "Generuj obrazy zachowując strukturę i kompozycję. Idealne do prac architektonicznych i projektowych."
+      },
+      "inpainting": {
+        "name": "Inpainting",
+        "description": "Wypełniaj lub zastępuj części obrazów treścią generowaną przez AI. Idealne do kreatywnych edycji."
       }
     },
     "upscaler": {
