@@ -12,6 +12,7 @@ import { sendWelcomeEmail } from '@/lib/email';
 import { authLimiter, getClientIdentifier, rateLimitResponse } from '@/lib/rate-limit';
 import { isAdminEmail } from '@/lib/admin-config';
 import { getGeoFromIP } from '@/lib/geo';
+import { createVerificationToken, sendVerificationEmail } from '@/lib/email-verification';
 
 // Helper to parse user agent for detailed info
 function parseUserAgent(ua: string) {
@@ -180,6 +181,11 @@ export async function POST(request: NextRequest) {
         userEmail: email,
         freeCredits: 3,
       }).catch(err => console.error('[register-user] Welcome email failed:', err));
+
+      // Send email verification (in background, don't block response)
+      createVerificationToken(user.id, email)
+        .then(token => sendVerificationEmail(email, name || 'User', token))
+        .catch(err => console.error('[register-user] Verification email failed:', err));
     } else {
       // Update last login with tracking data (async for PostgreSQL support)
       await updateUserLoginAsync(email);

@@ -2,7 +2,7 @@ import { Queue, Worker, Job, QueueEvents } from "bullmq";
 import { getRedisClient } from "./redis";
 import { UpscaleJob, JobInput, JobResult } from "@/types/api";
 import Replicate from "replicate";
-import { decrementConcurrentJobs } from "./rateLimit";
+import { decrementConcurrentJobs } from "./rate-limit";
 import { sendWebhook } from "./webhooks";
 
 const replicate = new Replicate({

@@ -2133,3 +2133,43 @@ model MusicFolder {
   @@unique([userId, name])
   @@index([userId])
 }
+
+// ===================
+// Admin Audit Logging
+// ===================
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  adminId     String
+  adminEmail  String
+  action      String   // user.create, user.delete, api_key.revoke, etc.
+  targetType  String?  // user, api_key, feature_flag, ticket, etc.
+  targetId    String?  // ID of the affected resource
+  details     String?  @db.Text // JSON string with additional details
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+
+  @@index([adminId])
+  @@index([action])
+  @@index([targetType])
+  @@index([targetId])
+  @@index([createdAt])
+}
+
+// ===================
+// Email Verification Tokens
+// ===================
+
+model EmailVerificationToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  email     String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([token])
+  @@index([expiresAt])
+}

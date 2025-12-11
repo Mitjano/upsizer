@@ -4,6 +4,7 @@ import { getAllUsers, updateUser } from '@/lib/db';
 import { apiLimiter, getClientIdentifier, rateLimitResponse } from '@/lib/rate-limit';
 import { updateUserSchema, validateRequest, formatZodErrors } from '@/lib/validation';
 import { handleApiError, parsePaginationParams, paginate } from '@/lib/api-utils';
+import { logAdminAction, getRequestMetadata } from '@/lib/audit-log';
 
 export async function GET(request: NextRequest) {
   try {
@@ -70,6 +71,20 @@ export async function PATCH(request: NextRequest) {
     if (!updatedUser) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
+
+    // Log admin action
+    const metadata = getRequestMetadata(request);
+    await logAdminAction(
+      session.user.id!,
+      session.user.email!,
+      'user.update',
+      {
+        targetType: 'user',
+        targetId: userId,
+        details: { updates },
+        ...metadata,
+      }
+    );
 
     return NextResponse.json({ success: true, user: updatedUser });
   } catch (error) {
