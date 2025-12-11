@@ -15,6 +15,7 @@ import {
   CreditCostBadge,
 } from './shared'
 import { CREDIT_COSTS } from '@/lib/credits-config'
+import { useAnalytics } from '@/hooks/useAnalytics'
 
 interface ProcessingResult {
   id: string
@@ -32,6 +33,7 @@ export function BackgroundRemover({ userRole = 'user' }: BackgroundRemoverProps)
   const { data: session } = useSession()
   const t = useTranslations('components.loginPrompt.backgroundRemover')
   const tCommon = useTranslations('common')
+  const { trackBackgroundRemoved, trackImageUploaded, trackImageDownloaded } = useAnalytics()
   const [processing, setProcessing] = useState(false)
   const [result, setResult] = useState<ProcessingResult | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -41,6 +43,8 @@ export function BackgroundRemover({ userRole = 'user' }: BackgroundRemoverProps)
     if (acceptedFiles.length === 0) return
 
     const file = acceptedFiles[0]
+    // Track upload
+    trackImageUploaded(file.size, file.type)
     setProcessing(true)
     setError(null)
     setResult(null)
@@ -63,6 +67,8 @@ export function BackgroundRemover({ userRole = 'user' }: BackgroundRemoverProps)
 
       const data = await response.json()
       setResult(data.image)
+      // Track successful background removal
+      trackBackgroundRemoved()
       toast.success('Background removed successfully!', { id: 'bg-removal' })
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An error occurred'
@@ -71,7 +77,7 @@ export function BackgroundRemover({ userRole = 'user' }: BackgroundRemoverProps)
     } finally {
       setProcessing(false)
     }
-  }, [])
+  }, [trackImageUploaded, trackBackgroundRemoved])
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,

@@ -15,10 +15,12 @@ import {
   BatchImageItem,
   ImageInfo,
 } from "./uploader";
+import { useAnalytics } from "@/hooks/useAnalytics";
 
 export default function EnhancedImageUploader() {
   const t = useTranslations('toolsPage.uploader.batch');
   const { data: session } = useSession();
+  const { trackImageUpscaled, trackImageUploaded, trackImageDownloaded } = useAnalytics();
   const [dragActive, setDragActive] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -48,6 +50,8 @@ export default function EnhancedImageUploader() {
 
   const handleSingleFile = (file: File) => {
     setSelectedFile(file);
+    // Track upload event
+    trackImageUploaded(file.size, file.type);
     const reader = new FileReader();
     reader.onloadend = () => {
       const img = new Image();
@@ -126,6 +130,9 @@ export default function EnhancedImageUploader() {
         setProgress("Processing complete!");
         setUpscaledUrl(data.imageUrl);
 
+        // Track successful upscale
+        trackImageUpscaled(scale, qualityBoost ? 'premium' : 'standard');
+
         // Log usage
         if (session?.user?.email) {
           fetch("/api/user/log-usage", {
@@ -167,6 +174,8 @@ export default function EnhancedImageUploader() {
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
+      // Track download
+      trackImageDownloaded('upscale');
     } catch (error) {
       console.error("Download error:", error);
       alert("Failed to download image");

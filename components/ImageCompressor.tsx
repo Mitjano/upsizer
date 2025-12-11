@@ -4,6 +4,7 @@ import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import { CreditCostBadge } from './shared';
 import { CREDIT_COSTS } from '@/lib/credits-config';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 interface CompressionStats {
   originalSize: number;
@@ -17,6 +18,7 @@ interface CompressionStats {
 
 export default function ImageCompressor() {
   const { data: session } = useSession();
+  const { trackImageCompressed, trackImageUploaded, trackImageDownloaded } = useAnalytics();
   const [originalImage, setOriginalImage] = useState<string | null>(null);
   const [compressedImage, setCompressedImage] = useState<string | null>(null);
   const [stats, setStats] = useState<CompressionStats | null>(null);
@@ -51,6 +53,9 @@ export default function ImageCompressor() {
       setError('File size must be less than 20MB');
       return;
     }
+
+    // Track upload
+    trackImageUploaded(file.size, file.type);
 
     // Show original image
     const reader = new FileReader();
@@ -96,6 +101,10 @@ export default function ImageCompressor() {
 
       setCompressedImage(data.image);
       setStats(data.stats);
+      // Track successful compression
+      if (data.stats) {
+        trackImageCompressed(data.stats.originalSize, data.stats.compressedSize);
+      }
       setProgress('');
 
     } catch (err) {
@@ -115,6 +124,8 @@ export default function ImageCompressor() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    // Track download
+    trackImageDownloaded('compress');
   };
 
   const reset = () => {

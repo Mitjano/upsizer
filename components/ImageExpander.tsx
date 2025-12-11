@@ -14,6 +14,7 @@ import {
   CreditCostBadge,
 } from './shared'
 import { CREDIT_COSTS } from '@/lib/credits-config'
+import { useAnalytics } from '@/hooks/useAnalytics'
 
 interface ExpandResult {
   expandedImage: string
@@ -100,6 +101,7 @@ const EXPAND_PRESETS: ExpandPreset[] = [
 
 export function ImageExpander({ userRole = 'user' }: ImageExpanderProps) {
   const { data: session } = useSession()
+  const { trackImageExpanded, trackImageUploaded, trackImageDownloaded } = useAnalytics()
   const [processing, setProcessing] = useState(false)
   const [result, setResult] = useState<ExpandResult | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -113,6 +115,8 @@ export function ImageExpander({ userRole = 'user' }: ImageExpanderProps) {
       if (acceptedFiles.length === 0) return
 
       const file = acceptedFiles[0]
+      // Track upload
+      trackImageUploaded(file.size, file.type)
       setError(null)
       setResult(null)
       setSelectedFile(file)
@@ -124,7 +128,7 @@ export function ImageExpander({ userRole = 'user' }: ImageExpanderProps) {
       }
       reader.readAsDataURL(file)
     },
-    []
+    [trackImageUploaded]
   )
 
   const handleExpand = async (useSeed?: number) => {
@@ -156,6 +160,8 @@ export function ImageExpander({ userRole = 'user' }: ImageExpanderProps) {
       const data = await response.json()
       setResult(data)
       setLastSeed(data.seed)
+      // Track successful expansion
+      trackImageExpanded(selectedPreset)
       toast.success('Image expanded successfully!', { id: 'expand' })
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An error occurred'
@@ -187,6 +193,8 @@ export function ImageExpander({ userRole = 'user' }: ImageExpanderProps) {
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
+    // Track download
+    trackImageDownloaded('expand')
     toast.success('Image downloaded!')
   }
 
