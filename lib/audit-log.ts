@@ -95,7 +95,6 @@ export async function logAdminAction(
   // Try to persist to database
   if (isPrismaAvailable()) {
     try {
-      // @ts-expect-error - AuditLog model will be available after prisma generate
       await prisma.auditLog.create({
         data: {
           adminId: entry.adminId,
@@ -158,14 +157,12 @@ export async function getAuditLogs(options?: {
       }
 
       const [logs, total] = await Promise.all([
-        // @ts-expect-error - AuditLog model will be available after prisma generate
         prisma.auditLog.findMany({
           where,
           orderBy: { createdAt: 'desc' },
           take: limit,
           skip: offset,
         }),
-        // @ts-expect-error - AuditLog model will be available after prisma generate
         prisma.auditLog.count({ where }),
       ]);
 
@@ -245,7 +242,6 @@ export async function cleanupOldAuditLogs(retentionDays: number = 90): Promise<n
 
   if (isPrismaAvailable()) {
     try {
-      // @ts-expect-error - AuditLog model will be available after prisma generate
       const result = await prisma.auditLog.deleteMany({
         where: {
           createdAt: { lt: cutoffDate },

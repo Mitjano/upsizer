@@ -53,14 +53,12 @@ export async function createVerificationToken(
   if (usePostgres) {
     try {
       // Delete any existing tokens for this user
-      // @ts-expect-error - EmailVerificationToken model will be available after prisma generate
-      await prisma.emailVerificationToken?.deleteMany({
+      await prisma.emailVerificationToken.deleteMany({
         where: { userId },
       });
 
       // Create new token
-      // @ts-expect-error - EmailVerificationToken model will be available after prisma generate
-      await prisma.emailVerificationToken?.create({
+      await prisma.emailVerificationToken.create({
         data: {
           token,
           userId,
@@ -94,8 +92,7 @@ export async function verifyEmailToken(token: string): Promise<{
   if (usePostgres) {
     try {
       // Find token in database
-      // @ts-expect-error - EmailVerificationToken model will be available after prisma generate
-      const tokenRecord = await prisma.emailVerificationToken?.findUnique({
+      const tokenRecord = await prisma.emailVerificationToken.findUnique({
         where: { token },
       });
 
@@ -105,8 +102,7 @@ export async function verifyEmailToken(token: string): Promise<{
 
       if (new Date() > tokenRecord.expiresAt) {
         // Delete expired token
-        // @ts-expect-error - EmailVerificationToken model will be available after prisma generate
-        await prisma.emailVerificationToken?.delete({ where: { token } });
+        await prisma.emailVerificationToken.delete({ where: { token } });
         return { success: false, message: 'Verification token has expired' };
       }
 
@@ -120,8 +116,7 @@ export async function verifyEmailToken(token: string): Promise<{
       });
 
       // Delete used token
-      // @ts-expect-error - EmailVerificationToken model will be available after prisma generate
-      await prisma.emailVerificationToken?.delete({ where: { token } });
+      await prisma.emailVerificationToken.delete({ where: { token } });
 
       return {
         success: true,
