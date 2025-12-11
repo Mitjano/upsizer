@@ -197,8 +197,8 @@ export default function Header() {
   return (
     <header className="border-b border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm sticky top-0 z-50 transition-colors">
       <nav className="container mx-auto px-4 py-4 flex items-center" role="navigation" aria-label="Main navigation">
-        {/* Logo - fixed width for balance */}
-        <Link href="/" className="flex items-center gap-2 w-[120px]" aria-label="Pixelift home">
+        {/* Logo - fixed width for balance with right side */}
+        <Link href="/" className="flex items-center gap-2 w-[280px] shrink-0" aria-label="Pixelift home">
           <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-blue-500 rounded-lg" aria-hidden="true"></div>
           <span className="text-xl font-bold text-gray-900 dark:text-white">Pixelift</span>
         </Link>
@@ -300,8 +300,8 @@ export default function Header() {
           </Link>
         </div>
 
-        {/* Auth Buttons & Language Switcher - justify-end for right alignment */}
-        <div className="flex items-center justify-end gap-3">
+        {/* Auth Buttons & Language Switcher - fixed width matching logo for balance */}
+        <div className="flex items-center justify-end gap-3 w-[280px] shrink-0">
           {/* Theme Toggle */}
           <button
             onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
