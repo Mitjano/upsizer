@@ -26,6 +26,20 @@ const UNSUBSCRIBE_URL = 'https://pixelift.pl/settings/notifications';
 // =============================================================================
 
 /**
+ * Escape HTML special characters to prevent XSS
+ */
+function escapeHtml(text: string): string {
+  const htmlEscapes: Record<string, string> = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+  };
+  return text.replace(/[&<>"']/g, (char) => htmlEscapes[char] || char);
+}
+
+/**
  * Generate plain text version from HTML content
  */
 function htmlToPlainText(html: string): string {
@@ -271,24 +285,24 @@ export async function sendTicketCreatedEmail(data: TicketEmailData): Promise<boo
 
         <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background: #f3f4f6; border-radius: 8px; margin: 20px 0;">
           <tr><td style="padding: 20px;">
-            <p style="margin: 8px 0; color: #4b5563;"><strong>Ticket ID:</strong> ${data.ticketId}</p>
-            <p style="margin: 8px 0; color: #4b5563;"><strong>Subject:</strong> ${data.subject}</p>
-            <p style="margin: 8px 0; color: #4b5563;"><strong>Category:</strong> ${data.category}</p>
-            <p style="margin: 8px 0; color: #4b5563;"><strong>From:</strong> ${data.userName} (${data.userEmail})</p>
+            <p style="margin: 8px 0; color: #4b5563;"><strong>Ticket ID:</strong> ${escapeHtml(data.ticketId)}</p>
+            <p style="margin: 8px 0; color: #4b5563;"><strong>Subject:</strong> ${escapeHtml(data.subject)}</p>
+            <p style="margin: 8px 0; color: #4b5563;"><strong>Category:</strong> ${escapeHtml(data.category)}</p>
+            <p style="margin: 8px 0; color: #4b5563;"><strong>From:</strong> ${escapeHtml(data.userName)} (${escapeHtml(data.userEmail)})</p>
             <p style="margin: 8px 0; color: #4b5563;"><strong>Created:</strong> ${new Date(data.createdAt).toLocaleString()}</p>
           </td></tr>
         </table>
 
         <div style="margin: 20px 0;">
           <h3 style="color: #1f2937; margin: 0 0 10px 0;">Message:</h3>
-          <p style="color: #4b5563; white-space: pre-wrap; line-height: 1.6;">${data.description}</p>
+          <p style="color: #4b5563; white-space: pre-wrap; line-height: 1.6;">${escapeHtml(data.description)}</p>
         </div>
 
         ${ctaButton('View in Admin Panel', 'https://pixelift.pl/admin/tickets')}
       </td>
     </tr>
     ${emailFooter()}
-  `, `New ticket from ${data.userName}: ${data.subject}`);
+  `, `New ticket from ${escapeHtml(data.userName)}: ${escapeHtml(data.subject)}`);
 
   const text = `New Support Ticket Created
 
@@ -340,19 +354,19 @@ export async function sendTicketReplyEmail(data: TicketReplyEmailData): Promise<
       <td class="mobile-padding" style="padding: 40px 30px; font-family: Arial, sans-serif;">
         <h2 style="color: #1f2937; margin: 0 0 20px 0; font-size: 24px;">Support Team Reply</h2>
 
-        <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">Hi ${data.userName},</p>
+        <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">Hi ${escapeHtml(data.userName)},</p>
         <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">Our support team has replied to your ticket:</p>
 
         <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background: #f3f4f6; border-radius: 8px; margin: 20px 0;">
           <tr><td style="padding: 20px;">
-            <p style="margin: 8px 0; color: #4b5563;"><strong>Ticket ID:</strong> ${data.ticketId}</p>
-            <p style="margin: 8px 0; color: #4b5563;"><strong>Subject:</strong> ${data.subject}</p>
-            <p style="margin: 8px 0; color: #4b5563;"><strong>From:</strong> ${data.replyAuthor}</p>
+            <p style="margin: 8px 0; color: #4b5563;"><strong>Ticket ID:</strong> ${escapeHtml(data.ticketId)}</p>
+            <p style="margin: 8px 0; color: #4b5563;"><strong>Subject:</strong> ${escapeHtml(data.subject)}</p>
+            <p style="margin: 8px 0; color: #4b5563;"><strong>From:</strong> ${escapeHtml(data.replyAuthor)}</p>
           </td></tr>
         </table>
 
         <div style="background: #ffffff; border-left: 4px solid #10b981; padding: 20px; margin: 20px 0;">
-          <p style="color: #4b5563; white-space: pre-wrap; margin: 0; line-height: 1.6;">${data.replyMessage}</p>
+          <p style="color: #4b5563; white-space: pre-wrap; margin: 0; line-height: 1.6;">${escapeHtml(data.replyMessage)}</p>
         </div>
 
         <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
@@ -361,7 +375,7 @@ export async function sendTicketReplyEmail(data: TicketReplyEmailData): Promise<
       </td>
     </tr>
     ${emailFooter()}
-  `, `Reply to your ticket: ${data.subject}`);
+  `, `Reply to your ticket: ${escapeHtml(data.subject)}`);
 
   const text = `Support Team Reply
 
@@ -415,7 +429,7 @@ export async function sendWelcomeEmail(data: WelcomeEmailData): Promise<boolean>
     ${emailHeader()}
     <tr>
       <td class="mobile-padding" style="padding: 40px 30px; font-family: Arial, sans-serif;">
-        <h2 style="color: #1f2937; margin: 0 0 20px 0; font-size: 24px;">Welcome aboard, ${data.userName}! 👋</h2>
+        <h2 style="color: #1f2937; margin: 0 0 20px 0; font-size: 24px;">Welcome aboard, ${escapeHtml(data.userName)}! 👋</h2>
 
         <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">
           We're thrilled to have you join Pixelift. Your account is ready, and you have
@@ -522,7 +536,7 @@ export async function sendCreditsLowEmail(data: CreditsLowEmailData): Promise<bo
       <td class="mobile-padding" style="padding: 40px 30px; font-family: Arial, sans-serif;">
         <h2 style="color: #1f2937; margin: 0 0 20px 0; font-size: 24px;">Credits Running Low</h2>
 
-        <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">Hi ${data.userName},</p>
+        <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">Hi ${escapeHtml(data.userName)},</p>
         <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">
           Just a heads up - you have <strong style="color: #f59e0b;">${data.creditsRemaining} credits</strong> remaining in your Pixelift account.
         </p>
@@ -612,7 +626,7 @@ export async function sendCreditsDepletedEmail(data: CreditsDepletedEmailData): 
       <td class="mobile-padding" style="padding: 40px 30px; font-family: Arial, sans-serif;">
         <h2 style="color: #1f2937; margin: 0 0 20px 0; font-size: 24px;">Out of Credits</h2>
 
-        <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">Hi ${data.userName},</p>
+        <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">Hi ${escapeHtml(data.userName)},</p>
 
         <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background: #fef3f2; border-left: 4px solid #ef4444; border-radius: 4px; margin: 30px 0;">
           <tr><td style="padding: 20px;">
@@ -705,7 +719,7 @@ export async function sendFirstUploadEmail(data: FirstUploadEmailData): Promise<
       <td class="mobile-padding" style="padding: 40px 30px; font-family: Arial, sans-serif; text-align: center;">
         <div style="font-size: 60px; margin-bottom: 20px;">🎉</div>
 
-        <h2 style="color: #1f2937; margin: 0 0 20px 0; font-size: 24px;">Congratulations, ${data.userName}!</h2>
+        <h2 style="color: #1f2937; margin: 0 0 20px 0; font-size: 24px;">Congratulations, ${escapeHtml(data.userName)}!</h2>
 
         <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">
           You just processed your first image with Pixelift's AI technology.
@@ -818,7 +832,7 @@ export async function sendPurchaseConfirmationEmail(data: PurchaseConfirmationEm
 
         <h2 style="color: #1f2937; margin: 0 0 20px 0; font-size: 24px;">Thank You for Your Purchase!</h2>
 
-        <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">Hi ${data.userName},</p>
+        <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">Hi ${escapeHtml(data.userName)},</p>
         <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">
           Your payment has been successfully processed. Your credits are now available.
         </p>
@@ -828,7 +842,7 @@ export async function sendPurchaseConfirmationEmail(data: PurchaseConfirmationEm
             <h3 style="color: #1f2937; margin: 0 0 20px 0; font-size: 18px; text-align: center;">Receipt</h3>
 
             <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="border-bottom: 1px solid #d1d5db; padding-bottom: 15px; margin-bottom: 15px;">
-              <tr><td style="color: #6b7280; padding: 5px 0;">Plan:</td><td style="color: #1f2937; text-align: right; font-weight: 600;">${data.planName}</td></tr>
+              <tr><td style="color: #6b7280; padding: 5px 0;">Plan:</td><td style="color: #1f2937; text-align: right; font-weight: 600;">${escapeHtml(data.planName)}</td></tr>
               <tr><td style="color: #6b7280; padding: 5px 0;">Credits Added:</td><td style="color: #10b981; text-align: right; font-weight: 600;">${data.creditsAdded}</td></tr>
               ${isSubscription ? `<tr><td style="color: #6b7280; padding: 5px 0;">Billing Cycle:</td><td style="color: #1f2937; text-align: right; font-weight: 600;">Monthly</td></tr>` : ''}
             </table>
@@ -838,7 +852,7 @@ export async function sendPurchaseConfirmationEmail(data: PurchaseConfirmationEm
             </table>
 
             <p style="color: #6b7280; font-size: 12px; margin: 15px 0 0 0; text-align: center;">
-              Transaction ID: ${data.transactionId}
+              Transaction ID: ${escapeHtml(data.transactionId)}
             </p>
           </td></tr>
         </table>
@@ -871,7 +885,7 @@ export async function sendPurchaseConfirmationEmail(data: PurchaseConfirmationEm
       </td>
     </tr>
     ${emailFooter()}
-  `, `Your ${data.planName} purchase is confirmed`);
+  `, `Your ${escapeHtml(data.planName)} purchase is confirmed`);
 
   const text = `Thank You for Your Purchase!
 
@@ -932,7 +946,7 @@ export async function sendPaymentFailedEmail(data: PaymentFailedEmailData): Prom
 
         <h2 style="color: #1f2937; margin: 0 0 20px 0; font-size: 24px;">Payment Failed</h2>
 
-        <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">Hi ${data.userName},</p>
+        <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">Hi ${escapeHtml(data.userName)},</p>
         <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">
           We were unable to process your payment for your Pixelift subscription.
         </p>
@@ -940,7 +954,7 @@ export async function sendPaymentFailedEmail(data: PaymentFailedEmailData): Prom
         <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background: #fef2f2; border-left: 4px solid #ef4444; border-radius: 4px; margin: 30px 0; text-align: left;">
           <tr><td style="padding: 20px;">
             <p style="color: #991b1b; margin: 0; font-size: 16px;">
-              <strong>Plan:</strong> ${data.planName}<br />
+              <strong>Plan:</strong> ${escapeHtml(data.planName)}<br />
               <strong>Amount:</strong> ${data.currency}${data.amount.toFixed(2)}<br />
               <strong>Attempt:</strong> ${data.attemptCount} of 3
             </p>
@@ -1045,9 +1059,9 @@ export async function sendSubscriptionCancelledEmail(data: SubscriptionCancelled
       <td class="mobile-padding" style="padding: 40px 30px; font-family: Arial, sans-serif;">
         <h2 style="color: #1f2937; margin: 0 0 20px 0; font-size: 24px;">Subscription Cancelled</h2>
 
-        <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">Hi ${data.userName},</p>
+        <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">Hi ${escapeHtml(data.userName)},</p>
         <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">
-          Your <strong>${data.planName}</strong> subscription has been cancelled.
+          Your <strong>${escapeHtml(data.planName)}</strong> subscription has been cancelled.
         </p>
 
         <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background: #f3f4f6; border-radius: 8px; margin: 30px 0;">
@@ -1138,7 +1152,7 @@ export async function sendTicketConfirmationEmail(data: TicketConfirmationEmailD
 
         <h2 style="color: #1f2937; margin: 0 0 20px 0; font-size: 24px;">We Got Your Message!</h2>
 
-        <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">Hi ${data.userName},</p>
+        <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">Hi ${escapeHtml(data.userName)},</p>
         <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">
           Thank you for contacting Pixelift support. We've received your request and our team will get back to you as soon as possible.
         </p>
@@ -1146,9 +1160,9 @@ export async function sendTicketConfirmationEmail(data: TicketConfirmationEmailD
         <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background: #f0fdf4; border-left: 4px solid #10b981; border-radius: 4px; margin: 30px 0; text-align: left;">
           <tr><td style="padding: 20px;">
             <p style="color: #065f46; margin: 0; font-size: 15px;">
-              <strong>Ticket ID:</strong> #${data.ticketId}<br />
-              <strong>Subject:</strong> ${data.subject}<br />
-              <strong>Category:</strong> ${data.category}
+              <strong>Ticket ID:</strong> #${escapeHtml(data.ticketId)}<br />
+              <strong>Subject:</strong> ${escapeHtml(data.subject)}<br />
+              <strong>Category:</strong> ${escapeHtml(data.category)}
             </p>
           </td></tr>
         </table>
@@ -1170,7 +1184,7 @@ export async function sendTicketConfirmationEmail(data: TicketConfirmationEmailD
       </td>
     </tr>
     ${emailFooter()}
-  `, `We received your support request: ${data.subject}`);
+  `, `We received your support request: ${escapeHtml(data.subject)}`);
 
   const text = `We Got Your Message!
 
@@ -1233,7 +1247,7 @@ export async function sendAccountDeletedEmail(data: AccountDeletedEmailData): Pr
     ${emailHeader('linear-gradient(to right, #6b7280, #374151)')}
     <tr>
       <td class="mobile-padding" style="padding: 40px 30px; font-family: Arial, sans-serif;">
-        <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">Hi ${data.userName},</p>
+        <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">Hi ${escapeHtml(data.userName)},</p>
         <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">
           As per your request, your Pixelift account and all associated data have been permanently deleted.
         </p>

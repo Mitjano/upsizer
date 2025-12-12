@@ -11,6 +11,7 @@ import {
   getApiKeysByUserId,
   createApiKey,
 } from '@/lib/database';
+import { apiKeyCreationLimiter, getClientIdentifier, rateLimitResponse } from '@/lib/rate-limit';
 
 // Fixed rate limit for all users (100 requests per minute)
 const API_RATE_LIMIT = 100;
@@ -95,6 +96,13 @@ export async function GET() {
  */
 export async function POST(request: NextRequest) {
   try {
+    // Rate limiting for API key creation
+    const identifier = getClientIdentifier(request);
+    const { allowed, resetAt } = apiKeyCreationLimiter.check(identifier);
+    if (!allowed) {
+      return rateLimitResponse(resetAt);
+    }
+
     const session = await auth();
 
     if (!session?.user?.email) {

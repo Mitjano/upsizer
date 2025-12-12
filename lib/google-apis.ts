@@ -93,6 +93,7 @@ async function getServiceAccountToken(
       grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
       assertion: jwt,
     }),
+    signal: AbortSignal.timeout(15000), // 15 second timeout
   });
 
   if (!response.ok) {

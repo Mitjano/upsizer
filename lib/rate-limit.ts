@@ -209,6 +209,7 @@ export const authLimiter = new RateLimiter('rl:auth', 15 * 60 * 1000, 5);   // 5
 export const strictLimiter = new RateLimiter('rl:strict', 60 * 1000, 10);   // 10 req per minute
 export const imageProcessingLimiter = new RateLimiter('rl:image', 15 * 60 * 1000, 20); // 20 per 15 min
 export const analyticsLimiter = new RateLimiter('rl:analytics', 60 * 1000, 60); // 60 per minute
+export const apiKeyCreationLimiter = new RateLimiter('rl:apikey', 60 * 60 * 1000, 10); // 10 keys per hour
 
 /**
  * Get client identifier from request

@@ -56,7 +56,10 @@ export async function sendWebhook(
  * Clients can verify webhooks came from Pixelift
  */
 async function generateWebhookSignature(payload: WebhookPayload): Promise<string> {
-  const secret = process.env.WEBHOOK_SECRET || "pixelift-webhook-secret";
+  const secret = process.env.WEBHOOK_SECRET;
+  if (!secret) {
+    throw new Error('WEBHOOK_SECRET environment variable is required for webhook signing');
+  }
   const data = JSON.stringify(payload);
 
   // Use Web Crypto API to generate HMAC-SHA256

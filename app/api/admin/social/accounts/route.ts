@@ -10,6 +10,7 @@ export async function GET() {
   }
 
   try {
+    // Fetch accounts with posts count in single query
     const accounts = await prisma.socialAccount.findMany({
       orderBy: [{ isPrimary: "desc" }, { createdAt: "desc" }],
       select: {
@@ -34,21 +35,31 @@ export async function GET() {
       },
     });
 
-    // Get analytics for each account
-    const accountsWithAnalytics = await Promise.all(
-      accounts.map(async (account) => {
-        const latestAnalytics = await prisma.socialAnalytics.findFirst({
-          where: { accountId: account.id },
-          orderBy: { date: "desc" },
-        });
+    // Batch fetch latest analytics for all accounts (fixes N+1 query)
+    const accountIds = accounts.map(a => a.id);
 
-        return {
-          ...account,
-          postsCount: account._count.posts,
-          analytics: latestAnalytics,
-        };
-      })
-    );
+    // Fetch all analytics for accounts and group by accountId to get latest
+    const allAnalytics = accountIds.length > 0
+      ? await prisma.socialAnalytics.findMany({
+          where: { accountId: { in: accountIds } },
+          orderBy: { date: 'desc' },
+        })
+      : [];
+
+    // Create a map with only the latest analytics per account
+    const analyticsMap = new Map<string, typeof allAnalytics[0]>();
+    for (const analytics of allAnalytics) {
+      if (!analyticsMap.has(analytics.accountId)) {
+        analyticsMap.set(analytics.accountId, analytics);
+      }
+    }
+
+    // Combine accounts with analytics
+    const accountsWithAnalytics = accounts.map(account => ({
+      ...account,
+      postsCount: account._count.posts,
+      analytics: analyticsMap.get(account.id) || null,
+    }));
 
     return NextResponse.json({
       accounts: accountsWithAnalytics,

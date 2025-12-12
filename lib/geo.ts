@@ -39,10 +39,18 @@ export async function getGeoFromIP(ip: string): Promise<GeoData | null> {
 
   try {
     // ip-api.com free API (no key needed, 45 requests/min limit)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+
     const response = await fetch(
       `http://ip-api.com/json/${ip}?fields=status,country,countryCode,region,city,zip,lat,lon,timezone,isp,org,as`,
-      { next: { revalidate: 86400 } } // Cache for 24 hours
+      {
+        next: { revalidate: 86400 }, // Cache for 24 hours
+        signal: controller.signal,
+      }
     );
+
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       console.error('[geo] Failed to fetch geo data:', response.status);
