@@ -216,7 +216,6 @@ export async function POST(request: NextRequest) {
         userName: user.name || 'User',
         userEmail: user.email,
         creditsRemaining: updatedUser.credits,
-        totalUsed: updatedUser.totalUsage || creditsNeeded,
       }).catch(err => console.error('Credits low email failed:', err));
     }
 
