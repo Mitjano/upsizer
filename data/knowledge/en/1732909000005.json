@@ -5,11 +5,17 @@
   "excerpt": "Learn about outpainting, the AI technique that expands images beyond their original borders while maintaining visual coherence.",
   "content": "<h2>What is Outpainting?</h2><p>Outpainting is an AI image editing technique that extends an image beyond its original boundaries. Unlike cropping (which removes content), outpainting generates new content that seamlessly blends with the existing image.</p><h2>How Outpainting Works</h2><p>AI outpainting models analyze the existing image to understand:</p><ul><li>The overall style and aesthetic</li><li>Color palette and lighting</li><li>Subject matter and context</li><li>Perspective and composition</li></ul><p>Using this understanding, the AI generates new content for the expanded areas that naturally continues the scene.</p><h2>Common Use Cases</h2><h3>Aspect Ratio Conversion</h3><p>Convert a portrait image to landscape (or vice versa) for different platforms:</p><ul><li>Instagram square to YouTube thumbnail</li><li>Portrait photo to desktop wallpaper</li><li>Product shot to banner format</li></ul><h3>Composition Improvement</h3><p>Fix images where the subject is too close to the edge:</p><ul><li>Add breathing room around subjects</li><li>Create space for text overlays</li><li>Improve rule-of-thirds positioning</li></ul><h3>Creative Expansion</h3><p>Explore what's \"beyond the frame\":</p><ul><li>Extend landscapes to panoramic views</li><li>Add environmental context to portraits</li><li>Create wider scenes for storytelling</li></ul><h2>Best Practices</h2><ol><li><strong>Start small:</strong> Expand in increments rather than all at once</li><li><strong>Consider context:</strong> Think about what logically should be outside the frame</li><li><strong>Match lighting:</strong> Ensure the expanded areas maintain consistent lighting</li><li><strong>Check edges:</strong> Look for seams or inconsistencies at boundaries</li></ol><h2>Outpainting vs Inpainting</h2><p><strong>Outpainting:</strong> Generates content outside the image boundaries</p><p><strong>Inpainting:</strong> Replaces or generates content within the image boundaries</p><p>Both techniques use similar AI technology but serve different purposes.</p><h2>Tools for Outpainting</h2><p>At Pixelift, our Image Expander tool uses advanced AI models like FLUX Fill to provide high-quality outpainting. Simply upload an image, select the expansion direction, and let AI do the rest.</p>",
   "category": "techniques",
-  "tags": ["outpainting", "image-expansion", "composition", "aspect-ratio"],
+  "tags": [
+    "outpainting",
+    "image-expansion",
+    "composition",
+    "aspect-ratio"
+  ],
   "status": "published",
   "createdAt": "2024-11-29T12:00:00.000Z",
   "updatedAt": "2024-11-29T12:00:00.000Z",
   "publishedAt": "2024-11-29T12:00:00.000Z",
   "metaTitle": "Outpainting - AI Image Expansion Technique | Pixelift",
-  "metaDescription": "Learn about outpainting, the AI technique for expanding images beyond their borders. Perfect for aspect ratio conversion and composition improvement."
+  "metaDescription": "Learn about outpainting, the AI technique for expanding images beyond their borders. Perfect for aspect ratio conversion and composition improvement.",
+  "featuredImage": "/api/knowledge-image/outpainting-technique"
 }

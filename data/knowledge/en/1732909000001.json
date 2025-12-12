@@ -5,11 +5,17 @@
   "excerpt": "Discover Flux, the revolutionary AI image generation model from Black Forest Labs that's setting new standards for quality and speed.",
   "content": "<h2>What is Flux?</h2><p>Flux is a family of state-of-the-art AI image generation models developed by Black Forest Labs. It represents a significant leap forward in text-to-image generation, offering exceptional quality, speed, and versatility.</p><h2>Flux Model Variants</h2><h3>Flux Schnell</h3><p>The fastest model in the Flux family, designed for rapid prototyping and iterations. Despite its speed, it maintains impressive quality and is perfect for brainstorming and quick visualizations.</p><h3>Flux 1.1 Pro</h3><p>The balanced choice offering excellent quality with reasonable generation times. This is our recommended model for most use cases, combining the best of both worlds.</p><h3>Flux 1.1 Pro Ultra</h3><p>The premium tier offering 4MP resolution and raw mode for maximum photorealism. Ideal for professional work requiring the highest quality output.</p><h3>Flux 2.0 Pro</h3><p>The latest iteration supporting up to 8 reference images, enabling more precise control over the generated content.</p><h2>Key Features</h2><ul><li><strong>Exceptional Text Rendering:</strong> Flux models handle text in images better than many competitors</li><li><strong>Photorealistic Output:</strong> Particularly strong at generating realistic photographs</li><li><strong>Consistent Style:</strong> Maintains style coherence across multiple generations</li><li><strong>Fast Generation:</strong> Optimized for speed without sacrificing quality</li></ul><h2>Best Use Cases</h2><p>Flux excels at:</p><ul><li>Product photography and e-commerce imagery</li><li>Portrait and lifestyle photography</li><li>Architectural visualizations</li><li>Marketing and advertising materials</li></ul><h2>Tips for Best Results</h2><p>When using Flux models, consider these tips:</p><ol><li>Be specific about lighting conditions in your prompts</li><li>Use photography terminology for photorealistic results</li><li>Specify camera settings like focal length for controlled depth of field</li><li>Include style references like \"professional photograph\" or \"editorial shot\"</li></ol>",
   "category": "models",
-  "tags": ["flux", "black-forest-labs", "text-to-image", "photorealistic"],
+  "tags": [
+    "flux",
+    "black-forest-labs",
+    "text-to-image",
+    "photorealistic"
+  ],
   "status": "published",
   "createdAt": "2024-11-29T10:00:00.000Z",
   "updatedAt": "2024-11-29T10:00:00.000Z",
   "publishedAt": "2024-11-29T10:00:00.000Z",
   "metaTitle": "Flux AI Image Model - Complete Guide | Pixelift",
-  "metaDescription": "Learn about Flux, the revolutionary AI image generation model from Black Forest Labs. Discover Flux Schnell, Pro, and Ultra variants."
+  "metaDescription": "Learn about Flux, the revolutionary AI image generation model from Black Forest Labs. Discover Flux Schnell, Pro, and Ultra variants.",
+  "featuredImage": "/api/knowledge-image/flux-ai-image-model"
 }

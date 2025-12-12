@@ -5,11 +5,17 @@
   "excerpt": "Learn how AI upscaling works to enhance image resolution while preserving quality. Understand the technology behind modern image enhancement.",
   "content": "<h2>Understanding Image Upscaling</h2><p>Image upscaling is the process of increasing an image's resolution - making it larger while maintaining or improving its quality. Traditional upscaling methods simply interpolate pixels, often resulting in blurry or pixelated images. AI upscaling, however, uses neural networks to intelligently add detail and enhance quality.</p><h2>How AI Upscaling Works</h2><p>Modern AI upscaling uses deep learning models trained on millions of image pairs. These models learn to:</p><ul><li>Recognize patterns and textures in low-resolution images</li><li>Predict and generate missing high-resolution details</li><li>Remove compression artifacts and noise</li><li>Enhance edges and maintain sharpness</li></ul><h2>Common Upscaling Technologies</h2><h3>Real-ESRGAN</h3><p>One of the most popular AI upscaling models, Real-ESRGAN excels at enhancing real-world photos. It's particularly good at:</p><ul><li>Removing JPEG compression artifacts</li><li>Enhancing faces and text</li><li>Preserving natural textures</li></ul><h3>ESPCN and SRCNN</h3><p>Earlier neural network approaches that laid the groundwork for modern upscaling. While less sophisticated, they're faster and still useful for certain applications.</p><h2>Upscaling Factors</h2><p>Upscaling is typically measured in factors:</p><ul><li><strong>2x:</strong> Doubles both dimensions (4x total pixels)</li><li><strong>4x:</strong> Quadruples dimensions (16x total pixels)</li><li><strong>8x:</strong> Octuples dimensions (64x total pixels)</li></ul><p>Higher factors require more sophisticated AI processing to maintain quality.</p><h2>Best Practices</h2><ol><li>Start with the highest quality source image available</li><li>Remove noise and artifacts before upscaling when possible</li><li>Use appropriate upscaling factors - don't over-upscale</li><li>Consider multiple passes for extreme upscaling</li></ol><h2>Use Cases</h2><p>AI upscaling is invaluable for:</p><ul><li>Printing photos at larger sizes</li><li>Restoring old or low-quality images</li><li>Preparing images for high-resolution displays</li><li>Enhancing thumbnails and web images</li></ul>",
   "category": "techniques",
-  "tags": ["upscaling", "image-enhancement", "real-esrgan", "resolution"],
+  "tags": [
+    "upscaling",
+    "image-enhancement",
+    "real-esrgan",
+    "resolution"
+  ],
   "status": "published",
   "createdAt": "2024-11-29T10:30:00.000Z",
   "updatedAt": "2024-11-29T10:30:00.000Z",
   "publishedAt": "2024-11-29T10:30:00.000Z",
   "metaTitle": "What is AI Upscaling? Image Enhancement Guide | Pixelift",
-  "metaDescription": "Learn how AI upscaling enhances image resolution using deep learning. Understand Real-ESRGAN and modern image enhancement technology."
+  "metaDescription": "Learn how AI upscaling enhances image resolution using deep learning. Understand Real-ESRGAN and modern image enhancement technology.",
+  "featuredImage": "/api/knowledge-image/what-is-upscaling"
 }

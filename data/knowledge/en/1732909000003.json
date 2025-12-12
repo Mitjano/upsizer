@@ -5,11 +5,17 @@
   "excerpt": "Prompt engineering is the art and science of crafting effective text prompts to guide AI image generation models toward desired outputs.",
   "content": "<h2>Definition</h2><p><strong>Prompt Engineering</strong> is the practice of designing and optimizing text inputs (prompts) to achieve specific, desired outputs from AI models. In the context of image generation, it involves crafting descriptions that effectively communicate visual concepts to AI systems.</p><h2>Why Prompt Engineering Matters</h2><p>The quality of your prompt directly impacts the quality of generated images. A well-crafted prompt can:</p><ul><li>Produce more accurate results on the first try</li><li>Reduce the need for multiple generation attempts</li><li>Save credits and time</li><li>Unlock capabilities you didn't know the model had</li></ul><h2>Key Elements of Effective Prompts</h2><h3>Subject</h3><p>Clearly define what you want to see: \"a golden retriever\", \"a medieval castle\", \"a businesswoman\"</p><h3>Style</h3><p>Specify the artistic style: \"photorealistic\", \"watercolor painting\", \"3D render\", \"anime style\"</p><h3>Composition</h3><p>Describe the layout: \"close-up portrait\", \"wide landscape shot\", \"bird's eye view\"</p><h3>Lighting</h3><p>Set the mood: \"golden hour lighting\", \"dramatic shadows\", \"soft diffused light\"</p><h3>Quality Modifiers</h3><p>Add enhancement terms: \"highly detailed\", \"8K resolution\", \"professional photography\"</p><h2>Common Techniques</h2><ul><li><strong>Weighted terms:</strong> Some models support (parentheses) or [brackets] to emphasize or de-emphasize elements</li><li><strong>Negative prompts:</strong> Specify what you don't want to see</li><li><strong>Style references:</strong> Reference known artists or art movements</li><li><strong>Technical terms:</strong> Use photography or art terminology for precise control</li></ul><h2>Examples</h2><p><strong>Basic prompt:</strong> \"a cat sitting on a windowsill\"</p><p><strong>Enhanced prompt:</strong> \"a fluffy orange tabby cat sitting on a rustic wooden windowsill, golden hour sunlight streaming through lace curtains, photorealistic, shallow depth of field, warm color palette, 8K quality\"</p>",
   "category": "glossary",
-  "tags": ["prompt-engineering", "prompts", "ai-basics", "image-generation"],
+  "tags": [
+    "prompt-engineering",
+    "prompts",
+    "ai-basics",
+    "image-generation"
+  ],
   "status": "published",
   "createdAt": "2024-11-29T11:00:00.000Z",
   "updatedAt": "2024-11-29T11:00:00.000Z",
   "publishedAt": "2024-11-29T11:00:00.000Z",
   "metaTitle": "Prompt Engineering - AI Image Generation Glossary | Pixelift",
-  "metaDescription": "Learn about prompt engineering - the art of crafting effective text prompts for AI image generation. Tips, techniques, and examples."
+  "metaDescription": "Learn about prompt engineering - the art of crafting effective text prompts for AI image generation. Tips, techniques, and examples.",
+  "featuredImage": "/api/knowledge-image/prompt-engineering"
 }

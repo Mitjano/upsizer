@@ -5,11 +5,17 @@
   "excerpt": "Explore Recraft V3, a top-tier AI image generation model known for exceptional text rendering and versatile style options.",
   "content": "<h2>What is Recraft V3?</h2><p>Recraft V3 is a state-of-the-art text-to-image AI model developed by Recraft AI. It has quickly gained recognition for its exceptional quality, particularly in areas where other models struggle - like text rendering and consistent style application.</p><h2>Key Strengths</h2><h3>Text Rendering</h3><p>One of Recraft V3's standout features is its ability to accurately render text within images. This makes it ideal for:</p><ul><li>Logo design and branding</li><li>Poster and banner creation</li><li>Social media graphics with text overlays</li><li>Product mockups with labels</li></ul><h3>Multiple Styles</h3><p>Recraft V3 supports various artistic styles out of the box, including:</p><ul><li>Photorealistic imagery</li><li>Digital illustration</li><li>Vector graphics</li><li>Icon design</li></ul><h3>Consistency</h3><p>The model maintains remarkable consistency across generations, making it suitable for:</p><ul><li>Brand asset creation</li><li>Series of related images</li><li>Style-matched content</li></ul><h2>Recraft V3 SVG</h2><p>A specialized variant of Recraft V3 that outputs scalable vector graphics (SVG). This is perfect for:</p><ul><li>Logo creation</li><li>Icon design</li><li>Illustrations that need to scale</li><li>Print-ready graphics</li></ul><h2>Best Practices</h2><ol><li>Use clear, specific prompts for best text rendering</li><li>Specify the desired style explicitly</li><li>For logos, use the SVG variant</li><li>Include color preferences in your prompts</li></ol><h2>Comparison with Other Models</h2><p>Recraft V3 particularly excels when compared to other models in:</p><ul><li><strong>Text accuracy:</strong> Superior to most competitors</li><li><strong>Style consistency:</strong> Very reliable across generations</li><li><strong>Commercial use:</strong> Designed with commercial applications in mind</li></ul>",
   "category": "models",
-  "tags": ["recraft", "text-rendering", "svg", "logo-design"],
+  "tags": [
+    "recraft",
+    "text-rendering",
+    "svg",
+    "logo-design"
+  ],
   "status": "published",
   "createdAt": "2024-11-29T11:30:00.000Z",
   "updatedAt": "2024-11-29T11:30:00.000Z",
   "publishedAt": "2024-11-29T11:30:00.000Z",
   "metaTitle": "Recraft V3 AI Model Guide - Best for Text & Logos | Pixelift",
-  "metaDescription": "Learn about Recraft V3, the AI image model with exceptional text rendering. Perfect for logos, branding, and commercial graphics."
+  "metaDescription": "Learn about Recraft V3, the AI image model with exceptional text rendering. Perfect for logos, branding, and commercial graphics.",
+  "featuredImage": "/api/knowledge-image/recraft-v3-model"
 }
