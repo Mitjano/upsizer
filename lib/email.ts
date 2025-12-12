@@ -13,6 +13,156 @@ function getResend(): Resend | null {
   return resendInstance;
 }
 
+// =============================================================================
+// CONSTANTS
+// =============================================================================
+
+const FROM_EMAIL = 'Pixelift <noreply@pixelift.pl>';
+const SUPPORT_EMAIL = 'support@pixelift.pl';
+const UNSUBSCRIBE_URL = 'https://pixelift.pl/settings/notifications';
+
+// =============================================================================
+// HELPER FUNCTIONS
+// =============================================================================
+
+/**
+ * Generate plain text version from HTML content
+ */
+function htmlToPlainText(html: string): string {
+  return html
+    // Remove style tags and their content
+    .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+    // Convert headers to plain text with newlines
+    .replace(/<h[1-6][^>]*>(.*?)<\/h[1-6]>/gi, '\n$1\n')
+    // Convert paragraphs to plain text with newlines
+    .replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n')
+    // Convert list items
+    .replace(/<li[^>]*>(.*?)<\/li>/gi, '• $1\n')
+    // Convert links to text with URL
+    .replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '$2 ($1)')
+    // Convert breaks to newlines
+    .replace(/<br\s*\/?>/gi, '\n')
+    // Remove remaining HTML tags
+    .replace(/<[^>]+>/g, '')
+    // Decode HTML entities
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#039;/g, "'")
+    // Clean up whitespace
+    .replace(/\n\s*\n\s*\n/g, '\n\n')
+    .trim();
+}
+
+/**
+ * Generate responsive email wrapper with all required headers
+ */
+function emailWrapper(content: string, preheader: string = ''): string {
+  return `
+<!DOCTYPE html>
+<html lang="en" xmlns:v="urn:schemas-microsoft-com:vml">
+<head>
+  <meta charset="utf-8">
+  <meta name="x-apple-disable-message-reformatting">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no">
+  <meta name="color-scheme" content="light">
+  <meta name="supported-color-schemes" content="light">
+  <!--[if mso]>
+  <noscript>
+    <xml>
+      <o:OfficeDocumentSettings xmlns:o="urn:schemas-microsoft-com:office:office">
+        <o:PixelsPerInch>96</o:PixelsPerInch>
+      </o:OfficeDocumentSettings>
+    </xml>
+  </noscript>
+  <style>
+    td,th,div,p,a,h1,h2,h3,h4,h5,h6 {font-family: "Segoe UI", sans-serif; mso-line-height-rule: exactly;}
+  </style>
+  <![endif]-->
+  <style>
+    @media (max-width: 600px) {
+      .email-container { width: 100% !important; }
+      .mobile-padding { padding: 20px !important; }
+      .mobile-button { width: 100% !important; display: block !important; }
+      .mobile-hide { display: none !important; }
+      .mobile-stack { display: block !important; width: 100% !important; }
+    }
+  </style>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f3f4f6; -webkit-font-smoothing: antialiased;">
+  ${preheader ? `<div style="display: none; max-height: 0; overflow: hidden;">${preheader}</div>` : ''}
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #f3f4f6;">
+    <tr>
+      <td align="center" style="padding: 40px 20px;">
+        <table role="presentation" class="email-container" width="600" cellspacing="0" cellpadding="0" border="0" style="background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+          ${content}
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+}
+
+/**
+ * Generate email header with logo
+ */
+function emailHeader(gradient: string = 'linear-gradient(to right, #10b981, #3b82f6)'): string {
+  return `
+<tr>
+  <td style="background: ${gradient}; padding: 30px; text-align: center;">
+    <h1 style="color: #ffffff; margin: 0; font-family: Arial, sans-serif; font-size: 28px; font-weight: 700;">Pixelift</h1>
+    <p style="color: rgba(255,255,255,0.9); margin: 8px 0 0 0; font-family: Arial, sans-serif; font-size: 14px;">AI-Powered Image Processing</p>
+  </td>
+</tr>`;
+}
+
+/**
+ * Generate email footer with unsubscribe link
+ */
+function emailFooter(): string {
+  return `
+<tr>
+  <td style="background: #f3f4f6; padding: 30px; text-align: center; font-family: Arial, sans-serif;">
+    <p style="margin: 0 0 10px 0; color: #6b7280; font-size: 14px;">Pixelift - AI Image Processing</p>
+    <p style="margin: 0 0 15px 0;">
+      <a href="https://pixelift.pl" style="color: #10b981; text-decoration: none; margin: 0 8px;">Website</a>
+      <a href="https://pixelift.pl/pricing" style="color: #10b981; text-decoration: none; margin: 0 8px;">Pricing</a>
+      <a href="https://pixelift.pl/support" style="color: #10b981; text-decoration: none; margin: 0 8px;">Support</a>
+    </p>
+    <p style="margin: 0; color: #9ca3af; font-size: 12px;">
+      <a href="${UNSUBSCRIBE_URL}" style="color: #9ca3af; text-decoration: underline;">Manage email preferences</a>
+    </p>
+    <p style="margin: 10px 0 0 0; color: #9ca3af; font-size: 11px;">
+      Pixelift Sp. z o.o. • ul. Testowa 1, 00-000 Warszawa, Poland
+    </p>
+  </td>
+</tr>`;
+}
+
+/**
+ * Generate CTA button
+ */
+function ctaButton(text: string, url: string): string {
+  return `
+<table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" style="margin: 30px auto;">
+  <tr>
+    <td style="border-radius: 8px; background: linear-gradient(to right, #10b981, #3b82f6);">
+      <a href="${url}" class="mobile-button" style="display: inline-block; padding: 16px 32px; color: #ffffff; font-family: Arial, sans-serif; font-size: 16px; font-weight: 600; text-decoration: none;">
+        ${text}
+      </a>
+    </td>
+  </tr>
+</table>`;
+}
+
+// =============================================================================
+// TYPE DEFINITIONS
+// =============================================================================
+
 export interface TicketEmailData {
   ticketId: string;
   subject: string;
@@ -42,7 +192,6 @@ export interface CreditsLowEmailData {
   userName: string;
   userEmail: string;
   creditsRemaining: number;
-  totalUsed: number;
 }
 
 export interface CreditsDepletedEmailData {
@@ -68,8 +217,44 @@ export interface PurchaseConfirmationEmailData {
   nextBillingDate?: string;
 }
 
+export interface PaymentFailedEmailData {
+  userName: string;
+  userEmail: string;
+  planName: string;
+  amount: number;
+  currency: string;
+  attemptCount: number;
+  nextRetryDate?: string;
+}
+
+export interface SubscriptionCancelledEmailData {
+  userName: string;
+  userEmail: string;
+  planName: string;
+  endDate: string;
+  creditsRemaining: number;
+}
+
+export interface TicketConfirmationEmailData {
+  ticketId: string;
+  subject: string;
+  userName: string;
+  userEmail: string;
+  category: string;
+}
+
+export interface AccountDeletedEmailData {
+  userName: string;
+  userEmail: string;
+  deletionDate: string;
+}
+
+// =============================================================================
+// EMAIL SENDING FUNCTIONS
+// =============================================================================
+
 /**
- * Send email notification when a new support ticket is created
+ * Send email notification when a new support ticket is created (to admin)
  */
 export async function sendTicketCreatedEmail(data: TicketEmailData): Promise<boolean> {
   const resend = getResend();
@@ -78,34 +263,57 @@ export async function sendTicketCreatedEmail(data: TicketEmailData): Promise<boo
     return false;
   }
 
+  const html = emailWrapper(`
+    ${emailHeader()}
+    <tr>
+      <td class="mobile-padding" style="padding: 40px 30px; font-family: Arial, sans-serif;">
+        <h2 style="color: #1f2937; margin: 0 0 20px 0; font-size: 24px;">New Support Ticket Created</h2>
+
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background: #f3f4f6; border-radius: 8px; margin: 20px 0;">
+          <tr><td style="padding: 20px;">
+            <p style="margin: 8px 0; color: #4b5563;"><strong>Ticket ID:</strong> ${data.ticketId}</p>
+            <p style="margin: 8px 0; color: #4b5563;"><strong>Subject:</strong> ${data.subject}</p>
+            <p style="margin: 8px 0; color: #4b5563;"><strong>Category:</strong> ${data.category}</p>
+            <p style="margin: 8px 0; color: #4b5563;"><strong>From:</strong> ${data.userName} (${data.userEmail})</p>
+            <p style="margin: 8px 0; color: #4b5563;"><strong>Created:</strong> ${new Date(data.createdAt).toLocaleString()}</p>
+          </td></tr>
+        </table>
+
+        <div style="margin: 20px 0;">
+          <h3 style="color: #1f2937; margin: 0 0 10px 0;">Message:</h3>
+          <p style="color: #4b5563; white-space: pre-wrap; line-height: 1.6;">${data.description}</p>
+        </div>
+
+        ${ctaButton('View in Admin Panel', 'https://pixelift.pl/admin/tickets')}
+      </td>
+    </tr>
+    ${emailFooter()}
+  `, `New ticket from ${data.userName}: ${data.subject}`);
+
+  const text = `New Support Ticket Created
+
+Ticket ID: ${data.ticketId}
+Subject: ${data.subject}
+Category: ${data.category}
+From: ${data.userName} (${data.userEmail})
+Created: ${new Date(data.createdAt).toLocaleString()}
+
+Message:
+${data.description}
+
+View in Admin Panel: https://pixelift.pl/admin/tickets`;
+
   try {
     await resend.emails.send({
-      from: 'Pixelift Support <support@pixelift.pl>',
-      to: ['support@pixelift.pl'], // Admin email
+      from: FROM_EMAIL,
+      to: [SUPPORT_EMAIL],
       subject: `New Support Ticket: ${data.subject}`,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #10b981;">New Support Ticket Created</h2>
-
-          <div style="background: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
-            <p><strong>Ticket ID:</strong> ${data.ticketId}</p>
-            <p><strong>Subject:</strong> ${data.subject}</p>
-            <p><strong>Category:</strong> ${data.category}</p>
-            <p><strong>From:</strong> ${data.userName} (${data.userEmail})</p>
-            <p><strong>Created:</strong> ${new Date(data.createdAt).toLocaleString()}</p>
-          </div>
-
-          <div style="margin: 20px 0;">
-            <h3>Message:</h3>
-            <p style="white-space: pre-wrap;">${data.description}</p>
-          </div>
-
-          <a href="https://pixelift.pl/admin/tickets"
-             style="display: inline-block; background: #10b981; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin-top: 20px;">
-            View in Admin Panel
-          </a>
-        </div>
-      `,
+      html,
+      text,
+      headers: {
+        'List-Unsubscribe': `<${UNSUBSCRIBE_URL}>`,
+        'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+      },
     });
 
     console.log(`Ticket created email sent for ticket ${data.ticketId}`);
@@ -126,43 +334,63 @@ export async function sendTicketReplyEmail(data: TicketReplyEmailData): Promise<
     return false;
   }
 
+  const html = emailWrapper(`
+    ${emailHeader()}
+    <tr>
+      <td class="mobile-padding" style="padding: 40px 30px; font-family: Arial, sans-serif;">
+        <h2 style="color: #1f2937; margin: 0 0 20px 0; font-size: 24px;">Support Team Reply</h2>
+
+        <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">Hi ${data.userName},</p>
+        <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">Our support team has replied to your ticket:</p>
+
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background: #f3f4f6; border-radius: 8px; margin: 20px 0;">
+          <tr><td style="padding: 20px;">
+            <p style="margin: 8px 0; color: #4b5563;"><strong>Ticket ID:</strong> ${data.ticketId}</p>
+            <p style="margin: 8px 0; color: #4b5563;"><strong>Subject:</strong> ${data.subject}</p>
+            <p style="margin: 8px 0; color: #4b5563;"><strong>From:</strong> ${data.replyAuthor}</p>
+          </td></tr>
+        </table>
+
+        <div style="background: #ffffff; border-left: 4px solid #10b981; padding: 20px; margin: 20px 0;">
+          <p style="color: #4b5563; white-space: pre-wrap; margin: 0; line-height: 1.6;">${data.replyMessage}</p>
+        </div>
+
+        <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
+          You can reply directly to this email to continue the conversation.
+        </p>
+      </td>
+    </tr>
+    ${emailFooter()}
+  `, `Reply to your ticket: ${data.subject}`);
+
+  const text = `Support Team Reply
+
+Hi ${data.userName},
+
+Our support team has replied to your ticket:
+
+Ticket ID: ${data.ticketId}
+Subject: ${data.subject}
+From: ${data.replyAuthor}
+
+---
+${data.replyMessage}
+---
+
+You can reply directly to this email to continue the conversation.`;
+
   try {
     await resend.emails.send({
-      from: 'Pixelift Support <support@pixelift.pl>',
+      from: FROM_EMAIL,
       to: [data.userEmail],
-      replyTo: 'support@pixelift.pl',
+      replyTo: SUPPORT_EMAIL,
       subject: `Re: ${data.subject} [Ticket #${data.ticketId}]`,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #10b981;">Support Team Reply</h2>
-
-          <p>Hi ${data.userName},</p>
-
-          <p>Our support team has replied to your ticket:</p>
-
-          <div style="background: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
-            <p><strong>Ticket ID:</strong> ${data.ticketId}</p>
-            <p><strong>Subject:</strong> ${data.subject}</p>
-            <p><strong>From:</strong> ${data.replyAuthor}</p>
-          </div>
-
-          <div style="background: white; border-left: 4px solid #10b981; padding: 20px; margin: 20px 0;">
-            <p style="white-space: pre-wrap; margin: 0;">${data.replyMessage}</p>
-          </div>
-
-          <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
-            This is an automated notification. To reply or view the full ticket history,
-            please visit the admin panel or contact us at support@pixelift.pl
-          </p>
-
-          <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;" />
-
-          <p style="color: #9ca3af; font-size: 12px;">
-            Pixelift - AI Image Upscaling<br />
-            <a href="https://pixelift.pl" style="color: #10b981;">pixelift.pl</a>
-          </p>
-        </div>
-      `,
+      html,
+      text,
+      headers: {
+        'List-Unsubscribe': `<${UNSUBSCRIBE_URL}>`,
+        'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+      },
     });
 
     console.log(`Ticket reply email sent to ${data.userEmail} for ticket ${data.ticketId}`);
@@ -183,94 +411,91 @@ export async function sendWelcomeEmail(data: WelcomeEmailData): Promise<boolean>
     return false;
   }
 
+  const html = emailWrapper(`
+    ${emailHeader()}
+    <tr>
+      <td class="mobile-padding" style="padding: 40px 30px; font-family: Arial, sans-serif;">
+        <h2 style="color: #1f2937; margin: 0 0 20px 0; font-size: 24px;">Welcome aboard, ${data.userName}! 👋</h2>
+
+        <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">
+          We're thrilled to have you join Pixelift. Your account is ready, and you have
+          <strong style="color: #10b981;">${data.freeCredits} free credits</strong> to get started.
+        </p>
+
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background: #f0fdf4; border-left: 4px solid #10b981; border-radius: 4px; margin: 30px 0;">
+          <tr><td style="padding: 20px;">
+            <h3 style="color: #065f46; margin: 0 0 15px 0; font-size: 18px;">🚀 Quick Start Guide</h3>
+            <ol style="color: #065f46; margin: 0; padding-left: 20px; line-height: 1.8;">
+              <li>Go to your <strong>Dashboard</strong></li>
+              <li>Upload an image (PNG, JPG, or WEBP)</li>
+              <li>Choose your settings (try "Quality Boost")</li>
+              <li>Generate a <strong>FREE 200x200px preview</strong></li>
+              <li>Download your upscaled image</li>
+            </ol>
+          </td></tr>
+        </table>
+
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background: #eff6ff; border-left: 4px solid #3b82f6; border-radius: 4px; margin: 30px 0;">
+          <tr><td style="padding: 20px;">
+            <p style="color: #1e40af; margin: 0; font-size: 15px;">
+              <strong>💡 Pro Tip:</strong> Use the FREE preview feature to test different settings before using your credits.
+            </p>
+          </td></tr>
+        </table>
+
+        ${ctaButton('Go to Dashboard →', 'https://pixelift.pl/dashboard')}
+
+        <h3 style="color: #1f2937; margin-top: 40px; font-size: 20px;">What you can do with Pixelift:</h3>
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+          <tr><td style="padding: 10px 0;"><span style="color: #10b981; font-size: 20px;">✨</span> <strong style="color: #1f2937;">Upscale images</strong> up to 8x resolution</td></tr>
+          <tr><td style="padding: 10px 0;"><span style="color: #3b82f6; font-size: 20px;">🎨</span> <strong style="color: #1f2937;">Enhance quality</strong> with AI-powered improvements</td></tr>
+          <tr><td style="padding: 10px 0;"><span style="color: #8b5cf6; font-size: 20px;">📦</span> <strong style="color: #1f2937;">Batch process</strong> up to 50 images at once</td></tr>
+          <tr><td style="padding: 10px 0;"><span style="color: #f59e0b; font-size: 20px;">🔍</span> <strong style="color: #1f2937;">Compare results</strong> with interactive slider</td></tr>
+        </table>
+
+        <p style="color: #6b7280; font-size: 14px; margin-top: 30px; line-height: 1.6;">
+          Need help? Reply to this email or visit our <a href="https://pixelift.pl/support" style="color: #10b981;">Support page</a>.
+        </p>
+      </td>
+    </tr>
+    ${emailFooter()}
+  `, `Your ${data.freeCredits} free credits are waiting!`);
+
+  const text = `Welcome aboard, ${data.userName}!
+
+We're thrilled to have you join Pixelift. Your account is ready, and you have ${data.freeCredits} free credits to get started.
+
+Quick Start Guide:
+1. Go to your Dashboard
+2. Upload an image (PNG, JPG, or WEBP)
+3. Choose your settings (try "Quality Boost")
+4. Generate a FREE 200x200px preview
+5. Download your upscaled image
+
+Pro Tip: Use the FREE preview feature to test different settings before using your credits.
+
+Go to Dashboard: https://pixelift.pl/dashboard
+
+What you can do with Pixelift:
+• Upscale images up to 8x resolution
+• Enhance quality with AI-powered improvements
+• Batch process up to 50 images at once
+• Compare results with interactive slider
+
+Need help? Reply to this email or visit https://pixelift.pl/support`;
+
   try {
     await resend.emails.send({
-      from: 'Pixelift <support@pixelift.pl>',
+      from: FROM_EMAIL,
       to: [data.userEmail],
-      replyTo: 'support@pixelift.pl',
+      replyTo: SUPPORT_EMAIL,
       subject: `Welcome to Pixelift - Your ${data.freeCredits} free credits are waiting! 🎉`,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff;">
-          <!-- Header -->
-          <div style="background: linear-gradient(to right, #10b981, #3b82f6); padding: 30px; text-align: center;">
-            <h1 style="color: #ffffff; margin: 0; font-size: 28px;">Pixelift</h1>
-            <p style="color: #ffffff; margin: 10px 0 0 0; opacity: 0.9;">AI-Powered Image Upscaling</p>
-          </div>
-
-          <!-- Content -->
-          <div style="padding: 40px 30px;">
-            <h2 style="color: #1f2937; margin-top: 0;">Welcome aboard, ${data.userName}! 👋</h2>
-
-            <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">
-              We're thrilled to have you join Pixelift. Your account is ready, and you have
-              <strong style="color: #10b981;">${data.freeCredits} free credits</strong> to get started.
-            </p>
-
-            <div style="background: #f0fdf4; border-left: 4px solid #10b981; padding: 20px; margin: 30px 0; border-radius: 4px;">
-              <h3 style="color: #065f46; margin: 0 0 15px 0; font-size: 18px;">🚀 Quick Start Guide</h3>
-              <ol style="color: #065f46; margin: 0; padding-left: 20px; line-height: 1.8;">
-                <li>Go to your <strong>Dashboard</strong></li>
-                <li>Upload an image (PNG, JPG, or WEBP)</li>
-                <li>Choose your settings (try "Quality Boost")</li>
-                <li>Generate a <strong>FREE 200x200px preview</strong></li>
-                <li>Download your upscaled image</li>
-              </ol>
-            </div>
-
-            <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 20px; margin: 30px 0; border-radius: 4px;">
-              <p style="color: #1e40af; margin: 0; font-size: 15px;">
-                <strong>💡 Pro Tip:</strong> Use the FREE preview feature to test different settings
-                before using your credits. Perfect for finding the best quality!
-              </p>
-            </div>
-
-            <div style="text-align: center; margin: 40px 0;">
-              <a href="https://pixelift.pl/dashboard"
-                 style="display: inline-block; background: linear-gradient(to right, #10b981, #3b82f6);
-                        color: white; padding: 16px 32px; text-decoration: none;
-                        border-radius: 8px; font-weight: 600; font-size: 16px;">
-                Go to Dashboard →
-              </a>
-            </div>
-
-            <h3 style="color: #1f2937; margin-top: 40px; font-size: 20px;">What you can do with Pixelift:</h3>
-            <div style="margin: 20px 0;">
-              <div style="margin-bottom: 15px;">
-                <span style="color: #10b981; font-size: 20px;">✨</span>
-                <strong style="color: #1f2937;"> Upscale images</strong> up to 8x resolution
-              </div>
-              <div style="margin-bottom: 15px;">
-                <span style="color: #3b82f6; font-size: 20px;">🎨</span>
-                <strong style="color: #1f2937;"> Enhance quality</strong> with AI-powered improvements
-              </div>
-              <div style="margin-bottom: 15px;">
-                <span style="color: #8b5cf6; font-size: 20px;">📦</span>
-                <strong style="color: #1f2937;"> Batch process</strong> up to 50 images at once
-              </div>
-              <div style="margin-bottom: 15px;">
-                <span style="color: #f59e0b; font-size: 20px;">🔍</span>
-                <strong style="color: #1f2937;"> Compare results</strong> with interactive before/after slider
-              </div>
-            </div>
-
-            <p style="color: #6b7280; font-size: 14px; margin-top: 30px; line-height: 1.6;">
-              Need help getting started? Just reply to this email or visit our
-              <a href="https://pixelift.pl/support" style="color: #10b981; text-decoration: none;">Support page</a>.
-              We're here to help!
-            </p>
-          </div>
-
-          <!-- Footer -->
-          <div style="background: #f3f4f6; padding: 30px; text-align: center; color: #6b7280; font-size: 14px;">
-            <p style="margin: 0 0 10px 0;">Pixelift - AI Image Upscaling</p>
-            <p style="margin: 0;">
-              <a href="https://pixelift.pl" style="color: #10b981; text-decoration: none;">Website</a> •
-              <a href="https://pixelift.pl/pricing" style="color: #10b981; text-decoration: none;">Pricing</a> •
-              <a href="https://pixelift.pl/support" style="color: #10b981; text-decoration: none;">Support</a>
-            </p>
-          </div>
-        </div>
-      `,
+      html,
+      text,
+      headers: {
+        'List-Unsubscribe': `<${UNSUBSCRIBE_URL}>`,
+        'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+      },
     });
 
     console.log(`Welcome email sent to ${data.userEmail}`);
@@ -291,90 +516,76 @@ export async function sendCreditsLowEmail(data: CreditsLowEmailData): Promise<bo
     return false;
   }
 
+  const html = emailWrapper(`
+    ${emailHeader()}
+    <tr>
+      <td class="mobile-padding" style="padding: 40px 30px; font-family: Arial, sans-serif;">
+        <h2 style="color: #1f2937; margin: 0 0 20px 0; font-size: 24px;">Credits Running Low</h2>
+
+        <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">Hi ${data.userName},</p>
+        <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">
+          Just a heads up - you have <strong style="color: #f59e0b;">${data.creditsRemaining} credits</strong> remaining in your Pixelift account.
+        </p>
+
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background: #f3f4f6; border-radius: 8px; margin: 30px 0;">
+          <tr><td style="padding: 25px;">
+            <h3 style="color: #1f2937; margin: 0 0 15px 0; font-size: 18px;">📊 Your Credits</h3>
+            <p style="margin: 8px 0; color: #f59e0b; font-size: 18px;"><strong>Credits remaining: ${data.creditsRemaining}</strong></p>
+          </td></tr>
+        </table>
+
+        <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">Want to keep processing images? Check out our flexible plans:</p>
+
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 25px 0;">
+          <tr><td style="background: #eff6ff; padding: 15px; border-radius: 6px; margin-bottom: 10px;">
+            <strong style="color: #1e40af;">💎 Subscription Plans</strong>
+            <p style="color: #1e40af; margin: 5px 0; font-size: 14px;">From $0.05/credit • 100-1000 credits/month • Cancel anytime</p>
+          </td></tr>
+        </table>
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 10px 0;">
+          <tr><td style="background: #f0fdf4; padding: 15px; border-radius: 6px;">
+            <strong style="color: #065f46;">⚡ One-Time Purchase</strong>
+            <p style="color: #065f46; margin: 5px 0; font-size: 14px;">Buy 50-1000 credits • Credits never expire • No commitment</p>
+          </td></tr>
+        </table>
+
+        ${ctaButton('View Pricing Options →', 'https://pixelift.pl/pricing')}
+
+        <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
+          Questions? Reply to this email or contact <a href="mailto:${SUPPORT_EMAIL}" style="color: #10b981;">${SUPPORT_EMAIL}</a>
+        </p>
+      </td>
+    </tr>
+    ${emailFooter()}
+  `, `You have ${data.creditsRemaining} credits left`);
+
+  const text = `Credits Running Low
+
+Hi ${data.userName},
+
+Just a heads up - you have ${data.creditsRemaining} credits remaining in your Pixelift account.
+
+Want to keep processing images? Check out our flexible plans:
+
+• Subscription Plans: From $0.05/credit, 100-1000 credits/month, Cancel anytime
+• One-Time Purchase: Buy 50-1000 credits, Credits never expire, No commitment
+
+View Pricing Options: https://pixelift.pl/pricing
+
+Questions? Reply to this email or contact ${SUPPORT_EMAIL}`;
+
   try {
     await resend.emails.send({
-      from: 'Pixelift <support@pixelift.pl>',
+      from: FROM_EMAIL,
       to: [data.userEmail],
-      replyTo: 'support@pixelift.pl',
+      replyTo: SUPPORT_EMAIL,
       subject: `${data.userName}, you have ${data.creditsRemaining} credits left`,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff;">
-          <!-- Header -->
-          <div style="background: linear-gradient(to right, #10b981, #3b82f6); padding: 30px; text-align: center;">
-            <h1 style="color: #ffffff; margin: 0; font-size: 28px;">Pixelift</h1>
-          </div>
-
-          <!-- Content -->
-          <div style="padding: 40px 30px;">
-            <h2 style="color: #1f2937; margin-top: 0;">Credits Running Low</h2>
-
-            <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">
-              Hi ${data.userName},
-            </p>
-
-            <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">
-              Just a heads up - you have <strong style="color: #f59e0b;">${data.creditsRemaining} credits</strong>
-              remaining in your Pixelift account.
-            </p>
-
-            <div style="background: #f3f4f6; padding: 25px; border-radius: 8px; margin: 30px 0;">
-              <h3 style="color: #1f2937; margin: 0 0 15px 0; font-size: 18px;">📊 Your Usage</h3>
-              <p style="margin: 8px 0; color: #4b5563;"><strong>Credits used this month:</strong> ${data.totalUsed}</p>
-              <p style="margin: 8px 0; color: #4b5563;"><strong>Images processed:</strong> ${data.totalUsed}</p>
-              <p style="margin: 8px 0; color: #f59e0b;"><strong>Credits remaining:</strong> ${data.creditsRemaining}</p>
-            </div>
-
-            <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">
-              Want to keep processing images? Check out our flexible plans:
-            </p>
-
-            <div style="margin: 25px 0;">
-              <div style="background: #eff6ff; padding: 15px; border-radius: 6px; margin-bottom: 10px;">
-                <strong style="color: #1e40af;">💎 Subscription Plans</strong>
-                <p style="color: #1e40af; margin: 5px 0; font-size: 14px;">
-                  From $0.05/credit • 100-1000 credits/month • Cancel anytime
-                </p>
-              </div>
-              <div style="background: #f0fdf4; padding: 15px; border-radius: 6px; margin-bottom: 10px;">
-                <strong style="color: #065f46;">⚡ One-Time Purchase</strong>
-                <p style="color: #065f46; margin: 5px 0; font-size: 14px;">
-                  Buy 50-1000 credits • Credits never expire • No commitment
-                </p>
-              </div>
-              <div style="background: #fef3f2; padding: 15px; border-radius: 6px;">
-                <strong style="color: #991b1b;">🆓 Free Plan</strong>
-                <p style="color: #991b1b; margin: 5px 0; font-size: 14px;">
-                  Get 3 free credits every month • Perfect for light usage
-                </p>
-              </div>
-            </div>
-
-            <div style="text-align: center; margin: 40px 0;">
-              <a href="https://pixelift.pl/pricing"
-                 style="display: inline-block; background: linear-gradient(to right, #10b981, #3b82f6);
-                        color: white; padding: 16px 32px; text-decoration: none;
-                        border-radius: 8px; font-weight: 600; font-size: 16px;">
-                View Pricing Options →
-              </a>
-            </div>
-
-            <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
-              Questions? We're here to help! Reply to this email or contact
-              <a href="mailto:support@pixelift.pl" style="color: #10b981;">support@pixelift.pl</a>
-            </p>
-          </div>
-
-          <!-- Footer -->
-          <div style="background: #f3f4f6; padding: 30px; text-align: center; color: #6b7280; font-size: 14px;">
-            <p style="margin: 0 0 10px 0;">Pixelift - AI Image Upscaling</p>
-            <p style="margin: 0;">
-              <a href="https://pixelift.pl" style="color: #10b981; text-decoration: none;">Website</a> •
-              <a href="https://pixelift.pl/pricing" style="color: #10b981; text-decoration: none;">Pricing</a> •
-              <a href="https://pixelift.pl/support" style="color: #10b981; text-decoration: none;">Support</a>
-            </p>
-          </div>
-        </div>
-      `,
+      html,
+      text,
+      headers: {
+        'List-Unsubscribe': `<${UNSUBSCRIBE_URL}>`,
+        'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+      },
     });
 
     console.log(`Credits low email sent to ${data.userEmail} (${data.creditsRemaining} credits remaining)`);
@@ -395,94 +606,79 @@ export async function sendCreditsDepletedEmail(data: CreditsDepletedEmailData): 
     return false;
   }
 
+  const html = emailWrapper(`
+    ${emailHeader('linear-gradient(to right, #f59e0b, #ef4444)')}
+    <tr>
+      <td class="mobile-padding" style="padding: 40px 30px; font-family: Arial, sans-serif;">
+        <h2 style="color: #1f2937; margin: 0 0 20px 0; font-size: 24px;">Out of Credits</h2>
+
+        <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">Hi ${data.userName},</p>
+
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background: #fef3f2; border-left: 4px solid #ef4444; border-radius: 4px; margin: 30px 0;">
+          <tr><td style="padding: 20px;">
+            <p style="color: #991b1b; margin: 0; font-size: 16px;">
+              <strong>⚠️ Your credits have been depleted.</strong> You'll need to purchase more credits to continue processing images.
+            </p>
+          </td></tr>
+        </table>
+
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background: #f3f4f6; border-radius: 8px; margin: 30px 0;">
+          <tr><td style="padding: 25px;">
+            <h3 style="color: #1f2937; margin: 0 0 15px 0; font-size: 18px;">📊 Your Usage Summary</h3>
+            <p style="margin: 8px 0; color: #4b5563;"><strong>Total images processed:</strong> ${data.totalImagesProcessed}</p>
+            <p style="margin: 8px 0; color: #ef4444;"><strong>Current credits:</strong> 0</p>
+          </td></tr>
+        </table>
+
+        <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">Ready to continue? Choose the plan that works best for you:</p>
+
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background: #eff6ff; border: 2px solid #3b82f6; border-radius: 8px; margin: 20px 0;">
+          <tr><td style="padding: 20px;">
+            <strong style="color: #1e40af; font-size: 18px;">💎 Most Popular</strong>
+            <p style="color: #1e40af; margin: 5px 0 0 0; font-size: 14px;">Subscription: 200 credits/month for $36.40</p>
+          </td></tr>
+        </table>
+
+        ${ctaButton('Buy Credits Now →', 'https://pixelift.pl/pricing')}
+
+        <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
+          Need help choosing? Contact us at <a href="mailto:${SUPPORT_EMAIL}" style="color: #10b981;">${SUPPORT_EMAIL}</a>
+        </p>
+      </td>
+    </tr>
+    ${emailFooter()}
+  `, 'Your Pixelift credits are empty - Top up to continue');
+
+  const text = `Out of Credits
+
+Hi ${data.userName},
+
+Your credits have been depleted. You'll need to purchase more credits to continue processing images.
+
+Your Usage Summary:
+• Total images processed: ${data.totalImagesProcessed}
+• Current credits: 0
+
+Ready to continue? Choose the plan that works best for you:
+• Most Popular: Subscription 200 credits/month for $36.40
+• One-Time: 500 credits for $100.00
+
+Buy Credits Now: https://pixelift.pl/pricing
+
+Need help choosing? Contact us at ${SUPPORT_EMAIL}`;
+
   try {
     await resend.emails.send({
-      from: 'Pixelift <support@pixelift.pl>',
+      from: FROM_EMAIL,
       to: [data.userEmail],
-      replyTo: 'support@pixelift.pl',
+      replyTo: SUPPORT_EMAIL,
       subject: 'Your Pixelift credits are empty - Top up to continue',
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff;">
-          <!-- Header -->
-          <div style="background: linear-gradient(to right, #10b981, #3b82f6); padding: 30px; text-align: center;">
-            <h1 style="color: #ffffff; margin: 0; font-size: 28px;">Pixelift</h1>
-          </div>
-
-          <!-- Content -->
-          <div style="padding: 40px 30px;">
-            <h2 style="color: #1f2937; margin-top: 0;">Out of Credits</h2>
-
-            <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">
-              Hi ${data.userName},
-            </p>
-
-            <div style="background: #fef3f2; border-left: 4px solid #ef4444; padding: 20px; margin: 30px 0; border-radius: 4px;">
-              <p style="color: #991b1b; margin: 0; font-size: 16px;">
-                <strong>⚠️ Your credits have been depleted.</strong> You'll need to purchase more credits to continue processing images.
-              </p>
-            </div>
-
-            <div style="background: #f3f4f6; padding: 25px; border-radius: 8px; margin: 30px 0;">
-              <h3 style="color: #1f2937; margin: 0 0 15px 0; font-size: 18px;">📊 Your Usage Summary</h3>
-              <p style="margin: 8px 0; color: #4b5563;"><strong>Total images processed:</strong> ${data.totalImagesProcessed}</p>
-              <p style="margin: 8px 0; color: #4b5563;"><strong>Current credits:</strong> 0</p>
-            </div>
-
-            <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">
-              Ready to continue? Choose the plan that works best for you:
-            </p>
-
-            <div style="margin: 25px 0;">
-              <div style="background: #eff6ff; border: 2px solid #3b82f6; padding: 20px; border-radius: 8px; margin-bottom: 15px;">
-                <div style="display: flex; align-items: center; justify-content: space-between;">
-                  <div>
-                    <strong style="color: #1e40af; font-size: 18px;">💎 Most Popular</strong>
-                    <p style="color: #1e40af; margin: 5px 0 0 0; font-size: 14px;">
-                      Subscription: 200 credits/month for $36.40
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div style="background: #f0fdf4; padding: 15px; border-radius: 6px; margin-bottom: 10px;">
-                <strong style="color: #065f46;">⚡ One-Time: 500 credits</strong>
-                <p style="color: #065f46; margin: 5px 0; font-size: 14px;">
-                  $100.00 • $0.20/credit • Never expires
-                </p>
-              </div>
-              <div style="background: #fef3f2; padding: 15px; border-radius: 6px;">
-                <strong style="color: #991b1b;">🆓 Free Plan</strong>
-                <p style="color: #991b1b; margin: 5px 0; font-size: 14px;">
-                  Wait until next month for 3 free credits
-                </p>
-              </div>
-            </div>
-
-            <div style="text-align: center; margin: 40px 0;">
-              <a href="https://pixelift.pl/pricing"
-                 style="display: inline-block; background: linear-gradient(to right, #10b981, #3b82f6);
-                        color: white; padding: 16px 32px; text-decoration: none;
-                        border-radius: 8px; font-weight: 600; font-size: 16px;">
-                Buy Credits Now →
-              </a>
-            </div>
-
-            <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
-              Need help choosing? Contact us at
-              <a href="mailto:support@pixelift.pl" style="color: #10b981;">support@pixelift.pl</a>
-            </p>
-          </div>
-
-          <!-- Footer -->
-          <div style="background: #f3f4f6; padding: 30px; text-align: center; color: #6b7280; font-size: 14px;">
-            <p style="margin: 0 0 10px 0;">Pixelift - AI Image Upscaling</p>
-            <p style="margin: 0;">
-              <a href="https://pixelift.pl" style="color: #10b981; text-decoration: none;">Website</a> •
-              <a href="https://pixelift.pl/pricing" style="color: #10b981; text-decoration: none;">Pricing</a> •
-              <a href="https://pixelift.pl/support" style="color: #10b981; text-decoration: none;">Support</a>
-            </p>
-          </div>
-        </div>
-      `,
+      html,
+      text,
+      headers: {
+        'List-Unsubscribe': `<${UNSUBSCRIBE_URL}>`,
+        'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+      },
     });
 
     console.log(`Credits depleted email sent to ${data.userEmail}`);
@@ -503,102 +699,95 @@ export async function sendFirstUploadEmail(data: FirstUploadEmailData): Promise<
     return false;
   }
 
+  const html = emailWrapper(`
+    ${emailHeader()}
+    <tr>
+      <td class="mobile-padding" style="padding: 40px 30px; font-family: Arial, sans-serif; text-align: center;">
+        <div style="font-size: 60px; margin-bottom: 20px;">🎉</div>
+
+        <h2 style="color: #1f2937; margin: 0 0 20px 0; font-size: 24px;">Congratulations, ${data.userName}!</h2>
+
+        <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">
+          You just processed your first image with Pixelift's AI technology.
+        </p>
+
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background: #f0fdf4; border-left: 4px solid #10b981; border-radius: 4px; margin: 30px 0; text-align: center;">
+          <tr><td style="padding: 20px;">
+            <p style="color: #065f46; margin: 0; font-size: 18px; font-weight: 600;">See the difference AI can make?</p>
+            <p style="color: #065f46; margin: 10px 0 0 0; font-size: 14px;">That's just the beginning!</p>
+          </td></tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td class="mobile-padding" style="padding: 0 30px 40px 30px; font-family: Arial, sans-serif;">
+        <h3 style="color: #1f2937; margin-top: 0; font-size: 20px;">💡 Tips for Even Better Results</h3>
+
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 20px 0;">
+          <tr><td style="background: #fef3f2; padding: 15px; border-radius: 6px; margin-bottom: 10px;">
+            <strong style="color: #991b1b;">👤 Portrait Mode</strong>
+            <p style="color: #991b1b; margin: 5px 0; font-size: 14px;">Perfect for faces and people</p>
+          </td></tr>
+        </table>
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 10px 0;">
+          <tr><td style="background: #ecfdf5; padding: 15px; border-radius: 6px;">
+            <strong style="color: #065f46;">🏞️ Landscape Mode</strong>
+            <p style="color: #065f46; margin: 5px 0; font-size: 14px;">Ideal for nature photos and cityscapes</p>
+          </td></tr>
+        </table>
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 10px 0;">
+          <tr><td style="background: #eff6ff; padding: 15px; border-radius: 6px;">
+            <strong style="color: #1e40af;">⚡ Maximum Quality</strong>
+            <p style="color: #1e40af; margin: 5px 0; font-size: 14px;">For professional work</p>
+          </td></tr>
+        </table>
+
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background: #f3f4f6; border-radius: 8px; margin: 30px 0; text-align: center;">
+          <tr><td style="padding: 25px;">
+            <p style="margin: 0; color: #4b5563;"><strong>Credits remaining:</strong></p>
+            <p style="color: #10b981; font-size: 32px; font-weight: 600; margin: 10px 0 0 0;">${data.creditsRemaining}</p>
+          </td></tr>
+        </table>
+
+        ${ctaButton('Process More Images →', 'https://pixelift.pl/dashboard')}
+
+        <p style="color: #6b7280; font-size: 14px; margin-top: 30px; text-align: center; border-top: 1px solid #e5e7eb; padding-top: 30px;">
+          Love the results? Reply to this email and share your feedback!
+        </p>
+      </td>
+    </tr>
+    ${emailFooter()}
+  `, 'You just processed your first image!');
+
+  const text = `Congratulations, ${data.userName}!
+
+You just processed your first image with Pixelift's AI technology.
+
+See the difference AI can make? That's just the beginning!
+
+Tips for Even Better Results:
+• Portrait Mode - Perfect for faces and people
+• Landscape Mode - Ideal for nature photos and cityscapes
+• Maximum Quality - For professional work
+
+Credits remaining: ${data.creditsRemaining}
+
+Process More Images: https://pixelift.pl/dashboard
+
+Love the results? Reply to this email and share your feedback!`;
+
   try {
     await resend.emails.send({
-      from: 'Pixelift <support@pixelift.pl>',
+      from: FROM_EMAIL,
       to: [data.userEmail],
-      replyTo: 'support@pixelift.pl',
+      replyTo: SUPPORT_EMAIL,
       subject: '🎉 Congratulations on your first upscaled image!',
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff;">
-          <!-- Header -->
-          <div style="background: linear-gradient(to right, #10b981, #3b82f6); padding: 30px; text-align: center;">
-            <h1 style="color: #ffffff; margin: 0; font-size: 28px;">Pixelift</h1>
-          </div>
-
-          <!-- Content -->
-          <div style="padding: 40px 30px;">
-            <div style="text-align: center; font-size: 60px; margin-bottom: 20px;">🎉</div>
-
-            <h2 style="color: #1f2937; margin-top: 0; text-align: center;">Congratulations, ${data.userName}!</h2>
-
-            <p style="color: #4b5563; line-height: 1.6; font-size: 16px; text-align: center;">
-              You just processed your first image with Pixelift's AI technology.
-            </p>
-
-            <div style="background: #f0fdf4; border-left: 4px solid #10b981; padding: 20px; margin: 30px 0; border-radius: 4px; text-align: center;">
-              <p style="color: #065f46; margin: 0; font-size: 18px; font-weight: 600;">
-                See the difference AI can make?
-              </p>
-              <p style="color: #065f46; margin: 10px 0 0 0; font-size: 14px;">
-                That's just the beginning of what you can achieve!
-              </p>
-            </div>
-
-            <h3 style="color: #1f2937; margin-top: 40px; font-size: 20px;">💡 Tips for Even Better Results</h3>
-
-            <div style="margin: 20px 0;">
-              <div style="background: #fef3f2; padding: 15px; border-radius: 6px; margin-bottom: 10px;">
-                <strong style="color: #991b1b;">👤 Portrait Mode</strong>
-                <p style="color: #991b1b; margin: 5px 0; font-size: 14px;">
-                  Perfect for faces and people - enhances skin tones and details
-                </p>
-              </div>
-              <div style="background: #ecfdf5; padding: 15px; border-radius: 6px; margin-bottom: 10px;">
-                <strong style="color: #065f46;">🏞️ Landscape Mode</strong>
-                <p style="color: #065f46; margin: 5px 0; font-size: 14px;">
-                  Ideal for nature photos, cityscapes, and outdoor scenes
-                </p>
-              </div>
-              <div style="background: #eff6ff; padding: 15px; border-radius: 6px; margin-bottom: 10px;">
-                <strong style="color: #1e40af;">⚡ Maximum Quality</strong>
-                <p style="color: #1e40af; margin: 5px 0; font-size: 14px;">
-                  For professional work requiring the absolute best quality
-                </p>
-              </div>
-              <div style="background: #fef9e7; padding: 15px; border-radius: 6px;">
-                <strong style="color: #92400e;">📦 Batch Upload</strong>
-                <p style="color: #92400e; margin: 5px 0; font-size: 14px;">
-                  Process up to 50 images at once with the same settings
-                </p>
-              </div>
-            </div>
-
-            <div style="background: #f3f4f6; padding: 25px; border-radius: 8px; margin: 30px 0; text-align: center;">
-              <p style="margin: 0; color: #4b5563;">
-                <strong>Credits remaining:</strong>
-                <span style="color: #10b981; font-size: 24px; font-weight: 600;">${data.creditsRemaining}</span>
-              </p>
-            </div>
-
-            <div style="text-align: center; margin: 40px 0;">
-              <a href="https://pixelift.pl/dashboard"
-                 style="display: inline-block; background: linear-gradient(to right, #10b981, #3b82f6);
-                        color: white; padding: 16px 32px; text-decoration: none;
-                        border-radius: 8px; font-weight: 600; font-size: 16px;">
-                Process More Images →
-              </a>
-            </div>
-
-            <div style="border-top: 1px solid #e5e7eb; padding-top: 30px; margin-top: 40px;">
-              <p style="color: #6b7280; font-size: 14px; text-align: center;">
-                Love the results? We'd love to hear from you!<br />
-                Reply to this email and share your feedback.
-              </p>
-            </div>
-          </div>
-
-          <!-- Footer -->
-          <div style="background: #f3f4f6; padding: 30px; text-align: center; color: #6b7280; font-size: 14px;">
-            <p style="margin: 0 0 10px 0;">Pixelift - AI Image Upscaling</p>
-            <p style="margin: 0;">
-              <a href="https://pixelift.pl" style="color: #10b981; text-decoration: none;">Website</a> •
-              <a href="https://pixelift.pl/pricing" style="color: #10b981; text-decoration: none;">Pricing</a> •
-              <a href="https://pixelift.pl/support" style="color: #10b981; text-decoration: none;">Support</a>
-            </p>
-          </div>
-        </div>
-      `,
+      html,
+      text,
+      headers: {
+        'List-Unsubscribe': `<${UNSUBSCRIBE_URL}>`,
+        'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+      },
     });
 
     console.log(`First upload email sent to ${data.userEmail}`);
@@ -610,7 +799,7 @@ export async function sendFirstUploadEmail(data: FirstUploadEmailData): Promise<
 }
 
 /**
- * Send purchase confirmation email when user buys credits or subscription
+ * Send purchase confirmation email
  */
 export async function sendPurchaseConfirmationEmail(data: PurchaseConfirmationEmailData): Promise<boolean> {
   const resend = getResend();
@@ -621,116 +810,100 @@ export async function sendPurchaseConfirmationEmail(data: PurchaseConfirmationEm
 
   const isSubscription = !!data.nextBillingDate;
 
+  const html = emailWrapper(`
+    ${emailHeader()}
+    <tr>
+      <td class="mobile-padding" style="padding: 40px 30px; font-family: Arial, sans-serif; text-align: center;">
+        <div style="font-size: 60px; margin-bottom: 20px;">✅</div>
+
+        <h2 style="color: #1f2937; margin: 0 0 20px 0; font-size: 24px;">Thank You for Your Purchase!</h2>
+
+        <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">Hi ${data.userName},</p>
+        <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">
+          Your payment has been successfully processed. Your credits are now available.
+        </p>
+
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background: #f3f4f6; border-radius: 8px; margin: 30px 0;">
+          <tr><td style="padding: 30px;">
+            <h3 style="color: #1f2937; margin: 0 0 20px 0; font-size: 18px; text-align: center;">Receipt</h3>
+
+            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="border-bottom: 1px solid #d1d5db; padding-bottom: 15px; margin-bottom: 15px;">
+              <tr><td style="color: #6b7280; padding: 5px 0;">Plan:</td><td style="color: #1f2937; text-align: right; font-weight: 600;">${data.planName}</td></tr>
+              <tr><td style="color: #6b7280; padding: 5px 0;">Credits Added:</td><td style="color: #10b981; text-align: right; font-weight: 600;">${data.creditsAdded}</td></tr>
+              ${isSubscription ? `<tr><td style="color: #6b7280; padding: 5px 0;">Billing Cycle:</td><td style="color: #1f2937; text-align: right; font-weight: 600;">Monthly</td></tr>` : ''}
+            </table>
+
+            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+              <tr><td style="color: #1f2937; font-size: 18px; font-weight: 600; padding-top: 15px;">Total Paid:</td><td style="color: #1f2937; text-align: right; font-size: 18px; font-weight: 600;">${data.currency}${data.amountPaid.toFixed(2)}</td></tr>
+            </table>
+
+            <p style="color: #6b7280; font-size: 12px; margin: 15px 0 0 0; text-align: center;">
+              Transaction ID: ${data.transactionId}
+            </p>
+          </td></tr>
+        </table>
+
+        ${isSubscription ? `
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background: #eff6ff; border-left: 4px solid #3b82f6; border-radius: 4px; margin: 30px 0; text-align: left;">
+          <tr><td style="padding: 20px;">
+            <p style="color: #1e40af; margin: 0; font-size: 15px;">
+              <strong>📅 Next Billing Date:</strong> ${new Date(data.nextBillingDate!).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+            </p>
+            <p style="color: #1e40af; margin: 10px 0 0 0; font-size: 13px;">
+              Your subscription will automatically renew. You can cancel anytime from your dashboard.
+            </p>
+          </td></tr>
+        </table>
+        ` : `
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background: #f0fdf4; border-left: 4px solid #10b981; border-radius: 4px; margin: 30px 0; text-align: left;">
+          <tr><td style="padding: 20px;">
+            <p style="color: #065f46; margin: 0; font-size: 15px;"><strong>✨ Your credits are ready to use!</strong></p>
+            <p style="color: #065f46; margin: 10px 0 0 0; font-size: 13px;">These credits never expire. Use them whenever you need.</p>
+          </td></tr>
+        </table>
+        `}
+
+        ${ctaButton('Start Processing Images →', 'https://pixelift.pl/dashboard')}
+
+        <p style="color: #6b7280; font-size: 14px; margin-top: 30px; border-top: 1px solid #e5e7eb; padding-top: 30px;">
+          Need help? Contact us at <a href="mailto:${SUPPORT_EMAIL}" style="color: #10b981;">${SUPPORT_EMAIL}</a>
+        </p>
+      </td>
+    </tr>
+    ${emailFooter()}
+  `, `Your ${data.planName} purchase is confirmed`);
+
+  const text = `Thank You for Your Purchase!
+
+Hi ${data.userName},
+
+Your payment has been successfully processed. Your credits are now available.
+
+Receipt:
+- Plan: ${data.planName}
+- Credits Added: ${data.creditsAdded}
+${isSubscription ? '- Billing Cycle: Monthly' : ''}
+- Total Paid: ${data.currency}${data.amountPaid.toFixed(2)}
+- Transaction ID: ${data.transactionId}
+
+${isSubscription ? `Next Billing Date: ${new Date(data.nextBillingDate!).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}` : 'Your credits never expire. Use them whenever you need.'}
+
+Start Processing Images: https://pixelift.pl/dashboard
+
+Need help? Contact us at ${SUPPORT_EMAIL}`;
+
   try {
     await resend.emails.send({
-      from: 'Pixelift <support@pixelift.pl>',
+      from: FROM_EMAIL,
       to: [data.userEmail],
-      replyTo: 'support@pixelift.pl',
+      replyTo: SUPPORT_EMAIL,
       subject: `Purchase Confirmation - ${data.planName}`,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff;">
-          <!-- Header -->
-          <div style="background: linear-gradient(to right, #10b981, #3b82f6); padding: 30px; text-align: center;">
-            <h1 style="color: #ffffff; margin: 0; font-size: 28px;">Pixelift</h1>
-          </div>
-
-          <!-- Content -->
-          <div style="padding: 40px 30px;">
-            <div style="text-align: center; font-size: 60px; margin-bottom: 20px;">✅</div>
-
-            <h2 style="color: #1f2937; margin-top: 0; text-align: center;">Thank You for Your Purchase!</h2>
-
-            <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">
-              Hi ${data.userName},
-            </p>
-
-            <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">
-              Your payment has been successfully processed. Your credits are now available in your account.
-            </p>
-
-            <!-- Receipt Details -->
-            <div style="background: #f3f4f6; padding: 30px; border-radius: 8px; margin: 30px 0;">
-              <h3 style="color: #1f2937; margin: 0 0 20px 0; font-size: 18px; text-align: center;">Receipt</h3>
-
-              <div style="border-bottom: 1px solid #d1d5db; padding-bottom: 15px; margin-bottom: 15px;">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                  <span style="color: #6b7280;">Plan:</span>
-                  <strong style="color: #1f2937;">${data.planName}</strong>
-                </div>
-                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                  <span style="color: #6b7280;">Credits Added:</span>
-                  <strong style="color: #10b981;">${data.creditsAdded}</strong>
-                </div>
-                ${isSubscription ? `
-                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                  <span style="color: #6b7280;">Billing Cycle:</span>
-                  <strong style="color: #1f2937;">Monthly</strong>
-                </div>
-                ` : ''}
-              </div>
-
-              <div style="display: flex; justify-content: space-between; padding-top: 15px;">
-                <span style="color: #1f2937; font-size: 18px; font-weight: 600;">Total Paid:</span>
-                <strong style="color: #1f2937; font-size: 18px;">${data.currency}${data.amountPaid.toFixed(2)}</strong>
-              </div>
-
-              <p style="color: #6b7280; font-size: 12px; margin: 15px 0 0 0; text-align: center;">
-                Transaction ID: ${data.transactionId}
-              </p>
-            </div>
-
-            ${isSubscription ? `
-            <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 20px; margin: 30px 0; border-radius: 4px;">
-              <p style="color: #1e40af; margin: 0; font-size: 15px;">
-                <strong>📅 Next Billing Date:</strong> ${new Date(data.nextBillingDate!).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric'
-                })}
-              </p>
-              <p style="color: #1e40af; margin: 10px 0 0 0; font-size: 13px;">
-                Your subscription will automatically renew. You can cancel anytime from your dashboard.
-              </p>
-            </div>
-            ` : `
-            <div style="background: #f0fdf4; border-left: 4px solid #10b981; padding: 20px; margin: 30px 0; border-radius: 4px;">
-              <p style="color: #065f46; margin: 0; font-size: 15px;">
-                <strong>✨ Your credits are ready to use!</strong>
-              </p>
-              <p style="color: #065f46; margin: 10px 0 0 0; font-size: 13px;">
-                These credits never expire. Use them whenever you need.
-              </p>
-            </div>
-            `}
-
-            <div style="text-align: center; margin: 40px 0;">
-              <a href="https://pixelift.pl/dashboard"
-                 style="display: inline-block; background: linear-gradient(to right, #10b981, #3b82f6);
-                        color: white; padding: 16px 32px; text-decoration: none;
-                        border-radius: 8px; font-weight: 600; font-size: 16px;">
-                Start Processing Images →
-              </a>
-            </div>
-
-            <div style="border-top: 1px solid #e5e7eb; padding-top: 30px; margin-top: 40px;">
-              <p style="color: #6b7280; font-size: 14px;">
-                Need help or have questions? Contact us at
-                <a href="mailto:support@pixelift.pl" style="color: #10b981; text-decoration: none;">support@pixelift.pl</a>
-              </p>
-            </div>
-          </div>
-
-          <!-- Footer -->
-          <div style="background: #f3f4f6; padding: 30px; text-align: center; color: #6b7280; font-size: 14px;">
-            <p style="margin: 0 0 10px 0;">Pixelift - AI Image Upscaling</p>
-            <p style="margin: 0;">
-              <a href="https://pixelift.pl" style="color: #10b981; text-decoration: none;">Website</a> •
-              <a href="https://pixelift.pl/pricing" style="color: #10b981; text-decoration: none;">Pricing</a> •
-              <a href="https://pixelift.pl/support" style="color: #10b981; text-decoration: none;">Support</a>
-            </p>
-          </div>
-        </div>
-      `,
+      html,
+      text,
+      headers: {
+        'List-Unsubscribe': `<${UNSUBSCRIBE_URL}>`,
+        'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+      },
     });
 
     console.log(`Purchase confirmation email sent to ${data.userEmail} for ${data.planName}`);
@@ -739,16 +912,6 @@ export async function sendPurchaseConfirmationEmail(data: PurchaseConfirmationEm
     console.error('Failed to send purchase confirmation email:', error);
     return false;
   }
-}
-
-export interface PaymentFailedEmailData {
-  userName: string;
-  userEmail: string;
-  planName: string;
-  amount: number;
-  currency: string;
-  attemptCount: number;
-  nextRetryDate?: string;
 }
 
 /**
@@ -761,80 +924,101 @@ export async function sendPaymentFailedEmail(data: PaymentFailedEmailData): Prom
     return false;
   }
 
+  const html = emailWrapper(`
+    ${emailHeader('linear-gradient(to right, #ef4444, #f97316)')}
+    <tr>
+      <td class="mobile-padding" style="padding: 40px 30px; font-family: Arial, sans-serif; text-align: center;">
+        <div style="font-size: 60px; margin-bottom: 20px;">⚠️</div>
+
+        <h2 style="color: #1f2937; margin: 0 0 20px 0; font-size: 24px;">Payment Failed</h2>
+
+        <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">Hi ${data.userName},</p>
+        <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">
+          We were unable to process your payment for your Pixelift subscription.
+        </p>
+
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background: #fef2f2; border-left: 4px solid #ef4444; border-radius: 4px; margin: 30px 0; text-align: left;">
+          <tr><td style="padding: 20px;">
+            <p style="color: #991b1b; margin: 0; font-size: 16px;">
+              <strong>Plan:</strong> ${data.planName}<br />
+              <strong>Amount:</strong> ${data.currency}${data.amount.toFixed(2)}<br />
+              <strong>Attempt:</strong> ${data.attemptCount} of 3
+            </p>
+          </td></tr>
+        </table>
+
+        ${data.nextRetryDate ? `<p style="color: #4b5563; line-height: 1.6; font-size: 16px;">We'll automatically retry the payment on <strong>${data.nextRetryDate}</strong>.</p>` : ''}
+      </td>
+    </tr>
+    <tr>
+      <td class="mobile-padding" style="padding: 0 30px 40px 30px; font-family: Arial, sans-serif;">
+        <h3 style="color: #1f2937; margin-top: 0;">What you can do:</h3>
+        <ul style="color: #4b5563; line-height: 1.8;">
+          <li>Update your payment method in the billing portal</li>
+          <li>Ensure your card has sufficient funds</li>
+          <li>Contact your bank if the issue persists</li>
+        </ul>
+
+        ${ctaButton('Update Payment Method →', 'https://pixelift.pl/dashboard/settings')}
+
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background: #fef3f2; border-radius: 8px; margin: 30px 0;">
+          <tr><td style="padding: 20px;">
+            <h4 style="color: #991b1b; margin: 0 0 10px 0;">❓ Common Issues & Solutions</h4>
+            <ul style="color: #991b1b; margin: 0; padding-left: 20px; font-size: 14px; line-height: 1.6;">
+              <li><strong>Card declined:</strong> Try a different card or contact your bank</li>
+              <li><strong>Expired card:</strong> Update your payment method</li>
+              <li><strong>Insufficient funds:</strong> Ensure sufficient balance</li>
+            </ul>
+          </td></tr>
+        </table>
+
+        <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
+          If your payment continues to fail, your subscription will be cancelled. Need help? Contact us at <a href="mailto:${SUPPORT_EMAIL}" style="color: #10b981;">${SUPPORT_EMAIL}</a>
+        </p>
+      </td>
+    </tr>
+    ${emailFooter()}
+  `, 'Action required: Payment failed');
+
+  const text = `Payment Failed
+
+Hi ${data.userName},
+
+We were unable to process your payment for your Pixelift subscription.
+
+Plan: ${data.planName}
+Amount: ${data.currency}${data.amount.toFixed(2)}
+Attempt: ${data.attemptCount} of 3
+
+${data.nextRetryDate ? `We'll automatically retry the payment on ${data.nextRetryDate}.` : ''}
+
+What you can do:
+• Update your payment method in the billing portal
+• Ensure your card has sufficient funds
+• Contact your bank if the issue persists
+
+Update Payment Method: https://pixelift.pl/dashboard/settings
+
+Common Issues & Solutions:
+• Card declined: Try a different card or contact your bank
+• Expired card: Update your payment method
+• Insufficient funds: Ensure sufficient balance
+
+If your payment continues to fail, your subscription will be cancelled.
+Need help? Contact us at ${SUPPORT_EMAIL}`;
+
   try {
     await resend.emails.send({
-      from: 'Pixelift <support@pixelift.pl>',
+      from: FROM_EMAIL,
       to: [data.userEmail],
-      replyTo: 'support@pixelift.pl',
+      replyTo: SUPPORT_EMAIL,
       subject: 'Payment Failed - Action Required',
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff;">
-          <!-- Header -->
-          <div style="background: linear-gradient(to right, #ef4444, #f97316); padding: 30px; text-align: center;">
-            <h1 style="color: #ffffff; margin: 0; font-size: 28px;">Pixelift</h1>
-          </div>
-
-          <!-- Content -->
-          <div style="padding: 40px 30px;">
-            <div style="text-align: center; font-size: 60px; margin-bottom: 20px;">⚠️</div>
-
-            <h2 style="color: #1f2937; margin-top: 0; text-align: center;">Payment Failed</h2>
-
-            <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">
-              Hi ${data.userName},
-            </p>
-
-            <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">
-              We were unable to process your payment for your Pixelift subscription.
-            </p>
-
-            <div style="background: #fef2f2; border-left: 4px solid #ef4444; padding: 20px; margin: 30px 0; border-radius: 4px;">
-              <p style="color: #991b1b; margin: 0; font-size: 16px;">
-                <strong>Plan:</strong> ${data.planName}<br />
-                <strong>Amount:</strong> ${data.currency}${data.amount.toFixed(2)}<br />
-                <strong>Attempt:</strong> ${data.attemptCount} of 3
-              </p>
-            </div>
-
-            ${data.nextRetryDate ? `
-            <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">
-              We'll automatically retry the payment on <strong>${data.nextRetryDate}</strong>.
-            </p>
-            ` : ''}
-
-            <h3 style="color: #1f2937; margin-top: 30px;">What you can do:</h3>
-            <ul style="color: #4b5563; line-height: 1.8;">
-              <li>Update your payment method in the billing portal</li>
-              <li>Ensure your card has sufficient funds</li>
-              <li>Contact your bank if the issue persists</li>
-            </ul>
-
-            <div style="text-align: center; margin: 40px 0;">
-              <a href="https://pixelift.pl/dashboard/settings"
-                 style="display: inline-block; background: linear-gradient(to right, #10b981, #3b82f6);
-                        color: white; padding: 16px 32px; text-decoration: none;
-                        border-radius: 8px; font-weight: 600; font-size: 16px;">
-                Update Payment Method →
-              </a>
-            </div>
-
-            <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
-              If your payment continues to fail, your subscription will be cancelled and you'll lose access to premium features.
-              Need help? Contact us at <a href="mailto:support@pixelift.pl" style="color: #10b981;">support@pixelift.pl</a>
-            </p>
-          </div>
-
-          <!-- Footer -->
-          <div style="background: #f3f4f6; padding: 30px; text-align: center; color: #6b7280; font-size: 14px;">
-            <p style="margin: 0 0 10px 0;">Pixelift - AI Image Processing</p>
-            <p style="margin: 0;">
-              <a href="https://pixelift.pl" style="color: #10b981; text-decoration: none;">Website</a> •
-              <a href="https://pixelift.pl/pricing" style="color: #10b981; text-decoration: none;">Pricing</a> •
-              <a href="https://pixelift.pl/support" style="color: #10b981; text-decoration: none;">Support</a>
-            </p>
-          </div>
-        </div>
-      `,
+      html,
+      text,
+      headers: {
+        'List-Unsubscribe': `<${UNSUBSCRIBE_URL}>`,
+        'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+      },
     });
 
     console.log(`Payment failed email sent to ${data.userEmail}`);
@@ -843,14 +1027,6 @@ export async function sendPaymentFailedEmail(data: PaymentFailedEmailData): Prom
     console.error('Failed to send payment failed email:', error);
     return false;
   }
-}
-
-export interface SubscriptionCancelledEmailData {
-  userName: string;
-  userEmail: string;
-  planName: string;
-  endDate: string;
-  creditsRemaining: number;
 }
 
 /**
@@ -863,72 +1039,77 @@ export async function sendSubscriptionCancelledEmail(data: SubscriptionCancelled
     return false;
   }
 
+  const html = emailWrapper(`
+    ${emailHeader('linear-gradient(to right, #6b7280, #9ca3af)')}
+    <tr>
+      <td class="mobile-padding" style="padding: 40px 30px; font-family: Arial, sans-serif;">
+        <h2 style="color: #1f2937; margin: 0 0 20px 0; font-size: 24px;">Subscription Cancelled</h2>
+
+        <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">Hi ${data.userName},</p>
+        <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">
+          Your <strong>${data.planName}</strong> subscription has been cancelled.
+        </p>
+
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background: #f3f4f6; border-radius: 8px; margin: 30px 0;">
+          <tr><td style="padding: 25px;">
+            <h3 style="color: #1f2937; margin: 0 0 15px 0; font-size: 18px;">What happens now?</h3>
+            <ul style="color: #4b5563; margin: 0; padding-left: 20px; line-height: 1.8;">
+              <li>Your premium access ends on <strong>${data.endDate}</strong></li>
+              <li>You still have <strong>${data.creditsRemaining} credits</strong> to use</li>
+              <li>Your unused credits will remain available</li>
+              <li>You can resubscribe anytime</li>
+            </ul>
+          </td></tr>
+        </table>
+
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background: #eff6ff; border-left: 4px solid #3b82f6; border-radius: 4px; margin: 30px 0;">
+          <tr><td style="padding: 20px;">
+            <p style="color: #1e40af; margin: 0; font-size: 15px;">
+              <strong>Changed your mind?</strong> You can reactivate your subscription anytime from your dashboard.
+            </p>
+          </td></tr>
+        </table>
+
+        ${ctaButton('View Plans →', 'https://pixelift.pl/pricing')}
+
+        <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
+          We'd love to hear why you cancelled. Reply to this email with your feedback - it helps us improve!
+        </p>
+      </td>
+    </tr>
+    ${emailFooter()}
+  `, 'Your subscription has been cancelled');
+
+  const text = `Subscription Cancelled
+
+Hi ${data.userName},
+
+Your ${data.planName} subscription has been cancelled.
+
+What happens now?
+• Your premium access ends on ${data.endDate}
+• You still have ${data.creditsRemaining} credits to use
+• Your unused credits will remain available
+• You can resubscribe anytime
+
+Changed your mind? You can reactivate your subscription anytime from your dashboard.
+
+View Plans: https://pixelift.pl/pricing
+
+We'd love to hear why you cancelled. Reply to this email with your feedback - it helps us improve!`;
+
   try {
     await resend.emails.send({
-      from: 'Pixelift <support@pixelift.pl>',
+      from: FROM_EMAIL,
       to: [data.userEmail],
-      replyTo: 'support@pixelift.pl',
+      replyTo: SUPPORT_EMAIL,
       subject: 'Your Pixelift Subscription Has Been Cancelled',
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff;">
-          <!-- Header -->
-          <div style="background: linear-gradient(to right, #6b7280, #9ca3af); padding: 30px; text-align: center;">
-            <h1 style="color: #ffffff; margin: 0; font-size: 28px;">Pixelift</h1>
-          </div>
-
-          <!-- Content -->
-          <div style="padding: 40px 30px;">
-            <h2 style="color: #1f2937; margin-top: 0;">Subscription Cancelled</h2>
-
-            <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">
-              Hi ${data.userName},
-            </p>
-
-            <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">
-              Your <strong>${data.planName}</strong> subscription has been cancelled.
-            </p>
-
-            <div style="background: #f3f4f6; padding: 25px; border-radius: 8px; margin: 30px 0;">
-              <h3 style="color: #1f2937; margin: 0 0 15px 0; font-size: 18px;">What happens now?</h3>
-              <ul style="color: #4b5563; margin: 0; padding-left: 20px; line-height: 1.8;">
-                <li>Your premium access ends on <strong>${data.endDate}</strong></li>
-                <li>You still have <strong>${data.creditsRemaining} credits</strong> to use</li>
-                <li>Your unused credits will remain available</li>
-                <li>You can resubscribe anytime to get premium features back</li>
-              </ul>
-            </div>
-
-            <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 20px; margin: 30px 0; border-radius: 4px;">
-              <p style="color: #1e40af; margin: 0; font-size: 15px;">
-                <strong>Changed your mind?</strong> You can reactivate your subscription anytime from your dashboard.
-              </p>
-            </div>
-
-            <div style="text-align: center; margin: 40px 0;">
-              <a href="https://pixelift.pl/pricing"
-                 style="display: inline-block; background: linear-gradient(to right, #10b981, #3b82f6);
-                        color: white; padding: 16px 32px; text-decoration: none;
-                        border-radius: 8px; font-weight: 600; font-size: 16px;">
-                View Plans →
-              </a>
-            </div>
-
-            <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
-              We'd love to hear why you cancelled. Reply to this email with your feedback - it helps us improve!
-            </p>
-          </div>
-
-          <!-- Footer -->
-          <div style="background: #f3f4f6; padding: 30px; text-align: center; color: #6b7280; font-size: 14px;">
-            <p style="margin: 0 0 10px 0;">Pixelift - AI Image Processing</p>
-            <p style="margin: 0;">
-              <a href="https://pixelift.pl" style="color: #10b981; text-decoration: none;">Website</a> •
-              <a href="https://pixelift.pl/pricing" style="color: #10b981; text-decoration: none;">Pricing</a> •
-              <a href="https://pixelift.pl/support" style="color: #10b981; text-decoration: none;">Support</a>
-            </p>
-          </div>
-        </div>
-      `,
+      html,
+      text,
+      headers: {
+        'List-Unsubscribe': `<${UNSUBSCRIBE_URL}>`,
+        'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+      },
     });
 
     console.log(`Subscription cancelled email sent to ${data.userEmail}`);
@@ -937,14 +1118,6 @@ export async function sendSubscriptionCancelledEmail(data: SubscriptionCancelled
     console.error('Failed to send subscription cancelled email:', error);
     return false;
   }
-}
-
-export interface TicketConfirmationEmailData {
-  ticketId: string;
-  subject: string;
-  userName: string;
-  userEmail: string;
-  category: string;
 }
 
 /**
@@ -957,66 +1130,77 @@ export async function sendTicketConfirmationEmail(data: TicketConfirmationEmailD
     return false;
   }
 
+  const html = emailWrapper(`
+    ${emailHeader()}
+    <tr>
+      <td class="mobile-padding" style="padding: 40px 30px; font-family: Arial, sans-serif; text-align: center;">
+        <div style="font-size: 60px; margin-bottom: 20px;">📨</div>
+
+        <h2 style="color: #1f2937; margin: 0 0 20px 0; font-size: 24px;">We Got Your Message!</h2>
+
+        <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">Hi ${data.userName},</p>
+        <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">
+          Thank you for contacting Pixelift support. We've received your request and our team will get back to you as soon as possible.
+        </p>
+
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background: #f0fdf4; border-left: 4px solid #10b981; border-radius: 4px; margin: 30px 0; text-align: left;">
+          <tr><td style="padding: 20px;">
+            <p style="color: #065f46; margin: 0; font-size: 15px;">
+              <strong>Ticket ID:</strong> #${data.ticketId}<br />
+              <strong>Subject:</strong> ${data.subject}<br />
+              <strong>Category:</strong> ${data.category}
+            </p>
+          </td></tr>
+        </table>
+
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background: #f3f4f6; border-radius: 8px; margin: 30px 0; text-align: left;">
+          <tr><td style="padding: 25px;">
+            <h3 style="color: #1f2937; margin: 0 0 15px 0; font-size: 18px;">⏱️ What to expect</h3>
+            <ul style="color: #4b5563; margin: 0; padding-left: 20px; line-height: 1.8;">
+              <li>Response time: Usually within 24 hours</li>
+              <li>You'll receive an email when we reply</li>
+              <li>Track your tickets at <a href="https://pixelift.pl/support/tickets" style="color: #10b981;">pixelift.pl/support/tickets</a></li>
+            </ul>
+          </td></tr>
+        </table>
+
+        <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
+          You can reply directly to this email to add more information to your ticket.
+        </p>
+      </td>
+    </tr>
+    ${emailFooter()}
+  `, `We received your support request: ${data.subject}`);
+
+  const text = `We Got Your Message!
+
+Hi ${data.userName},
+
+Thank you for contacting Pixelift support. We've received your request and our team will get back to you as soon as possible.
+
+Ticket ID: #${data.ticketId}
+Subject: ${data.subject}
+Category: ${data.category}
+
+What to expect:
+• Response time: Usually within 24 hours
+• You'll receive an email when we reply
+• Track your tickets at https://pixelift.pl/support/tickets
+
+You can reply directly to this email to add more information to your ticket.`;
+
   try {
     await resend.emails.send({
-      from: 'Pixelift Support <support@pixelift.pl>',
+      from: FROM_EMAIL,
       to: [data.userEmail],
-      replyTo: 'support@pixelift.pl',
+      replyTo: SUPPORT_EMAIL,
       subject: `We received your request [Ticket #${data.ticketId}]`,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff;">
-          <!-- Header -->
-          <div style="background: linear-gradient(to right, #10b981, #3b82f6); padding: 30px; text-align: center;">
-            <h1 style="color: #ffffff; margin: 0; font-size: 28px;">Pixelift Support</h1>
-          </div>
-
-          <!-- Content -->
-          <div style="padding: 40px 30px;">
-            <div style="text-align: center; font-size: 60px; margin-bottom: 20px;">📨</div>
-
-            <h2 style="color: #1f2937; margin-top: 0; text-align: center;">We Got Your Message!</h2>
-
-            <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">
-              Hi ${data.userName},
-            </p>
-
-            <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">
-              Thank you for contacting Pixelift support. We've received your request and our team will get back to you as soon as possible.
-            </p>
-
-            <div style="background: #f0fdf4; border-left: 4px solid #10b981; padding: 20px; margin: 30px 0; border-radius: 4px;">
-              <p style="color: #065f46; margin: 0; font-size: 15px;">
-                <strong>Ticket ID:</strong> #${data.ticketId}<br />
-                <strong>Subject:</strong> ${data.subject}<br />
-                <strong>Category:</strong> ${data.category}
-              </p>
-            </div>
-
-            <div style="background: #f3f4f6; padding: 25px; border-radius: 8px; margin: 30px 0;">
-              <h3 style="color: #1f2937; margin: 0 0 15px 0; font-size: 18px;">⏱️ What to expect</h3>
-              <ul style="color: #4b5563; margin: 0; padding-left: 20px; line-height: 1.8;">
-                <li>Response time: Usually within 24 hours</li>
-                <li>You'll receive an email when we reply</li>
-                <li>Track your tickets at <a href="https://pixelift.pl/support/tickets" style="color: #10b981;">pixelift.pl/support/tickets</a></li>
-              </ul>
-            </div>
-
-            <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
-              Please keep this email for your records. You can reply directly to this email to add more information to your ticket.
-            </p>
-          </div>
-
-          <!-- Footer -->
-          <div style="background: #f3f4f6; padding: 30px; text-align: center; color: #6b7280; font-size: 14px;">
-            <p style="margin: 0 0 10px 0;">Pixelift - AI Image Processing</p>
-            <p style="margin: 0;">
-              <a href="https://pixelift.pl" style="color: #10b981; text-decoration: none;">Website</a> •
-              <a href="https://pixelift.pl/support/tickets" style="color: #10b981; text-decoration: none;">My Tickets</a> •
-              <a href="https://pixelift.pl/support" style="color: #10b981; text-decoration: none;">Help Center</a>
-            </p>
-          </div>
-        </div>
-      `,
+      html,
+      text,
+      headers: {
+        'List-Unsubscribe': `<${UNSUBSCRIBE_URL}>`,
+        'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+      },
     });
 
     console.log(`Ticket confirmation email sent to ${data.userEmail} for ticket ${data.ticketId}`);
@@ -1025,12 +1209,6 @@ export async function sendTicketConfirmationEmail(data: TicketConfirmationEmailD
     console.error('Failed to send ticket confirmation email:', error);
     return false;
   }
-}
-
-export interface AccountDeletedEmailData {
-  userName: string;
-  userEmail: string;
-  deletionDate: string;
 }
 
 /**
@@ -1043,73 +1221,86 @@ export async function sendAccountDeletedEmail(data: AccountDeletedEmailData): Pr
     return false;
   }
 
-  try {
-    const deletionDateFormatted = new Date(data.deletionDate).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+  const deletionDateFormatted = new Date(data.deletionDate).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
 
+  const html = emailWrapper(`
+    ${emailHeader('linear-gradient(to right, #6b7280, #374151)')}
+    <tr>
+      <td class="mobile-padding" style="padding: 40px 30px; font-family: Arial, sans-serif;">
+        <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">Hi ${data.userName},</p>
+        <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">
+          As per your request, your Pixelift account and all associated data have been permanently deleted.
+        </p>
+
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background: #f3f4f6; border-left: 4px solid #6b7280; border-radius: 4px; margin: 30px 0;">
+          <tr><td style="padding: 20px;">
+            <p style="color: #374151; margin: 0; font-size: 15px;">
+              <strong>Deletion completed:</strong> ${deletionDateFormatted}
+            </p>
+          </td></tr>
+        </table>
+
+        <h3 style="color: #1f2937; margin: 30px 0 15px 0; font-size: 18px;">What was deleted:</h3>
+        <ul style="color: #4b5563; margin: 0; padding-left: 20px; line-height: 1.8;">
+          <li>Your account information and profile</li>
+          <li>All processed images</li>
+          <li>Transaction and payment history</li>
+          <li>Usage history and statistics</li>
+          <li>Support tickets and conversations</li>
+        </ul>
+
+        <p style="color: #4b5563; line-height: 1.6; font-size: 16px; margin-top: 30px;">
+          This action is irreversible. If you wish to use Pixelift again, you'll need to create a new account.
+        </p>
+
+        <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">
+          We're sorry to see you go. If you have any feedback, we'd love to hear from you at <a href="mailto:feedback@pixelift.pl" style="color: #3b82f6;">feedback@pixelift.pl</a>.
+        </p>
+
+        <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">Thank you for using Pixelift.</p>
+      </td>
+    </tr>
+    ${emailFooter()}
+  `, 'Your account has been deleted');
+
+  const text = `Account Deleted
+
+Hi ${data.userName},
+
+As per your request, your Pixelift account and all associated data have been permanently deleted.
+
+Deletion completed: ${deletionDateFormatted}
+
+What was deleted:
+• Your account information and profile
+• All processed images
+• Transaction and payment history
+• Usage history and statistics
+• Support tickets and conversations
+
+This action is irreversible. If you wish to use Pixelift again, you'll need to create a new account.
+
+We're sorry to see you go. If you have any feedback, we'd love to hear from you at feedback@pixelift.pl.
+
+Thank you for using Pixelift.`;
+
+  try {
     await resend.emails.send({
-      from: 'Pixelift <noreply@pixelift.pl>',
+      from: FROM_EMAIL,
       to: [data.userEmail],
       subject: 'Your Pixelift Account Has Been Deleted',
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff;">
-          <!-- Header -->
-          <div style="background: linear-gradient(to right, #6b7280, #374151); padding: 30px; text-align: center;">
-            <h1 style="color: #ffffff; margin: 0; font-size: 28px;">Account Deleted</h1>
-          </div>
-
-          <!-- Content -->
-          <div style="padding: 40px 30px;">
-            <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">
-              Hi ${data.userName},
-            </p>
-
-            <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">
-              As per your request, your Pixelift account and all associated data have been permanently deleted.
-            </p>
-
-            <div style="background: #f3f4f6; border-left: 4px solid #6b7280; padding: 20px; margin: 30px 0; border-radius: 4px;">
-              <p style="color: #374151; margin: 0; font-size: 15px;">
-                <strong>Deletion completed:</strong> ${deletionDateFormatted}
-              </p>
-            </div>
-
-            <h3 style="color: #1f2937; margin: 30px 0 15px 0; font-size: 18px;">What was deleted:</h3>
-            <ul style="color: #4b5563; margin: 0; padding-left: 20px; line-height: 1.8;">
-              <li>Your account information and profile</li>
-              <li>All processed images</li>
-              <li>Transaction and payment history</li>
-              <li>Usage history and statistics</li>
-              <li>Support tickets and conversations</li>
-            </ul>
-
-            <p style="color: #4b5563; line-height: 1.6; font-size: 16px; margin-top: 30px;">
-              This action is irreversible and your data cannot be recovered. If you wish to use Pixelift again in the future, you'll need to create a new account.
-            </p>
-
-            <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">
-              We're sorry to see you go. If you have any feedback about your experience with Pixelift, we'd love to hear from you at <a href="mailto:feedback@pixelift.pl" style="color: #3b82f6;">feedback@pixelift.pl</a>.
-            </p>
-
-            <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
-              Thank you for using Pixelift.
-            </p>
-          </div>
-
-          <!-- Footer -->
-          <div style="background: #f3f4f6; padding: 30px; text-align: center; color: #6b7280; font-size: 14px;">
-            <p style="margin: 0 0 10px 0;">Pixelift - AI Image Processing</p>
-            <p style="margin: 0;">
-              <a href="https://pixelift.pl" style="color: #6b7280; text-decoration: none;">Visit Pixelift</a>
-            </p>
-          </div>
-        </div>
-      `,
+      html,
+      text,
+      headers: {
+        'List-Unsubscribe': `<${UNSUBSCRIBE_URL}>`,
+        'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+      },
     });
 
     console.log(`Account deletion confirmation sent to ${data.userEmail}`);
