@@ -9,174 +9,59 @@ import { ImageProcessor } from '@/lib/image-processor'
 
 interface PackshotPreset {
   name: string
-  background: { r: number; g: number; b: number }
-  addReflection: boolean
-  addShadow: boolean
+  aspectRatio: string
   credits: number
 }
 
 const PACKSHOT_CREDITS = CREDIT_COSTS.packshot.cost
 
-// Professional packshot presets with shadow/reflection options
+// Professional packshot presets - using fal.ai Product Photography
 const PRESETS: Record<string, PackshotPreset> = {
   white: {
     name: 'White Background',
-    background: { r: 255, g: 255, b: 255 },
-    addReflection: false,
-    addShadow: true,
+    aspectRatio: '1:1',
     credits: PACKSHOT_CREDITS,
   },
   gray: {
     name: 'Light Gray',
-    background: { r: 245, g: 245, b: 245 },
-    addReflection: false,
-    addShadow: true,
+    aspectRatio: '1:1',
     credits: PACKSHOT_CREDITS,
   },
   studio: {
     name: 'Studio Setup',
-    background: { r: 250, g: 250, b: 250 },
-    addReflection: true,
-    addShadow: true,
+    aspectRatio: '1:1',
     credits: PACKSHOT_CREDITS,
   },
   lifestyle: {
     name: 'Lifestyle',
-    background: { r: 248, g: 248, b: 248 },
-    addReflection: false,
-    addShadow: true,
+    aspectRatio: '4:3',
     credits: PACKSHOT_CREDITS,
   },
 }
 
 async function generatePackshot(imageBuffer: Buffer, preset: PackshotPreset): Promise<Buffer> {
-  // Convert image to base64 data URL for background removal
+  // Convert image to base64 data URL
   const base64Image = imageBuffer.toString('base64')
   const dataUrl = `data:image/png;base64,${base64Image}`
 
-  // Step 1: Remove background using BiRefNet
-  console.log('Step 1: Removing background...')
-  const transparentUrl = await ImageProcessor.removeBackground(dataUrl)
+  // Use fal.ai Product Photography - professional studio photos with realistic lighting
+  console.log('Generating professional product photography via fal.ai...')
+  const resultUrl = await ImageProcessor.generateProductPhotography(dataUrl, preset.aspectRatio)
 
-  // Download the transparent image
-  const transparentResponse = await fetch(transparentUrl)
-  if (!transparentResponse.ok) {
-    throw new Error('Failed to download transparent image')
+  // Download result
+  const response = await fetch(resultUrl)
+  if (!response.ok) {
+    throw new Error('Failed to download generated packshot')
   }
-  const transparentBuffer = Buffer.from(await transparentResponse.arrayBuffer())
 
-  // Get image metadata
-  const metadata = await sharp(transparentBuffer).metadata()
-  const productWidth = metadata.width || 1000
-  const productHeight = metadata.height || 1000
+  const resultBuffer = Buffer.from(await response.arrayBuffer())
 
-  // Calculate canvas size (2000x2000) and positioning
-  const canvasSize = 2000
-  const padding = 200 // Padding around product
-
-  // Scale product to fit with padding
-  const maxProductSize = canvasSize - (padding * 2)
-  const scale = Math.min(maxProductSize / productWidth, maxProductSize / productHeight * 0.7) // 0.7 to leave room for shadow/reflection
-  const scaledWidth = Math.round(productWidth * scale)
-  const scaledHeight = Math.round(productHeight * scale)
-
-  // Position product (centered horizontally, slightly above center vertically)
-  const productX = Math.round((canvasSize - scaledWidth) / 2)
-  const productY = Math.round((canvasSize - scaledHeight) / 2) - 100 // Move up to leave room for shadow
-
-  // Resize product
-  const resizedProduct = await sharp(transparentBuffer)
-    .resize(scaledWidth, scaledHeight, { fit: 'contain' })
-    .png()
-    .toBuffer()
-
-  // Create layers for compositing
-  const composites: sharp.OverlayOptions[] = []
-
-  // Step 2: Add reflection if enabled (before product)
-  if (preset.addReflection) {
-    console.log('Step 2: Adding reflection...')
-    // Create flipped, faded reflection
-    const reflection = await sharp(resizedProduct)
-      .flip() // Flip vertically
-      .linear(0.3, 0) // Reduce brightness to 30%
-      .png()
-      .toBuffer()
-
-    // Add gradient fade to reflection using a mask
-    const gradientMask = Buffer.from(
-      `<svg width="${scaledWidth}" height="${scaledHeight}">
-        <defs>
-          <linearGradient id="fade" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" style="stop-color:white;stop-opacity:0.4"/>
-            <stop offset="50%" style="stop-color:white;stop-opacity:0.1"/>
-            <stop offset="100%" style="stop-color:white;stop-opacity:0"/>
-          </linearGradient>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#fade)"/>
-      </svg>`
-    )
-
-    const fadedReflection = await sharp(reflection)
-      .composite([{ input: gradientMask, blend: 'dest-in' }])
-      .png()
-      .toBuffer()
-
-    // Position reflection below product
-    composites.push({
-      input: fadedReflection,
-      left: productX,
-      top: productY + scaledHeight + 5, // Small gap
+  // Resize to target size (2000x2000)
+  const finalImage = await sharp(resultBuffer)
+    .resize(2000, 2000, {
+      fit: 'contain',
+      background: { r: 255, g: 255, b: 255, alpha: 1 }
     })
-  }
-
-  // Step 3: Add shadow if enabled
-  if (preset.addShadow) {
-    console.log('Step 3: Adding shadow...')
-    // Create shadow ellipse
-    const shadowWidth = Math.round(scaledWidth * 0.8)
-    const shadowHeight = Math.round(scaledHeight * 0.1)
-    const shadowX = productX + Math.round((scaledWidth - shadowWidth) / 2)
-    const shadowY = productY + scaledHeight - 20
-
-    const shadowSvg = Buffer.from(
-      `<svg width="${shadowWidth}" height="${shadowHeight}">
-        <defs>
-          <radialGradient id="shadow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" style="stop-color:black;stop-opacity:0.25"/>
-            <stop offset="70%" style="stop-color:black;stop-opacity:0.1"/>
-            <stop offset="100%" style="stop-color:black;stop-opacity:0"/>
-          </radialGradient>
-        </defs>
-        <ellipse cx="${shadowWidth/2}" cy="${shadowHeight/2}" rx="${shadowWidth/2}" ry="${shadowHeight/2}" fill="url(#shadow)"/>
-      </svg>`
-    )
-
-    composites.push({
-      input: shadowSvg,
-      left: shadowX,
-      top: shadowY,
-    })
-  }
-
-  // Step 4: Add the product on top
-  composites.push({
-    input: resizedProduct,
-    left: productX,
-    top: productY,
-  })
-
-  // Create final canvas with background color and all layers
-  console.log('Step 4: Compositing final image...')
-  const finalImage = await sharp({
-    create: {
-      width: canvasSize,
-      height: canvasSize,
-      channels: 3,
-      background: preset.background,
-    }
-  })
-    .composite(composites)
     .png({ quality: 100 })
     .toBuffer()
 
@@ -292,7 +177,7 @@ export async function POST(request: NextRequest) {
       type: 'packshot_generation',
       creditsUsed: creditsNeeded,
       imageSize: `${file.size} bytes`,
-      model: 'birefnet-sharp',
+      model: 'fal-product-photography',
     })
 
     const newCredits = user.credits - creditsNeeded

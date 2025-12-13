@@ -571,63 +571,61 @@ export class ImageProcessor {
   }
 
   /**
-   * Professional packshot generation using Bria Product Shot
-   * Places product in a studio setting with professional lighting
+   * Professional product photography using fal.ai Product Photography
+   * Generates professional studio photos with realistic lighting ($0.04/image)
    */
-  static async generateProductShot(
+  static async generateProductPhotography(
     productImageUrl: string,
-    sceneDescription: string
+    aspectRatio: string = '1:1'
   ): Promise<string> {
     const falApiKey = process.env.FAL_API_KEY
     if (!falApiKey) {
       throw new Error('FAL_API_KEY not configured')
     }
 
-    console.log('Starting Bria Product Shot generation...')
-    console.log('Scene description:', sceneDescription)
+    console.log('Starting fal.ai Product Photography...')
 
-    // Use synchronous endpoint (fal.run instead of queue.fal.run)
-    const response = await fetch('https://fal.run/fal-ai/bria/product-shot', {
+    // Use synchronous endpoint
+    const response = await fetch('https://fal.run/fal-ai/image-apps-v2/product-photography', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Key ${falApiKey}`,
       },
       body: JSON.stringify({
-        image_url: productImageUrl,
-        scene_description: sceneDescription,
-        placement_type: 'automatic',
-        optimize_description: true,
-        shot_size: [2000, 2000],
-        num_results: 1,
+        product_image_url: productImageUrl,
+        aspect_ratio: aspectRatio,
       }),
     })
 
     if (!response.ok) {
       const error = await response.text()
-      console.error('Bria Product Shot error:', error)
-      throw new Error(`Bria Product Shot failed: ${error}`)
+      console.error('Product Photography error:', error)
+      throw new Error(`Product Photography failed: ${error}`)
     }
 
     const result = await response.json()
-    console.log('Bria result keys:', Object.keys(result))
+    console.log('Product Photography result keys:', Object.keys(result))
 
-    // Bria returns { images: [{ url: "..." }] }
-    if (result.images?.[0]?.url) {
-      console.log('Product shot generated via Bria')
-      return result.images[0].url
+    // Try various response formats
+    if (result.image?.url) {
+      console.log('Product photography generated via fal.ai')
+      return result.image.url
     }
 
-    // Try alternative response formats
-    if (result.image?.url) {
-      return result.image.url
+    if (result.images?.[0]?.url) {
+      return result.images[0].url
     }
 
     if (typeof result.output === 'string') {
       return result.output
     }
 
-    console.error('Unexpected Bria response:', JSON.stringify(result).slice(0, 500))
-    throw new Error('No image URL in Bria Product Shot response')
+    if (result.url) {
+      return result.url
+    }
+
+    console.error('Unexpected response:', JSON.stringify(result).slice(0, 500))
+    throw new Error('No image URL in Product Photography response')
   }
 }
