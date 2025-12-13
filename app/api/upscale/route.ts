@@ -161,7 +161,7 @@ export async function POST(request: NextRequest) {
       type: faceEnhance ? 'upscale_enhanced' : 'upscale_standard',
       creditsUsed: creditsNeeded,
       imageSize: `${image.size} bytes`,
-      model: faceEnhance ? 'GFPGAN' : 'Real-ESRGAN',
+      model: faceEnhance ? 'Real-ESRGAN + Face Enhance' : 'Real-ESRGAN',
     });
 
     // Credits are already deducted by createUsage function
@@ -198,7 +198,7 @@ export async function POST(request: NextRequest) {
       originalUrl: `/api/processed-images/${imageRecord.id}/view?type=original`,
       scale: scale,
       faceEnhance: faceEnhance,
-      model: faceEnhance ? 'GFPGAN' : 'Real-ESRGAN',
+      model: faceEnhance ? 'Real-ESRGAN + Face Enhance' : 'Real-ESRGAN',
       creditsUsed: creditsNeeded,
       creditsRemaining: updatedUser?.credits || 0,
     };

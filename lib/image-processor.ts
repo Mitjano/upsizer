@@ -239,10 +239,10 @@ export class ImageProcessor {
   }
 
   /**
-   * Upscale image using Replicate Real-ESRGAN or GFPGAN
+   * Upscale image using Replicate Real-ESRGAN
    * @param dataUrl - Base64 data URL of the image
    * @param scale - Upscale factor (2, 4, or 8)
-   * @param faceEnhance - Whether to use GFPGAN for face enhancement
+   * @param faceEnhance - Whether to enable face enhancement (uses Real-ESRGAN's built-in GFPGAN)
    * @returns URL of the upscaled image
    */
   static async upscaleImage(
@@ -251,11 +251,9 @@ export class ImageProcessor {
     faceEnhance: boolean = false
   ): Promise<string> {
     try {
-      if (faceEnhance) {
-        return await this.upscaleWithGFPGAN(dataUrl, scale)
-      } else {
-        return await this.upscaleWithRealESRGAN(dataUrl, scale)
-      }
+      // Use Real-ESRGAN with built-in face_enhance option
+      // This is more stable than separate GFPGAN model which has upload errors
+      return await this.upscaleWithRealESRGAN(dataUrl, scale, faceEnhance)
     } catch (error) {
       console.error('Replicate upscaling failed:', error)
       throw error
@@ -264,12 +262,15 @@ export class ImageProcessor {
 
   /**
    * Upscale using Real-ESRGAN (general upscaling)
+   * Uses built-in face_enhance option instead of separate GFPGAN model
+   * to avoid "Cog: Got error trying to upload output files" errors
    */
   private static async upscaleWithRealESRGAN(
     dataUrl: string,
-    scale: 2 | 4 | 8
+    scale: 2 | 4 | 8,
+    faceEnhance: boolean = false
   ): Promise<string> {
-    console.log(`Starting Real-ESRGAN ${scale}x upscale...`)
+    console.log(`Starting Real-ESRGAN ${scale}x upscale (face_enhance=${faceEnhance})...`)
 
     const output = await this.replicate.run(
       "nightmareai/real-esrgan:f121d640bd286e1fdc67f9799164c1d5be36ff74576ee11c803ae5b665dd46aa",
@@ -277,38 +278,13 @@ export class ImageProcessor {
         input: {
           image: dataUrl,
           scale: scale,
-          face_enhance: false,
+          face_enhance: faceEnhance,
         },
       }
     )
 
     const resultUrl = typeof output === 'string' ? output : String(output)
     console.log('Image upscaled via Replicate Real-ESRGAN')
-    return resultUrl
-  }
-
-  /**
-   * Upscale using GFPGAN (face enhancement + upscaling)
-   */
-  private static async upscaleWithGFPGAN(
-    dataUrl: string,
-    scale: 2 | 4 | 8
-  ): Promise<string> {
-    console.log(`Starting GFPGAN ${scale}x upscale with face enhancement...`)
-
-    const output = await this.replicate.run(
-      "tencentarc/gfpgan:9283608cc6b7be6b65a8e44983db012355fde4132009bf99d976b2f0896856a3",
-      {
-        input: {
-          img: dataUrl,
-          scale: scale,
-          version: "v1.4",
-        },
-      }
-    )
-
-    const resultUrl = typeof output === 'string' ? output : String(output)
-    console.log('Image upscaled via Replicate GFPGAN')
     return resultUrl
   }
 }
