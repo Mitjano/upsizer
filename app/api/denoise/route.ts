@@ -5,6 +5,7 @@ import { sendCreditsLowEmail, sendCreditsDepletedEmail } from '@/lib/email'
 import { imageProcessingLimiter, getClientIdentifier, rateLimitResponse } from '@/lib/rate-limit'
 import { authenticateRequest } from '@/lib/api-auth'
 import { CREDIT_COSTS } from '@/lib/credits-config'
+import { ImageProcessor } from '@/lib/image-processor'
 
 const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN!,
@@ -111,12 +112,15 @@ export async function POST(request: NextRequest) {
     const mimeType = file.type
     const dataUrl = `data:${mimeType};base64,${base64}`
 
+    // 6.5. RESIZE IF TOO LARGE FOR REPLICATE GPU (max ~2 million pixels)
+    const resizedDataUrl = await ImageProcessor.resizeForUpscale(dataUrl)
+
     // 7. CALL REPLICATE - SwinIR model
     const output = await replicate.run(
       "jingyunliang/swinir:660d922d33153019e8c263a3bba265de882e7f4f70396546b6c9c8f9d47a021a",
       {
         input: {
-          image: dataUrl,
+          image: resizedDataUrl,
           task_type: replicateTaskType,
         }
       }
