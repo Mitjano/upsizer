@@ -5,6 +5,7 @@ import { imageProcessingLimiter, getClientIdentifier, rateLimitResponse } from "
 import { validateFileSize, validateFileType, MAX_FILE_SIZE, ACCEPTED_IMAGE_TYPES } from "@/lib/validation";
 import { authenticateRequest } from "@/lib/api-auth";
 import { ImageProcessor } from "@/lib/image-processor";
+import { ProcessedImagesDB } from "@/lib/processed-images-db";
 
 // Credit costs
 const CREDIT_COSTS = {
@@ -106,9 +107,49 @@ export async function POST(request: NextRequest) {
     const mimeType = image.type;
     const dataUrl = `data:${mimeType};base64,${base64}`;
 
+    // Get image dimensions
+    const dimensions = await ImageProcessor.getImageDimensions(buffer);
+
+    // Save original image
+    const originalPath = await ImageProcessor.saveFile(
+      buffer,
+      image.name,
+      'original'
+    );
+
+    // Create database record
+    const imageRecord = await ProcessedImagesDB.create({
+      userId: user.email,
+      originalPath,
+      processedPath: null,
+      originalFilename: image.name,
+      fileSize: image.size,
+      width: dimensions.width,
+      height: dimensions.height,
+      isProcessed: false
+    });
+
     // Use fal.ai for upscaling
     console.log(`Starting upscale: model=${model}, scale=${scale}x`);
     const resultUrl = await ImageProcessor.upscaleImage(dataUrl, scale, model as 'esrgan' | 'aura-sr');
+
+    // Download processed image from fal.ai
+    const processedBuffer = await ImageProcessor.downloadImage(resultUrl);
+
+    // Save processed image as PNG
+    const processedFilename = image.name.replace(/\.[^.]+$/, '_upscaled.png');
+    const processedPath = await ImageProcessor.saveFile(
+      processedBuffer,
+      processedFilename,
+      'processed'
+    );
+
+    // Update record with processed info
+    await ProcessedImagesDB.update(imageRecord.id, {
+      processedPath,
+      isProcessed: true,
+      processedAt: new Date().toISOString()
+    });
 
     // Track if this is first upload before deducting credits
     const isFirstUpload = !user.firstUploadAt;
@@ -152,7 +193,9 @@ export async function POST(request: NextRequest) {
 
     const responseData = {
       success: true,
-      imageUrl: resultUrl,
+      imageId: imageRecord.id,
+      imageUrl: `/api/processed-images/${imageRecord.id}/view?type=processed`,
+      originalUrl: `/api/processed-images/${imageRecord.id}/view?type=original`,
       scale: scale,
       model: model,
       creditsUsed: creditsNeeded,

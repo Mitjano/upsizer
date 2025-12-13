@@ -19,6 +19,7 @@ type UpscaleModel = 'esrgan' | 'aura-sr'
 type UpscaleScale = 2 | 4
 
 interface ProcessingResult {
+  imageId: string
   imageUrl: string
   originalUrl: string
   scale: number
@@ -92,8 +93,9 @@ export function ImageUpscaler({ userRole = 'user' }: ImageUpscalerProps) {
       const data = await response.json()
 
       setResult({
+        imageId: data.imageId,
         imageUrl: data.imageUrl,
-        originalUrl: previewUrl!,
+        originalUrl: data.originalUrl || previewUrl!,
         scale: data.scale,
         model: data.model,
         creditsUsed: data.creditsUsed,
@@ -112,16 +114,23 @@ export function ImageUpscaler({ userRole = 'user' }: ImageUpscalerProps) {
   }
 
   const handleDownload = async () => {
-    if (!result?.imageUrl) return
+    if (!result?.imageId) return
 
     try {
       toast.loading('Preparing download...', { id: 'download' })
-      const response = await fetch(result.imageUrl)
+      // Use the download endpoint with proper filename
+      const downloadUrl = `/api/processed-images/${result.imageId}/download?type=processed`
+      const response = await fetch(downloadUrl)
+
+      if (!response.ok) {
+        throw new Error('Download failed')
+      }
+
       const blob = await response.blob()
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
-      a.download = `upscaled_${scale}x_${selectedFile?.name || 'image.png'}`
+      a.download = `upscaled_${result.scale}x_${selectedFile?.name?.replace(/\.[^.]+$/, '.png') || 'image.png'}`
       document.body.appendChild(a)
       a.click()
       window.URL.revokeObjectURL(url)
@@ -129,6 +138,7 @@ export function ImageUpscaler({ userRole = 'user' }: ImageUpscalerProps) {
       trackImageDownloaded('upscale')
       toast.success('Download started!', { id: 'download' })
     } catch (err) {
+      console.error('Download error:', err)
       toast.error('Failed to download image', { id: 'download' })
     }
   }
