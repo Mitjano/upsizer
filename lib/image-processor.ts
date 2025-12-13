@@ -587,7 +587,7 @@ export class ImageProcessor {
 
     // Create form data with image
     const formData = new FormData()
-    const blob = new Blob([imageBuffer], { type: 'image/png' })
+    const blob = new Blob([new Uint8Array(imageBuffer)], { type: 'image/png' })
     formData.append('imageFile', blob, 'image.png')
     formData.append('removeBackground', 'true')
     formData.append('beautifier', 'ai.auto') // Professional packshot beautifier
