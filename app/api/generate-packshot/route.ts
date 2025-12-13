@@ -53,7 +53,7 @@ function hexToRgb(hex: string): { r: number; g: number; b: number } {
 
 async function generatePackshot(imageBuffer: Buffer, backgroundColor: string): Promise<Buffer> {
   const TARGET_SIZE = 2000
-  const PRODUCT_SCALE = 0.75 // Product takes 75% of canvas
+  const PRODUCT_SCALE = 0.85 // Product takes 85% of canvas
   const MAX_PRODUCT_SIZE = Math.round(TARGET_SIZE * PRODUCT_SCALE)
 
   // Step 1: Remove background using BiRefNet (better quality)
@@ -94,29 +94,7 @@ async function generatePackshot(imageBuffer: Buffer, backgroundColor: string): P
     .ensureAlpha()
     .toBuffer()
 
-  // Step 5: Create simple drop shadow using SVG
-  const shadowBlur = 40
-  const shadowOpacity = 0.3
-  const shadowOffsetY = 20
-
-  const shadowSvg = `
-    <svg width="${scaledWidth + shadowBlur * 2}" height="${scaledHeight + shadowBlur * 2}">
-      <defs>
-        <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur in="SourceAlpha" stdDeviation="${shadowBlur / 2}" />
-          <feOffset dx="0" dy="${shadowOffsetY}" />
-          <feComponentTransfer>
-            <feFuncA type="linear" slope="${shadowOpacity}" />
-          </feComponentTransfer>
-        </filter>
-      </defs>
-      <rect x="${shadowBlur}" y="${shadowBlur}" width="${scaledWidth}" height="${scaledHeight}"
-            fill="black" filter="url(#shadow)" />
-    </svg>
-  `
-  const shadowBuffer = Buffer.from(shadowSvg)
-
-  // Step 6: Compose everything on background
+  // Step 5: Compose product on background (clean, no shadow - Amazon style)
   const bgColor = hexToRgb(backgroundColor)
 
   const finalImage = await sharp({
@@ -128,13 +106,6 @@ async function generatePackshot(imageBuffer: Buffer, backgroundColor: string): P
     },
   })
     .composite([
-      // Shadow
-      {
-        input: shadowBuffer,
-        left: productLeft - shadowBlur,
-        top: productTop - shadowBlur,
-      },
-      // Product (on top)
       {
         input: resizedProduct,
         left: productLeft,
