@@ -1,15 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import Replicate from 'replicate'
 import sharp from 'sharp'
 import { getUserByEmail, createUsage } from '@/lib/db'
 import { sendCreditsLowEmail, sendCreditsDepletedEmail } from '@/lib/email'
 import { imageProcessingLimiter, getClientIdentifier, rateLimitResponse } from '@/lib/rate-limit'
 import { authenticateRequest } from '@/lib/api-auth'
 import { CREDIT_COSTS } from '@/lib/credits-config'
-
-const replicate = new Replicate({
-  auth: process.env.REPLICATE_API_TOKEN!,
-})
+import { ImageProcessor } from '@/lib/image-processor'
 
 interface PackshotPreset {
   name: string
@@ -19,25 +15,26 @@ interface PackshotPreset {
 
 const PACKSHOT_CREDITS = CREDIT_COSTS.packshot.cost
 
+// ICLight V2 lighting prompts - these create dramatic studio lighting effects
 const PRESETS: Record<string, PackshotPreset> = {
   white: {
     name: 'White Background',
-    prompt: 'Transform this into a professional commercial product photography shot. Place the product on a pure white seamless background with two-softbox studio lighting setup. Add dramatic specular highlights and reflections on metallic/glossy surfaces. Create soft diffused shadows underneath. Use 85mm lens perspective, f/8 aperture look. High dynamic range, studio-quality lighting with rim light accent. The product must remain exactly identical - only enhance the lighting, add professional reflections, and change background to pure white studio sweep. Commercial packshot quality, dust-free, sharp focus.',
+    prompt: 'Professional product photography, pure white studio background, dramatic studio lighting with two softboxes, specular highlights on metallic and glossy surfaces, soft diffused shadow underneath, commercial packshot, high-end advertising quality',
     credits: PACKSHOT_CREDITS,
   },
   gray: {
     name: 'Light Gray',
-    prompt: 'Transform this into a professional commercial product photography shot. Place the product on a light gray gradient seamless backdrop with professional three-point lighting setup. Add specular highlights on reflective surfaces and soft shadow underneath. Use dramatic side lighting to emphasize product contours and textures. 85mm lens perspective with shallow depth of field feel. The product must remain exactly identical - only enhance with professional studio lighting, reflections on shiny parts, and gray gradient background. Commercial packshot quality, high-end advertising look.',
+    prompt: 'Professional product photography, light gray gradient studio background, three-point lighting setup, dramatic side lighting, specular highlights on reflective surfaces, soft shadow, commercial quality, high-end product shot',
     credits: PACKSHOT_CREDITS,
   },
   studio: {
     name: 'Studio Setup',
-    prompt: 'Transform this into a premium commercial product photography shot worthy of high-end advertising. Place on white acrylic reflective surface with professional multi-light studio setup. Add dramatic specular highlights, light flares on metallic parts, and mirror-like reflection below the product. Use rim lighting to separate product from background. Professional packshot with 85mm f/8 lens look. The product must remain exactly identical - only add professional studio lighting effects, reflections, and highlights. Magazine advertisement quality, ultra sharp, high dynamic range.',
+    prompt: 'Premium commercial product photography, white reflective acrylic surface, dramatic multi-light studio setup, strong specular highlights, light flares on metal parts, mirror reflection below product, rim lighting, magazine advertisement quality',
     credits: PACKSHOT_CREDITS,
   },
   lifestyle: {
     name: 'Lifestyle',
-    prompt: 'Transform this into a premium lifestyle product photography shot. Place product in an elegant, minimal modern setting with soft natural window lighting and gentle shadows. Add subtle reflections and professional lighting accents. Clean, sophisticated background that complements the product. The product must remain exactly identical - only enhance lighting and place in lifestyle context. High-end brand photography style, editorial quality.',
+    prompt: 'Premium lifestyle product photography, elegant minimal modern setting, soft natural window lighting, gentle shadows, sophisticated background, high-end brand photography, editorial quality',
     credits: PACKSHOT_CREDITS,
   },
 }
@@ -47,23 +44,12 @@ async function generatePackshot(imageBuffer: Buffer, prompt: string): Promise<Bu
   const base64Image = imageBuffer.toString('base64')
   const dataUrl = `data:image/png;base64,${base64Image}`
 
-  // Use FLUX Kontext Pro to generate professional packshot
-  const output = await replicate.run(
-    "black-forest-labs/flux-kontext-pro",
-    {
-      input: {
-        prompt: prompt,
-        input_image: dataUrl,
-        aspect_ratio: "1:1",
-        output_format: "png",
-        safety_tolerance: 2,
-        prompt_upsampling: true, // Enhance prompt for better results
-      }
-    }
-  ) as unknown as string
+  // Use ICLight V2 for professional studio relighting
+  // This model specializes in adding dramatic studio lighting effects
+  const relitUrl = await ImageProcessor.relightForPackshot(dataUrl, prompt)
 
   // Download result
-  const response = await fetch(output)
+  const response = await fetch(relitUrl)
   if (!response.ok) {
     throw new Error('Failed to download generated packshot')
   }
@@ -191,7 +177,7 @@ export async function POST(request: NextRequest) {
       type: 'packshot_generation',
       creditsUsed: creditsNeeded,
       imageSize: `${file.size} bytes`,
-      model: 'flux-kontext-pro',
+      model: 'iclight-v2',
     })
 
     const newCredits = user.credits - creditsNeeded

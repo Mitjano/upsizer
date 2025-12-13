@@ -470,4 +470,205 @@ export class ImageProcessor {
     console.log('Photo restored via FLUX Kontext')
     return resultUrl
   }
+
+  /**
+   * Professional studio relighting using ICLight V2 ($0.1/megapixel)
+   * Perfect for packshots - adds dramatic studio lighting
+   */
+  static async relightForPackshot(dataUrl: string, lightingPrompt: string): Promise<string> {
+    const falApiKey = process.env.FAL_API_KEY
+    if (!falApiKey) {
+      throw new Error('FAL_API_KEY not configured')
+    }
+
+    console.log('Starting ICLight V2 studio relighting...')
+
+    // Submit request to Fal.ai ICLight V2
+    const submitResponse = await fetch('https://queue.fal.run/fal-ai/iclight-v2', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Key ${falApiKey}`,
+      },
+      body: JSON.stringify({
+        image_url: dataUrl,
+        prompt: lightingPrompt,
+        num_inference_steps: 35,
+        guidance_scale: 7,
+        enable_hr_fix: true,
+        output_format: 'png',
+      }),
+    })
+
+    if (!submitResponse.ok) {
+      const error = await submitResponse.text()
+      throw new Error(`ICLight V2 submit failed: ${error}`)
+    }
+
+    const submitData = await submitResponse.json()
+    const requestId = submitData.request_id
+
+    if (!requestId) {
+      throw new Error('No request_id returned from ICLight V2')
+    }
+
+    // Poll for result
+    let attempts = 0
+    const maxAttempts = 120 // 2 minutes max
+
+    while (attempts < maxAttempts) {
+      await new Promise(resolve => setTimeout(resolve, 1000))
+
+      const statusResponse = await fetch(
+        `https://queue.fal.run/fal-ai/iclight-v2/requests/${requestId}/status`,
+        {
+          headers: {
+            'Authorization': `Key ${falApiKey}`,
+          },
+        }
+      )
+
+      if (!statusResponse.ok) {
+        attempts++
+        continue
+      }
+
+      const statusData = await statusResponse.json()
+
+      if (statusData.status === 'COMPLETED') {
+        const resultResponse = await fetch(
+          `https://queue.fal.run/fal-ai/iclight-v2/requests/${requestId}`,
+          {
+            headers: {
+              'Authorization': `Key ${falApiKey}`,
+            },
+          }
+        )
+
+        if (!resultResponse.ok) {
+          throw new Error('Failed to get result from ICLight V2')
+        }
+
+        const resultData = await resultResponse.json()
+
+        // ICLight V2 returns { images: [{ url: "..." }] }
+        if (resultData.images?.[0]?.url) {
+          console.log('Product relit via ICLight V2')
+          return resultData.images[0].url
+        }
+
+        throw new Error('No image URL in ICLight V2 response')
+      }
+
+      if (statusData.status === 'FAILED') {
+        throw new Error(`ICLight V2 processing failed: ${statusData.error || 'Unknown error'}`)
+      }
+
+      attempts++
+    }
+
+    throw new Error('ICLight V2 processing timeout')
+  }
+
+  /**
+   * Professional packshot generation using Bria Product Shot
+   * Places product in a studio setting with professional lighting
+   */
+  static async generateProductShot(
+    productImageUrl: string,
+    sceneDescription: string
+  ): Promise<string> {
+    const falApiKey = process.env.FAL_API_KEY
+    if (!falApiKey) {
+      throw new Error('FAL_API_KEY not configured')
+    }
+
+    console.log('Starting Bria Product Shot generation...')
+
+    // Submit request to Fal.ai Bria Product Shot
+    const submitResponse = await fetch('https://queue.fal.run/fal-ai/bria/product-shot', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Key ${falApiKey}`,
+      },
+      body: JSON.stringify({
+        image_url: productImageUrl,
+        scene_description: sceneDescription,
+        placement_type: 'automatic',
+        optimize_description: true,
+        shot_size: [2000, 2000],
+        num_results: 1,
+      }),
+    })
+
+    if (!submitResponse.ok) {
+      const error = await submitResponse.text()
+      throw new Error(`Bria Product Shot submit failed: ${error}`)
+    }
+
+    const submitData = await submitResponse.json()
+    const requestId = submitData.request_id
+
+    if (!requestId) {
+      throw new Error('No request_id returned from Bria Product Shot')
+    }
+
+    // Poll for result
+    let attempts = 0
+    const maxAttempts = 120 // 2 minutes max
+
+    while (attempts < maxAttempts) {
+      await new Promise(resolve => setTimeout(resolve, 1000))
+
+      const statusResponse = await fetch(
+        `https://queue.fal.run/fal-ai/bria/product-shot/requests/${requestId}/status`,
+        {
+          headers: {
+            'Authorization': `Key ${falApiKey}`,
+          },
+        }
+      )
+
+      if (!statusResponse.ok) {
+        attempts++
+        continue
+      }
+
+      const statusData = await statusResponse.json()
+
+      if (statusData.status === 'COMPLETED') {
+        const resultResponse = await fetch(
+          `https://queue.fal.run/fal-ai/bria/product-shot/requests/${requestId}`,
+          {
+            headers: {
+              'Authorization': `Key ${falApiKey}`,
+            },
+          }
+        )
+
+        if (!resultResponse.ok) {
+          throw new Error('Failed to get result from Bria Product Shot')
+        }
+
+        const resultData = await resultResponse.json()
+
+        // Bria returns { images: [{ url: "..." }] }
+        if (resultData.images?.[0]?.url) {
+          console.log('Product shot generated via Bria')
+          return resultData.images[0].url
+        }
+
+        throw new Error('No image URL in Bria Product Shot response')
+      }
+
+      if (statusData.status === 'FAILED') {
+        throw new Error(`Bria Product Shot failed: ${statusData.error || 'Unknown error'}`)
+      }
+
+      attempts++
+    }
+
+    throw new Error('Bria Product Shot processing timeout')
+  }
 }
