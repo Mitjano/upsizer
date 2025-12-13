@@ -239,180 +239,76 @@ export class ImageProcessor {
   }
 
   /**
-   * Upscale image using Fal.ai models
+   * Upscale image using Replicate Real-ESRGAN or GFPGAN
    * @param dataUrl - Base64 data URL of the image
-   * @param scale - Upscale factor (2 or 4)
-   * @param model - Model to use: 'esrgan' (fast) or 'aura-sr' (best quality)
+   * @param scale - Upscale factor (2, 4, or 8)
+   * @param faceEnhance - Whether to use GFPGAN for face enhancement
    * @returns URL of the upscaled image
    */
   static async upscaleImage(
     dataUrl: string,
-    scale: 2 | 4,
-    model: 'esrgan' | 'aura-sr' = 'esrgan'
+    scale: 2 | 4 | 8,
+    faceEnhance: boolean = false
   ): Promise<string> {
-    const falApiKey = process.env.FAL_API_KEY
-
-    if (!falApiKey) {
-      throw new Error('FAL_API_KEY environment variable is required for upscaling')
-    }
-
     try {
-      if (model === 'aura-sr') {
-        return await this.upscaleViaAuraSR(dataUrl, falApiKey)
+      if (faceEnhance) {
+        return await this.upscaleWithGFPGAN(dataUrl, scale)
       } else {
-        return await this.upscaleViaESRGAN(dataUrl, scale, falApiKey)
+        return await this.upscaleWithRealESRGAN(dataUrl, scale)
       }
     } catch (error) {
-      console.error(`Fal.ai ${model} upscaling failed:`, error)
+      console.error('Replicate upscaling failed:', error)
       throw error
     }
   }
 
   /**
-   * Upscale using Fal.ai ESRGAN (fast, supports 2x and 4x)
-   * Uses synchronous fal.run endpoint for faster response
+   * Upscale using Real-ESRGAN (general upscaling)
    */
-  private static async upscaleViaESRGAN(
+  private static async upscaleWithRealESRGAN(
     dataUrl: string,
-    scale: 2 | 4,
-    apiKey: string
+    scale: 2 | 4 | 8
   ): Promise<string> {
-    console.log(`Starting ESRGAN ${scale}x upscale...`)
+    console.log(`Starting Real-ESRGAN ${scale}x upscale...`)
 
-    // Use synchronous endpoint for faster response
-    const response = await fetch('https://fal.run/fal-ai/esrgan', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Key ${apiKey}`,
-      },
-      body: JSON.stringify({
-        image_url: dataUrl,
-        scale: scale,
-        model: 'RealESRGAN_x4plus',
-        output_format: 'png',
-      }),
-    })
+    const output = await this.replicate.run(
+      "nightmareai/real-esrgan:f121d640bd286e1fdc67f9799164c1d5be36ff74576ee11c803ae5b665dd46aa",
+      {
+        input: {
+          image: dataUrl,
+          scale: scale,
+          face_enhance: false,
+        },
+      }
+    )
 
-    if (!response.ok) {
-      const error = await response.text()
-      throw new Error(`Fal.ai ESRGAN failed: ${error}`)
-    }
-
-    const result = await response.json()
-
-    if (result.image?.url) {
-      console.log('Image upscaled via Fal.ai ESRGAN')
-      return result.image.url
-    }
-
-    throw new Error('No image URL in Fal.ai ESRGAN response')
+    const resultUrl = typeof output === 'string' ? output : String(output)
+    console.log('Image upscaled via Replicate Real-ESRGAN')
+    return resultUrl
   }
 
   /**
-   * Upscale using Fal.ai AuraSR v2 (best quality, 4x only)
-   * Uses synchronous fal.run endpoint
+   * Upscale using GFPGAN (face enhancement + upscaling)
    */
-  private static async upscaleViaAuraSR(
+  private static async upscaleWithGFPGAN(
     dataUrl: string,
-    apiKey: string
+    scale: 2 | 4 | 8
   ): Promise<string> {
-    console.log('Starting AuraSR v2 4x upscale...')
+    console.log(`Starting GFPGAN ${scale}x upscale with face enhancement...`)
 
-    // Use synchronous endpoint
-    const response = await fetch('https://fal.run/fal-ai/aura-sr', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Key ${apiKey}`,
-      },
-      body: JSON.stringify({
-        image_url: dataUrl,
-        upscaling_factor: 4,
-        overlapping_tiles: true,
-      }),
-    })
-
-    if (!response.ok) {
-      const error = await response.text()
-      throw new Error(`Fal.ai AuraSR failed: ${error}`)
-    }
-
-    const result = await response.json()
-
-    if (result.image?.url) {
-      console.log('Image upscaled via Fal.ai AuraSR')
-      return result.image.url
-    }
-
-    throw new Error('No image URL in Fal.ai AuraSR response')
-  }
-
-  /**
-   * Poll Fal.ai for result (shared by upscaling methods)
-   */
-  private static async pollFalResult(
-    modelPath: string,
-    requestId: string,
-    apiKey: string,
-    modelName: string
-  ): Promise<string> {
-    let attempts = 0
-    const maxAttempts = 120 // 2 minutes max
-
-    while (attempts < maxAttempts) {
-      await new Promise(resolve => setTimeout(resolve, 1000))
-
-      const statusResponse = await fetch(
-        `https://queue.fal.run/${modelPath}/requests/${requestId}/status`,
-        {
-          headers: {
-            'Authorization': `Key ${apiKey}`,
-          },
-        }
-      )
-
-      if (!statusResponse.ok) {
-        attempts++
-        continue
+    const output = await this.replicate.run(
+      "tencentarc/gfpgan:9283608cc6b7be6b65a8e44983db012355fde4132009bf99d976b2f0896856a3",
+      {
+        input: {
+          img: dataUrl,
+          scale: scale,
+          version: "v1.4",
+        },
       }
+    )
 
-      const statusData = await statusResponse.json()
-
-      if (statusData.status === 'COMPLETED') {
-        // Get result
-        const resultResponse = await fetch(
-          `https://queue.fal.run/${modelPath}/requests/${requestId}`,
-          {
-            headers: {
-              'Authorization': `Key ${apiKey}`,
-            },
-          }
-        )
-
-        if (!resultResponse.ok) {
-          throw new Error(`Failed to get result from Fal.ai ${modelName}`)
-        }
-
-        const resultData = await resultResponse.json()
-
-        // ESRGAN returns { image: { url: "..." } }
-        // AuraSR returns { image: { url: "..." } }
-        if (resultData.image?.url) {
-          console.log(`Image upscaled via Fal.ai ${modelName}`)
-          return resultData.image.url
-        }
-
-        throw new Error(`No image URL in Fal.ai ${modelName} response`)
-      }
-
-      if (statusData.status === 'FAILED') {
-        throw new Error(`Fal.ai ${modelName} processing failed: ${statusData.error || 'Unknown error'}`)
-      }
-
-      attempts++
-    }
-
-    throw new Error(`Fal.ai ${modelName} processing timeout`)
+    const resultUrl = typeof output === 'string' ? output : String(output)
+    console.log('Image upscaled via Replicate GFPGAN')
+    return resultUrl
   }
 }

@@ -7,10 +7,10 @@ import { authenticateRequest } from "@/lib/api-auth";
 import { ImageProcessor } from "@/lib/image-processor";
 import { ProcessedImagesDB } from "@/lib/processed-images-db";
 
-// Credit costs
+// Credit costs - 1 credit per upscale, +1 for face enhancement
 const CREDIT_COSTS = {
-  standard: 1, // ESRGAN
-  premium: 2,  // AuraSR
+  standard: 1,
+  faceEnhance: 1, // Additional credit for GFPGAN face enhancement
 };
 
 export async function POST(request: NextRequest) {
@@ -45,14 +45,14 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData();
     const image = formData.get("image") as File;
     const scaleParam = parseInt(formData.get("scale") as string) || 2;
-    const modelParam = formData.get("model") as string || "esrgan";
 
-    // Support legacy qualityBoost parameter for backward compatibility
+    // Support face enhancement (GFPGAN) - legacy qualityBoost parameter
     const qualityBoost = formData.get("qualityBoost") === "true";
-    const model = qualityBoost ? "aura-sr" : (modelParam === "aura-sr" ? "aura-sr" : "esrgan");
+    const faceEnhanceParam = formData.get("faceEnhance") === "true";
+    const faceEnhance = qualityBoost || faceEnhanceParam;
 
-    // AuraSR only supports 4x, ESRGAN supports 2x and 4x
-    const scale = model === "aura-sr" ? 4 : (scaleParam === 4 ? 4 : 2) as 2 | 4;
+    // Validate and set scale (2, 4, or 8)
+    const scale = [2, 4, 8].includes(scaleParam) ? scaleParam as 2 | 4 | 8 : 2;
 
     if (!image) {
       return NextResponse.json(
@@ -76,8 +76,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Calculate credits needed
-    const creditsNeeded = model === "aura-sr" ? CREDIT_COSTS.premium : CREDIT_COSTS.standard;
+    // Calculate credits needed (1 base + 1 for face enhancement)
+    const creditsNeeded = CREDIT_COSTS.standard + (faceEnhance ? CREDIT_COSTS.faceEnhance : 0);
 
     // Check if user has enough credits
     if (user.credits < creditsNeeded) {
@@ -129,11 +129,11 @@ export async function POST(request: NextRequest) {
       isProcessed: false
     });
 
-    // Use fal.ai for upscaling
-    console.log(`Starting upscale: model=${model}, scale=${scale}x`);
-    const resultUrl = await ImageProcessor.upscaleImage(dataUrl, scale, model as 'esrgan' | 'aura-sr');
+    // Use Replicate for upscaling (Real-ESRGAN or GFPGAN)
+    console.log(`Starting upscale: scale=${scale}x, faceEnhance=${faceEnhance}`);
+    const resultUrl = await ImageProcessor.upscaleImage(dataUrl, scale, faceEnhance);
 
-    // Download processed image from fal.ai
+    // Download processed image from Replicate
     const processedBuffer = await ImageProcessor.downloadImage(resultUrl);
 
     // Save processed image as PNG
@@ -158,10 +158,10 @@ export async function POST(request: NextRequest) {
     // Track usage and deduct credits
     await createUsage({
       userId: user.id,
-      type: model === 'aura-sr' ? 'upscale_premium' : 'upscale_standard',
+      type: faceEnhance ? 'upscale_enhanced' : 'upscale_standard',
       creditsUsed: creditsNeeded,
       imageSize: `${image.size} bytes`,
-      model: model === 'aura-sr' ? 'AuraSR' : 'ESRGAN',
+      model: faceEnhance ? 'GFPGAN' : 'Real-ESRGAN',
     });
 
     // Credits are already deducted by createUsage function
@@ -197,7 +197,8 @@ export async function POST(request: NextRequest) {
       imageUrl: `/api/processed-images/${imageRecord.id}/view?type=processed`,
       originalUrl: `/api/processed-images/${imageRecord.id}/view?type=original`,
       scale: scale,
-      model: model,
+      faceEnhance: faceEnhance,
+      model: faceEnhance ? 'GFPGAN' : 'Real-ESRGAN',
       creditsUsed: creditsNeeded,
       creditsRemaining: updatedUser?.credits || 0,
     };

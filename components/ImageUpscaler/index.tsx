@@ -15,8 +15,7 @@ import {
 } from '../shared'
 import { useAnalytics } from '@/hooks/useAnalytics'
 
-type UpscaleModel = 'esrgan' | 'aura-sr'
-type UpscaleScale = 2 | 4
+type UpscaleScale = 2 | 4 | 8
 
 interface ProcessingResult {
   imageId: string
@@ -24,6 +23,7 @@ interface ProcessingResult {
   originalUrl: string
   scale: number
   model: string
+  faceEnhance: boolean
   creditsUsed: number
   creditsRemaining: number
 }
@@ -45,8 +45,8 @@ export function ImageUpscaler({ userRole = 'user' }: ImageUpscalerProps) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
 
   // Settings
-  const [model, setModel] = useState<UpscaleModel>('esrgan')
   const [scale, setScale] = useState<UpscaleScale>(2)
+  const [faceEnhance, setFaceEnhance] = useState(false)
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) return
@@ -75,10 +75,10 @@ export function ImageUpscaler({ userRole = 'user' }: ImageUpscalerProps) {
       const formData = new FormData()
       formData.append('image', selectedFile)
       formData.append('scale', scale.toString())
-      formData.append('model', model)
+      formData.append('faceEnhance', faceEnhance.toString())
 
-      const modelName = model === 'aura-sr' ? 'AuraSR (Premium)' : 'ESRGAN (Standard)'
-      toast.loading(`Upscaling with ${modelName}...`, { id: 'upscale' })
+      const modelName = faceEnhance ? 'GFPGAN (Face Enhancement)' : 'Real-ESRGAN'
+      toast.loading(`Upscaling ${scale}x with ${modelName}...`, { id: 'upscale' })
 
       const response = await fetch('/api/upscale', {
         method: 'POST',
@@ -98,6 +98,7 @@ export function ImageUpscaler({ userRole = 'user' }: ImageUpscalerProps) {
         originalUrl: data.originalUrl || previewUrl!,
         scale: data.scale,
         model: data.model,
+        faceEnhance: data.faceEnhance,
         creditsUsed: data.creditsUsed,
         creditsRemaining: data.creditsRemaining,
       })
@@ -167,16 +168,16 @@ export function ImageUpscaler({ userRole = 'user' }: ImageUpscalerProps) {
     return (
       <LoginPrompt
         title="Upscale Your Images"
-        description="Sign in to upscale your images up to 4x with AI"
+        description="Sign in to upscale your images up to 8x with AI"
         callbackUrl="/tools/upscaler"
         accentColor="purple"
-        features={["3 Free Credits", "No Credit Card", "Up to 4x Upscale"]}
+        features={["3 Free Credits", "No Credit Card", "Up to 8x Upscale"]}
       />
     )
   }
 
-  // Credit cost display
-  const creditCost = model === 'aura-sr' ? 2 : 1
+  // Credit cost: 1 base + 1 for face enhancement
+  const creditCost = 1 + (faceEnhance ? 1 : 0)
 
   return (
     <div className="w-full max-w-5xl mx-auto space-y-8">
@@ -243,88 +244,63 @@ export function ImageUpscaler({ userRole = 'user' }: ImageUpscalerProps) {
             </button>
           </div>
 
-          {/* Model Selection */}
-          <div className="grid grid-cols-2 gap-4">
-            <button
-              onClick={() => setModel('esrgan')}
-              disabled={processing}
-              className={`p-4 rounded-xl border-2 transition-all ${
-                model === 'esrgan'
-                  ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20'
-                  : 'border-gray-200 dark:border-gray-700 hover:border-purple-300'
-              } ${processing ? 'opacity-50 cursor-not-allowed' : ''}`}
-            >
-              <div className="text-left">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-bold text-gray-900 dark:text-white">Standard</span>
-                  <span className="text-xs px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-full">
-                    1 credit
-                  </span>
-                </div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">ESRGAN - Fast and reliable</p>
-                <p className="text-xs text-gray-500 mt-1">Supports 2x and 4x upscaling</p>
-              </div>
-            </button>
-
-            <button
-              onClick={() => { setModel('aura-sr'); setScale(4); }}
-              disabled={processing}
-              className={`p-4 rounded-xl border-2 transition-all ${
-                model === 'aura-sr'
-                  ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20'
-                  : 'border-gray-200 dark:border-gray-700 hover:border-purple-300'
-              } ${processing ? 'opacity-50 cursor-not-allowed' : ''}`}
-            >
-              <div className="text-left">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-bold text-gray-900 dark:text-white">Premium</span>
-                  <span className="text-xs px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 rounded-full">
-                    2 credits
-                  </span>
-                </div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">AuraSR v2 - Best quality</p>
-                <p className="text-xs text-gray-500 mt-1">GAN-based, preserves fine details</p>
-              </div>
-            </button>
+          {/* Scale Selection */}
+          <div className="flex flex-col items-center gap-4">
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Upscale Factor:</span>
+            <div className="flex bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+              {[2, 4, 8].map((s) => (
+                <button
+                  key={s}
+                  onClick={() => setScale(s as UpscaleScale)}
+                  disabled={processing}
+                  className={`px-6 py-2 rounded-md text-sm font-medium transition ${
+                    scale === s
+                      ? 'bg-white dark:bg-gray-700 text-purple-600 dark:text-purple-400 shadow-sm'
+                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                  }`}
+                >
+                  {s}x
+                </button>
+              ))}
+            </div>
           </div>
 
-          {/* Scale Selection - Only for ESRGAN */}
-          {model === 'esrgan' && (
-            <div className="flex items-center justify-center gap-4">
-              <span className="text-sm text-gray-600 dark:text-gray-400">Scale:</span>
-              <div className="flex bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
-                <button
-                  onClick={() => setScale(2)}
+          {/* Face Enhancement Toggle */}
+          <div className="flex items-center justify-center gap-4">
+            <label className="flex items-center gap-3 cursor-pointer">
+              <div className="relative">
+                <input
+                  type="checkbox"
+                  checked={faceEnhance}
+                  onChange={(e) => setFaceEnhance(e.target.checked)}
                   disabled={processing}
-                  className={`px-4 py-2 rounded-md text-sm font-medium transition ${
-                    scale === 2
-                      ? 'bg-white dark:bg-gray-700 text-purple-600 dark:text-purple-400 shadow-sm'
-                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-                  }`}
-                >
-                  2x
-                </button>
-                <button
-                  onClick={() => setScale(4)}
-                  disabled={processing}
-                  className={`px-4 py-2 rounded-md text-sm font-medium transition ${
-                    scale === 4
-                      ? 'bg-white dark:bg-gray-700 text-purple-600 dark:text-purple-400 shadow-sm'
-                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-                  }`}
-                >
-                  4x
-                </button>
+                  className="sr-only"
+                />
+                <div className={`w-11 h-6 rounded-full transition-colors ${
+                  faceEnhance
+                    ? 'bg-purple-600'
+                    : 'bg-gray-300 dark:bg-gray-600'
+                }`}>
+                  <div className={`w-5 h-5 bg-white rounded-full shadow-md transform transition-transform ${
+                    faceEnhance ? 'translate-x-5' : 'translate-x-0.5'
+                  } mt-0.5`} />
+                </div>
               </div>
-            </div>
-          )}
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                Face Enhancement (GFPGAN)
+              </span>
+              <span className="text-xs px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 rounded-full">
+                +1 credit
+              </span>
+            </label>
+          </div>
 
-          {/* AuraSR fixed scale note */}
-          {model === 'aura-sr' && (
-            <div className="text-center text-sm text-gray-500 dark:text-gray-400">
-              AuraSR uses 4x upscaling for best quality results
-            </div>
-          )}
+          {/* Info */}
+          <div className="text-center text-sm text-gray-500 dark:text-gray-400">
+            {faceEnhance
+              ? 'GFPGAN enhances faces and improves overall quality'
+              : 'Real-ESRGAN for fast, reliable upscaling'}
+          </div>
 
           {/* Upscale Button */}
           <div className="flex justify-center">
@@ -347,7 +323,7 @@ export function ImageUpscaler({ userRole = 'user' }: ImageUpscalerProps) {
                 </div>
               ) : (
                 <div className="flex items-center gap-2">
-                  <span>Upscale Image</span>
+                  <span>Upscale {scale}x</span>
                   <span className="text-purple-200">({creditCost} credit{creditCost > 1 ? 's' : ''})</span>
                 </div>
               )}
@@ -367,13 +343,13 @@ export function ImageUpscaler({ userRole = 'user' }: ImageUpscalerProps) {
             originalUrl={result.originalUrl}
             processedUrl={result.imageUrl}
             originalLabel="Original"
-            processedLabel={`${result.scale}x Upscaled`}
+            processedLabel={`${result.scale}x Upscaled${result.faceEnhance ? ' + Enhanced' : ''}`}
             accentColor="purple"
           />
 
           {/* Credits Info */}
           <CreditsInfo
-            message={`Image upscaled ${result.scale}x successfully!`}
+            message={`Image upscaled ${result.scale}x successfully!${result.faceEnhance ? ' Face enhancement applied.' : ''}`}
             creditsRemaining={result.creditsRemaining}
             accentColor="purple"
           />
