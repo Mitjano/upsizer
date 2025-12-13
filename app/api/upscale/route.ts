@@ -167,7 +167,12 @@ export async function POST(request: NextRequest) {
         }
         break;
       } else if (status.status === "failed" || status.status === "canceled") {
-        throw new Error(`Replicate processing failed: ${status.error || 'Unknown error'}`);
+        // Check if it's a transient Replicate error (upload issues)
+        const errorMsg = status.error || 'Unknown error';
+        if (errorMsg.includes('upload output files') || errorMsg.includes('Cog')) {
+          throw new Error(`Replicate temporary error. Please try again in a moment. (${errorMsg})`);
+        }
+        throw new Error(`Replicate processing failed: ${errorMsg}`);
       }
 
       // Wait 1 second before next poll
