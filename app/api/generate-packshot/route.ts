@@ -15,26 +15,26 @@ interface PackshotPreset {
 
 const PACKSHOT_CREDITS = CREDIT_COSTS.packshot.cost
 
-// ICLight V2 lighting prompts - these create dramatic studio lighting effects
+// Bria Product Shot scene descriptions - professional product photography scenes
 const PRESETS: Record<string, PackshotPreset> = {
   white: {
     name: 'White Background',
-    prompt: 'Professional product photography, pure white studio background, dramatic studio lighting with two softboxes, specular highlights on metallic and glossy surfaces, soft diffused shadow underneath, commercial packshot, high-end advertising quality',
+    prompt: 'professional product photography studio, pure white seamless background, soft studio lighting, clean commercial packshot',
     credits: PACKSHOT_CREDITS,
   },
   gray: {
     name: 'Light Gray',
-    prompt: 'Professional product photography, light gray gradient studio background, three-point lighting setup, dramatic side lighting, specular highlights on reflective surfaces, soft shadow, commercial quality, high-end product shot',
+    prompt: 'professional product photography studio, light gray gradient backdrop, soft diffused lighting, elegant commercial shot',
     credits: PACKSHOT_CREDITS,
   },
   studio: {
     name: 'Studio Setup',
-    prompt: 'Premium commercial product photography, white reflective acrylic surface, dramatic multi-light studio setup, strong specular highlights, light flares on metal parts, mirror reflection below product, rim lighting, magazine advertisement quality',
+    prompt: 'premium product photography studio, white reflective surface with mirror reflection, professional multi-light setup, high-end commercial advertising',
     credits: PACKSHOT_CREDITS,
   },
   lifestyle: {
     name: 'Lifestyle',
-    prompt: 'Premium lifestyle product photography, elegant minimal modern setting, soft natural window lighting, gentle shadows, sophisticated background, high-end brand photography, editorial quality',
+    prompt: 'elegant minimalist interior setting, modern white marble surface, soft natural daylight from window, sophisticated lifestyle product shot',
     credits: PACKSHOT_CREDITS,
   },
 }
@@ -44,12 +44,12 @@ async function generatePackshot(imageBuffer: Buffer, prompt: string): Promise<Bu
   const base64Image = imageBuffer.toString('base64')
   const dataUrl = `data:image/png;base64,${base64Image}`
 
-  // Use ICLight V2 for professional studio relighting
-  // This model specializes in adding dramatic studio lighting effects
-  const relitUrl = await ImageProcessor.relightForPackshot(dataUrl, prompt)
+  // Use Bria Product Shot for professional packshot generation
+  // This model removes background and places product in professional studio scene
+  const packshotUrl = await ImageProcessor.generateProductShot(dataUrl, prompt)
 
   // Download result
-  const response = await fetch(relitUrl)
+  const response = await fetch(packshotUrl)
   if (!response.ok) {
     throw new Error('Failed to download generated packshot')
   }
@@ -177,7 +177,7 @@ export async function POST(request: NextRequest) {
       type: 'packshot_generation',
       creditsUsed: creditsNeeded,
       imageSize: `${file.size} bytes`,
-      model: 'iclight-v2',
+      model: 'bria-product-shot',
     })
 
     const newCredits = user.credits - creditsNeeded
