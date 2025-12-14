@@ -3613,5 +3613,17 @@
       "getStarted": "Get Started Free",
       "startInpainting": "Start Inpainting"
     }
+  },
+  "share": {
+    "createdWith": "Created with",
+    "freeAiTools": "Free AI Image Processing Tools",
+    "download": "Download",
+    "wantToCreate": "Want to create your own?",
+    "tryDescription": "Try Pixelift for free - AI-powered image upscaling, background removal, and more.",
+    "tryFree": "Try Pixelift Free",
+    "imageNotFound": "Image not found",
+    "poweredBy": "Powered by",
+    "copyLink": "Copy Link",
+    "linkCopied": "Link copied to clipboard!"
   }
 }

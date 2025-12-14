@@ -12,6 +12,7 @@ import {
   CreditsInfo,
   ErrorMessage,
   ActionButton,
+  CopyLinkButton,
 } from '../shared'
 import { useAnalytics } from '@/hooks/useAnalytics'
 
@@ -363,6 +364,7 @@ export function ImageUpscaler({ userRole = 'user' }: ImageUpscalerProps) {
             >
               Download Image
             </ActionButton>
+            <CopyLinkButton imageId={result.imageId} accentColor="purple" />
             <ActionButton
               onClick={handleReset}
               icon="upload"

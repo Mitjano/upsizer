@@ -21,5 +21,8 @@ export type { ErrorMessageProps } from './ErrorMessage';
 export { default as ActionButton } from './ActionButton';
 export type { ActionButtonProps } from './ActionButton';
 
+export { default as CopyLinkButton } from './CopyLinkButton';
+export type { CopyLinkButtonProps } from './CopyLinkButton';
+
 export { CreditCostBadge, CreditsRemaining, CreditCostInfo } from './CreditCostBadge';
 export type { CreditCostBadgeProps, CreditsRemainingProps, CreditCostInfoProps } from './CreditCostBadge';

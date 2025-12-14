@@ -13,6 +13,7 @@ import {
   ErrorMessage,
   ActionButton,
   CreditCostBadge,
+  CopyLinkButton,
 } from './shared'
 import { CREDIT_COSTS } from '@/lib/credits-config'
 import { useAnalytics } from '@/hooks/useAnalytics'
@@ -194,6 +195,7 @@ export function BackgroundRemover({ userRole = 'user' }: BackgroundRemoverProps)
             >
               Download Image
             </ActionButton>
+            <CopyLinkButton imageId={result.id} accentColor="blue" />
             <ActionButton
               onClick={() => setResult(null)}
               icon="upload"

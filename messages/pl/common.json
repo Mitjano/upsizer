@@ -3685,5 +3685,17 @@
       "getStarted": "Zacznij Za Darmo",
       "startInpainting": "Rozpocznij Inpainting"
     }
+  },
+  "share": {
+    "createdWith": "Stworzone z",
+    "freeAiTools": "Darmowe Narzędzia AI do Obróbki Zdjęć",
+    "download": "Pobierz",
+    "wantToCreate": "Chcesz stworzyć własne?",
+    "tryDescription": "Wypróbuj Pixelift za darmo - powiększanie zdjęć AI, usuwanie tła i więcej.",
+    "tryFree": "Wypróbuj Pixelift Za Darmo",
+    "imageNotFound": "Obraz nie znaleziony",
+    "poweredBy": "Zasilane przez",
+    "copyLink": "Kopiuj Link",
+    "linkCopied": "Link skopiowany do schowka!"
   }
 }
