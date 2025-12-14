@@ -3,8 +3,7 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
-import ImageComparison from "./ImageComparison";
-import { FaTimes, FaInfoCircle, FaPaintBrush, FaEraser, FaUndo } from "react-icons/fa";
+import { FaTimes, FaInfoCircle, FaPaintBrush, FaUndo } from "react-icons/fa";
 import { LoginPrompt, CreditCostBadge } from "./shared";
 import { CREDIT_COSTS } from '@/lib/credits-config';
 
@@ -404,12 +403,30 @@ export default function InpaintingPro() {
             </div>
           ) : (
             <div className="bg-gray-100 dark:bg-gray-800/50 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-              <ImageComparison
-                beforeImage={previewUrl}
-                afterImage={processedUrl}
-                beforeLabel="Original"
-                afterLabel="Inpainted"
-              />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Before */}
+                <div className="relative">
+                  <div className="absolute top-2 left-2 bg-black/60 text-white text-xs px-2 py-1 rounded z-10">
+                    Przed
+                  </div>
+                  <img
+                    src={previewUrl}
+                    alt="Original"
+                    className="w-full h-auto rounded-lg border border-gray-300 dark:border-gray-600"
+                  />
+                </div>
+                {/* After */}
+                <div className="relative">
+                  <div className="absolute top-2 left-2 bg-cyan-500/80 text-white text-xs px-2 py-1 rounded z-10">
+                    Po
+                  </div>
+                  <img
+                    src={processedUrl}
+                    alt="Inpainted"
+                    className="w-full h-auto rounded-lg border border-cyan-500/50"
+                  />
+                </div>
+              </div>
             </div>
           )}
 
