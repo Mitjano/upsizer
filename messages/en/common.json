@@ -3462,5 +3462,156 @@
       "getCredits": "Get Credits",
       "exploreTools": "Explore All Tools"
     }
+  },
+  "inpaintingPage": {
+    "badge": "Powered by FLUX Fill Pro AI",
+    "titlePrefix": "AI",
+    "title": "Inpainting Pro",
+    "subtitle": "Fill, replace, or extend parts of your images with AI-generated content. Paint over any area and describe what should appear - FLUX Fill Pro handles the rest.",
+    "stats": {
+      "quality": "Pro",
+      "qualityLabel": "Quality",
+      "processing": "~45s",
+      "processingLabel": "Processing",
+      "creditCost": "5",
+      "creditCostLabel": "Credits/Image"
+    },
+    "termsNotice": "By uploading a file you agree to our Terms of Use and Privacy Policy.",
+    "features": {
+      "title": "Powerful Features",
+      "smartFill": {
+        "title": "Smart Fill",
+        "description": "Paint over unwanted objects and let AI seamlessly fill the area with matching content."
+      },
+      "promptBased": {
+        "title": "Prompt-Based",
+        "description": "Describe what you want to appear in the painted area for precise, creative results."
+      },
+      "adjustableBrush": {
+        "title": "Adjustable Brush",
+        "description": "Variable brush size for precise masking - from fine details to large areas."
+      }
+    },
+    "howItWorks": {
+      "title": "How It",
+      "titleHighlight": "Works",
+      "step1": {
+        "title": "Upload Image",
+        "description": "Upload your photo in JPG, PNG, or WEBP format"
+      },
+      "step2": {
+        "title": "Paint Area",
+        "description": "Use the brush to mark the area for editing"
+      },
+      "step3": {
+        "title": "Describe Result",
+        "description": "Enter a prompt describing what should be generated"
+      },
+      "step4": {
+        "title": "Download Result",
+        "description": "Download the image with perfectly integrated changes"
+      }
+    },
+    "useCases": {
+      "title": "Perfect For",
+      "removeObjects": {
+        "icon": "🗑️",
+        "title": "Remove Objects",
+        "description": "Remove unwanted elements from photos while preserving the natural background"
+      },
+      "replaceContent": {
+        "icon": "🔄",
+        "title": "Replace Content",
+        "description": "Swap elements for something completely new based on your description"
+      },
+      "extendImages": {
+        "icon": "🖼️",
+        "title": "Extend Images",
+        "description": "Add content beyond the original photo borders"
+      },
+      "fixImperfections": {
+        "icon": "🔧",
+        "title": "Fix Imperfections",
+        "description": "Repair damaged or missing parts of photographs"
+      }
+    },
+    "technology": {
+      "title": "FLUX Fill Pro Technology",
+      "description": "FLUX Fill Pro is a state-of-the-art AI model from Black Forest Labs, designed specifically for advanced inpainting. It uses diffusion-based architecture to generate realistic content that seamlessly blends into existing images.",
+      "feature1": "Contextual image understanding for coherent results",
+      "feature2": "Prompt-based control for creative replacements",
+      "feature3": "Preservation of original image quality and style",
+      "feature4": "Support for a wide range of styles and image types"
+    },
+    "advancedUseCases": {
+      "title": "Advanced Use Cases",
+      "photography": {
+        "icon": "📸",
+        "title": "Professional Photography",
+        "description": "Enhance photo shoots by removing distractions or adding new elements.",
+        "example1": "Removing unwanted people from backgrounds",
+        "example2": "Adding props and set pieces"
+      },
+      "ecommerce": {
+        "icon": "🛒",
+        "title": "E-commerce",
+        "description": "Create product variants without additional photo shoots.",
+        "example1": "Changing product color or pattern",
+        "example2": "Adding or removing accessories"
+      },
+      "realEstate": {
+        "icon": "🏠",
+        "title": "Real Estate",
+        "description": "Present properties in their best light.",
+        "example1": "Removing old furniture or clutter",
+        "example2": "Virtual staging of empty rooms"
+      }
+    },
+    "tips": {
+      "title": "Tips for Best Results",
+      "bestPractices": {
+        "title": "Best Practices",
+        "tip1": "Paint over the entire object you want to replace",
+        "tip2": "Add a small margin around the object",
+        "tip3": "Use descriptive prompts for better results",
+        "tip4": "Test different brush sizes for precision"
+      },
+      "proTips": {
+        "title": "Pro Tips",
+        "tip1": "For removal: leave prompt empty or type 'background only'",
+        "tip2": "For replacement: describe the new element in detail",
+        "tip3": "Work with high-quality source images",
+        "tip4": "For complex edits, work in stages"
+      }
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "q1": {
+        "question": "What is inpainting?",
+        "answer": "Inpainting is an AI technique that fills marked areas of an image with new content. You can remove objects, replace elements, or extend images beyond their original borders."
+      },
+      "q2": {
+        "question": "How much does inpainting cost?",
+        "answer": "Each inpainting operation costs 5 credits. This price reflects the advanced FLUX Fill Pro technology that ensures the highest quality results."
+      },
+      "q3": {
+        "question": "What formats are supported?",
+        "answer": "We support JPG, JPEG, PNG, and WEBP formats. Maximum file size is 30MB. For best results, use high-quality images."
+      },
+      "q4": {
+        "question": "How to write a good prompt?",
+        "answer": "Be specific and descriptive. Instead of 'flower', write 'red rose with dew drops in soft light'. The more details, the better the results."
+      },
+      "q5": {
+        "question": "Can I use results commercially?",
+        "answer": "Yes! All generated images are fully yours and can be used commercially without restrictions."
+      }
+    },
+    "cta": {
+      "title": "Advanced AI Inpainting at Your Fingertips",
+      "subtitle": "The same technology used by professional photo editors - now available to everyone.",
+      "getStarted": "Get Started Free",
+      "startInpainting": "Start Inpainting"
+    }
   }
 }

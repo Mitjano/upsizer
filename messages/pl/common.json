@@ -3534,5 +3534,156 @@
       "getCredits": "Kup Kredyty",
       "exploreTools": "Zobacz Wszystkie Narzędzia"
     }
+  },
+  "inpaintingPage": {
+    "badge": "Napędzane przez FLUX Fill Pro AI",
+    "titlePrefix": "AI",
+    "title": "Inpainting Pro",
+    "subtitle": "Wypełniaj, zamieniaj lub rozszerzaj fragmenty obrazów za pomocą generowanej przez AI zawartości. Zamaluj dowolny obszar i opisz, co ma się pojawić - FLUX Fill Pro zrobi resztę.",
+    "stats": {
+      "quality": "Pro",
+      "qualityLabel": "Jakość",
+      "processing": "~45s",
+      "processingLabel": "Przetwarzanie",
+      "creditCost": "5",
+      "creditCostLabel": "Kredytów/Obraz"
+    },
+    "termsNotice": "Przesyłając plik, akceptujesz nasz Regulamin i Politykę Prywatności.",
+    "features": {
+      "title": "Potężne Funkcje",
+      "smartFill": {
+        "title": "Inteligentne Wypełnianie",
+        "description": "Zamaluj niechciane obiekty, a AI płynnie wypełni obszar dopasowaną zawartością."
+      },
+      "promptBased": {
+        "title": "Sterowanie Promptem",
+        "description": "Opisz, co ma się pojawić w zamalowanym obszarze dla precyzyjnych, kreatywnych rezultatów."
+      },
+      "adjustableBrush": {
+        "title": "Regulowany Pędzel",
+        "description": "Zmienny rozmiar pędzla do precyzyjnego maskowania - od drobnych detali po duże obszary."
+      }
+    },
+    "howItWorks": {
+      "title": "Jak Działa",
+      "titleHighlight": "Inpainting",
+      "step1": {
+        "title": "Prześlij Obraz",
+        "description": "Prześlij swoje zdjęcie w formacie JPG, PNG lub WEBP"
+      },
+      "step2": {
+        "title": "Zamaluj Obszar",
+        "description": "Użyj pędzla do zaznaczenia obszaru do edycji"
+      },
+      "step3": {
+        "title": "Opisz Efekt",
+        "description": "Wpisz prompt opisujący, co ma być wygenerowane"
+      },
+      "step4": {
+        "title": "Pobierz Wynik",
+        "description": "Pobierz obraz z idealnie zintegrowaną zmianą"
+      }
+    },
+    "useCases": {
+      "title": "Idealne Do",
+      "removeObjects": {
+        "icon": "🗑️",
+        "title": "Usuwanie Obiektów",
+        "description": "Usuń niechciane elementy ze zdjęć, zachowując naturalne tło"
+      },
+      "replaceContent": {
+        "icon": "🔄",
+        "title": "Zamiana Zawartości",
+        "description": "Zamień elementy na coś zupełnie nowego według opisu"
+      },
+      "extendImages": {
+        "icon": "🖼️",
+        "title": "Rozszerzanie Obrazów",
+        "description": "Dodaj zawartość poza oryginalne granice zdjęcia"
+      },
+      "fixImperfections": {
+        "icon": "🔧",
+        "title": "Naprawa Niedoskonałości",
+        "description": "Napraw uszkodzone lub brakujące fragmenty fotografii"
+      }
+    },
+    "technology": {
+      "title": "Technologia FLUX Fill Pro",
+      "description": "FLUX Fill Pro to najnowocześniejszy model AI od Black Forest Labs, zaprojektowany specjalnie do zaawansowanego inpaintingu. Wykorzystuje architekturę opartą na dyfuzji do generowania realistycznej zawartości, która płynnie wtapia się w istniejące obrazy.",
+      "feature1": "Kontekstowe rozumienie obrazu dla spójnych rezultatów",
+      "feature2": "Sterowanie promptem dla kreatywnych zamian",
+      "feature3": "Zachowanie jakości i stylu oryginalnego obrazu",
+      "feature4": "Obsługa szerokiej gamy stylów i typów obrazów"
+    },
+    "advancedUseCases": {
+      "title": "Zaawansowane Zastosowania",
+      "photography": {
+        "icon": "📸",
+        "title": "Profesjonalna Fotografia",
+        "description": "Udoskonal sesje zdjęciowe usuwając rozpraszające elementy lub dodając nowe.",
+        "example1": "Usuwanie niechcianych osób z tła",
+        "example2": "Dodawanie rekwizytów i elementów scenografii"
+      },
+      "ecommerce": {
+        "icon": "🛒",
+        "title": "E-commerce",
+        "description": "Twórz warianty produktów bez dodatkowych sesji zdjęciowych.",
+        "example1": "Zmiana koloru lub wzoru produktu",
+        "example2": "Dodawanie lub usuwanie akcesoriów"
+      },
+      "realEstate": {
+        "icon": "🏠",
+        "title": "Nieruchomości",
+        "description": "Prezentuj nieruchomości w najlepszym świetle.",
+        "example1": "Usuwanie starych mebli lub bałaganu",
+        "example2": "Virtual staging pustych pomieszczeń"
+      }
+    },
+    "tips": {
+      "title": "Wskazówki dla Najlepszych Rezultatów",
+      "bestPractices": {
+        "title": "Najlepsze Praktyki",
+        "tip1": "Zamaluj cały obiekt, który chcesz zastąpić",
+        "tip2": "Dodaj mały margines wokół obiektu",
+        "tip3": "Używaj opisowych promptów dla lepszych rezultatów",
+        "tip4": "Testuj różne rozmiary pędzla dla precyzji"
+      },
+      "proTips": {
+        "title": "Porady Pro",
+        "tip1": "Dla usuwania: zostaw prompt pusty lub wpisz 'background only'",
+        "tip2": "Dla zamiany: opisz szczegółowo nowy element",
+        "tip3": "Pracuj z wysokiej jakości obrazami źródłowymi",
+        "tip4": "Przy złożonych edycjach pracuj etapami"
+      }
+    },
+    "faq": {
+      "title": "Często Zadawane Pytania",
+      "q1": {
+        "question": "Czym jest inpainting?",
+        "answer": "Inpainting to technika AI, która wypełnia zaznaczone obszary obrazu nową zawartością. Możesz usuwać obiekty, zamieniać elementy lub rozszerzać obrazy poza ich oryginalne granice."
+      },
+      "q2": {
+        "question": "Ile kosztuje inpainting?",
+        "answer": "Każda operacja inpaintingu kosztuje 5 kredytów. Ta cena odzwierciedla zaawansowaną technologię FLUX Fill Pro, która zapewnia najwyższą jakość rezultatów."
+      },
+      "q3": {
+        "question": "Jakie formaty są obsługiwane?",
+        "answer": "Obsługujemy formaty JPG, JPEG, PNG i WEBP. Maksymalny rozmiar pliku to 30MB. Dla najlepszych rezultatów używaj obrazów wysokiej jakości."
+      },
+      "q4": {
+        "question": "Jak napisać dobry prompt?",
+        "answer": "Bądź konkretny i opisowy. Zamiast 'kwiat' napisz 'czerwona róża z kroplami rosy w miękkim świetle'. Im więcej szczegółów, tym lepsze rezultaty."
+      },
+      "q5": {
+        "question": "Czy mogę używać wyników komercyjnie?",
+        "answer": "Tak! Wszystkie wygenerowane obrazy są w pełni Twoje i możesz ich używać komercyjnie bez ograniczeń."
+      }
+    },
+    "cta": {
+      "title": "Zaawansowany AI Inpainting na Wyciągnięcie Ręki",
+      "subtitle": "Ta sama technologia używana przez profesjonalnych edytorów zdjęć - teraz dostępna dla każdego.",
+      "getStarted": "Zacznij Za Darmo",
+      "startInpainting": "Rozpocznij Inpainting"
+    }
   }
 }

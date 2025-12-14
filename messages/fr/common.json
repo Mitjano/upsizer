@@ -3549,5 +3549,156 @@
       "getCredits": "Obtenir des Crédits",
       "exploreTools": "Explorer Tous les Outils"
     }
+  },
+  "inpaintingPage": {
+    "badge": "Propulsé par FLUX Fill Pro AI",
+    "titlePrefix": "AI",
+    "title": "Inpainting Pro",
+    "subtitle": "Remplissez, remplacez ou étendez des parties de vos images avec du contenu généré par IA. Peignez sur n'importe quelle zone et décrivez ce qui doit apparaître - FLUX Fill Pro s'occupe du reste.",
+    "stats": {
+      "quality": "Pro",
+      "qualityLabel": "Qualité",
+      "processing": "~45s",
+      "processingLabel": "Traitement",
+      "creditCost": "5",
+      "creditCostLabel": "Crédits/Image"
+    },
+    "termsNotice": "En téléchargeant un fichier, vous acceptez nos Conditions d'utilisation et notre Politique de confidentialité.",
+    "features": {
+      "title": "Fonctionnalités Puissantes",
+      "smartFill": {
+        "title": "Remplissage Intelligent",
+        "description": "Peignez sur les objets indésirables et laissez l'IA remplir la zone de manière fluide avec un contenu correspondant."
+      },
+      "promptBased": {
+        "title": "Basé sur les Prompts",
+        "description": "Décrivez ce que vous voulez voir apparaître dans la zone peinte pour des résultats précis et créatifs."
+      },
+      "adjustableBrush": {
+        "title": "Pinceau Ajustable",
+        "description": "Taille de pinceau variable pour un masquage précis - des détails fins aux grandes zones."
+      }
+    },
+    "howItWorks": {
+      "title": "Comment Ça",
+      "titleHighlight": "Fonctionne",
+      "step1": {
+        "title": "Télécharger l'Image",
+        "description": "Téléchargez votre photo au format JPG, PNG ou WEBP"
+      },
+      "step2": {
+        "title": "Peindre la Zone",
+        "description": "Utilisez le pinceau pour marquer la zone à éditer"
+      },
+      "step3": {
+        "title": "Décrire le Résultat",
+        "description": "Entrez un prompt décrivant ce qui doit être généré"
+      },
+      "step4": {
+        "title": "Télécharger le Résultat",
+        "description": "Téléchargez l'image avec les modifications parfaitement intégrées"
+      }
+    },
+    "useCases": {
+      "title": "Parfait Pour",
+      "removeObjects": {
+        "icon": "🗑️",
+        "title": "Supprimer des Objets",
+        "description": "Supprimez les éléments indésirables des photos tout en préservant le fond naturel"
+      },
+      "replaceContent": {
+        "icon": "🔄",
+        "title": "Remplacer le Contenu",
+        "description": "Échangez des éléments contre quelque chose de complètement nouveau selon votre description"
+      },
+      "extendImages": {
+        "icon": "🖼️",
+        "title": "Étendre les Images",
+        "description": "Ajoutez du contenu au-delà des bordures originales de la photo"
+      },
+      "fixImperfections": {
+        "icon": "🔧",
+        "title": "Corriger les Imperfections",
+        "description": "Réparez les parties endommagées ou manquantes des photographies"
+      }
+    },
+    "technology": {
+      "title": "Technologie FLUX Fill Pro",
+      "description": "FLUX Fill Pro est un modèle IA de pointe de Black Forest Labs, conçu spécifiquement pour l'inpainting avancé. Il utilise une architecture basée sur la diffusion pour générer un contenu réaliste qui s'intègre parfaitement aux images existantes.",
+      "feature1": "Compréhension contextuelle de l'image pour des résultats cohérents",
+      "feature2": "Contrôle basé sur les prompts pour des remplacements créatifs",
+      "feature3": "Préservation de la qualité et du style de l'image originale",
+      "feature4": "Support d'une large gamme de styles et types d'images"
+    },
+    "advancedUseCases": {
+      "title": "Cas d'Utilisation Avancés",
+      "photography": {
+        "icon": "📸",
+        "title": "Photographie Professionnelle",
+        "description": "Améliorez vos séances photo en supprimant les distractions ou en ajoutant de nouveaux éléments.",
+        "example1": "Supprimer les personnes indésirables de l'arrière-plan",
+        "example2": "Ajouter des accessoires et éléments de décor"
+      },
+      "ecommerce": {
+        "icon": "🛒",
+        "title": "E-commerce",
+        "description": "Créez des variantes de produits sans séances photo supplémentaires.",
+        "example1": "Changer la couleur ou le motif du produit",
+        "example2": "Ajouter ou supprimer des accessoires"
+      },
+      "realEstate": {
+        "icon": "🏠",
+        "title": "Immobilier",
+        "description": "Présentez les propriétés sous leur meilleur jour.",
+        "example1": "Supprimer les vieux meubles ou le désordre",
+        "example2": "Home staging virtuel des pièces vides"
+      }
+    },
+    "tips": {
+      "title": "Conseils pour de Meilleurs Résultats",
+      "bestPractices": {
+        "title": "Meilleures Pratiques",
+        "tip1": "Peignez sur tout l'objet que vous voulez remplacer",
+        "tip2": "Ajoutez une petite marge autour de l'objet",
+        "tip3": "Utilisez des prompts descriptifs pour de meilleurs résultats",
+        "tip4": "Testez différentes tailles de pinceau pour la précision"
+      },
+      "proTips": {
+        "title": "Conseils Pro",
+        "tip1": "Pour supprimer : laissez le prompt vide ou tapez 'background only'",
+        "tip2": "Pour remplacer : décrivez le nouvel élément en détail",
+        "tip3": "Travaillez avec des images sources de haute qualité",
+        "tip4": "Pour les éditions complexes, travaillez par étapes"
+      }
+    },
+    "faq": {
+      "title": "Questions Fréquemment Posées",
+      "q1": {
+        "question": "Qu'est-ce que l'inpainting ?",
+        "answer": "L'inpainting est une technique d'IA qui remplit les zones marquées d'une image avec un nouveau contenu. Vous pouvez supprimer des objets, remplacer des éléments ou étendre les images au-delà de leurs bordures originales."
+      },
+      "q2": {
+        "question": "Combien coûte l'inpainting ?",
+        "answer": "Chaque opération d'inpainting coûte 5 crédits. Ce prix reflète la technologie avancée FLUX Fill Pro qui garantit des résultats de la plus haute qualité."
+      },
+      "q3": {
+        "question": "Quels formats sont supportés ?",
+        "answer": "Nous supportons les formats JPG, JPEG, PNG et WEBP. La taille maximale de fichier est de 30 Mo. Pour de meilleurs résultats, utilisez des images de haute qualité."
+      },
+      "q4": {
+        "question": "Comment écrire un bon prompt ?",
+        "answer": "Soyez précis et descriptif. Au lieu de 'fleur', écrivez 'rose rouge avec des gouttes de rosée dans une lumière douce'. Plus il y a de détails, meilleurs sont les résultats."
+      },
+      "q5": {
+        "question": "Puis-je utiliser les résultats commercialement ?",
+        "answer": "Oui ! Toutes les images générées sont entièrement les vôtres et peuvent être utilisées commercialement sans restrictions."
+      }
+    },
+    "cta": {
+      "title": "Inpainting IA Avancé à Portée de Main",
+      "subtitle": "La même technologie utilisée par les éditeurs photo professionnels - maintenant accessible à tous.",
+      "getStarted": "Commencer Gratuitement",
+      "startInpainting": "Démarrer l'Inpainting"
+    }
   }
 }
