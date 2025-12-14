@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import sharp from 'sharp'
+import { fal } from '@fal-ai/client'
 import { getUserByEmail, createUsage } from '@/lib/db'
 import { sendCreditsLowEmail, sendCreditsDepletedEmail } from '@/lib/email'
 import { imageProcessingLimiter, getClientIdentifier, rateLimitResponse } from '@/lib/rate-limit'
@@ -7,66 +7,45 @@ import { authenticateRequest } from '@/lib/api-auth'
 import { CREDIT_COSTS } from '@/lib/credits-config'
 import { ImageProcessor } from '@/lib/image-processor'
 
-interface PackshotPreset {
-  name: string
-  backgroundColor?: string // Hex color for solid backgrounds
-  backgroundPrompt?: string // AI-generated background prompt
-  credits: number
+// Configure fal.ai client
+fal.config({
+  credentials: process.env.FAL_KEY,
+})
+
+const AI_BACKGROUND_CREDITS = CREDIT_COSTS.packshot.cost // Reuse packshot credits
+
+// Preset prompts for AI backgrounds
+const PRESET_PROMPTS: Record<string, string> = {
+  studio: 'Professional product photography studio setup, clean white cyclorama background, soft studio lighting with subtle gradient, commercial photography, high-end product shot',
+  marble: 'Elegant marble surface with soft natural lighting, luxury product photography, clean white marble texture, premium feel, high-end commercial shot',
+  nature: 'Natural outdoor setting with soft bokeh background, organic green leaves and plants, soft natural daylight, lifestyle product photography',
+  minimal: 'Minimalist clean background, soft neutral gradient, modern product photography, subtle shadows, contemporary design aesthetic',
+  wood: 'Rustic wooden table surface, warm natural tones, artisan product photography, cozy ambient lighting, handcrafted feel',
+  lifestyle: 'Modern lifestyle scene, contemporary interior setting, soft ambient lighting, aspirational product placement, premium home environment',
 }
 
-const PACKSHOT_CREDITS = CREDIT_COSTS.packshot.cost
+async function generateAIBackground(
+  imageUrl: string,
+  prompt: string
+): Promise<string> {
+  console.log('Generating AI background with Bria...', { prompt })
 
-// Professional packshot presets - using Photoroom API
-const PRESETS: Record<string, PackshotPreset> = {
-  white: {
-    name: 'White Background',
-    backgroundColor: 'FFFFFF',
-    credits: PACKSHOT_CREDITS,
-  },
-  gray: {
-    name: 'Light Gray',
-    backgroundColor: 'F0F0F0',
-    credits: PACKSHOT_CREDITS,
-  },
-  studio: {
-    name: 'Studio Setup',
-    backgroundPrompt: 'professional product photography, studio lighting, soft gradient background, clean minimalist, commercial photography',
-    credits: PACKSHOT_CREDITS,
-  },
-  lifestyle: {
-    name: 'Lifestyle',
-    backgroundPrompt: 'lifestyle product photography, elegant marble surface, soft natural lighting, premium feel, high-end commercial',
-    credits: PACKSHOT_CREDITS,
-  },
-}
+  const result = await fal.subscribe('fal-ai/bria/background/replace', {
+    input: {
+      image_url: imageUrl,
+      prompt: prompt,
+      refine_prompt: true,
+      fast: true,
+      num_images: 1,
+    },
+  })
 
-async function generatePackshot(imageBuffer: Buffer, preset: PackshotPreset): Promise<Buffer> {
-  let resultBuffer: Buffer
-
-  if (preset.backgroundPrompt) {
-    // AI-generated background
-    resultBuffer = await ImageProcessor.generatePackshotWithAIBackground(
-      imageBuffer,
-      preset.backgroundPrompt
-    )
-  } else {
-    // Solid color background
-    resultBuffer = await ImageProcessor.generatePackshotPhotoroom(
-      imageBuffer,
-      preset.backgroundColor || 'FFFFFF'
-    )
+  const data = result.data as { images: Array<{ url: string }> }
+  if (!data.images || data.images.length === 0) {
+    throw new Error('No image generated from Bria')
   }
 
-  // Ensure output is 2000x2000
-  const finalImage = await sharp(resultBuffer)
-    .resize(2000, 2000, {
-      fit: 'contain',
-      background: { r: 255, g: 255, b: 255, alpha: 1 }
-    })
-    .png({ quality: 100 })
-    .toBuffer()
-
-  return finalImage
+  return data.images[0].url
 }
 
 export async function POST(request: NextRequest) {
@@ -99,13 +78,24 @@ export async function POST(request: NextRequest) {
     // 3. EXTRACT FORMDATA
     const formData = await request.formData()
     const file = formData.get('file') as File
-    const presetName = (formData.get('preset') as string) || 'white'
+    const preset = formData.get('preset') as string | null
+    const customPrompt = formData.get('prompt') as string | null
 
     if (!file) {
       return NextResponse.json(
         { error: 'No file provided' },
         { status: 400 }
       )
+    }
+
+    // Determine the prompt to use
+    let backgroundPrompt: string
+    if (customPrompt && customPrompt.trim()) {
+      backgroundPrompt = customPrompt.trim()
+    } else if (preset && PRESET_PROMPTS[preset]) {
+      backgroundPrompt = PRESET_PROMPTS[preset]
+    } else {
+      backgroundPrompt = PRESET_PROMPTS.studio // Default
     }
 
     // 4. VALIDATE FILE
@@ -125,20 +115,9 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Get preset
-    const preset = PRESETS[presetName]
-    if (!preset) {
-      return NextResponse.json(
-        { error: 'Invalid preset' },
-        { status: 400 }
-      )
-    }
-
     // 5. CHECK CREDITS
-    const creditsNeeded = preset.credits
+    const creditsNeeded = AI_BACKGROUND_CREDITS
 
-
-    // Check if user has enough credits
     if (user.credits < creditsNeeded) {
       if (user.credits === 0) {
         sendCreditsDepletedEmail({
@@ -157,28 +136,33 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // 6. PROCESS IMAGE - Generate professional packshot with AI
+    // 6. UPLOAD IMAGE TO GET URL
+    // First remove background, then upload to fal storage
     const arrayBuffer = await file.arrayBuffer()
     const buffer = Buffer.from(arrayBuffer)
 
-    const finalImage = await generatePackshot(buffer, preset)
+    // Remove background first for cleaner product isolation
+    const noBgBuffer = await ImageProcessor.removeBackground(buffer)
 
-    // Convert to data URL
-    const base64 = finalImage.toString('base64')
+    // Upload to fal storage
+    const uploadedUrl = await fal.storage.upload(new Blob([noBgBuffer], { type: 'image/png' }))
+
+    // 7. GENERATE AI BACKGROUND
+    const resultUrl = await generateAIBackground(uploadedUrl, backgroundPrompt)
+
+    // Download result and convert to base64
+    const resultResponse = await fetch(resultUrl)
+    const resultBuffer = Buffer.from(await resultResponse.arrayBuffer())
+    const base64 = resultBuffer.toString('base64')
     const dataUrl = `data:image/png;base64,${base64}`
-
-    // 7. GET IMAGE DIMENSIONS
-    const metadata = await sharp(finalImage).metadata()
-    const width = metadata.width || 2000
-    const height = metadata.height || 2000
 
     // 8. DEDUCT CREDITS & LOG USAGE
     await createUsage({
       userId: user.id,
-      type: 'packshot_generation',
+      type: 'ai_background',
       creditsUsed: creditsNeeded,
       imageSize: `${file.size} bytes`,
-      model: 'photoroom',
+      model: 'bria-background-replace',
     })
 
     const newCredits = user.credits - creditsNeeded
@@ -195,19 +179,16 @@ export async function POST(request: NextRequest) {
     // 10. RETURN SUCCESS
     return NextResponse.json({
       success: true,
-      packshot: dataUrl,
-      preset: preset.name,
-      dimensions: {
-        width,
-        height,
-      },
+      result: dataUrl,
+      prompt: backgroundPrompt,
+      preset: preset || 'custom',
       creditsRemaining: newCredits,
     })
   } catch (error: any) {
-    console.error('[Packshot] Error:', error)
+    console.error('[AI Background] Error:', error)
     return NextResponse.json(
       {
-        error: 'Failed to generate packshot',
+        error: 'Failed to generate AI background',
         details: error.message,
       },
       { status: 500 }
