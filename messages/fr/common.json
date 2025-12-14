@@ -3345,5 +3345,75 @@
     "goHome": "Aller à l'accueil",
     "persistentIssue": "Si ce problème persiste,",
     "contactSupport": "contactez notre support"
+  },
+  "aiBackgroundPage": {
+    "badge": "Propulsé par Bria AI",
+    "title": "Générateur de Fonds AI pour Produits",
+    "subtitle": "Transformez vos photos de produits en images professionnelles avec des fonds générés par IA. Parfait pour l'e-commerce, les réseaux sociaux et le marketing. Choisissez parmi 6 presets ou créez votre propre fond avec des prompts texte.",
+    "stats": {
+      "presetsLabel": "Presets Disponibles",
+      "processingLabel": "Temps de Génération",
+      "creditCostLabel": "Crédits par Image"
+    },
+    "creditsRemaining": "{credits} crédits restants",
+    "termsNotice": "En téléchargeant un fichier, vous acceptez nos Conditions et Politique de Confidentialité.",
+    "presets": {
+      "title": "Styles de Fond Prêts à l'Emploi",
+      "studio": { "icon": "📸", "name": "Studio", "description": "Éclairage studio professionnel avec cyclorama blanc" },
+      "marble": { "icon": "🪨", "name": "Marbre", "description": "Surface en marbre élégante avec éclairage naturel" },
+      "nature": { "icon": "🌿", "name": "Nature", "description": "Décor naturel en extérieur avec bokeh doux" },
+      "minimal": { "icon": "◻️", "name": "Minimal", "description": "Dégradé épuré, photographie produit moderne" },
+      "wood": { "icon": "🪵", "name": "Bois", "description": "Surface en bois rustique, tons chauds" },
+      "lifestyle": { "icon": "🏠", "name": "Lifestyle", "description": "Intérieur moderne, ambiance inspirante" }
+    },
+    "features": {
+      "aiGenerated": { "title": "Fonds Générés par IA", "description": "La technologie IA avancée crée des fonds réalistes et professionnels adaptés à votre produit. Chaque fond est unique." },
+      "customPrompts": { "title": "Prompts de Fond Personnalisés", "description": "Vous ne trouvez pas le preset parfait ? Décrivez le fond avec vos propres mots - l'IA générera exactement ce dont vous avez besoin." },
+      "ecommerce": { "title": "Prêt pour l'E-commerce", "description": "Optimisé pour Amazon, eBay, Etsy et autres plateformes. Des photos de produits professionnelles qui augmentent les ventes." }
+    },
+    "howItWorks": {
+      "title": "Comment Fonctionne le Générateur de Fonds AI",
+      "step1": { "title": "1. Téléchargez la Photo", "description": "Téléchargez votre photo de produit au format JPG, PNG ou WEBP" },
+      "step2": { "title": "2. Choisissez le Fond", "description": "Sélectionnez un preset ou décrivez votre propre fond" },
+      "step3": { "title": "3. L'IA Génère", "description": "L'IA supprime le fond et en crée un nouveau en ~15 secondes" },
+      "step4": { "title": "4. Téléchargez", "description": "Téléchargez l'image finale en haute résolution" }
+    },
+    "useCases": {
+      "title": "Parfait Pour",
+      "ecommerce": { "title": "Boutiques en Ligne", "description": "Créez des photos de produits cohérentes et professionnelles pour votre boutique. Augmentez les conversions avec des visuels attrayants." },
+      "socialMedia": { "title": "Réseaux Sociaux", "description": "Démarquez-vous sur Instagram et Facebook. Créez des publications de produits accrocheuses avec des fonds créatifs." },
+      "dropshipping": { "title": "Dropshipping", "description": "Transformez les photos des fournisseurs en visuels uniques. Différenciez-vous des concurrents vendant les mêmes produits." },
+      "marketing": { "title": "Supports Marketing", "description": "Créez des graphiques professionnels pour catalogues, flyers et publicités sans studio photo." }
+    },
+    "technology": {
+      "title": "Technologie IA",
+      "description": "Le Générateur de Fonds AI utilise le modèle Bria Background Replace - apprentissage automatique avancé entraîné sur des millions de photos de produits professionnelles.",
+      "feature1": "Suppression automatique du fond avec précision au pixel",
+      "feature2": "Génération réaliste de fonds adaptés au produit",
+      "feature3": "Conservation naturelle des ombres et reflets",
+      "feature4": "Sûr commercialement - utilisez sans restrictions"
+    },
+    "tips": {
+      "title": "Conseils pour de Meilleurs Résultats",
+      "tip1": "Utilisez des photos bien éclairées avec le produit clairement visible",
+      "tip2": "Évitez les photos avec des fonds très complexes - l'IA fonctionne mieux avec des fonds simples",
+      "tip3": "Pour les prompts personnalisés, soyez précis : décrivez la surface, l'éclairage et le style",
+      "tip4": "Le preset 'Studio' fonctionne le mieux pour les exigences d'Amazon et des marketplaces",
+      "tip5": "Les produits individuels donnent de meilleurs résultats que les groupes de produits"
+    },
+    "faq": {
+      "title": "Questions Fréquentes",
+      "q1": { "question": "Quels formats de fichier sont supportés ?", "answer": "JPG, JPEG, PNG et WEBP. Maximum 30 Mo. Pour de meilleurs résultats, utilisez des images d'au moins 1000x1000 pixels." },
+      "q2": { "question": "Combien ça coûte ?", "answer": "Chaque génération coûte 2 crédits. Les nouveaux utilisateurs reçoivent 3 crédits gratuits. Crédits supplémentaires disponibles en forfaits économiques." },
+      "q3": { "question": "Puis-je utiliser les images générées commercialement ?", "answer": "Oui ! Toutes les images sont entièrement commerciales. Utilisez-les dans vos boutiques, publicités, catalogues sans restrictions." },
+      "q4": { "question": "Comment écrire un bon prompt personnalisé ?", "answer": "Soyez précis : surface (marbre, bois), éclairage (studio, naturel), style (minimaliste, luxe). Exemple : 'Marbre noir élégant, éclairage studio doux, atmosphère de luxe'." },
+      "q5": { "question": "Que faire si le résultat n'est pas satisfaisant ?", "answer": "Générez un nouveau fond avec un preset ou prompt différent. Chaque tentative est indépendante. Commencez par les presets, puis expérimentez." }
+    },
+    "cta": {
+      "title": "Prêt pour des Photos de Produits Professionnelles ?",
+      "subtitle": "Transformez des photos ordinaires en photographie de produits professionnelle avec des fonds générés par IA. Pas de studio, pas de photographe - juste vous et l'IA.",
+      "getCredits": "Obtenir des Crédits",
+      "exploreTools": "Explorer Tous les Outils"
+    }
   }
 }
