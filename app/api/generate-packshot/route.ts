@@ -5,14 +5,13 @@ import { sendCreditsLowEmail, sendCreditsDepletedEmail } from '@/lib/email'
 import { imageProcessingLimiter, getClientIdentifier, rateLimitResponse } from '@/lib/rate-limit'
 import { authenticateRequest } from '@/lib/api-auth'
 import { CREDIT_COSTS } from '@/lib/credits-config'
-import { ImageProcessor } from '@/lib/image-processor'
 
 // Configure fal.ai client
 fal.config({
   credentials: process.env.FAL_KEY,
 })
 
-const AI_BACKGROUND_CREDITS = CREDIT_COSTS.packshot.cost // Reuse packshot credits
+const AI_BACKGROUND_CREDITS = CREDIT_COSTS.packshot.cost
 
 // Preset prompts for AI backgrounds
 const PRESET_PROMPTS: Record<string, string> = {
@@ -24,30 +23,6 @@ const PRESET_PROMPTS: Record<string, string> = {
   lifestyle: 'Modern lifestyle scene, contemporary interior setting, soft ambient lighting, aspirational product placement, premium home environment',
 }
 
-async function generateAIBackground(
-  imageUrl: string,
-  prompt: string
-): Promise<string> {
-  console.log('Generating AI background with Bria...', { prompt })
-
-  const result = await fal.subscribe('fal-ai/bria/background/replace', {
-    input: {
-      image_url: imageUrl,
-      prompt: prompt,
-      refine_prompt: true,
-      fast: true,
-      num_images: 1,
-    },
-  })
-
-  const data = result.data as { images: Array<{ url: string }> }
-  if (!data.images || data.images.length === 0) {
-    throw new Error('No image generated from Bria')
-  }
-
-  return data.images[0].url
-}
-
 export async function POST(request: NextRequest) {
   try {
     // Rate limiting
@@ -57,7 +32,7 @@ export async function POST(request: NextRequest) {
       return rateLimitResponse(resetAt)
     }
 
-    // 1. AUTHENTICATION - via session or API key
+    // 1. AUTHENTICATION
     const authResult = await authenticateRequest(request)
     if (!authResult.success) {
       return NextResponse.json(
@@ -69,10 +44,7 @@ export async function POST(request: NextRequest) {
     // 2. GET USER
     const user = await getUserByEmail(authResult.user!.email)
     if (!user) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
     // 3. EXTRACT FORMDATA
@@ -82,10 +54,7 @@ export async function POST(request: NextRequest) {
     const customPrompt = formData.get('prompt') as string | null
 
     if (!file) {
-      return NextResponse.json(
-        { error: 'No file provided' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'No file provided' }, { status: 400 })
     }
 
     // Determine the prompt to use
@@ -95,7 +64,7 @@ export async function POST(request: NextRequest) {
     } else if (preset && PRESET_PROMPTS[preset]) {
       backgroundPrompt = PRESET_PROMPTS[preset]
     } else {
-      backgroundPrompt = PRESET_PROMPTS.studio // Default
+      backgroundPrompt = PRESET_PROMPTS.studio
     }
 
     // 4. VALIDATE FILE
@@ -107,7 +76,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const MAX_SIZE = 30 * 1024 * 1024 // 30MB
+    const MAX_SIZE = 30 * 1024 * 1024
     if (file.size > MAX_SIZE) {
       return NextResponse.json(
         { error: 'File too large. Maximum size: 30MB' },
@@ -117,7 +86,6 @@ export async function POST(request: NextRequest) {
 
     // 5. CHECK CREDITS
     const creditsNeeded = AI_BACKGROUND_CREDITS
-
     if (user.credits < creditsNeeded) {
       if (user.credits === 0) {
         sendCreditsDepletedEmail({
@@ -127,30 +95,36 @@ export async function POST(request: NextRequest) {
         }).catch(err => console.error('Failed to send credits depleted email:', err))
       }
       return NextResponse.json(
-        {
-          error: 'Insufficient credits',
-          required: creditsNeeded,
-          available: user.credits,
-        },
+        { error: 'Insufficient credits', required: creditsNeeded, available: user.credits },
         { status: 402 }
       )
     }
 
-    // 6. CONVERT TO DATA URL AND REMOVE BACKGROUND
+    // 6. UPLOAD IMAGE TO FAL STORAGE
     const arrayBuffer = await file.arrayBuffer()
-    const buffer = Buffer.from(arrayBuffer)
-    const inputDataUrl = `data:${file.type};base64,${buffer.toString('base64')}`
+    const uploadedUrl = await fal.storage.upload(
+      new Blob([new Uint8Array(arrayBuffer)], { type: file.type })
+    )
 
-    // Remove background first for cleaner product isolation
-    const noBgDataUrl = await ImageProcessor.removeBackground(inputDataUrl)
+    console.log('Generating AI background with Bria...', { prompt: backgroundPrompt })
 
-    // Upload to fal storage (convert data URL to blob)
-    const base64Data = noBgDataUrl.split(',')[1]
-    const noBgBuffer = Buffer.from(base64Data, 'base64')
-    const uploadedUrl = await fal.storage.upload(new Blob([new Uint8Array(noBgBuffer)], { type: 'image/png' }))
+    // 7. GENERATE AI BACKGROUND (Bria handles bg removal + new bg generation)
+    const result = await fal.subscribe('fal-ai/bria/background/replace', {
+      input: {
+        image_url: uploadedUrl,
+        prompt: backgroundPrompt,
+        refine_prompt: true,
+        fast: true,
+        num_images: 1,
+      },
+    })
 
-    // 7. GENERATE AI BACKGROUND
-    const resultUrl = await generateAIBackground(uploadedUrl, backgroundPrompt)
+    const data = result.data as { images: Array<{ url: string }> }
+    if (!data.images || data.images.length === 0) {
+      throw new Error('No image generated from Bria')
+    }
+
+    const resultUrl = data.images[0].url
 
     // Download result and convert to base64
     const resultResponse = await fetch(resultUrl)
@@ -189,10 +163,7 @@ export async function POST(request: NextRequest) {
   } catch (error: any) {
     console.error('[AI Background] Error:', error)
     return NextResponse.json(
-      {
-        error: 'Failed to generate AI background',
-        details: error.message,
-      },
+      { error: 'Failed to generate AI background', details: error.message },
       { status: 500 }
     )
   }
