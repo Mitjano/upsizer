@@ -8,7 +8,7 @@ import { CREDIT_COSTS } from '@/lib/credits-config'
 
 // Configure fal.ai client
 fal.config({
-  credentials: process.env.FAL_KEY,
+  credentials: process.env.FAL_API_KEY,
 })
 
 const AI_BACKGROUND_CREDITS = CREDIT_COSTS.packshot.cost
