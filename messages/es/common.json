@@ -1743,6 +1743,140 @@
       "startRestoring": "Empezar a Restaurar"
     }
   },
+  "upscalerPage": {
+    "badge": "Impulsado por Real-ESRGAN AI",
+    "title": "Amplía tus Imágenes hasta",
+    "titleHighlight": "8x Resolución",
+    "subtitle": "Ampliación profesional de imágenes con IA Real-ESRGAN. Aumenta la resolución de fotos sin perder calidad. Mejora facial opcional con GFPGAN.",
+    "stats": {
+      "maxScale": "8x",
+      "maxScaleLabel": "Escala Máx.",
+      "processing": "5-15s",
+      "processingLabel": "Procesamiento",
+      "creditCost": "1-2",
+      "creditCostLabel": "Créditos/Imagen"
+    },
+    "termsNotice": "Al subir un archivo aceptas nuestros Términos de Uso y Política de Privacidad.",
+    "scaleOptions": {
+      "title": "Elige tu Factor de Ampliación",
+      "2": {
+        "name": "Doble Resolución",
+        "description": "Perfecta para mejoras menores e imágenes web. Procesamiento rápido."
+      },
+      "4": {
+        "name": "Cuádruple Resolución",
+        "description": "Ideal para impresión y uso profesional. Excelente equilibrio calidad-velocidad."
+      },
+      "8": {
+        "name": "Ocho Veces la Resolución",
+        "description": "Máxima calidad para impresión de gran formato y proyectos profesionales."
+      }
+    },
+    "features": {
+      "title": "Características de Real-ESRGAN",
+      "realESRGAN": {
+        "title": "Tecnología Real-ESRGAN",
+        "description": "Modelo de IA de última generación para super-resolución de imágenes. Reconstruye fielmente texturas, bordes y detalles finos."
+      },
+      "faceEnhance": {
+        "title": "Mejora Facial GFPGAN",
+        "description": "Mejora facial con IA opcional. Perfecta para retratos y fotos grupales con rostros borrosos."
+      },
+      "fast": {
+        "title": "Procesamiento Ultrarrápido",
+        "description": "Aceleración GPU optimizada. Obtén resultados en segundos, no minutos."
+      }
+    },
+    "howItWorks": {
+      "title": "Cómo Funciona el",
+      "titleHighlight": "Ampliador AI",
+      "step1": {
+        "title": "Sube tu Imagen",
+        "description": "Arrastra y suelta o selecciona una imagen JPG, PNG o WEBP hasta 10MB."
+      },
+      "step2": {
+        "title": "Elige la Escala",
+        "description": "Selecciona ampliación 2x, 4x u 8x según tus necesidades."
+      },
+      "step3": {
+        "title": "Opcional: Mejora Facial",
+        "description": "Activa GFPGAN para mejores rostros en retratos (+1 crédito)."
+      },
+      "step4": {
+        "title": "Descarga el Resultado",
+        "description": "Descarga tu imagen ampliada en formato PNG de alta calidad."
+      }
+    },
+    "useCases": {
+      "title": "Casos de Uso del Ampliador AI",
+      "photography": {
+        "icon": "📸",
+        "title": "Fotografía",
+        "description": "Amplía fotos digitales antiguas, prepara imágenes para impresión o recupera detalles de baja resolución."
+      },
+      "ecommerce": {
+        "icon": "🛒",
+        "title": "E-commerce",
+        "description": "Crea imágenes de productos nítidas para marketplaces. Mejora la calidad de imágenes de proveedores."
+      },
+      "printing": {
+        "icon": "🖨️",
+        "title": "Impresión Gran Formato",
+        "description": "Prepara imágenes para pósters, banners y materiales de marketing sin pixelación."
+      },
+      "oldPhotos": {
+        "icon": "🖼️",
+        "title": "Fotos Antiguas",
+        "description": "Revive fotos familiares del pasado. Combina con mejora facial para mejores resultados."
+      }
+    },
+    "technology": {
+      "title": "🔬 Tecnología Real-ESRGAN",
+      "description": "Real-ESRGAN (Red Generativa Adversaria Mejorada de Super-Resolución) es un modelo de IA de vanguardia entrenado con millones de imágenes. A diferencia de algoritmos de interpolación simples, entiende la estructura de la imagen y reconstruye inteligentemente los detalles faltantes.",
+      "feature1": "Reconstrucción de texturas y detalles de alta calidad",
+      "feature2": "Preservación de bordes nítidos sin artefactos",
+      "feature3": "Eliminación inteligente de ruido durante la ampliación",
+      "feature4": "GFPGAN opcional para rostros perfectos en retratos"
+    },
+    "tips": {
+      "title": "💡 Consejos para Mejores Resultados",
+      "tip1": "Comienza con 2x para una vista previa rápida de calidad",
+      "tip2": "Usa 4x para la mayoría de aplicaciones profesionales",
+      "tip3": "8x es mejor para imágenes fuente muy pequeñas",
+      "tip4": "Activa mejora facial para retratos y fotos grupales",
+      "tip5": "El formato PNG proporciona la mejor calidad de salida",
+      "tip6": "Combina con restauración para fotos antiguas y dañadas"
+    },
+    "faq": {
+      "title": "Preguntas Frecuentes",
+      "q1": {
+        "question": "¿Cuál es la diferencia entre 2x, 4x y 8x?",
+        "answer": "2x duplica las dimensiones (ej. 500px → 1000px), 4x cuadriplica (500px → 2000px), 8x multiplica por ocho (500px → 4000px). Mayor escala = más detalles generados por IA."
+      },
+      "q2": {
+        "question": "¿Cuándo debo usar la mejora facial?",
+        "answer": "Activa GFPGAN cuando tu imagen contenga rostros, especialmente borrosos o de baja resolución. El modelo se especializa en reconstrucción de rasgos faciales."
+      },
+      "q3": {
+        "question": "¿Cuántos créditos cuesta la ampliación?",
+        "answer": "La ampliación básica cuesta 1 crédito sin importar la escala. La mejora facial GFPGAN añade +1 crédito (2 créditos en total)."
+      },
+      "q4": {
+        "question": "¿Qué formatos son compatibles?",
+        "answer": "Soportamos JPEG, PNG y WEBP. La salida siempre es PNG para máxima calidad. El tamaño máximo de archivo es 10MB."
+      },
+      "q5": {
+        "question": "¿Puedo ampliar una imagen ya ampliada?",
+        "answer": "Sí, pero los resultados pueden ser peores. La IA funciona mejor con imágenes originales. Para fotos muy pequeñas, recomendamos 8x directamente en lugar de múltiples pasadas de ampliación."
+      }
+    },
+    "cta": {
+      "title": "¿Listo para Ampliar tus Imágenes?",
+      "subtitle": "Comienza con 3 créditos gratis. Sin tarjeta de crédito. Resultados profesionales en segundos.",
+      "getStarted": "Comenzar Gratis",
+      "startUpscaling": "Ampliar Imagen"
+    }
+  },
   "imageExpandPage": {
     "badge": "Impulsado por FLUX.1 Fill [pro] AI",
     "title": "Expansión de Imagen (Uncrop)",

@@ -1743,6 +1743,140 @@
       "startRestoring": "Start Restoring"
     }
   },
+  "upscalerPage": {
+    "badge": "Powered by Real-ESRGAN AI",
+    "title": "Upscale Your Images to",
+    "titleHighlight": "8x Resolution",
+    "subtitle": "Professional AI image upscaling with Real-ESRGAN. Increase photo resolution without losing quality. Optional face enhancement with GFPGAN.",
+    "stats": {
+      "maxScale": "8x",
+      "maxScaleLabel": "Max Scale",
+      "processing": "5-15s",
+      "processingLabel": "Processing",
+      "creditCost": "1-2",
+      "creditCostLabel": "Credits/Image"
+    },
+    "termsNotice": "By uploading a file you agree to our Terms of Use and Privacy Policy.",
+    "scaleOptions": {
+      "title": "Choose Your Upscale Factor",
+      "2": {
+        "name": "Double Resolution",
+        "description": "Perfect for minor enhancements and web images. Fast processing."
+      },
+      "4": {
+        "name": "Quadruple Resolution",
+        "description": "Great for printing and professional use. Excellent quality-speed balance."
+      },
+      "8": {
+        "name": "Eight Times Resolution",
+        "description": "Maximum quality for large format printing and professional projects."
+      }
+    },
+    "features": {
+      "title": "Real-ESRGAN Features",
+      "realESRGAN": {
+        "title": "Real-ESRGAN Technology",
+        "description": "State-of-the-art AI model for image super-resolution. Faithfully reconstructs textures, edges, and fine details."
+      },
+      "faceEnhance": {
+        "title": "GFPGAN Face Enhancement",
+        "description": "Optional AI face enhancement. Perfect for portraits and group photos with blurry faces."
+      },
+      "fast": {
+        "title": "Lightning Fast Processing",
+        "description": "Optimized GPU acceleration. Get results in seconds, not minutes."
+      }
+    },
+    "howItWorks": {
+      "title": "How",
+      "titleHighlight": "AI Upscaler Works",
+      "step1": {
+        "title": "Upload Image",
+        "description": "Drag and drop or select a JPG, PNG, or WEBP image up to 10MB."
+      },
+      "step2": {
+        "title": "Choose Scale",
+        "description": "Select 2x, 4x, or 8x upscaling based on your needs."
+      },
+      "step3": {
+        "title": "Optional: Face Enhancement",
+        "description": "Enable GFPGAN for better faces in portraits (+1 credit)."
+      },
+      "step4": {
+        "title": "Download Result",
+        "description": "Download your upscaled image in full-quality PNG format."
+      }
+    },
+    "useCases": {
+      "title": "AI Upscaler Use Cases",
+      "photography": {
+        "icon": "📸",
+        "title": "Photography",
+        "description": "Enlarge old digital photos, prepare images for print, or recover details from low resolution."
+      },
+      "ecommerce": {
+        "icon": "🛒",
+        "title": "E-commerce",
+        "description": "Create sharp product images for marketplaces. Improve supplier image quality."
+      },
+      "printing": {
+        "icon": "🖨️",
+        "title": "Large Format Printing",
+        "description": "Prepare images for posters, banners, and marketing materials without pixelation."
+      },
+      "oldPhotos": {
+        "icon": "🖼️",
+        "title": "Old Photos",
+        "description": "Revive family photos from the past. Combine with face enhancement for best results."
+      }
+    },
+    "technology": {
+      "title": "🔬 Real-ESRGAN Technology",
+      "description": "Real-ESRGAN (Enhanced Super-Resolution Generative Adversarial Network) is a cutting-edge AI model trained on millions of images. Unlike simple interpolation algorithms, it understands image structure and intelligently reconstructs missing details.",
+      "feature1": "High-quality texture and detail reconstruction",
+      "feature2": "Sharp edge preservation without artifacts",
+      "feature3": "Intelligent noise removal during upscaling",
+      "feature4": "Optional GFPGAN for perfect faces in portraits"
+    },
+    "tips": {
+      "title": "💡 Tips for Best Results",
+      "tip1": "Start with 2x for a quick quality preview",
+      "tip2": "Use 4x for most professional applications",
+      "tip3": "8x is best for very small source images",
+      "tip4": "Enable face enhancement for portraits and group photos",
+      "tip5": "PNG format provides the best output quality",
+      "tip6": "Combine with restoration for old, damaged photos"
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "q1": {
+        "question": "What's the difference between 2x, 4x, and 8x?",
+        "answer": "2x doubles dimensions (e.g., 500px → 1000px), 4x quadruples (500px → 2000px), 8x multiplies by eight (500px → 4000px). Higher scale = more AI-generated details."
+      },
+      "q2": {
+        "question": "When should I use face enhancement?",
+        "answer": "Enable GFPGAN when your image contains faces, especially blurry or low-resolution ones. The model specializes in facial feature reconstruction."
+      },
+      "q3": {
+        "question": "How many credits does upscaling cost?",
+        "answer": "Basic upscaling costs 1 credit regardless of scale. GFPGAN face enhancement adds +1 credit (2 credits total)."
+      },
+      "q4": {
+        "question": "What formats are supported?",
+        "answer": "We support JPEG, PNG, and WEBP. Output is always PNG for maximum quality. Maximum file size is 10MB."
+      },
+      "q5": {
+        "question": "Can I upscale an already upscaled image?",
+        "answer": "Yes, but results may be worse. AI works best on original images. For very small photos, we recommend 8x directly instead of multiple upscaling passes."
+      }
+    },
+    "cta": {
+      "title": "Ready to Upscale Your Images?",
+      "subtitle": "Start with 3 free credits. No credit card required. Professional results in seconds.",
+      "getStarted": "Get Started Free",
+      "startUpscaling": "Upscale Image"
+    }
+  },
   "imageExpandPage": {
     "badge": "Powered by FLUX.1 Fill [pro] AI",
     "title": "Image Expand (Uncrop)",

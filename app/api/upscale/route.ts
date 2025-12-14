@@ -7,8 +7,9 @@ import { authenticateRequest } from "@/lib/api-auth";
 import { ImageProcessor } from "@/lib/image-processor";
 import { ProcessedImagesDB } from "@/lib/processed-images-db";
 
-// Credit cost for upscaling (Clarity Upscaler - best quality)
+// Credit cost for upscaling (Real-ESRGAN)
 const CREDITS_PER_UPSCALE = 1;
+const CREDITS_FOR_FACE_ENHANCE = 1;
 
 export async function POST(request: NextRequest) {
   try {
@@ -42,9 +43,13 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData();
     const image = formData.get("image") as File;
     const scaleParam = parseInt(formData.get("scale") as string) || 2;
+    const faceEnhance = formData.get("faceEnhance") === "true";
 
-    // Validate scale (2 or 4 for Clarity Upscaler)
-    const scale = [2, 4].includes(scaleParam) ? scaleParam as 2 | 4 : 2;
+    // Validate scale (2, 4, or 8 for Real-ESRGAN)
+    const scale = [2, 4, 8].includes(scaleParam) ? scaleParam as 2 | 4 | 8 : 2;
+
+    // Calculate total credit cost
+    const totalCredits = CREDITS_PER_UPSCALE + (faceEnhance ? CREDITS_FOR_FACE_ENHANCE : 0);
 
     if (!image) {
       return NextResponse.json(
@@ -69,7 +74,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if user has enough credits
-    if (user.credits < CREDITS_PER_UPSCALE) {
+    if (user.credits < totalCredits) {
       // Send credits depleted email when user tries to process with 0 credits
       if (user.credits === 0) {
         sendCreditsDepletedEmail({
@@ -82,7 +87,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           error: "Insufficient credits",
-          required: CREDITS_PER_UPSCALE,
+          required: totalCredits,
           available: user.credits
         },
         { status: 402 } // Payment Required
@@ -118,9 +123,10 @@ export async function POST(request: NextRequest) {
       isProcessed: false
     });
 
-    // Upscale using Clarity Upscaler (best quality)
-    console.log(`Starting Clarity Upscaler: scale=${scale}x`);
-    const resultUrl = await ImageProcessor.upscaleWithClarity(dataUrl, scale);
+    // Upscale using Real-ESRGAN with optional face enhancement
+    const modelName = faceEnhance ? 'Real-ESRGAN + GFPGAN' : 'Real-ESRGAN';
+    console.log(`Starting ${modelName}: scale=${scale}x, faceEnhance=${faceEnhance}`);
+    const resultUrl = await ImageProcessor.upscaleImage(dataUrl, scale, faceEnhance);
 
     // Download processed image from Replicate
     const processedBuffer = await ImageProcessor.downloadImage(resultUrl);
@@ -148,9 +154,9 @@ export async function POST(request: NextRequest) {
     await createUsage({
       userId: user.id,
       type: "upscale",
-      creditsUsed: CREDITS_PER_UPSCALE,
+      creditsUsed: totalCredits,
       imageSize: `${image.size} bytes`,
-      model: "Clarity Upscaler",
+      model: modelName,
     });
 
     // Credits are already deducted by createUsage function
@@ -186,7 +192,9 @@ export async function POST(request: NextRequest) {
       imageUrl: `/api/processed-images/${imageRecord.id}/view?type=processed`,
       originalUrl: `/api/processed-images/${imageRecord.id}/view?type=original`,
       scale: scale,
-      creditsUsed: CREDITS_PER_UPSCALE,
+      model: modelName,
+      faceEnhance: faceEnhance,
+      creditsUsed: totalCredits,
       creditsRemaining: updatedUser?.credits || 0,
     };
 

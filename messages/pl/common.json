@@ -1743,6 +1743,140 @@
       "startRestoring": "Zacznij Restaurować"
     }
   },
+  "upscalerPage": {
+    "badge": "Napędzane przez Real-ESRGAN AI",
+    "title": "Powiększ Swoje Obrazy do",
+    "titleHighlight": "8x Rozdzielczości",
+    "subtitle": "Profesjonalne powiększanie obrazów AI z Real-ESRGAN. Zwiększ rozdzielczość zdjęć bez utraty jakości. Opcjonalne ulepszenie twarzy z GFPGAN.",
+    "stats": {
+      "maxScale": "8x",
+      "maxScaleLabel": "Maks. Skala",
+      "processing": "5-15s",
+      "processingLabel": "Przetwarzanie",
+      "creditCost": "1-2",
+      "creditCostLabel": "Kredyty/Obraz"
+    },
+    "termsNotice": "Przesyłając plik, zgadzasz się na nasze Warunki Użytkowania i Politykę Prywatności.",
+    "scaleOptions": {
+      "title": "Wybierz Skalę Powiększenia",
+      "2": {
+        "name": "Podwójna Rozdzielczość",
+        "description": "Idealna do drobnych poprawek i obrazów internetowych. Szybkie przetwarzanie."
+      },
+      "4": {
+        "name": "Poczwórna Rozdzielczość",
+        "description": "Świetna do druku i profesjonalnego użytku. Doskonała równowaga jakości i szybkości."
+      },
+      "8": {
+        "name": "Ośmiokrotna Rozdzielczość",
+        "description": "Maksymalna jakość do druku wielkoformatowego i projektów profesjonalnych."
+      }
+    },
+    "features": {
+      "title": "Funkcje Real-ESRGAN",
+      "realESRGAN": {
+        "title": "Technologia Real-ESRGAN",
+        "description": "Najnowocześniejszy model AI do super-rozdzielczości obrazu. Wiernie odtwarza tekstury, krawędzie i drobne szczegóły."
+      },
+      "faceEnhance": {
+        "title": "Ulepszenie Twarzy GFPGAN",
+        "description": "Opcjonalne ulepszenie twarzy AI. Doskonałe do portretów i zdjęć grupowych z rozmytymi twarzami."
+      },
+      "fast": {
+        "title": "Błyskawiczne Przetwarzanie",
+        "description": "Zoptymalizowane GPU przyspiesza przetwarzanie. Otrzymaj wyniki w kilka sekund, nie minut."
+      }
+    },
+    "howItWorks": {
+      "title": "Jak Działa",
+      "titleHighlight": "AI Upscaler",
+      "step1": {
+        "title": "Prześlij Obraz",
+        "description": "Przeciągnij i upuść lub wybierz obraz JPG, PNG lub WEBP do 10MB."
+      },
+      "step2": {
+        "title": "Wybierz Skalę",
+        "description": "Wybierz 2x, 4x lub 8x powiększenie zależnie od potrzeb."
+      },
+      "step3": {
+        "title": "Opcjonalnie: Ulepszenie Twarzy",
+        "description": "Włącz GFPGAN dla lepszych twarzy w portretach (+1 kredyt)."
+      },
+      "step4": {
+        "title": "Pobierz Wynik",
+        "description": "Pobierz powiększony obraz w pełnej jakości PNG."
+      }
+    },
+    "useCases": {
+      "title": "Przypadki Użycia Upscalera AI",
+      "photography": {
+        "icon": "📸",
+        "title": "Fotografia",
+        "description": "Powiększ stare zdjęcia cyfrowe, przygotuj obrazy do druku lub odzyskaj szczegóły z niskiej rozdzielczości."
+      },
+      "ecommerce": {
+        "icon": "🛒",
+        "title": "E-commerce",
+        "description": "Twórz ostre zdjęcia produktów na marketplace. Popraw jakość obrazów dostawców."
+      },
+      "printing": {
+        "icon": "🖨️",
+        "title": "Druk Wielkoformatowy",
+        "description": "Przygotuj obrazy do plakatów, banerów i materiałów reklamowych bez pikselizacji."
+      },
+      "oldPhotos": {
+        "icon": "🖼️",
+        "title": "Stare Zdjęcia",
+        "description": "Odśwież rodzinne zdjęcia z przeszłości. Połącz z ulepszeniem twarzy dla najlepszych wyników."
+      }
+    },
+    "technology": {
+      "title": "🔬 Technologia Real-ESRGAN",
+      "description": "Real-ESRGAN (Enhanced Super-Resolution Generative Adversarial Network) to najnowocześniejszy model AI trenowany na milionach obrazów. W przeciwieństwie do prostych algorytmów interpolacji, rozumie strukturę obrazu i inteligentnie rekonstruuje brakujące detale.",
+      "feature1": "Rekonstrukcja tekstur i szczegółów w wysokiej jakości",
+      "feature2": "Zachowanie ostrych krawędzi bez artefaktów",
+      "feature3": "Inteligentne usuwanie szumów podczas powiększania",
+      "feature4": "Opcjonalne GFPGAN dla doskonałych twarzy w portretach"
+    },
+    "tips": {
+      "title": "💡 Wskazówki dla Najlepszych Wyników",
+      "tip1": "Zacznij od 2x dla szybkiego podglądu jakości",
+      "tip2": "Używaj 4x do większości zastosowań profesjonalnych",
+      "tip3": "8x najlepsze dla bardzo małych obrazów źródłowych",
+      "tip4": "Włącz ulepszenie twarzy dla portretów i zdjęć grupowych",
+      "tip5": "Format PNG daje najlepszą jakość wyjściową",
+      "tip6": "Połącz z restauracją dla starych, uszkodzonych zdjęć"
+    },
+    "faq": {
+      "title": "Często Zadawane Pytania",
+      "q1": {
+        "question": "Jaka jest różnica między 2x, 4x i 8x?",
+        "answer": "2x podwaja wymiary (np. 500px → 1000px), 4x poczwórnie (500px → 2000px), 8x ośmiokrotnie (500px → 4000px). Większa skala = więcej szczegółów generowanych przez AI."
+      },
+      "q2": {
+        "question": "Kiedy używać ulepszenia twarzy?",
+        "answer": "Włącz GFPGAN gdy obraz zawiera twarze, szczególnie rozmyte lub w niskiej rozdzielczości. Model specjalizuje się w rekonstrukcji rysów twarzy."
+      },
+      "q3": {
+        "question": "Ile kredytów kosztuje powiększanie?",
+        "answer": "Podstawowe powiększanie kosztuje 1 kredyt niezależnie od skali. Ulepszenie twarzy GFPGAN dodaje +1 kredyt (łącznie 2 kredyty)."
+      },
+      "q4": {
+        "question": "Jakie formaty są obsługiwane?",
+        "answer": "Obsługujemy JPEG, PNG i WEBP. Wynik zawsze jest w formacie PNG dla najwyższej jakości. Maksymalny rozmiar pliku to 10MB."
+      },
+      "q5": {
+        "question": "Czy mogę powiększyć obraz już powiększony?",
+        "answer": "Tak, ale wyniki mogą być gorsze. AI działa najlepiej na oryginalnych obrazach. Dla bardzo małych zdjęć zalecamy od razu 8x zamiast wielokrotnego powiększania."
+      }
+    },
+    "cta": {
+      "title": "Gotowy Powiększyć Swoje Obrazy?",
+      "subtitle": "Zacznij z 3 darmowymi kredytami. Bez karty kredytowej. Profesjonalne wyniki w sekundy.",
+      "getStarted": "Zacznij Za Darmo",
+      "startUpscaling": "Powiększ Obraz"
+    }
+  },
   "imageExpandPage": {
     "badge": "Napędzane przez FLUX.1 Fill [pro] AI",
     "title": "Rozszerzanie Obrazu (Uncrop)",

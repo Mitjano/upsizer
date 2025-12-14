@@ -23,8 +23,7 @@ const ImageUpscaler = dynamic(
 export default function UpscalerPage() {
   const { data: session } = useSession();
   const [userRole, setUserRole] = useState<'user' | 'premium' | 'admin'>('user');
-  const t = useTranslations('toolsPage.upscaler');
-  const tCommon = useTranslations('common');
+  const t = useTranslations('upscalerPage');
 
   useEffect(() => {
     if (session?.user?.email) {
@@ -66,23 +65,23 @@ export default function UpscalerPage() {
               </span>
             </h1>
 
-            <p className="text-xl text-gray-600 dark:text-gray-400 mb-8 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-600 dark:text-gray-400 mb-8 max-w-3xl mx-auto">
               {t('subtitle')}
             </p>
 
             {/* Stats */}
             <div className="grid grid-cols-3 gap-8 max-w-lg mx-auto">
               <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">4x</div>
-                <div className="text-gray-500 dark:text-gray-400 text-sm mt-1">{t('stats.maxScale')}</div>
+                <div className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">{t('stats.maxScale')}</div>
+                <div className="text-gray-500 dark:text-gray-400 text-sm mt-1">{t('stats.maxScaleLabel')}</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">5s</div>
-                <div className="text-gray-500 dark:text-gray-400 text-sm mt-1">{t('stats.processing')}</div>
+                <div className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">{t('stats.processing')}</div>
+                <div className="text-gray-500 dark:text-gray-400 text-sm mt-1">{t('stats.processingLabel')}</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">1-2</div>
-                <div className="text-gray-500 dark:text-gray-400 text-sm mt-1">{t('stats.creditPerImage')}</div>
+                <div className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">{t('stats.creditCost')}</div>
+                <div className="text-gray-500 dark:text-gray-400 text-sm mt-1">{t('stats.creditCostLabel')}</div>
               </div>
             </div>
           </div>
@@ -94,41 +93,60 @@ export default function UpscalerPage() {
         <div className="bg-white dark:bg-gray-800/50 rounded-xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm">
           <ImageUpscaler userRole={userRole} />
           <p className="text-sm text-gray-500 mt-4 text-center">
-            {t('uploadTerms')}
+            {t('termsNotice')}
           </p>
+        </div>
+      </section>
+
+      {/* Presets Section */}
+      <section className="max-w-7xl mx-auto px-6 py-12">
+        <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 text-gray-900 dark:text-white">
+          {t('scaleOptions.title')}
+        </h2>
+        <div className="grid md:grid-cols-3 gap-6">
+          {['2x', '4x', '8x'].map((scale, idx) => (
+            <div
+              key={scale}
+              className={`bg-gradient-to-br ${
+                idx === 0 ? 'from-blue-100 dark:from-blue-500/20 to-cyan-100 dark:to-cyan-500/20' :
+                idx === 1 ? 'from-purple-100 dark:from-purple-500/20 to-pink-100 dark:to-pink-500/20' :
+                'from-orange-100 dark:from-orange-500/20 to-red-100 dark:to-red-500/20'
+              } backdrop-blur-sm border border-gray-200 dark:border-gray-700 rounded-2xl p-6 text-center`}
+            >
+              <div className="text-5xl font-bold mb-2 text-gray-900 dark:text-white">{scale}</div>
+              <div className="text-lg font-semibold mb-2 text-gray-800 dark:text-gray-200">
+                {t(`scaleOptions.${scale.replace('x', '')}.name`)}
+              </div>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                {t(`scaleOptions.${scale.replace('x', '')}.description`)}
+              </p>
+            </div>
+          ))}
         </div>
       </section>
 
       {/* Features Grid */}
       <section className="max-w-7xl mx-auto px-6 py-12">
+        <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 text-gray-900 dark:text-white">
+          {t('features.title')}
+        </h2>
         <div className="grid md:grid-cols-3 gap-6">
           {[
-            {
-              icon: '⚡',
-              title: t('features.fast.title'),
-              description: t('features.fast.description'),
-              gradient: 'from-yellow-100 to-orange-100 dark:from-yellow-500/20 dark:to-orange-500/20',
-            },
-            {
-              icon: '🎨',
-              title: t('features.scale.title'),
-              description: t('features.scale.description'),
-              gradient: 'from-purple-100 to-pink-100 dark:from-purple-500/20 dark:to-pink-500/20',
-            },
-            {
-              icon: '✨',
-              title: t('features.face.title'),
-              description: t('features.face.description'),
-              gradient: 'from-blue-100 to-cyan-100 dark:from-blue-500/20 dark:to-cyan-500/20',
-            },
-          ].map((feature, idx) => (
+            { icon: '🔍', key: 'realESRGAN', gradient: 'from-purple-100 dark:from-purple-500/20 to-pink-100 dark:to-pink-500/20' },
+            { icon: '👤', key: 'faceEnhance', gradient: 'from-blue-100 dark:from-blue-500/20 to-cyan-100 dark:to-cyan-500/20' },
+            { icon: '⚡', key: 'fast', gradient: 'from-yellow-100 dark:from-yellow-500/20 to-orange-100 dark:to-orange-500/20' },
+          ].map((feature) => (
             <div
-              key={idx}
+              key={feature.key}
               className={`bg-gradient-to-br ${feature.gradient} backdrop-blur-sm border border-gray-200 dark:border-gray-700 rounded-2xl p-6 hover:border-gray-300 dark:hover:border-gray-600 transition`}
             >
               <div className="text-4xl mb-4">{feature.icon}</div>
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">{feature.title}</h3>
-              <p className="text-gray-600 dark:text-gray-400">{feature.description}</p>
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                {t(`features.${feature.key}.title`)}
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400">
+                {t(`features.${feature.key}.description`)}
+              </p>
             </div>
           ))}
         </div>
@@ -140,100 +158,72 @@ export default function UpscalerPage() {
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
               <span className="text-gray-900 dark:text-white">{t('howItWorks.title')} </span>
-              <span className="bg-gradient-to-r from-purple-500 to-pink-500 dark:from-purple-400 dark:to-pink-400 bg-clip-text text-transparent">{t('howItWorks.titleHighlight')}</span>
+              <span className="bg-gradient-to-r from-purple-500 to-pink-500 dark:from-purple-400 dark:to-pink-400 bg-clip-text text-transparent">
+                {t('howItWorks.titleHighlight')}
+              </span>
             </h2>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8">
-            <div>
-              <h3 className="text-xl font-semibold mb-3 text-purple-600 dark:text-purple-400">Two Powerful AI Models</h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-4">
-                Choose between ESRGAN for fast, reliable upscaling or AuraSR v2 for the highest quality results.
-                Both models use advanced AI to intelligently reconstruct missing details.
-              </p>
-              <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
-                <li className="flex items-start gap-2">
-                  <span className="text-green-500 dark:text-green-400 mt-1">✓</span>
-                  <span><strong>ESRGAN (Standard):</strong> Fast 2x/4x upscaling, 1 credit per image</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-green-500 dark:text-green-400 mt-1">✓</span>
-                  <span><strong>AuraSR v2 (Premium):</strong> GAN-based 4x upscaling with superior detail preservation, 2 credits</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-green-500 dark:text-green-400 mt-1">✓</span>
-                  <span>Both reduce noise and compression artifacts automatically</span>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-xl font-semibold mb-3 text-pink-600 dark:text-pink-400">Perfect For</h3>
-              <div className="space-y-3 text-gray-600 dark:text-gray-400">
-                <div className="bg-white dark:bg-gray-800/50 rounded-lg p-3 border border-gray-200 dark:border-transparent">
-                  <strong className="text-gray-900 dark:text-white">📸 Photography:</strong> Enlarge photos for printing
-                  without losing quality
+          <div className="grid md:grid-cols-4 gap-6">
+            {['step1', 'step2', 'step3', 'step4'].map((step, idx) => (
+              <div key={step} className="text-center">
+                <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold text-xl mx-auto mb-4">
+                  {idx + 1}
                 </div>
-                <div className="bg-white dark:bg-gray-800/50 rounded-lg p-3 border border-gray-200 dark:border-transparent">
-                  <strong className="text-gray-900 dark:text-white">🎮 Gaming:</strong> Upscale game textures and screenshots
-                  for HD displays
-                </div>
-                <div className="bg-white dark:bg-gray-800/50 rounded-lg p-3 border border-gray-200 dark:border-transparent">
-                  <strong className="text-gray-900 dark:text-white">🎨 Design:</strong> Enhance low-res logos, illustrations,
-                  and artwork
-                </div>
-                <div className="bg-white dark:bg-gray-800/50 rounded-lg p-3 border border-gray-200 dark:border-transparent">
-                  <strong className="text-gray-900 dark:text-white">👤 Portraits:</strong> Restore old family photos with
-                  enhanced detail
-                </div>
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+                  {t(`howItWorks.${step}.title`)}
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  {t(`howItWorks.${step}.description`)}
+                </p>
               </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Upscaling Options & Formats */}
+      {/* Use Cases */}
       <section className="max-w-7xl mx-auto px-6 py-16">
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl border border-purple-300 dark:border-purple-700/50 p-6">
-            <h3 className="text-xl font-semibold mb-4 flex items-center gap-2 text-gray-900 dark:text-white">
-              <span>🔧</span> Upscaling Models
-            </h3>
-            <div className="space-y-3 text-gray-700 dark:text-gray-300">
-              <div>
-                <strong className="text-gray-900 dark:text-white">Standard (ESRGAN):</strong> Fast and reliable upscaling,
-                supports 2x and 4x, costs 1 credit
-              </div>
-              <div>
-                <strong className="text-gray-900 dark:text-white">Premium (AuraSR v2):</strong> Best quality with GAN-based
-                super-resolution, 4x upscaling, costs 2 credits
-              </div>
-              <div>
-                <strong className="text-gray-900 dark:text-white">Processing Time:</strong> Most images complete in 5-15 seconds
-              </div>
-              <div>
-                <strong className="text-gray-900 dark:text-white">Quality:</strong> Both models preserve fine textures and reduce artifacts
-              </div>
-            </div>
-          </div>
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900 dark:text-white">
+            {t('useCases.title')}
+          </h2>
+        </div>
 
-          <div className="bg-gradient-to-br from-blue-100 to-cyan-100 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-xl border border-blue-300 dark:border-blue-700/50 p-6">
-            <h3 className="text-xl font-semibold mb-4 flex items-center gap-2 text-gray-900 dark:text-white">
-              <span>📋</span> Supported Formats
-            </h3>
-            <div className="space-y-3 text-gray-700 dark:text-gray-300">
-              <div>
-                <strong className="text-gray-900 dark:text-white">Input:</strong> JPG, PNG, WebP - up to 10MB per image
-              </div>
-              <div>
-                <strong className="text-gray-900 dark:text-white">Output:</strong> High-quality PNG format
-              </div>
-              <div>
-                <strong className="text-gray-900 dark:text-white">Scale Options:</strong> 2x or 4x with Standard, 4x with Premium
-              </div>
-              <div>
-                <strong className="text-gray-900 dark:text-white">Credits:</strong> 1 credit for Standard, 2 credits for Premium
-              </div>
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {['photography', 'ecommerce', 'printing', 'oldPhotos'].map((useCase) => (
+            <div
+              key={useCase}
+              className="bg-gray-50 dark:bg-gray-800/30 rounded-xl border border-gray-200 dark:border-gray-700 p-6 hover:border-purple-500/50 transition"
+            >
+              <div className="text-3xl mb-3">{t(`useCases.${useCase}.icon`)}</div>
+              <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">
+                {t(`useCases.${useCase}.title`)}
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                {t(`useCases.${useCase}.description`)}
+              </p>
             </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Technology Section */}
+      <section className="max-w-7xl mx-auto px-6 py-12">
+        <div className="bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 rounded-2xl border border-purple-300 dark:border-purple-700/50 p-8">
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
+            {t('technology.title')}
+          </h2>
+          <p className="text-gray-700 dark:text-gray-300 mb-6">
+            {t('technology.description')}
+          </p>
+          <div className="grid md:grid-cols-2 gap-4">
+            {['feature1', 'feature2', 'feature3', 'feature4'].map((feature) => (
+              <div key={feature} className="flex items-start gap-3">
+                <span className="text-green-500 dark:text-green-400 mt-1">✓</span>
+                <span className="text-gray-700 dark:text-gray-300">{t(`technology.${feature}`)}</span>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -241,27 +231,42 @@ export default function UpscalerPage() {
       {/* Tips Section */}
       <section className="max-w-7xl mx-auto px-6 py-12">
         <div className="bg-gray-100 dark:bg-gray-800/20 rounded-xl border border-gray-200 dark:border-gray-700 p-8">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">💡 Tips for Best Results</h2>
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">{t('tips.title')}</h2>
           <div className="grid md:grid-cols-2 gap-6 text-gray-600 dark:text-gray-400">
             <div>
-              <h4 className="font-semibold text-gray-900 dark:text-white mb-2">✓ Do:</h4>
               <ul className="space-y-2 text-sm">
-                <li>• Use the highest quality source image available</li>
-                <li>• Use Premium (AuraSR) for portraits and detailed images</li>
-                <li>• Start with 2x for web use, 4x for printing</li>
-                <li>• Use Standard (ESRGAN) for quick, cost-effective upscaling</li>
+                <li>• {t('tips.tip1')}</li>
+                <li>• {t('tips.tip2')}</li>
+                <li>• {t('tips.tip3')}</li>
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold text-gray-900 dark:text-white mb-2">✗ Avoid:</h4>
               <ul className="space-y-2 text-sm">
-                <li>• Upscaling already heavily compressed or pixelated images</li>
-                <li>• Using 4x when 2x would be sufficient</li>
-                <li>• Expecting perfect results from extremely low-quality sources</li>
-                <li>• Uploading images larger than 10MB</li>
+                <li>• {t('tips.tip4')}</li>
+                <li>• {t('tips.tip5')}</li>
+                <li>• {t('tips.tip6')}</li>
               </ul>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="max-w-7xl mx-auto px-6 py-16">
+        <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-900 dark:text-white">
+          {t('faq.title')}
+        </h2>
+        <div className="max-w-3xl mx-auto space-y-6">
+          {['q1', 'q2', 'q3', 'q4', 'q5'].map((q) => (
+            <div key={q} className="bg-white dark:bg-gray-800/50 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+                {t(`faq.${q}.question`)}
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400">
+                {t(`faq.${q}.answer`)}
+              </p>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -272,7 +277,7 @@ export default function UpscalerPage() {
             {t('cta.title')}
           </h2>
           <p className="text-gray-700 dark:text-gray-300 text-lg max-w-2xl mx-auto mb-8">
-            Start with 3 free credits. No credit card required.
+            {t('cta.subtitle')}
           </p>
           {!session ? (
             <Link

@@ -1830,6 +1830,140 @@
       "startRestoring": "Commencer à Restaurer"
     }
   },
+  "upscalerPage": {
+    "badge": "Propulsé par Real-ESRGAN AI",
+    "title": "Agrandissez vos Images jusqu'à",
+    "titleHighlight": "8x Résolution",
+    "subtitle": "Agrandissement d'images professionnel par IA avec Real-ESRGAN. Augmentez la résolution des photos sans perte de qualité. Amélioration faciale optionnelle avec GFPGAN.",
+    "stats": {
+      "maxScale": "8x",
+      "maxScaleLabel": "Échelle Max",
+      "processing": "5-15s",
+      "processingLabel": "Traitement",
+      "creditCost": "1-2",
+      "creditCostLabel": "Crédits/Image"
+    },
+    "termsNotice": "En téléchargeant un fichier, vous acceptez nos Conditions d'Utilisation et notre Politique de Confidentialité.",
+    "scaleOptions": {
+      "title": "Choisissez votre Facteur d'Agrandissement",
+      "2": {
+        "name": "Double Résolution",
+        "description": "Parfait pour les petites améliorations et images web. Traitement rapide."
+      },
+      "4": {
+        "name": "Quadruple Résolution",
+        "description": "Idéal pour l'impression et l'usage professionnel. Excellent équilibre qualité-vitesse."
+      },
+      "8": {
+        "name": "Huit Fois la Résolution",
+        "description": "Qualité maximale pour l'impression grand format et les projets professionnels."
+      }
+    },
+    "features": {
+      "title": "Fonctionnalités Real-ESRGAN",
+      "realESRGAN": {
+        "title": "Technologie Real-ESRGAN",
+        "description": "Modèle IA de pointe pour la super-résolution d'images. Reconstruit fidèlement les textures, bords et détails fins."
+      },
+      "faceEnhance": {
+        "title": "Amélioration Faciale GFPGAN",
+        "description": "Amélioration faciale IA optionnelle. Parfait pour les portraits et photos de groupe avec visages flous."
+      },
+      "fast": {
+        "title": "Traitement Ultra-rapide",
+        "description": "Accélération GPU optimisée. Obtenez des résultats en secondes, pas en minutes."
+      }
+    },
+    "howItWorks": {
+      "title": "Comment Fonctionne l'",
+      "titleHighlight": "Upscaler IA",
+      "step1": {
+        "title": "Téléchargez votre Image",
+        "description": "Glissez-déposez ou sélectionnez une image JPG, PNG ou WEBP jusqu'à 10Mo."
+      },
+      "step2": {
+        "title": "Choisissez l'Échelle",
+        "description": "Sélectionnez un agrandissement 2x, 4x ou 8x selon vos besoins."
+      },
+      "step3": {
+        "title": "Optionnel: Amélioration Faciale",
+        "description": "Activez GFPGAN pour de meilleurs visages dans les portraits (+1 crédit)."
+      },
+      "step4": {
+        "title": "Téléchargez le Résultat",
+        "description": "Téléchargez votre image agrandie en format PNG haute qualité."
+      }
+    },
+    "useCases": {
+      "title": "Cas d'Utilisation de l'Upscaler IA",
+      "photography": {
+        "icon": "📸",
+        "title": "Photographie",
+        "description": "Agrandissez d'anciennes photos numériques, préparez des images pour l'impression ou récupérez les détails de basse résolution."
+      },
+      "ecommerce": {
+        "icon": "🛒",
+        "title": "E-commerce",
+        "description": "Créez des images de produits nettes pour les marketplaces. Améliorez la qualité des images fournisseurs."
+      },
+      "printing": {
+        "icon": "🖨️",
+        "title": "Impression Grand Format",
+        "description": "Préparez des images pour affiches, bannières et matériels marketing sans pixelisation."
+      },
+      "oldPhotos": {
+        "icon": "🖼️",
+        "title": "Photos Anciennes",
+        "description": "Ravivez les photos de famille du passé. Combinez avec l'amélioration faciale pour les meilleurs résultats."
+      }
+    },
+    "technology": {
+      "title": "🔬 Technologie Real-ESRGAN",
+      "description": "Real-ESRGAN (Réseau Antagoniste Génératif Amélioré de Super-Résolution) est un modèle IA de pointe entraîné sur des millions d'images. Contrairement aux algorithmes d'interpolation simples, il comprend la structure de l'image et reconstruit intelligemment les détails manquants.",
+      "feature1": "Reconstruction de textures et détails haute qualité",
+      "feature2": "Préservation des bords nets sans artefacts",
+      "feature3": "Suppression intelligente du bruit pendant l'agrandissement",
+      "feature4": "GFPGAN optionnel pour des visages parfaits dans les portraits"
+    },
+    "tips": {
+      "title": "💡 Conseils pour les Meilleurs Résultats",
+      "tip1": "Commencez par 2x pour un aperçu rapide de la qualité",
+      "tip2": "Utilisez 4x pour la plupart des applications professionnelles",
+      "tip3": "8x est idéal pour les images sources très petites",
+      "tip4": "Activez l'amélioration faciale pour les portraits et photos de groupe",
+      "tip5": "Le format PNG offre la meilleure qualité de sortie",
+      "tip6": "Combinez avec la restauration pour les photos anciennes et endommagées"
+    },
+    "faq": {
+      "title": "Questions Fréquentes",
+      "q1": {
+        "question": "Quelle est la différence entre 2x, 4x et 8x?",
+        "answer": "2x double les dimensions (ex. 500px → 1000px), 4x quadruple (500px → 2000px), 8x multiplie par huit (500px → 4000px). Échelle plus grande = plus de détails générés par l'IA."
+      },
+      "q2": {
+        "question": "Quand dois-je utiliser l'amélioration faciale?",
+        "answer": "Activez GFPGAN quand votre image contient des visages, surtout flous ou en basse résolution. Le modèle se spécialise dans la reconstruction des traits du visage."
+      },
+      "q3": {
+        "question": "Combien de crédits coûte l'agrandissement?",
+        "answer": "L'agrandissement de base coûte 1 crédit quelle que soit l'échelle. L'amélioration faciale GFPGAN ajoute +1 crédit (2 crédits au total)."
+      },
+      "q4": {
+        "question": "Quels formats sont supportés?",
+        "answer": "Nous supportons JPEG, PNG et WEBP. La sortie est toujours en PNG pour une qualité maximale. La taille maximale de fichier est 10Mo."
+      },
+      "q5": {
+        "question": "Puis-je agrandir une image déjà agrandie?",
+        "answer": "Oui, mais les résultats peuvent être moins bons. L'IA fonctionne mieux sur les images originales. Pour les très petites photos, nous recommandons 8x directement plutôt que plusieurs passes d'agrandissement."
+      }
+    },
+    "cta": {
+      "title": "Prêt à Agrandir vos Images?",
+      "subtitle": "Commencez avec 3 crédits gratuits. Sans carte de crédit. Résultats professionnels en secondes.",
+      "getStarted": "Commencer Gratuitement",
+      "startUpscaling": "Agrandir l'Image"
+    }
+  },
   "imageExpandPage": {
     "badge": "Propulsé par FLUX.1 Fill [pro] AI",
     "title": "Expansion d'Image (Uncrop)",
