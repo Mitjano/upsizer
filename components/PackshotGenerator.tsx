@@ -83,7 +83,7 @@ export function PackshotGenerator({ userRole = 'user' }: PackshotGeneratorProps)
 
       toast.loading('Generating AI background...', { id: 'ai-background' })
 
-      const response = await fetch('/api/generate-packshot', {
+      const response = await fetch('/api/generate-ai-background', {
         method: 'POST',
         body: formData,
       })

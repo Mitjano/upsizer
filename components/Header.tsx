@@ -117,7 +117,7 @@ const toolCategories = [
     ),
     tools: [
       { key: 'backgroundGenerator', href: '/tools/background-generator', color: 'from-pink-500 to-rose-600' },
-      { key: 'packshot', href: '/tools/packshot-generator', color: 'from-amber-500 to-orange-600' },
+      { key: 'packshot', href: '/tools/ai-background-generator', color: 'from-amber-500 to-orange-600' },
       { key: 'expand', href: '/tools/image-expand', color: 'from-indigo-500 to-indigo-600' },
       { key: 'inpainting', href: '/tools/inpainting', color: 'from-emerald-500 to-teal-600' },
     ],

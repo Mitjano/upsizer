@@ -172,7 +172,7 @@ export default function StructuredData() {
           "@type": "Service",
           "name": "Packshot Generator",
           "description": "Create professional product photos with AI-generated backgrounds",
-          "url": "https://pixelift.pl/tools/packshot-generator",
+          "url": "https://pixelift.pl/tools/ai-background-generator",
           "provider": {
             "@type": "Organization",
             "name": "Pixelift"

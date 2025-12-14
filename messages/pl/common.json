@@ -3258,5 +3258,147 @@
     "goHome": "Przejdź do strony głównej",
     "persistentIssue": "Jeśli problem się powtarza,",
     "contactSupport": "skontaktuj się z naszym wsparciem"
+  },
+  "aiBackgroundPage": {
+    "badge": "Napędzane przez Bria AI",
+    "title": "Generator Tła AI dla Produktów",
+    "subtitle": "Przekształć zdjęcia produktów w profesjonalne fotografie z AI-generowanym tłem. Idealne dla e-commerce, social media i marketingu. Wybierz z 6 gotowych presetów lub stwórz własne tło opisując je tekstem.",
+    "stats": {
+      "presetsLabel": "Gotowych Presetów",
+      "processingLabel": "Czas Generowania",
+      "creditCostLabel": "Kredyty za Obraz"
+    },
+    "creditsRemaining": "Pozostało {credits} kredytów",
+    "termsNotice": "Przesyłając plik, akceptujesz nasz Regulamin i Politykę Prywatności.",
+    "presets": {
+      "title": "Gotowe Style Tła",
+      "studio": {
+        "icon": "📸",
+        "name": "Studio",
+        "description": "Profesjonalne oświetlenie studyjne z białym cycloramą"
+      },
+      "marble": {
+        "icon": "🪨",
+        "name": "Marmur",
+        "description": "Elegancka marmurowa powierzchnia z naturalnym światłem"
+      },
+      "nature": {
+        "icon": "🌿",
+        "name": "Natura",
+        "description": "Naturalne otoczenie z miękkim bokeh w tle"
+      },
+      "minimal": {
+        "icon": "◻️",
+        "name": "Minimal",
+        "description": "Czysty gradient, nowoczesna fotografia produktowa"
+      },
+      "wood": {
+        "icon": "🪵",
+        "name": "Drewno",
+        "description": "Rustykalna drewniana powierzchnia, ciepłe tony"
+      },
+      "lifestyle": {
+        "icon": "🏠",
+        "name": "Lifestyle",
+        "description": "Nowoczesne wnętrze, aspiracyjna sceneria"
+      }
+    },
+    "features": {
+      "aiGenerated": {
+        "title": "Tła Generowane przez AI",
+        "description": "Zaawansowana technologia AI tworzy realistyczne, profesjonalne tła dopasowane do Twojego produktu. Każde tło jest unikalne i generowane specjalnie dla Twojego zdjęcia."
+      },
+      "customPrompts": {
+        "title": "Własne Opisy Tła",
+        "description": "Nie znalazłeś idealnego presetu? Opisz tło własnymi słowami - AI wygeneruje dokładnie to, czego potrzebujesz. Pełna kontrola twórcza w Twoich rękach."
+      },
+      "ecommerce": {
+        "title": "Gotowe dla E-commerce",
+        "description": "Zoptymalizowane pod wymagania Amazon, Allegro, eBay i innych platform. Profesjonalne zdjęcia produktowe zwiększające konwersję sprzedaży."
+      }
+    },
+    "howItWorks": {
+      "title": "Jak Działa Generator Tła AI",
+      "step1": {
+        "title": "1. Prześlij Zdjęcie",
+        "description": "Wgraj zdjęcie produktu w formacie JPG, PNG lub WEBP"
+      },
+      "step2": {
+        "title": "2. Wybierz Tło",
+        "description": "Wybierz preset lub opisz własne tło tekstem"
+      },
+      "step3": {
+        "title": "3. AI Generuje",
+        "description": "AI usuwa tło i tworzy nowe w ~15 sekund"
+      },
+      "step4": {
+        "title": "4. Pobierz",
+        "description": "Ściągnij gotowy obraz w wysokiej rozdzielczości"
+      }
+    },
+    "useCases": {
+      "title": "Idealne Zastosowania",
+      "ecommerce": {
+        "title": "Sklepy Internetowe",
+        "description": "Twórz spójne, profesjonalne zdjęcia produktów dla swojego sklepu. Zwiększ konwersję dzięki atrakcyjnym wizualizacjom."
+      },
+      "socialMedia": {
+        "title": "Social Media",
+        "description": "Wyróżnij się na Instagramie i Facebooku. Twórz przyciągające wzrok posty produktowe z kreatywnymi tłami."
+      },
+      "dropshipping": {
+        "title": "Dropshipping",
+        "description": "Przekształć zdjęcia od dostawców w unikalne wizualizacje. Wyróżnij się od konkurencji sprzedającej te same produkty."
+      },
+      "marketing": {
+        "title": "Materiały Marketingowe",
+        "description": "Twórz profesjonalne grafiki do katalogów, ulotek i reklam bez studia fotograficznego."
+      }
+    },
+    "technology": {
+      "title": "Technologia AI",
+      "description": "Generator Tła AI wykorzystuje model Bria Background Replace - zaawansowaną technologię uczenia maszynowego trenowaną na milionach profesjonalnych zdjęć produktowych.",
+      "feature1": "Automatyczne usuwanie tła z precyzją na poziomie pikseli",
+      "feature2": "Generowanie realistycznych teł dopasowanych do produktu",
+      "feature3": "Zachowanie naturalnych cieni i odbić",
+      "feature4": "Komercyjnie bezpieczne - możesz używać bez ograniczeń"
+    },
+    "tips": {
+      "title": "Wskazówki dla Najlepszych Rezultatów",
+      "tip1": "Używaj dobrze oświetlonych zdjęć z wyraźnie widocznym produktem",
+      "tip2": "Unikaj zdjęć z bardzo złożonym tłem - AI działa najlepiej z prostymi tłami",
+      "tip3": "Dla custom promptów bądź konkretny: opisz powierzchnię, oświetlenie i styl",
+      "tip4": "Preset 'Studio' najlepiej sprawdza się dla wymagań Amazon i Allegro",
+      "tip5": "Pojedyncze produkty dają lepsze rezultaty niż grupy produktów"
+    },
+    "faq": {
+      "title": "Często Zadawane Pytania",
+      "q1": {
+        "question": "Jakie formaty plików są obsługiwane?",
+        "answer": "Generator obsługuje formaty JPG, JPEG, PNG i WEBP. Maksymalny rozmiar pliku to 30MB. Dla najlepszych rezultatów zalecamy obrazy o rozdzielczości co najmniej 1000x1000 pikseli."
+      },
+      "q2": {
+        "question": "Ile kosztuje generowanie tła?",
+        "answer": "Każde generowanie tła kosztuje 2 kredyty. Nowi użytkownicy otrzymują 3 darmowe kredyty na start. Dodatkowe kredyty można kupić w przystępnych pakietach."
+      },
+      "q3": {
+        "question": "Czy mogę używać wygenerowanych obrazów komercyjnie?",
+        "answer": "Tak! Wszystkie wygenerowane obrazy są w pełni komercyjne. Możesz ich używać w sklepach internetowych, reklamach, katalogach i innych materiałach marketingowych bez żadnych ograniczeń."
+      },
+      "q4": {
+        "question": "Jak napisać dobry custom prompt?",
+        "answer": "Opisz konkretnie: powierzchnię (marmur, drewno, beton), oświetlenie (studyjne, naturalne, dramatyczne), styl (minimalistyczny, luksusowy, rustykalny) i atmosferę. Przykład: 'Elegancki czarny marmur z delikatnym złotym żyłkowaniem, miękkie oświetlenie studyjne, luksusowa atmosfera'."
+      },
+      "q5": {
+        "question": "Co jeśli wynik nie jest zadowalający?",
+        "answer": "Możesz wygenerować nowe tło z innym presetem lub custom promptem. Każda próba to osobne generowanie. Dla najlepszych rezultatów zacznij od presetów, a potem eksperymentuj z własnymi opisami."
+      }
+    },
+    "cta": {
+      "title": "Gotowy na Profesjonalne Zdjęcia Produktów?",
+      "subtitle": "Przekształć zwykłe zdjęcia w profesjonalne fotografie produktowe z AI-generowanym tłem. Bez studia, bez fotografa - tylko Ty i AI.",
+      "getCredits": "Kup Kredyty",
+      "exploreTools": "Zobacz Wszystkie Narzędzia"
+    }
   }
 }

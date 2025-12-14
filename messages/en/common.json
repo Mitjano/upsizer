@@ -3258,5 +3258,75 @@
     "goHome": "Go to homepage",
     "persistentIssue": "If this issue persists,",
     "contactSupport": "contact our support team"
+  },
+  "aiBackgroundPage": {
+    "badge": "Powered by Bria AI",
+    "title": "AI Product Background Generator",
+    "subtitle": "Transform product photos into professional images with AI-generated backgrounds. Perfect for e-commerce, social media, and marketing. Choose from 6 ready presets or create your own background with text prompts.",
+    "stats": {
+      "presetsLabel": "Ready Presets",
+      "processingLabel": "Generation Time",
+      "creditCostLabel": "Credits per Image"
+    },
+    "creditsRemaining": "{credits} credits remaining",
+    "termsNotice": "By uploading a file, you agree to our Terms and Privacy Policy.",
+    "presets": {
+      "title": "Ready Background Styles",
+      "studio": { "icon": "📸", "name": "Studio", "description": "Professional studio lighting with white cyclorama" },
+      "marble": { "icon": "🪨", "name": "Marble", "description": "Elegant marble surface with natural lighting" },
+      "nature": { "icon": "🌿", "name": "Nature", "description": "Natural outdoor setting with soft bokeh" },
+      "minimal": { "icon": "◻️", "name": "Minimal", "description": "Clean gradient, modern product photography" },
+      "wood": { "icon": "🪵", "name": "Wood", "description": "Rustic wooden surface, warm tones" },
+      "lifestyle": { "icon": "🏠", "name": "Lifestyle", "description": "Modern interior, aspirational setting" }
+    },
+    "features": {
+      "aiGenerated": { "title": "AI-Generated Backgrounds", "description": "Advanced AI technology creates realistic, professional backgrounds tailored to your product. Each background is unique." },
+      "customPrompts": { "title": "Custom Background Prompts", "description": "Can't find the perfect preset? Describe the background in your own words - AI will generate exactly what you need." },
+      "ecommerce": { "title": "E-commerce Ready", "description": "Optimized for Amazon, eBay, Etsy and other platforms. Professional product photos that increase sales." }
+    },
+    "howItWorks": {
+      "title": "How AI Background Generator Works",
+      "step1": { "title": "1. Upload Photo", "description": "Upload your product photo in JPG, PNG or WEBP format" },
+      "step2": { "title": "2. Choose Background", "description": "Select a preset or describe your own background" },
+      "step3": { "title": "3. AI Generates", "description": "AI removes background and creates new one in ~15 seconds" },
+      "step4": { "title": "4. Download", "description": "Download the final high-resolution image" }
+    },
+    "useCases": {
+      "title": "Perfect For",
+      "ecommerce": { "title": "Online Stores", "description": "Create consistent, professional product photos for your store. Increase conversion with attractive visuals." },
+      "socialMedia": { "title": "Social Media", "description": "Stand out on Instagram and Facebook. Create eye-catching product posts with creative backgrounds." },
+      "dropshipping": { "title": "Dropshipping", "description": "Transform supplier photos into unique visuals. Stand out from competitors selling the same products." },
+      "marketing": { "title": "Marketing Materials", "description": "Create professional graphics for catalogs, flyers, and ads without a photo studio." }
+    },
+    "technology": {
+      "title": "AI Technology",
+      "description": "AI Background Generator uses Bria Background Replace model - advanced machine learning trained on millions of professional product photos.",
+      "feature1": "Automatic background removal with pixel-level precision",
+      "feature2": "Realistic background generation matched to product",
+      "feature3": "Natural shadow and reflection preservation",
+      "feature4": "Commercially safe - use without restrictions"
+    },
+    "tips": {
+      "title": "Tips for Best Results",
+      "tip1": "Use well-lit photos with clearly visible product",
+      "tip2": "Avoid photos with very complex backgrounds - AI works best with simple ones",
+      "tip3": "For custom prompts be specific: describe surface, lighting and style",
+      "tip4": "'Studio' preset works best for Amazon and marketplace requirements",
+      "tip5": "Single products give better results than product groups"
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "q1": { "question": "What file formats are supported?", "answer": "JPG, JPEG, PNG and WEBP. Max 30MB. For best results, use images at least 1000x1000 pixels." },
+      "q2": { "question": "How much does it cost?", "answer": "Each generation costs 2 credits. New users get 3 free credits. Additional credits in affordable packages." },
+      "q3": { "question": "Can I use generated images commercially?", "answer": "Yes! All images are fully commercial. Use in stores, ads, catalogs without restrictions." },
+      "q4": { "question": "How to write a good custom prompt?", "answer": "Be specific: surface (marble, wood), lighting (studio, natural), style (minimalist, luxury). Example: 'Elegant black marble, soft studio lighting, luxury atmosphere'." },
+      "q5": { "question": "What if result is not satisfactory?", "answer": "Generate new background with different preset or prompt. Each attempt is separate. Start with presets, then experiment." }
+    },
+    "cta": {
+      "title": "Ready for Professional Product Photos?",
+      "subtitle": "Transform ordinary photos into professional product photography with AI-generated backgrounds. No studio, no photographer - just you and AI.",
+      "getCredits": "Get Credits",
+      "exploreTools": "Explore All Tools"
+    }
   }
 }

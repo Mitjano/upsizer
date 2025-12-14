@@ -120,7 +120,7 @@ const tools: Tool[] = [
   },
   {
     nameKey: 'packshot',
-    href: '/tools/packshot-generator',
+    href: '/tools/ai-background-generator',
     descriptionKey: 'packshot',
     icon: (
       <svg className="w-7 h-7" fill="none" stroke="#fbbf24" viewBox="0 0 24 24">

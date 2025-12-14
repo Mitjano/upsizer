@@ -30,7 +30,7 @@ const tools = [
   {
     name: 'Packshot Generator',
     description: 'Create professional product photos with AI backgrounds',
-    href: '/tools/packshot-generator',
+    href: '/tools/ai-background-generator',
     icon: '📦',
     color: 'from-pink-500 to-rose-500',
     credits: '2 credits per image',

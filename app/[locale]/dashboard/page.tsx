@@ -77,7 +77,7 @@ const allTools = [
   { nameKey: 'objectRemoval', href: '/tools/object-removal', icon: '🗑️', color: 'text-orange-400', credits: '2', badge: 'NEW' },
   { nameKey: 'bgGenerator', href: '/tools/background-generator', icon: '🌟', color: 'text-pink-400', credits: '3', badge: 'NEW' },
   { nameKey: 'compressor', href: '/tools/image-compressor', icon: '📦', color: 'text-teal-400', credits: 'free' },
-  { nameKey: 'packshot', href: '/tools/packshot-generator', icon: '📷', color: 'text-amber-400', credits: '2' },
+  { nameKey: 'packshot', href: '/tools/ai-background-generator', icon: '📷', color: 'text-amber-400', credits: '2' },
   { nameKey: 'expand', href: '/tools/image-expand', icon: '↔️', color: 'text-indigo-400', credits: '2' },
   { nameKey: 'inpainting', href: '/tools/inpainting', icon: '🖌️', color: 'text-cyan-400', credits: '2', badge: 'NEW' },
   { nameKey: 'reimagine', href: '/tools/reimagine', icon: '🔮', color: 'text-violet-400', credits: '2', badge: 'NEW' },
