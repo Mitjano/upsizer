@@ -307,8 +307,19 @@ export class ImageProcessor {
     faceEnhance: boolean = false
   ): Promise<string> {
     try {
-      // Resize image if too large for Replicate GPU (max ~2 million pixels)
-      const resizedDataUrl = await this.resizeForUpscale(dataUrl)
+      // Adjust max pixels based on scale to prevent GPU OOM errors
+      // Higher scales require more GPU memory, so we need smaller input images
+      // 8x with face_enhance is the most memory intensive
+      let maxPixels: number
+      if (scale === 8) {
+        maxPixels = faceEnhance ? 250000 : 500000  // ~500x500 or ~700x700 max
+      } else if (scale === 4) {
+        maxPixels = faceEnhance ? 1000000 : 1500000  // ~1000x1000 or ~1200x1200 max
+      } else {
+        maxPixels = 2000000  // ~1400x1400 max for 2x
+      }
+
+      const resizedDataUrl = await this.resizeForUpscale(dataUrl, maxPixels)
 
       // Use Real-ESRGAN with built-in face_enhance option
       // This is more stable than separate GFPGAN model which has upload errors
