@@ -615,4 +615,49 @@ export class ImageProcessor {
     console.log('Packshot generated via Photoroom')
     return resultBuffer
   }
+
+  /**
+   * Professional packshot with AI-generated background using Photoroom API
+   * Creates studio-quality product photography with custom AI backgrounds
+   */
+  static async generatePackshotWithAIBackground(
+    imageBuffer: Buffer,
+    backgroundPrompt: string
+  ): Promise<Buffer> {
+    const photoroomApiKey = process.env.PHOTOROOM_API_KEY
+    if (!photoroomApiKey) {
+      throw new Error('PHOTOROOM_API_KEY not configured')
+    }
+
+    console.log('Starting Photoroom AI background generation...', backgroundPrompt)
+
+    // Create form data with image
+    const formData = new FormData()
+    const blob = new Blob([new Uint8Array(imageBuffer)], { type: 'image/png' })
+    formData.append('imageFile', blob, 'image.png')
+    formData.append('removeBackground', 'true')
+    formData.append('background.prompt', backgroundPrompt)
+    formData.append('shadow.mode', 'ai.soft')
+    formData.append('padding', '0.1')
+    formData.append('outputSize', '2000x2000')
+
+    const response = await fetch('https://image-api.photoroom.com/v2/edit', {
+      method: 'POST',
+      headers: {
+        'x-api-key': photoroomApiKey,
+        'Accept': 'image/png',
+      },
+      body: formData,
+    })
+
+    if (!response.ok) {
+      const error = await response.text()
+      console.error('Photoroom AI background error:', error)
+      throw new Error(`Photoroom AI background failed: ${error}`)
+    }
+
+    const resultBuffer = Buffer.from(await response.arrayBuffer())
+    console.log('AI background packshot generated via Photoroom')
+    return resultBuffer
+  }
 }

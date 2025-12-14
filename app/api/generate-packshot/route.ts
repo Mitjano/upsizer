@@ -9,7 +9,8 @@ import { ImageProcessor } from '@/lib/image-processor'
 
 interface PackshotPreset {
   name: string
-  backgroundColor: string // Hex color for Photoroom
+  backgroundColor?: string // Hex color for solid backgrounds
+  backgroundPrompt?: string // AI-generated background prompt
   credits: number
 }
 
@@ -29,22 +30,32 @@ const PRESETS: Record<string, PackshotPreset> = {
   },
   studio: {
     name: 'Studio Setup',
-    backgroundColor: 'FAFAFA',
+    backgroundPrompt: 'professional product photography, studio lighting, soft gradient background, clean minimalist, commercial photography',
     credits: PACKSHOT_CREDITS,
   },
   lifestyle: {
     name: 'Lifestyle',
-    backgroundColor: 'F5F3F0',
+    backgroundPrompt: 'lifestyle product photography, elegant marble surface, soft natural lighting, premium feel, high-end commercial',
     credits: PACKSHOT_CREDITS,
   },
 }
 
 async function generatePackshot(imageBuffer: Buffer, preset: PackshotPreset): Promise<Buffer> {
-  // Use Photoroom API - industry standard for professional packshots
-  const resultBuffer = await ImageProcessor.generatePackshotPhotoroom(
-    imageBuffer,
-    preset.backgroundColor
-  )
+  let resultBuffer: Buffer
+
+  if (preset.backgroundPrompt) {
+    // AI-generated background
+    resultBuffer = await ImageProcessor.generatePackshotWithAIBackground(
+      imageBuffer,
+      preset.backgroundPrompt
+    )
+  } else {
+    // Solid color background
+    resultBuffer = await ImageProcessor.generatePackshotPhotoroom(
+      imageBuffer,
+      preset.backgroundColor || 'FFFFFF'
+    )
+  }
 
   // Ensure output is 2000x2000
   const finalImage = await sharp(resultBuffer)
