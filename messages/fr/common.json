@@ -129,6 +129,10 @@
       "name": "Compresseur d'Images",
       "description": "Réduisez la taille intelligemment"
     },
+    "formatConverter": {
+      "name": "Convertisseur de Format",
+      "description": "Convertissez entre PNG, JPG, WebP, AVIF"
+    },
     "packshot": {
       "name": "Générateur de Packshot",
       "description": "Photos professionnelles de produits"
@@ -593,6 +597,11 @@
         "description": "Réduisez la taille des fichiers tout en maintenant la qualité. Parfait pour l'optimisation web.",
         "credits": "1 crédit"
       },
+      "formatConverter": {
+        "name": "Convertisseur de Format",
+        "description": "Convertissez vos images entre PNG, JPG, WebP, AVIF et GIF. Gratuit et rapide.",
+        "credits": "Gratuit"
+      },
       "styleTransfer": {
         "name": "Transfert de Style",
         "description": "Transformez vos photos avec des styles artistiques. Appliquez l'apparence de peintures célèbres ou de styles personnalisés.",
@@ -918,6 +927,10 @@
         "name": "Compresseur d'Images",
         "description": "Réduisez la taille du fichier"
       },
+      "formatConverter": {
+        "name": "Convertisseur de Format",
+        "description": "Convertissez entre formats d'image"
+      },
       "packshot": {
         "name": "Générateur de Packshot",
         "description": "Photos produits professionnelles"
@@ -996,6 +1009,7 @@
       "objectRemoval": { "name": "Suppression d'Objets", "description": "Effacez les objets, personnes et distractions indésirables" },
       "bgGenerator": { "name": "Générateur de Fond", "description": "Générez des arrière-plans IA époustouflants à partir de descriptions" },
       "compressor": { "name": "Compresseur d'Images", "description": "Réduisez la taille du fichier en conservant la qualité" },
+      "formatConverter": { "name": "Convertisseur de Format", "description": "Convertissez entre PNG, JPG, WebP, AVIF et GIF gratuitement" },
       "packshot": { "name": "Générateur Packshot", "description": "Créez des photos de produits professionnelles instantanément" },
       "expand": { "name": "Expansion d'Image", "description": "Étendez les bordures d'image avec l'outpainting IA" }
     },
@@ -3159,6 +3173,139 @@
       "title": "Prêt à Optimiser vos Images?",
       "subtitle": "Réduisez drastiquement les tailles de fichiers tout en maintenant la qualité visuelle. Parfait pour le web et mobile.",
       "getCredits": "Obtenir des Crédits",
+      "exploreTools": "Explorer Tous les Outils"
+    }
+  },
+  "formatConverter": {
+    "title": "Format",
+    "titleHighlight": "d'Image",
+    "subtitle": "Convertissez vos images entre différents formats. Sélectionnez une image, choisissez le format de sortie et ajustez la qualité si nécessaire.",
+    "badge": "Gratuit",
+    "uploadTitle": "Télécharger une Image",
+    "uploadSubtitle": "Glissez-déposez votre image ici ou cliquez pour parcourir",
+    "supportedFormats": "Formats supportés: JPG, PNG, WebP, AVIF, GIF",
+    "maxFileSize": "Taille max: 20MB",
+    "targetFormat": "Format Cible",
+    "quality": "Qualité",
+    "qualityHint": "Plus haute qualité = fichier plus grand",
+    "convert": "Convertir l'Image",
+    "converting": "Conversion en cours...",
+    "downloadConverted": "Télécharger l'Image Convertie",
+    "convertAnother": "Convertir une Autre Image",
+    "originalFormat": "Format Original",
+    "targetFormatLabel": "Format Cible",
+    "originalSize": "Taille Originale",
+    "convertedSize": "Taille Convertie",
+    "sizeDifference": "Différence",
+    "smaller": "plus petit",
+    "larger": "plus grand",
+    "dimensions": "Dimensions",
+    "qualityUsed": "Qualité Utilisée",
+    "free": "Gratuit",
+    "errors": {
+      "fileTooLarge": "Le fichier est trop volumineux. Taille maximale: 20MB",
+      "invalidType": "Type de fichier invalide. Formats supportés: JPG, PNG, WebP, AVIF, GIF",
+      "conversionFailed": "Échec de la conversion. Veuillez réessayer.",
+      "loginRequired": "Veuillez vous connecter pour utiliser cet outil"
+    },
+    "formats": {
+      "jpg": {
+        "label": "JPG",
+        "description": "Idéal pour les photos"
+      },
+      "png": {
+        "label": "PNG",
+        "description": "Sans perte, transparence"
+      },
+      "webp": {
+        "label": "WebP",
+        "description": "Moderne, petite taille"
+      },
+      "avif": {
+        "label": "AVIF",
+        "description": "Nouvelle génération, le plus petit"
+      },
+      "gif": {
+        "label": "GIF",
+        "description": "Support des animations"
+      }
+    }
+  },
+  "formatConverterPage": {
+    "badge": "Gratuit • Propulsé par Sharp",
+    "title": "Convertisseur",
+    "titleHighlight": "de Format d'Image",
+    "subtitle": "Convertissez vos images entre PNG, JPG, WebP, AVIF et GIF. Gratuit, rapide et sans limite d'utilisation.",
+    "stats": {
+      "formats": "5 Formats",
+      "formatsLabel": "Supportés",
+      "processing": "~2s",
+      "processingLabel": "Traitement",
+      "creditCost": "Gratuit",
+      "creditCostLabel": "Toujours Gratuit"
+    },
+    "termsNotice": "En téléchargeant un fichier, vous acceptez nos Conditions d'Utilisation et Politique de Confidentialité.",
+    "features": {
+      "multiFormat": {
+        "title": "5 Formats",
+        "description": "Convertissez entre JPG, PNG, WebP, AVIF et GIF selon vos besoins."
+      },
+      "qualityControl": {
+        "title": "Contrôle Qualité",
+        "description": "Ajustez la qualité de sortie pour trouver l'équilibre parfait entre taille et fidélité."
+      },
+      "instantProcessing": {
+        "title": "Instantané",
+        "description": "Conversion ultra-rapide en quelques secondes grâce à notre moteur optimisé."
+      }
+    },
+    "formatComparison": {
+      "title": "Comparaison des Formats",
+      "subtitle": "Choisissez le meilleur format pour votre cas d'utilisation",
+      "table": {
+        "format": "Format",
+        "bestFor": "Idéal Pour",
+        "transparency": "Transparence",
+        "animation": "Animation",
+        "compression": "Compression"
+      },
+      "formats": {
+        "jpg": {
+          "bestFor": "Photos, images complexes",
+          "transparency": "Non",
+          "animation": "Non",
+          "compression": "Avec perte"
+        },
+        "png": {
+          "bestFor": "Graphiques, logos, transparence",
+          "transparency": "Oui",
+          "animation": "Non",
+          "compression": "Sans perte"
+        },
+        "webp": {
+          "bestFor": "Web moderne, équilibre taille/qualité",
+          "transparency": "Oui",
+          "animation": "Oui",
+          "compression": "Les deux"
+        },
+        "avif": {
+          "bestFor": "Compression maximale, nouvelle génération",
+          "transparency": "Oui",
+          "animation": "Oui",
+          "compression": "Les deux"
+        },
+        "gif": {
+          "bestFor": "Animations simples, compatibilité",
+          "transparency": "Limitée",
+          "animation": "Oui",
+          "compression": "Sans perte"
+        }
+      }
+    },
+    "cta": {
+      "title": "Prêt à Convertir vos Images?",
+      "subtitle": "Convertissez entre tous les formats populaires gratuitement. Aucune inscription requise pour commencer.",
+      "getCredits": "Voir les Tarifs",
       "exploreTools": "Explorer Tous les Outils"
     }
   },

@@ -156,6 +156,11 @@
       "name": "Kontrola Struktury",
       "description": "Generuj z kontrolą głębi i krawędzi",
       "badge": "NOWE"
+    },
+    "formatConverter": {
+      "name": "Konwerter Formatów",
+      "description": "Konwertuj między formatami obrazów",
+      "badge": "DARMOWE"
     }
   },
   "home": {
@@ -3697,5 +3702,137 @@
     "poweredBy": "Zasilane przez",
     "copyLink": "Kopiuj Link",
     "linkCopied": "Link skopiowany do schowka!"
+  },
+  "formatConverter": {
+    "auth": {
+      "title": "Zaloguj się, aby konwertować obrazy",
+      "description": "Utwórz darmowe konto, aby konwertować formaty obrazów. To całkowicie za darmo!",
+      "signIn": "Zaloguj się",
+      "signUp": "Zarejestruj się za darmo"
+    },
+    "upload": {
+      "title": "Kliknij lub przeciągnij obraz do konwersji",
+      "formats": "JPG, PNG, WebP, AVIF, GIF do 20MB",
+      "free": "Całkowicie za darmo"
+    },
+    "settings": {
+      "title": "Ustawienia konwersji",
+      "detected": "Wykryty format",
+      "targetFormat": "Konwertuj do",
+      "quality": "Jakość",
+      "smallerFile": "Mniejszy plik",
+      "betterQuality": "Lepsza jakość",
+      "noQuality": "Format GIF nie obsługuje ustawień jakości"
+    },
+    "buttons": {
+      "convert": "Konwertuj obraz",
+      "converting": "Konwertowanie...",
+      "newImage": "Prześlij nowy obraz",
+      "download": "Pobierz skonwertowany obraz"
+    },
+    "preview": {
+      "original": "Oryginał",
+      "converted": "Skonwertowany",
+      "processing": "Przetwarzanie...",
+      "clickConvert": "Kliknij \"Konwertuj obraz\" aby rozpocząć"
+    },
+    "results": {
+      "title": "Wyniki konwersji",
+      "originalSize": "Oryginalny rozmiar",
+      "convertedSize": "Rozmiar po konwersji",
+      "sizeDifference": "Różnica rozmiaru",
+      "conversion": "Konwersja"
+    },
+    "progress": {
+      "converting": "Konwertowanie obrazu...",
+      "processing": "Przetwarzanie..."
+    },
+    "errors": {
+      "invalidType": "Prześlij obraz JPG, PNG, WebP, AVIF lub GIF",
+      "tooLarge": "Rozmiar pliku musi być mniejszy niż 20MB",
+      "readFailed": "Nie udało się odczytać pliku obrazu",
+      "conversionFailed": "Nie udało się skonwertować obrazu"
+    }
+  },
+  "formatConverterPage": {
+    "badge": "Darmowe narzędzie - bez kredytów",
+    "title": "Konwerter formatów obrazów",
+    "subtitle": "Konwertuj obrazy między formatami JPG, PNG, WebP, AVIF i GIF natychmiast. Całkowicie za darmo, bez limitów.",
+    "stats": {
+      "formats": "5 formatów",
+      "formatsLabel": "Obsługiwane",
+      "processing": "Natychmiast",
+      "processingLabel": "Konwersja",
+      "creditCost": "Darmowe",
+      "creditCostLabel": "Bez kredytów"
+    },
+    "termsNotice": "Korzystając z tego narzędzia, akceptujesz nasz Regulamin i Politykę Prywatności.",
+    "supportedFormats": {
+      "title": "Obsługiwane formaty",
+      "jpg": "Najlepszy do zdjęć, mały rozmiar",
+      "png": "Bezstratny, obsługuje przezroczystość",
+      "webp": "Nowoczesny format, świetna kompresja",
+      "avif": "Nowa generacja, najmniejsze pliki",
+      "gif": "Obsługa animacji"
+    },
+    "features": {
+      "instantConversion": {
+        "title": "Natychmiastowa konwersja",
+        "description": "Konwertuj obrazy w kilka sekund dzięki zoptymalizowanemu silnikowi. Bez czekania, bez kolejek."
+      },
+      "qualityControl": {
+        "title": "Kontrola jakości",
+        "description": "Dostosuj jakość wyjściową suwakiem. Zbalansuj rozmiar pliku i jakość obrazu."
+      },
+      "completelyFree": {
+        "title": "Całkowicie za darmo",
+        "description": "Bez kredytów, bez limitów. Konwertuj tyle obrazów, ile potrzebujesz, na zawsze za darmo."
+      }
+    },
+    "useCases": {
+      "title": "Kiedy używać konwertera formatów",
+      "webOptimization": {
+        "title": "Optymalizacja dla sieci",
+        "description": "Optymalizuj obrazy pod kątem wydajności stron konwertując do nowoczesnych formatów jak WebP lub AVIF.",
+        "feature1": "Konwertuj PNG/JPG na WebP - 30% mniejsze pliki",
+        "feature2": "Używaj AVIF dla nowoczesnych przeglądarek",
+        "feature3": "Zachowaj jakość zmniejszając czas ładowania"
+      },
+      "compatibility": {
+        "title": "Kompatybilność formatów",
+        "socialMedia": "Media społecznościowe:",
+        "socialMediaDesc": "Konwertuj do JPG dla uniwersalnej kompatybilności",
+        "apps": "Aplikacje:",
+        "appsDesc": "Konwertuj AVIF/WebP do PNG dla starszego oprogramowania",
+        "print": "Druk:",
+        "printDesc": "Konwertuj do wysokiej jakości JPG lub PNG do druku"
+      }
+    },
+    "formatComparison": {
+      "title": "Porównanie formatów",
+      "format": "Format",
+      "size": "Rozmiar pliku",
+      "quality": "Jakość",
+      "transparency": "Przezroczystość",
+      "bestFor": "Najlepszy do",
+      "small": "Mały",
+      "smallest": "Najmniejszy",
+      "medium": "Średni",
+      "large": "Duży",
+      "good": "Dobra",
+      "excellent": "Doskonała",
+      "limited": "Ograniczona",
+      "jpgBest": "Zdjęcia, obrazy webowe",
+      "pngBest": "Grafiki, loga, zrzuty ekranu",
+      "webpBest": "Nowoczesne strony, aplikacje",
+      "avifBest": "Maksymalna kompresja, nowoczesne przeglądarki",
+      "gifBest": "Proste animacje, memy"
+    },
+    "cta": {
+      "title": "Potrzebujesz więcej narzędzi AI?",
+      "subtitle": "Odkryj nasz kompletny zestaw narzędzi AI do obrazów. Powiększaj, usuwaj tła, koloruj i więcej.",
+      "exploreTools": "Zobacz wszystkie narzędzia",
+      "viewPricing": "Zobacz cennik"
+    }
   }
 }

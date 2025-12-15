@@ -32,6 +32,7 @@
   "description": "AI-powered image upscaling with Real-ESRGAN and GFPGAN",
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.0",
+    "@fal-ai/client": "^1.7.2",
     "@prisma/adapter-pg": "^7.0.1",
     "@prisma/client": "^7.0.1",
     "@sentry/nextjs": "^10.27.0",
