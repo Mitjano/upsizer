@@ -3232,81 +3232,84 @@
     }
   },
   "formatConverterPage": {
-    "badge": "Gratuit • Propulsé par Sharp",
-    "title": "Convertisseur",
-    "titleHighlight": "de Format d'Image",
-    "subtitle": "Convertissez vos images entre PNG, JPG, WebP, AVIF et GIF. Gratuit, rapide et sans limite d'utilisation.",
+    "badge": "Outil Gratuit - Aucun Crédit Requis",
+    "title": "Convertisseur de Format d'Image",
+    "subtitle": "Convertissez vos images entre JPG, PNG, WebP, AVIF et GIF instantanément. Entièrement gratuit, sans limites.",
     "stats": {
       "formats": "5 Formats",
       "formatsLabel": "Supportés",
-      "processing": "~2s",
-      "processingLabel": "Traitement",
+      "processing": "Instantané",
+      "processingLabel": "Conversion",
       "creditCost": "Gratuit",
-      "creditCostLabel": "Toujours Gratuit"
+      "creditCostLabel": "Sans Crédits"
     },
-    "termsNotice": "En téléchargeant un fichier, vous acceptez nos Conditions d'Utilisation et Politique de Confidentialité.",
+    "termsNotice": "En utilisant cet outil, vous acceptez nos Conditions d'Utilisation et Politique de Confidentialité.",
+    "supportedFormats": {
+      "title": "Formats Supportés",
+      "jpg": "Idéal pour les photos, petite taille de fichier",
+      "png": "Sans perte, supporte la transparence",
+      "webp": "Format moderne, excellente compression",
+      "avif": "Nouvelle génération, fichiers les plus petits",
+      "gif": "Supporte les animations"
+    },
     "features": {
-      "multiFormat": {
-        "title": "5 Formats",
-        "description": "Convertissez entre JPG, PNG, WebP, AVIF et GIF selon vos besoins."
+      "instantConversion": {
+        "title": "Conversion Instantanée",
+        "description": "Convertissez vos images en quelques secondes grâce à notre moteur de traitement optimisé. Pas d'attente, pas de file d'attente."
       },
       "qualityControl": {
-        "title": "Contrôle Qualité",
-        "description": "Ajustez la qualité de sortie pour trouver l'équilibre parfait entre taille et fidélité."
+        "title": "Contrôle de Qualité",
+        "description": "Ajustez finement la qualité de sortie avec notre curseur. Équilibrez entre taille de fichier et qualité d'image."
       },
-      "instantProcessing": {
-        "title": "Instantané",
-        "description": "Conversion ultra-rapide en quelques secondes grâce à notre moteur optimisé."
+      "completelyFree": {
+        "title": "Entièrement Gratuit",
+        "description": "Aucun crédit requis, aucune limite. Convertissez autant d'images que vous le souhaitez, gratuit pour toujours."
+      }
+    },
+    "useCases": {
+      "title": "Quand Utiliser le Convertisseur de Format",
+      "webOptimization": {
+        "title": "Optimisation Web",
+        "description": "Optimisez vos images pour les performances web en les convertissant vers des formats modernes comme WebP ou AVIF.",
+        "feature1": "Convertissez PNG/JPG en WebP pour des fichiers 30% plus petits",
+        "feature2": "Utilisez AVIF pour le support des navigateurs nouvelle génération",
+        "feature3": "Maintenez la qualité tout en réduisant les temps de chargement"
+      },
+      "compatibility": {
+        "title": "Compatibilité des Formats",
+        "socialMedia": "Réseaux Sociaux:",
+        "socialMediaDesc": "Convertissez en JPG pour une compatibilité universelle",
+        "apps": "Applications:",
+        "appsDesc": "Convertissez AVIF/WebP en PNG pour les logiciels plus anciens",
+        "print": "Impression:",
+        "printDesc": "Convertissez en JPG ou PNG haute qualité pour l'impression"
       }
     },
     "formatComparison": {
-      "title": "Comparaison des Formats",
-      "subtitle": "Choisissez le meilleur format pour votre cas d'utilisation",
-      "table": {
-        "format": "Format",
-        "bestFor": "Idéal Pour",
-        "transparency": "Transparence",
-        "animation": "Animation",
-        "compression": "Compression"
-      },
-      "formats": {
-        "jpg": {
-          "bestFor": "Photos, images complexes",
-          "transparency": "Non",
-          "animation": "Non",
-          "compression": "Avec perte"
-        },
-        "png": {
-          "bestFor": "Graphiques, logos, transparence",
-          "transparency": "Oui",
-          "animation": "Non",
-          "compression": "Sans perte"
-        },
-        "webp": {
-          "bestFor": "Web moderne, équilibre taille/qualité",
-          "transparency": "Oui",
-          "animation": "Oui",
-          "compression": "Les deux"
-        },
-        "avif": {
-          "bestFor": "Compression maximale, nouvelle génération",
-          "transparency": "Oui",
-          "animation": "Oui",
-          "compression": "Les deux"
-        },
-        "gif": {
-          "bestFor": "Animations simples, compatibilité",
-          "transparency": "Limitée",
-          "animation": "Oui",
-          "compression": "Sans perte"
-        }
-      }
+      "title": "Guide de Comparaison des Formats",
+      "format": "Format",
+      "size": "Taille Fichier",
+      "quality": "Qualité",
+      "transparency": "Transparence",
+      "bestFor": "Idéal Pour",
+      "small": "Petite",
+      "smallest": "Plus petite",
+      "medium": "Moyenne",
+      "large": "Grande",
+      "good": "Bonne",
+      "excellent": "Excellente",
+      "limited": "Limitée",
+      "jpgBest": "Photos, images web",
+      "pngBest": "Graphiques, logos, captures d'écran",
+      "webpBest": "Sites web modernes, applications",
+      "avifBest": "Compression maximale, navigateurs modernes",
+      "gifBest": "Animations simples, mèmes"
     },
     "cta": {
-      "title": "Prêt à Convertir vos Images?",
-      "subtitle": "Convertissez entre tous les formats populaires gratuitement. Aucune inscription requise pour commencer.",
-      "getCredits": "Voir les Tarifs",
-      "exploreTools": "Explorer Tous les Outils"
+      "title": "Besoin de Plus d'Outils IA?",
+      "subtitle": "Explorez notre suite complète d'outils d'image alimentés par l'IA. Agrandissez, supprimez les arrière-plans, colorisez, et plus encore.",
+      "exploreTools": "Explorer Tous les Outils",
+      "viewPricing": "Voir les Tarifs"
     }
   },
   "refundPage": {
