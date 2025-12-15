@@ -29,6 +29,7 @@ export default function FormatConverter() {
   const t = useTranslations('formatConverter');
   const { trackImageUploaded, trackImageDownloaded } = useAnalytics();
   const [originalImage, setOriginalImage] = useState<string | null>(null);
+  const [originalFile, setOriginalFile] = useState<File | null>(null);
   const [convertedImage, setConvertedImage] = useState<string | null>(null);
   const [stats, setStats] = useState<ConversionStats | null>(null);
   const [loading, setLoading] = useState(false);
@@ -68,7 +69,8 @@ export default function FormatConverter() {
     // Track upload
     trackImageUploaded(file.size, file.type);
 
-    // Save original filename and detected format
+    // Save original file and filename
+    setOriginalFile(file);
     setOriginalFileName(file.name);
     const format = file.type.split('/')[1].replace('jpeg', 'jpg');
     setDetectedFormat(format);
@@ -86,26 +88,15 @@ export default function FormatConverter() {
   };
 
   const handleConvert = async () => {
-    if (!originalImage) return;
+    if (!originalFile) return;
 
     setLoading(true);
     setError(null);
     setProgress(t('progress.converting'));
 
     try {
-      // Convert data URL to blob properly
-      const base64Data = originalImage.split(',')[1];
-      const mimeType = originalImage.split(',')[0].split(':')[1].split(';')[0];
-      const byteCharacters = atob(base64Data);
-      const byteNumbers = new Array(byteCharacters.length);
-      for (let i = 0; i < byteCharacters.length; i++) {
-        byteNumbers[i] = byteCharacters.charCodeAt(i);
-      }
-      const byteArray = new Uint8Array(byteNumbers);
-      const blob = new Blob([byteArray], { type: mimeType });
-
       const formData = new FormData();
-      formData.append('file', blob, originalFileName || 'image.jpg');
+      formData.append('file', originalFile);
       formData.append('format', targetFormat);
       formData.append('quality', quality.toString());
 
