@@ -93,9 +93,16 @@ export default function FormatConverter() {
     setProgress(t('progress.converting'));
 
     try {
-      // Convert data URL back to file
-      const response = await fetch(originalImage);
-      const blob = await response.blob();
+      // Convert data URL to blob properly
+      const base64Data = originalImage.split(',')[1];
+      const mimeType = originalImage.split(',')[0].split(':')[1].split(';')[0];
+      const byteCharacters = atob(base64Data);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: mimeType });
 
       const formData = new FormData();
       formData.append('file', blob, originalFileName || 'image.jpg');
