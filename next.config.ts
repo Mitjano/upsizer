@@ -15,12 +15,16 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  // Increase body size limit for large image uploads (default is 4MB)
+  // Increase body size limit for large image uploads
   experimental: {
     serverActions: {
       bodySizeLimit: '25mb',
     },
+    // Increase middleware request body buffer size (default is 10MB)
+    // This affects API routes that receive large FormData uploads
+    middlewareClientMaxBodySize: 26214400, // 25MB in bytes
   },
+  serverExternalPackages: ['sharp'],
   // Remove console.log in production builds
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production' ? {
