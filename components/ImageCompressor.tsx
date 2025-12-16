@@ -107,6 +107,14 @@ export default function ImageCompressor() {
         body: formData,
       });
 
+      // Handle non-JSON responses (like HTML error pages)
+      const contentType = res.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        const text = await res.text();
+        console.error('Non-JSON response:', text.substring(0, 200));
+        throw new Error('Server error. Please try again.');
+      }
+
       const data = await res.json();
 
       if (!res.ok) {
@@ -122,7 +130,12 @@ export default function ImageCompressor() {
       setProgress('');
 
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to compress image');
+      console.error('Compression error:', err);
+      if (err instanceof TypeError && err.message === 'Failed to fetch') {
+        setError('Network error. Please check your connection and try again.');
+      } else {
+        setError(err instanceof Error ? err.message : 'Failed to compress image');
+      }
       setProgress('');
     } finally {
       setLoading(false);
