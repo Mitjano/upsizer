@@ -77,12 +77,26 @@ export default function ImageCompressor() {
     setProgress('Compressing image...');
 
     try {
-      // Convert data URL back to file
+      // Convert data URL back to file with proper MIME type
       const response = await fetch(originalImage);
-      const blob = await response.blob();
+      const originalBlob = await response.blob();
+
+      // Extract MIME type from data URL and create blob with correct type
+      const mimeMatch = originalImage.match(/^data:([^;]+);/);
+      const mimeType = mimeMatch ? mimeMatch[1] : 'image/jpeg';
+      const blob = new Blob([originalBlob], { type: mimeType });
+
+      // Determine file extension from MIME type
+      const extMap: Record<string, string> = {
+        'image/jpeg': 'jpg',
+        'image/jpg': 'jpg',
+        'image/png': 'png',
+        'image/webp': 'webp'
+      };
+      const ext = extMap[mimeType] || 'jpg';
 
       const formData = new FormData();
-      formData.append('file', blob, 'image.jpg');
+      formData.append('file', blob, `image.${ext}`);
       formData.append('quality', quality.toString());
       formData.append('format', format);
 
