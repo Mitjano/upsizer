@@ -1,252 +1,295 @@
-# Pixelift - Plan Rozwoju
+# Pixelift - Lista Zadań (Audyt 16.12.2024)
 
-## Zakończone (14.12.2024)
+## Status Projektu
 
-### Copy Link / Share Feature
-- [x] Dodać ikonę 'link' do ActionButton
-- [x] Utworzyć komponent CopyLinkButton
-- [x] Eksportować CopyLinkButton z barrel file
-- [x] Utworzyć stronę /share/[id] z OG meta tagami
-- [x] Dodać tłumaczenia (en, pl)
-- [x] Zintegrować z ImageUpscaler
-- [x] Zintegrować z BackgroundRemover
-- [x] Wdrożyć na produkcję
-
----
-
-## Do Zrobienia
-
-### 1. Nowe Narzędzia AI (Wyrównanie Menu)
-
-**Priorytet: Wysoki** - Aktualnie menu jest nierówne (1 narzędzie w "Narzędzia")
-
-#### Kategoria: NARZĘDZIA (Utilities) - potrzeba 2 nowych
-
-| Narzędzie | Model AI | Opis | Koszt API |
-|-----------|----------|------|-----------|
-| **Image to Vector (SVG)** | Vectorizer.AI API lub lokalne | Konwersja PNG/JPG do SVG | ~$0.01/obraz |
-| **Format Converter** | Sharp (lokalne) | HEIC/AVIF/WebP ↔ JPG/PNG | DARMOWE |
-
-#### Kategoria: ULEPSZANIE (Enhance) - można dodać
-
-| Narzędzie | Model AI | Opis | Koszt API |
-|-----------|----------|------|-----------|
-| **Portrait Relight** | fal.ai/ic-light-v2 lub Replicate zsxkib/ic-light | Zmiana oświetlenia portretów | ~$0.05/obraz |
-| **Face Enhancer Pro** | Replicate codeformer | Zaawansowana restauracja twarzy | ~$0.01/obraz |
-
-#### Kategoria: USUWANIE (Remove) - można dodać
-
-| Narzędzie | Model AI | Opis | Koszt API |
-|-----------|----------|------|-----------|
-| **Watermark Remover** | Replicate (LaMA inpainting) | Usuwanie znaków wodnych | ~$0.02/obraz |
-| **Shadow Remover** | fal.ai shadow-removal | Usuwanie cieni ze zdjęć | ~$0.02/obraz |
-
-#### Kategoria: GENEROWANIE (Generate) - można dodać
-
-| Narzędzie | Model AI | Opis | Koszt API |
-|-----------|----------|------|-----------|
-| **Sketch to Image** | Replicate flux-kontext | Zamiana szkicu w realistyczny obraz | ~$0.04/obraz |
-| **Image to 3D** | Replicate meshy/triposr | Konwersja zdjęcia do modelu 3D | ~$0.10/model |
-
-#### Kategoria: PRZEKSZTAŁCANIE (Transform) - można dodać
-
-| Narzędzie | Model AI | Opis | Koszt API |
-|-----------|----------|------|-----------|
-| **Face Swap** | Replicate face-swap | Zamiana twarzy na zdjęciach | ~$0.05/obraz |
-| **Age Transform** | Replicate age-transformation | Zmiana wieku na zdjęciu | ~$0.03/obraz |
+| Metryka | Wartość |
+|---------|---------|
+| Pliki źródłowe | 479 |
+| Pliki testowe | 8 |
+| Pokrycie testami | ~1.7% |
+| Zależności | 700+ |
+| Podatności | 2 HIGH |
+| Języki UI | 4 (en, pl, es, fr) |
 
 ---
 
-### 2. Rekomendowane Narzędzia do Natychmiastowej Implementacji
+## 🔴 KRYTYCZNE (Do natychmiastowej naprawy)
 
-**Priorytet: Najwyższy** - wyrównanie menu + popularne funkcje
+### Bezpieczeństwo
 
-- [ ] **Format Converter** (Kategoria: Narzędzia)
-  - Konwersja między formatami: HEIC, AVIF, WebP, PNG, JPG, GIF
-  - Używa Sharp (biblioteka już zainstalowana!)
-  - **DARMOWE** - brak kosztów API
-  - Wypełni kategorię "Narzędzia"
+- [ ] **Naprawić podatności Next.js** (HIGH severity)
+  ```bash
+  npm audit fix
+  ```
+  - Source Code Exposure (GHSA-w37m-7fhw-fmv9)
+  - DoS with Server Components (GHSA-mwv6-3258-q52c)
 
-- [ ] **Portrait Relight** (Kategoria: Ulepszanie)
-  - fal.ai ICLight V2 (już masz FAL_API_KEY!)
-  - Zmiana oświetlenia portretów przez prompt
-  - ~$0.05/obraz
-  - Bardzo popularne narzędzie
+- [ ] **Zamienić bibliotekę xlsx na bezpieczną alternatywę**
+  - Problem: Prototype Pollution + ReDoS (brak poprawki)
+  - Rozwiązanie: Migracja do `exceljs` lub `sheetjs-ce`
+  ```bash
+  npm uninstall xlsx
+  npm install exceljs
+  ```
+  - Pliki do modyfikacji: sprawdzić użycie xlsx w projekcie
 
-- [ ] **Watermark Remover** (Kategoria: Usuwanie)
-  - Replicate LaMA lub podobny model inpainting
-  - Automatyczne wykrywanie i usuwanie watermarków
-  - ~$0.02/obraz
-  - Duże zapotrzebowanie rynkowe
+### Brakujące Zależności
+
+- [ ] **Zainstalować brakujące pakiety**
+  ```bash
+  npm install @fal-ai/client
+  npm install --save-dev @types/swagger-ui-react swagger-ui-react
+  ```
+
+### Build & TypeScript
+
+- [ ] **Wyczyścić stary cache buildu**
+  ```bash
+  rm -rf .next
+  npm run build
+  ```
+
+- [ ] **Usunąć lub utworzyć brakujące ścieżki**
+  - `app/[locale]/tools/packshot-generator/` - brak strony (usuń referencje lub utwórz)
+  - `app/api/generate-packshot/` - brak endpointu
+  - `app/api/user/welcome/` - brak endpointu
 
 ---
 
-### 3. Rozszerzyć Copy Link na pozostałe narzędzia
+## 🟠 ŚREDNIE (Przed następnym deployem)
 
-**Priorytet: Wysoki**
+### ESLint & Jakość Kodu
 
-Narzędzia wymagające modyfikacji API (muszą zapisywać obrazy do bazy):
+- [ ] **Naprawić LoginPrompt.tsx** - użyć `<Link>` zamiast `<a>`
+  - Plik: `components/uploader/LoginPrompt.tsx:35,41`
+  - Problem: Używa `<a>` dla wewnętrznych linków
 
-- [ ] **ImageExpander** (`/api/expand-image`)
-- [ ] **PackshotGenerator** (`/api/generate-packshot`)
-- [ ] **ObjectRemover** (`/api/object-removal`)
-- [ ] **ImageColorizer** (`/api/colorize`)
-- [ ] **ImageDenoiser** (`/api/denoise`)
-- [ ] **StyleTransfer** (`/api/style-transfer`)
-- [ ] **ImageReimagine** (`/api/reimagine`)
-- [ ] **InpaintingPro** (`/api/inpainting`)
-- [ ] **StructureControl** (`/api/structure-control`)
+- [ ] **Zamienić `<img>` na `<Image>`** w komponentach:
+  - `components/admin/AdminUserRow.tsx`
+  - `components/admin/AdminBlogRow.tsx`
+  - `components/SwaggerUI.tsx`
+  - Inne komponenty zgłoszone przez ESLint
+
+- [ ] **Dodać brakującą regułę ESLint**
+  - Plik: `.eslintrc.json`
+  - Dodać: `@typescript-eslint/no-explicit-any`
+
+### Konfiguracja
+
+- [ ] **Skonfigurować środowisko deweloperskie**
+  - Upewnić się, że `.env.local` zawiera wszystkie wymagane zmienne
+  - Zweryfikować `DATABASE_URL` dla lokalnego development
 
 ---
 
-### 4. Social Share Buttons
+## 🟡 NISKIE (Ulepszenia)
 
-**Priorytet: Średni**
+### Testy (Zwiększyć pokrycie z 1.7% do 30%)
 
-- [ ] Dodać przyciski udostępniania na stronie /share/[id]:
+- [ ] **Testy API endpoints (priorytet)**
+  - [ ] `/api/auth/` - flow autentykacji
+  - [ ] `/api/upscale/` - upscaling obrazów
+  - [ ] `/api/stripe/` - webhook płatności
+  - [ ] `/api/user/` - zarządzanie użytkownikami
+
+- [ ] **Testy komponentów**
+  - [ ] `ImageUploader` - główny komponent uploadu
+  - [ ] `Dashboard` - panel użytkownika
+  - [ ] `CopyLinkButton` - udostępnianie
+
+- [ ] **Testy integracyjne**
+  - [ ] Flow rejestracji użytkownika
+  - [ ] Flow płatności (Stripe)
+  - [ ] Flow przetwarzania obrazu
+
+### Dokumentacja
+
+- [ ] **Zaktualizować README.md** o informacje z audytu
+- [ ] **Dodać CONTRIBUTING.md** z wytycznymi dla deweloperów
+- [ ] **Dodać CHANGELOG.md** do śledzenia zmian
+
+---
+
+## 📋 FUNKCJONALNOŚCI (Backlog)
+
+### Nowe Narzędzia AI (wyrównanie menu)
+
+#### Kategoria: NARZĘDZIA (potrzeba 2 nowych)
+
+- [ ] **Format Converter** (DARMOWE - Sharp)
+  - Konwersja: HEIC, AVIF, WebP ↔ PNG, JPG, GIF
+  - Biblioteka już zainstalowana
+
+- [ ] **Image to Vector (SVG)**
+  - Model: Vectorizer.AI API
+  - Koszt: ~$0.01/obraz
+
+#### Kategoria: ULEPSZANIE
+
+- [ ] **Portrait Relight**
+  - Model: fal.ai/ic-light-v2 (klucz już skonfigurowany)
+  - Koszt: ~$0.05/obraz
+
+- [ ] **Face Enhancer Pro**
+  - Model: Replicate codeformer
+  - Koszt: ~$0.01/obraz
+
+#### Kategoria: USUWANIE
+
+- [ ] **Watermark Remover**
+  - Model: Replicate LaMA inpainting
+  - Koszt: ~$0.02/obraz
+
+- [ ] **Shadow Remover**
+  - Model: fal.ai shadow-removal
+  - Koszt: ~$0.02/obraz
+
+#### Kategoria: GENEROWANIE
+
+- [ ] **Sketch to Image**
+  - Model: Replicate flux-kontext
+  - Koszt: ~$0.04/obraz
+
+- [ ] **Image to 3D**
+  - Model: Replicate meshy/triposr
+  - Koszt: ~$0.10/model
+
+#### Kategoria: PRZEKSZTAŁCANIE
+
+- [ ] **Face Swap**
+  - Model: Replicate face-swap
+  - Koszt: ~$0.05/obraz
+
+- [ ] **Age Transform**
+  - Model: Replicate age-transformation
+  - Koszt: ~$0.03/obraz
+
+### Rozszerzenie Copy Link
+
+Narzędzia wymagające integracji z CopyLinkButton:
+
+- [ ] ImageExpander (`/api/expand-image`)
+- [ ] PackshotGenerator (`/api/generate-packshot`)
+- [ ] ObjectRemover (`/api/object-removal`)
+- [ ] ImageColorizer (`/api/colorize`)
+- [ ] ImageDenoiser (`/api/denoise`)
+- [ ] StyleTransfer (`/api/style-transfer`)
+- [ ] ImageReimagine (`/api/reimagine`)
+- [ ] InpaintingPro (`/api/inpainting`)
+- [ ] StructureControl (`/api/structure-control`)
+
+### Social Share
+
+- [ ] **Social Share Buttons** na stronie `/share/[id]`
   - Facebook Share
   - Twitter/X Share
   - Pinterest Pin
   - WhatsApp Share
-- [ ] Utworzyć komponent `SocialShareButtons`
+  - LinkedIn Share
 
----
+### UX Improvements
 
-### 5. Ulepszenia UX
-
-**Priorytet: Niski**
-
-- [ ] Batch processing - przetwarzanie wielu obrazów naraz
+- [ ] Batch processing - przetwarzanie wielu obrazów
 - [ ] History page - historia przetworzonych obrazów
 - [ ] Before/After comparison na share page
 - [ ] QR code do share link
+- [ ] Dark mode improvements
 
 ---
 
-## Analiza Konkurencji
+## 🛡️ BEZPIECZEŃSTWO (Ciągłe)
 
-### Popularne funkcje u konkurencji (źródło: [Dzine.ai](https://www.dzine.ai/blog/the-best-ai-photo-editors-of-2024-top-tools-for-photo-editing-retouching/), [Fotor](https://www.fotor.com/blog/best-ai-photo-editor/)):
-
-| Funkcja | Pixelift | Konkurencja |
-|---------|----------|-------------|
-| Image Upscaling | ✅ | ✅ |
-| Background Removal | ✅ | ✅ |
-| Object Removal | ✅ | ✅ |
-| Inpainting | ✅ | ✅ |
-| Style Transfer | ✅ | ✅ |
-| Colorization | ✅ | ✅ |
-| Face Enhancement | ✅ (GFPGAN) | ✅ |
-| Image Expand | ✅ | ✅ |
-| **Portrait Relight** | ❌ | ✅ (Luminar, Clipdrop) |
-| **Face Swap** | ❌ | ✅ (Pixlr, Fotor) |
-| **Watermark Remover** | ❌ | ✅ (WatermarkRemover.io) |
-| **Image to Vector** | ❌ | ✅ (Vectorizer.AI) |
-| **Format Converter** | ❌ | ✅ (Cloudinary) |
-| **Sketch to Image** | ❌ | ✅ (Canva, OpenArt) |
-| **Image to 3D** | ❌ | ✅ (Meshy, 3DAIStudio) |
+- [ ] Regularny `npm audit` (dodać do CI)
+- [ ] Rotacja kluczy API co 90 dni
+- [ ] Przegląd logów Sentry co tydzień
+- [ ] Backup bazy danych (automatyczny, dzienny)
+- [ ] Penetration testing przed major release
 
 ---
 
-## Dostępne Modele AI
+## 📊 MONITORING (Do wdrożenia)
 
-### Replicate (już używane)
-- [Real-ESRGAN](https://replicate.com/nightmareai/real-esrgan) - upscaling ✅
-- [BRIA RMBG](https://replicate.com/bria/remove-background) - background removal ✅
-- [DDColor](https://replicate.com/piddnad/ddcolor) - colorization ✅
-- [GFPGAN](https://replicate.com/tencentarc/gfpgan) - face restoration ✅
-- [CodeFormer](https://replicate.com/sczhou/codeformer) - face restoration pro
-- [IC-Light](https://replicate.com/zsxkib/ic-light) - portrait relighting
-- [FLUX Kontext](https://replicate.com/black-forest-labs/flux-kontext-pro) - inpainting/editing ✅
+- [ ] **Web Vitals Dashboard**
+  - LCP, FID, CLS tracking
+  - Integracja z Google Analytics
 
-### Fal.ai (już używane)
-- [BiRefNet](https://fal.ai/models/fal-ai/birefnet) - background removal (FREE!) ✅
-- [AuraSR](https://fal.ai/models/fal-ai/aura-sr) - upscaling
-- [ICLight V2](https://fal.ai/models/fal-ai/iclight-v2) - relighting ✅ (używane w packshot)
-- [Shadow Removal](https://fal.ai) - usuwanie cieni
-- [FLUX.1](https://fal.ai/flux) - generowanie obrazów
+- [ ] **Alerting**
+  - Error rate > 1%
+  - Response time > 3s
+  - Failed payments
 
-### Lokalne (Sharp - już zainstalowane)
-- Format conversion (HEIC, AVIF, WebP, PNG, JPG)
-- Resize, crop, rotate
-- Metadata extraction
+- [ ] **Business Metrics**
+  - Daily Active Users
+  - Conversion rate
+  - Credit usage patterns
 
 ---
 
-## Notatki techniczne
+## 🚀 DEPLOYMENT CHECKLIST
 
-### Wzorzec dodawania Copy Link do narzędzia
+Przed każdym deployem sprawdzić:
 
-1. **Modyfikacja API route** (`/api/[tool]/route.ts`):
-```typescript
-import { ProcessedImagesDB } from '@/lib/processed-images-db';
-import { ImageProcessor } from '@/lib/image-processor';
+```bash
+# 1. Testy
+npm run test:run
 
-// Po przetworzeniu obrazu:
-const processedPath = await ImageProcessor.saveFile(resultBuffer, filename, 'processed');
+# 2. Linting
+npm run lint
 
-const imageRecord = await ProcessedImagesDB.create({
-  userId: user.email,
-  originalPath,
-  processedPath,
-  originalFilename: file.name,
-  fileSize: file.size,
-  width,
-  height,
-  isProcessed: true,
-});
+# 3. Type check
+npx tsc --noEmit
 
-// W response dodać:
-return NextResponse.json({
-  // ... existing fields
-  imageId: imageRecord.id,
-});
+# 4. Security audit
+npm audit
+
+# 5. Build
+npm run build
+
+# 6. Database migrations
+npx prisma migrate deploy
 ```
 
-2. **Modyfikacja komponentu** (`/components/[Tool].tsx`):
-```typescript
-import { CopyLinkButton } from './shared';
+---
 
-// W result interface dodać:
-interface ProcessingResult {
-  imageId: string;
-  // ... existing fields
-}
+## 📝 NOTATKI TECHNICZNE
 
-// W sekcji Actions dodać:
-<CopyLinkButton imageId={result.imageId} accentColor="[tool-color]" />
-```
+### Wzorzec dodawania nowego narzędzia AI
 
-### Wzorzec dodawania nowego narzędzia
+1. `app/api/[tool-name]/route.ts` - API endpoint
+2. `components/[ToolName].tsx` - Komponent React
+3. `app/[locale]/tools/[tool-name]/page.tsx` - Strona
+4. `components/Header.tsx` - Dodać do menu
+5. `messages/[locale]/common.json` - Tłumaczenia (4 języki)
+6. `lib/credits-config.ts` - Koszt kredytów
 
-1. Utworzyć `/app/api/[tool-name]/route.ts`
-2. Utworzyć `/components/[ToolName].tsx`
-3. Utworzyć `/app/[locale]/tools/[tool-name]/page.tsx`
-4. Dodać do menu w `/components/Header.tsx`
-5. Dodać tłumaczenia do `/messages/en/common.json` i `/messages/pl/common.json`
-6. Dodać koszt kredytów w `/lib/credits-config.ts`
+### Kluczowe pliki
 
-### Pliki kluczowe
-
-- `/components/shared/CopyLinkButton.tsx` - komponent przycisku share
-- `/app/[locale]/share/[id]/page.tsx` - strona udostępniania
-- `/lib/processed-images-db.ts` - baza danych obrazów
-- `/lib/image-processor.ts` - przetwarzanie i zapis obrazów
-- `/lib/credits-config.ts` - konfiguracja kredytów
+| Plik | Opis |
+|------|------|
+| `lib/prisma.ts` | Klient bazy danych |
+| `lib/redis.ts` | Cache i kolejki |
+| `lib/stripe.ts` | Integracja płatności |
+| `lib/auth.ts` | Autentykacja |
+| `middleware.ts` | CSRF, locale, admin |
 
 ---
 
-## Źródła i Referencje
+## 📅 HISTORIA AUDYTÓW
 
-- [Best AI Photo Editors 2024 - Dzine.ai](https://www.dzine.ai/blog/the-best-ai-photo-editors-of-2024-top-tools-for-photo-editing-retouching/)
-- [Replicate AI Models](https://replicate.com/explore)
-- [Fal.ai Models](https://fal.ai/models)
-- [Vectorizer.AI](https://vectorizer.ai/)
-- [WatermarkRemover.io](https://www.watermarkremover.io/)
+| Data | Wersja | Uwagi |
+|------|--------|-------|
+| 2024-11-23 | 1.0 | Pierwszy pełny audyt |
+| 2024-12-16 | 1.1 | Audyt przed zamknięciem fazy dev |
 
 ---
 
-## Kontakt
+## 🔗 LINKI
 
-Projekt: Pixelift
-Repo: https://github.com/Mitjano/upsizer
-Produkcja: https://pixelift.pl
+- **Repo:** https://github.com/Mitjano/upsizer
+- **Produkcja:** https://pixelift.pl
+- **Dokumentacja API:** https://pixelift.pl/api-docs
+- **Sentry:** https://sentry.io/organizations/pixelift
+
+---
+
+*Ostatnia aktualizacja: 16.12.2024*
