@@ -132,9 +132,14 @@ export function WatermarkRemover({ userRole = 'user' }: WatermarkRemoverProps) {
       formData.append('file', uploadedFile)
 
       if (maskMode === 'manual' && maskDataUrl) {
-        // Convert mask data URL to blob
-        const response = await fetch(maskDataUrl)
-        const blob = await response.blob()
+        // Convert mask data URL to blob without using fetch (CSP-safe)
+        const base64Data = maskDataUrl.split(',')[1]
+        const binaryString = atob(base64Data)
+        const bytes = new Uint8Array(binaryString.length)
+        for (let i = 0; i < binaryString.length; i++) {
+          bytes[i] = binaryString.charCodeAt(i)
+        }
+        const blob = new Blob([bytes], { type: 'image/png' })
         formData.append('mask', blob, 'mask.png')
       }
 
