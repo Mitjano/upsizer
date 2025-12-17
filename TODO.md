@@ -63,9 +63,10 @@
 
 ### Konfiguracja
 
-- [ ] **Skonfigurować środowisko deweloperskie**
-  - Upewnić się, że `.env.local` zawiera wszystkie wymagane zmienne
-  - Zweryfikować `DATABASE_URL` dla lokalnego development
+- [x] **Skonfigurować środowisko deweloperskie** ✅ *Zrobione 17.12.2024*
+  - Zaktualizowano `.env.example` o brakujące zmienne
+  - Dodano: Firebase Admin SDK, Google OAuth, OpenAI, GoAPI
+  - Poprawiono nazewnictwo (`NEXT_PUBLIC_APP_URL`)
 
 ### i18n - Tłumaczenia
 
