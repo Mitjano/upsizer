@@ -54,9 +54,12 @@
   - ~~`components/admin/AdminBlogRow.tsx`~~ - plik nie istnieje
   - ~~`components/SwaggerUI.tsx`~~ - plik nie istnieje
 
-- [ ] **Dodać brakującą regułę ESLint**
+- [x] **Dodać brakującą regułę ESLint** ✅ *Zrobione 17.12.2024*
   - Plik: `.eslintrc.json`
-  - Dodać: `@typescript-eslint/no-explicit-any`
+  - Dodano: `@typescript-eslint/no-explicit-any` (warn)
+  - Dodano: `@typescript-eslint/no-unused-vars` (warn)
+  - Dodano: `prefer-const` (warn)
+  - Rozszerzono: `plugin:@typescript-eslint/recommended`
 
 ### Konfiguracja
 
