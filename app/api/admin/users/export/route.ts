@@ -6,7 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
 
 export async function GET(request: NextRequest) {
   try {
@@ -45,19 +45,15 @@ export async function GET(request: NextRequest) {
     // Select fields
     const selectedFields = fields.includes('all') ? allFields : fields.filter(f => allFields.includes(f));
 
-    // If only emails requested
-    if (fields.length === 1 && fields[0] === 'email') {
-      const emailData = users.map(u => ({ email: u.email }));
-
-      if (format === 'csv') {
-        const csv = emailData.map(e => e.email).join('\n');
-        return new NextResponse(csv, {
-          headers: {
-            'Content-Type': 'text/csv',
-            'Content-Disposition': `attachment; filename="users_emails_${new Date().toISOString().split('T')[0]}.csv"`,
-          },
-        });
-      }
+    // If only emails requested as CSV
+    if (fields.length === 1 && fields[0] === 'email' && format === 'csv') {
+      const csv = users.map(u => u.email).join('\n');
+      return new NextResponse(csv, {
+        headers: {
+          'Content-Type': 'text/csv',
+          'Content-Disposition': 'attachment; filename="users_emails_' + new Date().toISOString().split('T')[0] + '.csv"',
+        },
+      });
     }
 
     // Map users to selected fields
@@ -75,31 +71,45 @@ export async function GET(request: NextRequest) {
       return row;
     });
 
-    // Create workbook
-    const wb = XLSX.utils.book_new();
-    const ws = XLSX.utils.json_to_sheet(exportData);
+    // Create workbook with ExcelJS
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Users');
 
-    // Set column widths
-    const colWidths = selectedFields.map(field => ({
-      wch: Math.max(field.length, 15)
+    // Add header row
+    worksheet.columns = selectedFields.map(field => ({
+      header: field,
+      key: field,
+      width: Math.max(field.length, 15)
     }));
-    ws['!cols'] = colWidths;
 
-    XLSX.utils.book_append_sheet(wb, ws, 'Users');
+    // Add data rows
+    exportData.forEach(row => {
+      worksheet.addRow(row);
+    });
 
-    // Generate buffer
-    const buffer = XLSX.write(wb, { type: 'buffer', bookType: format === 'csv' ? 'csv' : 'xlsx' });
+    // Style header row
+    worksheet.getRow(1).font = { bold: true };
 
     const filename = newsletterOnly
-      ? `newsletter_subscribers_${new Date().toISOString().split('T')[0]}`
-      : `users_export_${new Date().toISOString().split('T')[0]}`;
+      ? 'newsletter_subscribers_' + new Date().toISOString().split('T')[0]
+      : 'users_export_' + new Date().toISOString().split('T')[0];
 
-    return new NextResponse(buffer, {
+    // Generate buffer based on format
+    let arrayBuffer: ArrayBuffer;
+    let contentType: string;
+
+    if (format === 'csv') {
+      arrayBuffer = await workbook.csv.writeBuffer();
+      contentType = 'text/csv';
+    } else {
+      arrayBuffer = await workbook.xlsx.writeBuffer();
+      contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+    }
+
+    return new NextResponse(arrayBuffer, {
       headers: {
-        'Content-Type': format === 'csv'
-          ? 'text/csv'
-          : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        'Content-Disposition': `attachment; filename="${filename}.${format}"`,
+        'Content-Type': contentType,
+        'Content-Disposition': 'attachment; filename="' + filename + '.' + format + '"',
       },
     });
   } catch (error) {

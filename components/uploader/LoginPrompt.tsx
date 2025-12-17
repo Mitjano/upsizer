@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 
 /**
  * Login prompt shown to unauthenticated users
@@ -32,18 +33,18 @@ export default function LoginPrompt() {
             {t('description')}
           </p>
           <div className="flex gap-4 justify-center">
-            <a
+            <Link
               href="/auth/signin"
               className="inline-block px-8 py-3 bg-green-500 hover:bg-green-600 rounded-lg font-medium transition"
             >
               {t('signIn')}
-            </a>
-            <a
+            </Link>
+            <Link
               href="/auth/signup"
               className="inline-block px-8 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg font-medium transition"
             >
               {t('signUp')}
-            </a>
+            </Link>
           </div>
           <div className="mt-8 flex items-center justify-center gap-6 text-sm text-gray-500">
             <FeatureBadge text={t('freeCredits')} />

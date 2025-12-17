@@ -1,6 +1,7 @@
 "use client";
 
 import { useSession, signOut } from "next-auth/react";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useTranslations } from 'next-intl';
@@ -462,9 +463,11 @@ export default function Header() {
                   aria-label={`User menu for ${session.user?.name || 'User'}`}
                 >
                   {session.user?.image ? (
-                    <img
+                    <Image
                       src={session.user.image}
                       alt=""
+                      width={32}
+                      height={32}
                       className="w-8 h-8 rounded-full"
                       aria-hidden="true"
                     />
