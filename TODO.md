@@ -28,20 +28,16 @@
 
 ### Brakujące Zależności
 
-- [ ] **Zainstalować brakujące pakiety**
-  ```bash
-  npm install @fal-ai/client
-  npm install --save-dev @types/swagger-ui-react swagger-ui-react
-  ```
+- [x] **Zainstalować brakujące pakiety** ✅ *Zrobione 17.12.2024*
+  - `@fal-ai/client@1.7.2` - zainstalowane
 
 ### Build & TypeScript
 
 - [x] **Wyczyścić stary cache buildu** ✅ *Zrobione 17.12.2024*
 
-- [ ] **Usunąć lub utworzyć brakujące ścieżki**
-  - `app/[locale]/tools/packshot-generator/` - brak strony (usuń referencje lub utwórz)
-  - `app/api/generate-packshot/` - brak endpointu
-  - `app/api/user/welcome/` - brak endpointu
+- [x] **Usunąć lub utworzyć brakujące ścieżki** ✅ *Zrobione 17.12.2024*
+  - `app/api/generate-packshot/` - usunięty pusty katalog (redirect w next.config.ts)
+  - `app/api/user/welcome/` - utworzony endpoint do wysyłania welcome email
 
 ---
 
@@ -52,11 +48,11 @@
 - [x] **Naprawić LoginPrompt.tsx** - użyć `<Link>` zamiast `<a>` ✅ *Zrobione 17.12.2024*
   - Plik: `components/uploader/LoginPrompt.tsx`
 
-- [~] **Zamienić `<img>` na `<Image>`** w komponentach:
+- [x] **Zamienić `<img>` na `<Image>`** ✅ *Zrobione 17.12.2024*
   - [x] `components/Header.tsx` ✅ *Zrobione 17.12.2024*
-  - [ ] `components/admin/AdminUserRow.tsx`
-  - [ ] `components/admin/AdminBlogRow.tsx`
-  - [ ] `components/SwaggerUI.tsx`
+  - ~~`components/admin/AdminUserRow.tsx`~~ - plik nie istnieje
+  - ~~`components/admin/AdminBlogRow.tsx`~~ - plik nie istnieje
+  - ~~`components/SwaggerUI.tsx`~~ - plik nie istnieje
 
 - [ ] **Dodać brakującą regułę ESLint**
   - Plik: `.eslintrc.json`
