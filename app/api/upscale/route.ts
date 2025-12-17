@@ -130,6 +130,10 @@ export async function POST(request: NextRequest) {
     // Get image dimensions
     const dimensions = await ImageProcessor.getImageDimensions(buffer);
 
+    // Resize if too large for Replicate GPU (max ~2 million pixels)
+    // This prevents CUDA OOM errors on large images
+    const resizedDataUrl = await ImageProcessor.resizeForUpscale(dataUrl);
+
     // Save original image
     const originalPath = await ImageProcessor.saveFile(
       buffer,
@@ -160,7 +164,8 @@ export async function POST(request: NextRequest) {
       processedBuffer = await ImageProcessor.upscaleFaithful(buffer, scale);
     } else {
       // Use advanced upscale with intelligent model selection (AI-based)
-      const resultUrl = await ImageProcessor.upscaleAdvanced(dataUrl, scale, validatedImageType as 'product' | 'portrait' | 'general');
+      // Use resizedDataUrl to prevent CUDA OOM on large images
+      const resultUrl = await ImageProcessor.upscaleAdvanced(resizedDataUrl, scale, validatedImageType as 'product' | 'portrait' | 'general');
       // Download processed image from Replicate
       processedBuffer = await ImageProcessor.downloadImage(resultUrl);
     }

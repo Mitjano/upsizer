@@ -6,6 +6,7 @@ import { imageProcessingLimiter, getClientIdentifier, rateLimitResponse } from '
 import { authenticateRequest } from '@/lib/api-auth'
 import { CREDIT_COSTS } from '@/lib/credits-config'
 import { ProcessedImagesDB } from '@/lib/processed-images-db'
+import { ImageProcessor } from '@/lib/image-processor'
 
 const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN!,
@@ -95,7 +96,7 @@ export async function POST(request: NextRequest) {
       maskDataUrl = `data:${maskFile.type};base64,${maskBase64}`
     }
 
-    // 7. PROCESS WITH LAMA INPAINTING
+    // 7. PROCESS WITH BRIA ERASER
     // Mask is required for watermark removal
     if (!maskDataUrl) {
       return NextResponse.json(
@@ -104,15 +105,19 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.log('Processing watermark removal with LaMA...')
+    // 7.5. RESIZE IF TOO LARGE FOR REPLICATE GPU (max ~2 million pixels)
+    const resizedImageDataUrl = await ImageProcessor.resizeForUpscale(imageDataUrl)
+    const resizedMaskDataUrl = await ImageProcessor.resizeForUpscale(maskDataUrl)
 
-    // Use LaMA model for clean inpainting
+    console.log('Processing watermark removal with Bria Eraser...')
+
+    // Use Bria Eraser model for clean inpainting (same as object-removal)
     const output = await replicate.run(
-      "zylim0702/remove-object:0e3a841c913f597c1e4c321560aa69e2bc1f15c65f8c366caafc379240efd8ba",
+      "bria/eraser",
       {
         input: {
-          image: imageDataUrl,
-          mask: maskDataUrl,
+          image: resizedImageDataUrl,
+          mask: resizedMaskDataUrl,
         },
       }
     )
@@ -153,7 +158,7 @@ export async function POST(request: NextRequest) {
       type: 'watermark_remover',
       creditsUsed: creditsNeeded,
       imageSize: `${file.size} bytes`,
-      model: 'stable-diffusion-inpainting',
+      model: 'bria-eraser',
     })
 
     const newCredits = user.credits - creditsNeeded
