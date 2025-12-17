@@ -79,13 +79,13 @@
 
 ## 🟡 NISKIE (Ulepszenia)
 
-### Testy (Zwiększyć pokrycie z 1.7% do 30%)
+### Testy (315 testów ✅, pokrycie w trakcie zwiększania)
 
-- [ ] **Testy API endpoints (priorytet)**
+- [~] **Testy API endpoints (priorytet)**
   - [ ] `/api/auth/` - flow autentykacji
   - [ ] `/api/upscale/` - upscaling obrazów
   - [ ] `/api/stripe/` - webhook płatności
-  - [ ] `/api/user/` - zarządzanie użytkownikami
+  - [x] `/api/user/` - zarządzanie użytkownikami ✅ *28 testów (17.12.2024)*
 
 - [ ] **Testy komponentów**
   - [ ] `ImageUploader` - główny komponent uploadu
