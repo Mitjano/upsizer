@@ -419,7 +419,7 @@
     "verifyYourEmail": "Verifica tu email",
     "checkYourInbox": "Revisa tu bandeja de entrada para el enlace de verificación.",
     "verificationEmailInfo": "Haz clic en el enlace de tu email para verificar tu cuenta. Si no lo ves, revisa spam.",
-    "verificationSentTo": "Hemos enviado un enlace de verificación a {email}",
+    "verificationSentTo": "Hemos enviado un enlace de verificación a",
     "didntReceiveEmail": "¿No recibiste el email? Revisa tu carpeta de spam o",
     "tryAgain": "inténtalo de nuevo",
     "optional": "opcional",

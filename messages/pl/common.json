@@ -459,7 +459,7 @@
     "verifyYourEmail": "Zweryfikuj swój email",
     "checkYourInbox": "Sprawdź skrzynkę odbiorczą w poszukiwaniu linku weryfikacyjnego.",
     "verificationEmailInfo": "Kliknij link w emailu, aby zweryfikować konto. Jeśli go nie widzisz, sprawdź folder spam.",
-    "verificationSentTo": "Wysłaliśmy link weryfikacyjny na adres {email}",
+    "verificationSentTo": "Wysłaliśmy link weryfikacyjny na adres",
     "didntReceiveEmail": "Nie otrzymałeś emaila? Sprawdź folder spam lub",
     "tryAgain": "spróbuj ponownie",
     "optional": "opcjonalne",

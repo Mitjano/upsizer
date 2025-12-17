@@ -67,7 +67,7 @@ export function EmailSignUpForm() {
         </div>
         <h3 className="text-xl font-semibold text-white mb-2">{t('checkYourEmail')}</h3>
         <p className="text-gray-400 mb-4">
-          {t('verificationSentTo', { email: <span key="email" className="text-white font-medium">{email}</span> })}
+          {t('verificationSentTo')} <span className="text-white font-medium">{email}</span>
         </p>
         <p className="text-sm text-gray-500 mb-6">
           {t('verificationEmailInfo')}

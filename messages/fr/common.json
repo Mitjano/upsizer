@@ -418,7 +418,7 @@
     "verifyYourEmail": "Vérifiez votre email",
     "checkYourInbox": "Vérifiez votre boîte de réception pour le lien de vérification.",
     "verificationEmailInfo": "Cliquez sur le lien dans votre email pour vérifier votre compte. Si vous ne le voyez pas, vérifiez vos spams.",
-    "verificationSentTo": "Nous avons envoyé un lien de vérification à {email}",
+    "verificationSentTo": "Nous avons envoyé un lien de vérification à",
     "didntReceiveEmail": "Vous n'avez pas reçu l'email? Vérifiez vos spams ou",
     "tryAgain": "réessayez",
     "optional": "optionnel",
