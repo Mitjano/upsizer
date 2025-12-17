@@ -160,6 +160,16 @@
       "name": "Contrôle de Structure",
       "description": "Générez avec contrôle de profondeur et de bords",
       "badge": "NOUVEAU"
+    },
+    "portraitRelight": {
+      "name": "Rééclairage de Portrait",
+      "description": "Changez l'éclairage des portraits avec l'IA",
+      "badge": "NOUVEAU"
+    },
+    "watermarkRemover": {
+      "name": "Suppresseur de Filigrane",
+      "description": "Supprimez les filigranes des images",
+      "badge": "NOUVEAU"
     }
   },
   "home": {
@@ -1045,9 +1055,9 @@
     },
     "credits": {
       "1": "1 crédit",
-      "13": "1-3 crédits",
       "2": "2 crédits",
       "3": "3 crédits",
+      "13": "1-3 crédits",
       "free": "Gratuit"
     },
     "tryNow": "Essayer maintenant",
@@ -1937,7 +1947,6 @@
     },
     "termsNotice": "En téléchargeant un fichier, vous acceptez nos Conditions d'Utilisation et notre Politique de Confidentialité.",
     "scaleOptions": {
-      "title": "Choisissez votre Facteur d'Agrandissement",
       "2": {
         "name": "Double Résolution",
         "description": "Parfait pour les petites améliorations et images web. Traitement rapide."
@@ -1949,7 +1958,8 @@
       "8": {
         "name": "Huit Fois la Résolution",
         "description": "Qualité maximale pour l'impression grand format et les projets professionnels."
-      }
+      },
+      "title": "Choisissez votre Facteur d'Agrandissement"
     },
     "features": {
       "title": "Fonctionnalités Real-ESRGAN",
@@ -4171,6 +4181,283 @@
       "subtitle": "La même technologie utilisée par les éditeurs photo professionnels - maintenant accessible à tous.",
       "getStarted": "Commencer Gratuitement",
       "startInpainting": "Démarrer l'Inpainting"
+    }
+  },
+  "portraitRelight": {
+    "auth": {
+      "title": "Connectez-vous pour Rééclairer les Portraits",
+      "description": "Transformez l'éclairage de vos portraits avec l'IA",
+      "feature1": "Qualité Studio",
+      "feature2": "6 Préréglages d'Éclairage",
+      "feature3": "Prompts Personnalisés"
+    },
+    "upload": {
+      "title": "Télécharger Portrait",
+      "subtitle": "Glissez-déposez ou cliquez pour télécharger une photo portrait",
+      "formats": "Supporte JPG, PNG, WEBP • Max 20Mo"
+    },
+    "preview": {
+      "title": "Image Sélectionnée"
+    },
+    "settings": {
+      "presets": "Style d'Éclairage",
+      "customPrompt": "Éclairage Personnalisé (Optionnel)",
+      "customPromptPlaceholder": "Décrivez l'éclairage que vous souhaitez...",
+      "customPromptHint": "Laissez vide pour utiliser le préréglage sélectionné"
+    },
+    "presets": {
+      "studio": "Studio",
+      "golden": "Heure Dorée",
+      "dramatic": "Dramatique",
+      "neon": "Néon",
+      "natural": "Naturel",
+      "rembrandt": "Rembrandt"
+    },
+    "buttons": {
+      "relight": "Rééclairer Portrait",
+      "processing": "Traitement...",
+      "download": "Télécharger",
+      "processAnother": "Traiter un Autre",
+      "changeImage": "Changer d'Image"
+    },
+    "result": {
+      "before": "Original",
+      "after": "Rééclairé",
+      "success": "Portrait rééclairé avec succès!"
+    },
+    "processing": "Rééclairage du portrait...",
+    "success": "Portrait rééclairé avec succès!"
+  },
+  "portraitRelightPage": {
+    "badge": "Éclairage de Portrait par IA",
+    "title": "Rééclairage de Portrait IA",
+    "subtitle": "Transformez l'éclairage de vos portraits avec un rééclairage de qualité studio alimenté par l'IA.",
+    "termsNotice": "En utilisant cet outil, vous acceptez nos Conditions d'Utilisation.",
+    "stats": {
+      "presets": "6",
+      "presetsLabel": "Préréglages d'Éclairage",
+      "aiPowered": "ICLight V2",
+      "aiPoweredLabel": "Modèle IA",
+      "creditCost": "2 Crédits",
+      "creditCostLabel": "Par Image"
+    },
+    "howItWorks": {
+      "title": "Comment Ça Marche",
+      "step1": {
+        "title": "Télécharger Portrait",
+        "description": "Téléchargez n'importe quelle photo portrait"
+      },
+      "step2": {
+        "title": "Choisir l'Éclairage",
+        "description": "Sélectionnez un préréglage ou un style personnalisé"
+      },
+      "step3": {
+        "title": "Télécharger le Résultat",
+        "description": "Obtenez votre portrait rééclairé"
+      }
+    },
+    "lightingPresets": {
+      "title": "Préréglages d'Éclairage",
+      "studio": {
+        "title": "Studio",
+        "description": "Éclairage professionnel à trois points"
+      },
+      "golden": {
+        "title": "Heure Dorée",
+        "description": "Éclairage chaud de coucher de soleil"
+      },
+      "dramatic": {
+        "title": "Dramatique",
+        "description": "Ombres à haut contraste"
+      },
+      "neon": {
+        "title": "Néon",
+        "description": "Éclairage coloré cyberpunk"
+      },
+      "natural": {
+        "title": "Naturel",
+        "description": "Lumière douce de fenêtre"
+      },
+      "rembrandt": {
+        "title": "Rembrandt",
+        "description": "Éclairage classique en triangle"
+      }
+    },
+    "features": {
+      "aiPowered": {
+        "title": "Alimenté par IA",
+        "description": "ICLight V2 pour un rééclairage réaliste"
+      },
+      "customPrompts": {
+        "title": "Prompts Personnalisés",
+        "description": "Décrivez n'importe quel scénario d'éclairage"
+      },
+      "fastProcessing": {
+        "title": "Traitement Rapide",
+        "description": "Résultats en quelques secondes"
+      }
+    },
+    "useCases": {
+      "title": "Cas d'Utilisation",
+      "photographers": {
+        "title": "Photographes",
+        "description": "Corriger l'éclairage en post-production"
+      },
+      "contentCreators": {
+        "title": "Créateurs de Contenu",
+        "description": "Éclairage cohérent"
+      },
+      "ecommerce": {
+        "title": "E-commerce",
+        "description": "Portraits professionnels"
+      },
+      "socialMedia": {
+        "title": "Réseaux Sociaux",
+        "description": "Selfies améliorés"
+      }
+    },
+    "relatedTools": {
+      "title": "Outils Connexes",
+      "packshot": {
+        "title": "Générateur de Packshot",
+        "description": "Photographie de produits"
+      },
+      "removeBackground": {
+        "title": "Supprimer le Fond",
+        "description": "Fonds transparents"
+      },
+      "restore": {
+        "title": "Restaurer le Visage",
+        "description": "Améliorer les traits du visage"
+      }
+    },
+    "cta": {
+      "title": "Prêt à Transformer vos Portraits?",
+      "subtitle": "Commencez à rééclairer vos photos avec l'IA aujourd'hui",
+      "exploreTools": "Explorer Tous les Outils",
+      "viewPricing": "Voir les Prix"
+    }
+  },
+  "watermarkRemover": {
+    "auth": {
+      "title": "Connectez-vous pour Supprimer les Filigranes",
+      "description": "Supprimez les filigranes, logos et textes des images avec l'IA",
+      "feature1": "Détection Automatique",
+      "feature2": "Masque Manuel",
+      "feature3": "Résultats Parfaits"
+    },
+    "upload": {
+      "title": "Télécharger Image avec Filigrane",
+      "subtitle": "Glissez-déposez ou cliquez pour télécharger",
+      "formats": "Supporte JPG, PNG, WEBP • Max 20Mo"
+    },
+    "preview": {
+      "title": "Sélectionner la Zone du Filigrane"
+    },
+    "settings": {
+      "autoDetect": "Détection Automatique",
+      "manualMask": "Masque Manuel",
+      "brushSize": "Taille du Pinceau",
+      "clearMask": "Effacer le Masque",
+      "autoDescription": "L'IA détectera et supprimera automatiquement les filigranes",
+      "manualDescription": "Peignez sur la zone du filigrane pour la marquer pour suppression"
+    },
+    "buttons": {
+      "remove": "Supprimer le Filigrane",
+      "processing": "Traitement...",
+      "download": "Télécharger",
+      "processAnother": "Traiter une Autre",
+      "changeImage": "Changer d'Image"
+    },
+    "result": {
+      "before": "Original",
+      "after": "Nettoyé",
+      "success": "Filigrane supprimé avec succès!"
+    },
+    "processing": "Suppression du filigrane...",
+    "success": "Filigrane supprimé avec succès!"
+  },
+  "watermarkRemoverPage": {
+    "badge": "Suppression de Filigrane par IA",
+    "title": "Suppresseur de Filigrane IA",
+    "subtitle": "Supprimez les filigranes, logos et superpositions de texte des images de manière transparente avec l'inpainting IA.",
+    "termsNotice": "En utilisant cet outil, vous acceptez nos Conditions d'Utilisation.",
+    "stats": {
+      "aiPowered": "LaMA",
+      "aiPoweredLabel": "Modèle IA",
+      "modes": "2",
+      "modesLabel": "Modes de Suppression",
+      "creditCost": "2 Crédits",
+      "creditCostLabel": "Par Image"
+    },
+    "howItWorks": {
+      "title": "Comment Ça Marche",
+      "step1": {
+        "title": "Télécharger Image",
+        "description": "Téléchargez une image avec filigrane"
+      },
+      "step2": {
+        "title": "Sélectionner le Mode",
+        "description": "Auto-détecter ou marquer manuellement le filigrane"
+      },
+      "step3": {
+        "title": "Télécharger Propre",
+        "description": "Obtenez votre image sans filigrane"
+      }
+    },
+    "features": {
+      "autoDetect": {
+        "title": "Détection Automatique",
+        "description": "L'IA trouve et supprime automatiquement les filigranes"
+      },
+      "manualMask": {
+        "title": "Masquage Manuel",
+        "description": "Peignez sur des zones spécifiques à supprimer"
+      },
+      "seamless": {
+        "title": "Résultats Parfaits",
+        "description": "L'IA remplit le fond naturellement"
+      }
+    },
+    "useCases": {
+      "title": "Cas d'Utilisation",
+      "stockPhotos": {
+        "title": "Photos de Stock",
+        "description": "Supprimez les filigranes d'aperçu des images de stock"
+      },
+      "screenshots": {
+        "title": "Captures d'Écran",
+        "description": "Nettoyez les captures d'écran avec des superpositions indésirables"
+      },
+      "oldPhotos": {
+        "title": "Anciennes Photos",
+        "description": "Supprimez les tampons de date des anciennes photos"
+      },
+      "documents": {
+        "title": "Documents",
+        "description": "Nettoyez les documents numérisés"
+      }
+    },
+    "relatedTools": {
+      "title": "Outils Connexes",
+      "objectRemoval": {
+        "title": "Suppression d'Objets",
+        "description": "Supprimez n'importe quel objet des photos"
+      },
+      "inpainting": {
+        "title": "Inpainting IA",
+        "description": "Remplissez et étendez les images"
+      },
+      "removeBackground": {
+        "title": "Supprimer le Fond",
+        "description": "Fonds transparents"
+      }
+    },
+    "cta": {
+      "title": "Prêt à Supprimer les Filigranes?",
+      "subtitle": "Nettoyez vos images avec l'IA aujourd'hui",
+      "exploreTools": "Explorer Tous les Outils",
+      "viewPricing": "Voir les Prix"
     }
   }
 }

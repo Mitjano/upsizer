@@ -161,6 +161,16 @@
       "name": "Conversor de Formatos",
       "description": "Convierte entre formatos de imagen",
       "badge": "GRATIS"
+    },
+    "portraitRelight": {
+      "name": "Reiluminación de Retratos",
+      "description": "Cambia la iluminación de retratos con IA",
+      "badge": "NUEVO"
+    },
+    "watermarkRemover": {
+      "name": "Eliminador de Marcas de Agua",
+      "description": "Elimina marcas de agua de imágenes",
+      "badge": "NUEVO"
     }
   },
   "home": {
@@ -962,9 +972,9 @@
     },
     "credits": {
       "1": "1 crédito",
-      "13": "1-3 créditos",
       "2": "2 créditos",
       "3": "3 créditos",
+      "13": "1-3 créditos",
       "free": "Gratis"
     },
     "tryNow": "Probar ahora",
@@ -1854,7 +1864,6 @@
     },
     "termsNotice": "Al subir un archivo aceptas nuestros Términos de Uso y Política de Privacidad.",
     "scaleOptions": {
-      "title": "Elige tu Factor de Ampliación",
       "2": {
         "name": "Doble Resolución",
         "description": "Perfecta para mejoras menores e imágenes web. Procesamiento rápido."
@@ -1866,7 +1875,8 @@
       "8": {
         "name": "Ocho Veces la Resolución",
         "description": "Máxima calidad para impresión de gran formato y proyectos profesionales."
-      }
+      },
+      "title": "Elige tu Factor de Ampliación"
     },
     "features": {
       "title": "Características de Real-ESRGAN",
@@ -4084,6 +4094,283 @@
         "title": "Eliminador de Fondo",
         "description": "Elimina fondos al instante con IA"
       }
+    }
+  },
+  "portraitRelight": {
+    "auth": {
+      "title": "Inicia sesión para Reiluminar Retratos",
+      "description": "Transforma la iluminación de tus retratos con IA",
+      "feature1": "Calidad de Estudio",
+      "feature2": "6 Presets de Iluminación",
+      "feature3": "Prompts Personalizados"
+    },
+    "upload": {
+      "title": "Subir Retrato",
+      "subtitle": "Arrastra y suelta o haz clic para subir una foto de retrato",
+      "formats": "Soporta JPG, PNG, WEBP • Máx 20MB"
+    },
+    "preview": {
+      "title": "Imagen Seleccionada"
+    },
+    "settings": {
+      "presets": "Estilo de Iluminación",
+      "customPrompt": "Iluminación Personalizada (Opcional)",
+      "customPromptPlaceholder": "Describe la iluminación que deseas...",
+      "customPromptHint": "Deja vacío para usar el preset seleccionado"
+    },
+    "presets": {
+      "studio": "Estudio",
+      "golden": "Hora Dorada",
+      "dramatic": "Dramático",
+      "neon": "Neón",
+      "natural": "Natural",
+      "rembrandt": "Rembrandt"
+    },
+    "buttons": {
+      "relight": "Reiluminar Retrato",
+      "processing": "Procesando...",
+      "download": "Descargar",
+      "processAnother": "Procesar Otro",
+      "changeImage": "Cambiar Imagen"
+    },
+    "result": {
+      "before": "Original",
+      "after": "Reiluminado",
+      "success": "¡Retrato reiluminado exitosamente!"
+    },
+    "processing": "Reiluminando retrato...",
+    "success": "¡Retrato reiluminado exitosamente!"
+  },
+  "portraitRelightPage": {
+    "badge": "Iluminación de Retratos con IA",
+    "title": "Reiluminación de Retratos con IA",
+    "subtitle": "Transforma la iluminación de tus retratos con reiluminación de calidad de estudio impulsada por IA.",
+    "termsNotice": "Al usar esta herramienta, aceptas nuestros Términos de Servicio.",
+    "stats": {
+      "presets": "6",
+      "presetsLabel": "Presets de Iluminación",
+      "aiPowered": "ICLight V2",
+      "aiPoweredLabel": "Modelo IA",
+      "creditCost": "2 Créditos",
+      "creditCostLabel": "Por Imagen"
+    },
+    "howItWorks": {
+      "title": "Cómo Funciona",
+      "step1": {
+        "title": "Subir Retrato",
+        "description": "Sube cualquier foto de retrato"
+      },
+      "step2": {
+        "title": "Elegir Iluminación",
+        "description": "Selecciona un preset o estilo personalizado"
+      },
+      "step3": {
+        "title": "Descargar Resultado",
+        "description": "Obtén tu retrato reiluminado"
+      }
+    },
+    "lightingPresets": {
+      "title": "Presets de Iluminación",
+      "studio": {
+        "title": "Estudio",
+        "description": "Iluminación profesional de tres puntos"
+      },
+      "golden": {
+        "title": "Hora Dorada",
+        "description": "Iluminación cálida de atardecer"
+      },
+      "dramatic": {
+        "title": "Dramático",
+        "description": "Sombras de alto contraste"
+      },
+      "neon": {
+        "title": "Neón",
+        "description": "Iluminación de colores cyberpunk"
+      },
+      "natural": {
+        "title": "Natural",
+        "description": "Luz suave de ventana"
+      },
+      "rembrandt": {
+        "title": "Rembrandt",
+        "description": "Iluminación clásica de triángulo"
+      }
+    },
+    "features": {
+      "aiPowered": {
+        "title": "Potenciado por IA",
+        "description": "ICLight V2 para reiluminación realista"
+      },
+      "customPrompts": {
+        "title": "Prompts Personalizados",
+        "description": "Describe cualquier escenario de iluminación"
+      },
+      "fastProcessing": {
+        "title": "Procesamiento Rápido",
+        "description": "Resultados en segundos"
+      }
+    },
+    "useCases": {
+      "title": "Casos de Uso",
+      "photographers": {
+        "title": "Fotógrafos",
+        "description": "Corrige la iluminación en postproducción"
+      },
+      "contentCreators": {
+        "title": "Creadores de Contenido",
+        "description": "Iluminación consistente"
+      },
+      "ecommerce": {
+        "title": "E-commerce",
+        "description": "Retratos profesionales"
+      },
+      "socialMedia": {
+        "title": "Redes Sociales",
+        "description": "Selfies mejorados"
+      }
+    },
+    "relatedTools": {
+      "title": "Herramientas Relacionadas",
+      "packshot": {
+        "title": "Generador de Packshot",
+        "description": "Fotografía de productos"
+      },
+      "removeBackground": {
+        "title": "Eliminar Fondo",
+        "description": "Fondos transparentes"
+      },
+      "restore": {
+        "title": "Restaurar Rostro",
+        "description": "Mejorar rasgos faciales"
+      }
+    },
+    "cta": {
+      "title": "¿Listo para Transformar tus Retratos?",
+      "subtitle": "Comienza a reiluminar tus fotos con IA hoy",
+      "exploreTools": "Explorar Todas las Herramientas",
+      "viewPricing": "Ver Precios"
+    }
+  },
+  "watermarkRemover": {
+    "auth": {
+      "title": "Inicia sesión para Eliminar Marcas de Agua",
+      "description": "Elimina marcas de agua, logos y texto de imágenes con IA",
+      "feature1": "Detección Automática",
+      "feature2": "Máscara Manual",
+      "feature3": "Resultados Perfectos"
+    },
+    "upload": {
+      "title": "Subir Imagen con Marca de Agua",
+      "subtitle": "Arrastra y suelta o haz clic para subir",
+      "formats": "Soporta JPG, PNG, WEBP • Máx 20MB"
+    },
+    "preview": {
+      "title": "Seleccionar Área de Marca de Agua"
+    },
+    "settings": {
+      "autoDetect": "Detección Automática",
+      "manualMask": "Máscara Manual",
+      "brushSize": "Tamaño del Pincel",
+      "clearMask": "Limpiar Máscara",
+      "autoDescription": "La IA detectará y eliminará automáticamente las marcas de agua",
+      "manualDescription": "Pinta sobre el área de la marca de agua para marcarla para eliminación"
+    },
+    "buttons": {
+      "remove": "Eliminar Marca de Agua",
+      "processing": "Procesando...",
+      "download": "Descargar",
+      "processAnother": "Procesar Otra",
+      "changeImage": "Cambiar Imagen"
+    },
+    "result": {
+      "before": "Original",
+      "after": "Limpio",
+      "success": "¡Marca de agua eliminada exitosamente!"
+    },
+    "processing": "Eliminando marca de agua...",
+    "success": "¡Marca de agua eliminada exitosamente!"
+  },
+  "watermarkRemoverPage": {
+    "badge": "Eliminación de Marcas de Agua con IA",
+    "title": "Eliminador de Marcas de Agua con IA",
+    "subtitle": "Elimina marcas de agua, logos y superposiciones de texto de imágenes de forma perfecta con inpainting de IA.",
+    "termsNotice": "Al usar esta herramienta, aceptas nuestros Términos de Servicio.",
+    "stats": {
+      "aiPowered": "LaMA",
+      "aiPoweredLabel": "Modelo IA",
+      "modes": "2",
+      "modesLabel": "Modos de Eliminación",
+      "creditCost": "2 Créditos",
+      "creditCostLabel": "Por Imagen"
+    },
+    "howItWorks": {
+      "title": "Cómo Funciona",
+      "step1": {
+        "title": "Subir Imagen",
+        "description": "Sube una imagen con marca de agua"
+      },
+      "step2": {
+        "title": "Seleccionar Modo",
+        "description": "Auto-detectar o marcar manualmente la marca de agua"
+      },
+      "step3": {
+        "title": "Descargar Limpio",
+        "description": "Obtén tu imagen sin marca de agua"
+      }
+    },
+    "features": {
+      "autoDetect": {
+        "title": "Detección Automática",
+        "description": "La IA encuentra y elimina automáticamente las marcas de agua"
+      },
+      "manualMask": {
+        "title": "Enmascarado Manual",
+        "description": "Pinta sobre áreas específicas para eliminar"
+      },
+      "seamless": {
+        "title": "Resultados Perfectos",
+        "description": "La IA rellena el fondo de forma natural"
+      }
+    },
+    "useCases": {
+      "title": "Casos de Uso",
+      "stockPhotos": {
+        "title": "Fotos de Stock",
+        "description": "Elimina marcas de agua de vista previa de imágenes de stock"
+      },
+      "screenshots": {
+        "title": "Capturas de Pantalla",
+        "description": "Limpia capturas de pantalla con superposiciones no deseadas"
+      },
+      "oldPhotos": {
+        "title": "Fotos Antiguas",
+        "description": "Elimina sellos de fecha de fotos antiguas"
+      },
+      "documents": {
+        "title": "Documentos",
+        "description": "Limpia documentos escaneados"
+      }
+    },
+    "relatedTools": {
+      "title": "Herramientas Relacionadas",
+      "objectRemoval": {
+        "title": "Eliminación de Objetos",
+        "description": "Elimina cualquier objeto de las fotos"
+      },
+      "inpainting": {
+        "title": "Inpainting IA",
+        "description": "Rellena y extiende imágenes"
+      },
+      "removeBackground": {
+        "title": "Eliminar Fondo",
+        "description": "Fondos transparentes"
+      }
+    },
+    "cta": {
+      "title": "¿Listo para Eliminar Marcas de Agua?",
+      "subtitle": "Limpia tus imágenes con IA hoy",
+      "exploreTools": "Explorar Todas las Herramientas",
+      "viewPricing": "Ver Precios"
     }
   }
 }
