@@ -1,4 +1,4 @@
-# Pixelift - Lista Zadań (Audyt 16.12.2024)
+# Pixelift - Lista Zadań (Aktualizacja 18.12.2024)
 
 ## Status Projektu
 
@@ -10,184 +10,291 @@
 | Zależności | 700+ |
 | Podatności | 0 ✅ |
 | Języki UI | 4 (en, pl, es, fr) |
+| Główne API | Replicate, Sharp, Photoroom |
 
 ---
 
-## 🔴 KRYTYCZNE (Do natychmiastowej naprawy)
+## 🎯 STRATEGIA: Konkurencja z Adobe Express
 
-### Bezpieczeństwo
+### Analiza Porównawcza (18.12.2024)
 
-- [x] **Naprawić podatności Next.js** (HIGH severity) ✅ *Zrobione 17.12.2024*
-  - Source Code Exposure (GHSA-w37m-7fhw-fmv9)
-  - DoS with Server Components (GHSA-mwv6-3258-q52c)
+#### ✅ Narzędzia Pixelift (przewaga nad Adobe)
+- AI Image Upscaler (Real-ESRGAN) - Adobe nie ma
+- Face Restore (CodeFormer) - Adobe nie ma
+- Image Colorize - Adobe nie ma
+- Portrait Relight - Adobe nie ma
+- Object Removal (LaMA) - Adobe ma podobne
+- Background Generator (FLUX) - Adobe ma podstawowe
+- Style Transfer - Adobe nie ma
+- Reimagine - Adobe nie ma
+- Structure Control - Adobe nie ma
+- AI Video Generation - Adobe ma ograniczone
 
-- [x] **Zamienić bibliotekę xlsx na bezpieczną alternatywę** ✅ *Zrobione 17.12.2024*
-  - Problem: Prototype Pollution + ReDoS (brak poprawki)
-  - Rozwiązanie: Migracja do `exceljs`
-  - Plik zmodyfikowany: `app/api/admin/users/export/route.ts`
-
-### Brakujące Zależności
-
-- [x] **Zainstalować brakujące pakiety** ✅ *Zrobione 17.12.2024*
-  - `@fal-ai/client@1.7.2` - zainstalowane
-
-### Build & TypeScript
-
-- [x] **Wyczyścić stary cache buildu** ✅ *Zrobione 17.12.2024*
-
-- [x] **Usunąć lub utworzyć brakujące ścieżki** ✅ *Zrobione 17.12.2024*
-  - `app/api/generate-packshot/` - usunięty pusty katalog (redirect w next.config.ts)
-  - `app/api/user/welcome/` - utworzony endpoint do wysyłania welcome email
-
----
-
-## 🟠 ŚREDNIE (Przed następnym deployem)
-
-### ESLint & Jakość Kodu
-
-- [x] **Naprawić LoginPrompt.tsx** - użyć `<Link>` zamiast `<a>` ✅ *Zrobione 17.12.2024*
-  - Plik: `components/uploader/LoginPrompt.tsx`
-
-- [x] **Zamienić `<img>` na `<Image>`** ✅ *Zrobione 17.12.2024*
-  - [x] `components/Header.tsx` ✅ *Zrobione 17.12.2024*
-  - ~~`components/admin/AdminUserRow.tsx`~~ - plik nie istnieje
-  - ~~`components/admin/AdminBlogRow.tsx`~~ - plik nie istnieje
-  - ~~`components/SwaggerUI.tsx`~~ - plik nie istnieje
-
-- [x] **Dodać brakującą regułę ESLint** ✅ *Zrobione 17.12.2024*
-  - Plik: `.eslintrc.json`
-  - Dodano: `@typescript-eslint/no-explicit-any` (warn)
-  - Dodano: `@typescript-eslint/no-unused-vars` (warn)
-  - Dodano: `prefer-const` (warn)
-  - Rozszerzono: `plugin:@typescript-eslint/recommended`
-
-### Konfiguracja
-
-- [x] **Skonfigurować środowisko deweloperskie** ✅ *Zrobione 17.12.2024*
-  - Zaktualizowano `.env.example` o brakujące zmienne
-  - Dodano: Firebase Admin SDK, Google OAuth, OpenAI, GoAPI
-  - Poprawiono nazewnictwo (`NEXT_PUBLIC_APP_URL`)
-
-### i18n - Tłumaczenia
-
-- [x] **Dodać brakujące tłumaczenia portraitRelight i watermarkRemover** ✅ *Zrobione 17.12.2024*
-  - Dodano do `messages/es/common.json`
-  - Dodano do `messages/fr/common.json`
-  - Naprawiono błędy MISSING_MESSAGE podczas buildu
+#### ❌ Narzędzia Adobe, których brakuje Pixelift
+| Narzędzie | Priorytet | API/Rozwiązanie | Koszt |
+|-----------|-----------|-----------------|-------|
+| Crop Image | 🔴 Wysoki | Sharp (lokalnie) | FREE |
+| Resize Image | 🔴 Wysoki | Sharp (lokalnie) | FREE |
+| Logo Maker | 🔴 Wysoki | Ideogram 3.0 (Replicate) | ~$0.02/obraz |
+| QR Code Generator | 🔴 Wysoki | Illusion (Replicate) | ~$0.02/obraz |
+| Convert to SVG | 🟠 Średni | Vectorizer.AI API | ~$0.01/obraz |
+| Collage Maker | 🟠 Średni | Sharp + własna logika | FREE |
+| Text Effects | 🟠 Średni | Ideogram 3.0 / Recraft V3 | ~$0.02/obraz |
+| Filters & Effects | 🟡 Niski | Sharp + LUTs | FREE |
+| Templates Gallery | 🟡 Niski | Własna implementacja | FREE |
 
 ---
 
-## 🟡 NISKIE (Ulepszenia)
+## 🔴 PRIORYTET 1: Nowe Narzędzia Podstawowe
 
-### Testy (369 testów ✅, pokrycie znacząco zwiększone)
+### 1.1 Crop Image (Kadrowanie)
+- **Rozwiązanie**: Sharp (lokalnie, bez API)
+- **Koszt kredytów**: FREE lub 1 kredt
+- **Funkcje**:
+  - [ ] Swobodne kadrowanie
+  - [ ] Predefiniowane proporcje (1:1, 4:3, 16:9, 9:16)
+  - [ ] Proporcje social media (Instagram, Facebook, Twitter)
+  - [ ] Rule of thirds overlay
+- **Pliki do utworzenia**:
+  - `app/api/crop-image/route.ts`
+  - `components/ImageCropper.tsx`
+  - `app/[locale]/tools/crop-image/page.tsx`
 
-- [x] **Testy API endpoints (priorytet)** ✅ *Zrobione 17.12.2024*
-  - [x] `/api/upscale/` - 10 testów
-  - [x] `/api/stripe/checkout` - 13 testów
-  - [x] `/api/stripe/webhook` - 12 testów
-  - [x] `/api/user/` - 28 testów
+### 1.2 Resize Image (Zmiana rozmiaru)
+- **Rozwiązanie**: Sharp (lokalnie, bez API)
+- **Koszt kredytów**: FREE lub 1 kredt
+- **Funkcje**:
+  - [ ] Resize by pixels
+  - [ ] Resize by percentage
+  - [ ] Maintain aspect ratio
+  - [ ] Social media presets (Instagram 1080x1080, FB Cover 820x312, etc.)
+- **Pliki do utworzenia**:
+  - `app/api/resize-image/route.ts`
+  - `components/ImageResizer.tsx`
+  - `app/[locale]/tools/resize-image/page.tsx`
 
-- [x] **Testy komponentów** ✅ *Zrobione 17.12.2024*
-  - [x] `ImageUploader` - 19 testów ✅ *17.12.2024*
-  - [x] `Dashboard` - 25 testów ✅ *17.12.2024*
-  - [x] `CopyLinkButton` - 18 testów ✅ *17.12.2024*
+### 1.3 Logo Maker (Generator Logo AI)
+- **Rozwiązanie**: Ideogram 3.0 via Replicate
+- **Dlaczego**: Najlepsza jakość tekstu/typografii w AI (lepszy niż FLUX)
+- **Model**: `ideogram-ai/ideogram-v2-turbo`
+- **Koszt API**: ~$0.02/generacja
+- **Koszt kredytów**: 3-5 kredytów
+- **Funkcje**:
+  - [ ] Text input dla nazwy firmy/marki
+  - [ ] Wybór stylu (minimalist, vintage, modern, etc.)
+  - [ ] Wybór kolorystyki
+  - [ ] Eksport PNG z przezroczystym tłem
+  - [ ] Warianty (3-4 propozycje)
+- **Pliki do utworzenia**:
+  - `app/api/logo-maker/route.ts`
+  - `components/LogoMaker.tsx`
+  - `app/[locale]/tools/logo-maker/page.tsx`
 
-- [x] **Testy integracyjne** ✅ *Zrobione 17.12.2024*
-  - [x] Flow rejestracji użytkownika - 24 testy
-  - [x] Flow płatności (Stripe) - 26 testów
-  - [x] Flow przetwarzania obrazu - 28 testów
-
-### Dokumentacja
-
-- [x] **Zaktualizować README.md** o informacje z audytu ✅ *Zrobione 17.12.2024*
-- [x] **Dodać CONTRIBUTING.md** z wytycznymi dla deweloperów ✅ *Zrobione 17.12.2024*
-- [x] **Dodać CHANGELOG.md** do śledzenia zmian ✅ *Zrobione 17.12.2024*
+### 1.4 QR Code Generator (Artystyczne kody QR)
+- **Rozwiązanie**: Illusion model via Replicate
+- **Model**: `catacolabs/illusion`
+- **Koszt API**: ~$0.02/generacja
+- **Koszt kredytów**: 2-3 kredyty
+- **Funkcje**:
+  - [ ] URL/Text input
+  - [ ] Prompt dla stylu wizualnego
+  - [ ] Wybór predefiniowanych stylów
+  - [ ] Walidacja skanowania
+- **Pliki do utworzenia**:
+  - `app/api/qr-generator/route.ts`
+  - `components/QRGenerator.tsx`
+  - `app/[locale]/tools/qr-generator/page.tsx`
 
 ---
 
-## 📋 FUNKCJONALNOŚCI (Backlog)
+## 🟠 PRIORYTET 2: Narzędzia Zaawansowane
 
-### Nowe Narzędzia AI (wyrównanie menu)
+### 2.1 Convert to SVG (Wektoryzacja)
+- **Rozwiązanie OPCJA A**: Vectorizer.AI API (najlepsza jakość)
+  - Płatne API: ~$0.01/obraz
+  - https://vectorizer.ai/api
+- **Rozwiązanie OPCJA B**: Recraft V3 (free tier dostępny)
+  - Model: `recraft-ai/recraft-v3-svg`
+- **Koszt kredytów**: 2-3 kredyty
+- **Funkcje**:
+  - [ ] Upload raster image
+  - [ ] Preview SVG
+  - [ ] Download SVG
+  - [ ] Color simplification options
+- **Pliki do utworzenia**:
+  - `app/api/vectorize/route.ts`
+  - `components/ImageVectorizer.tsx`
+  - `app/[locale]/tools/convert-to-svg/page.tsx`
 
-#### Kategoria: NARZĘDZIA (potrzeba 2 nowych)
+### 2.2 Collage Maker
+- **Rozwiązanie**: Sharp + własna logika (bez API zewnętrznego)
+- **Koszt kredytów**: FREE lub 1 kredt
+- **Funkcje**:
+  - [ ] Wybór layoutu (2x2, 3x3, 1+2, etc.)
+  - [ ] Upload wielu zdjęć
+  - [ ] Drag & drop reordering
+  - [ ] Spacing/padding options
+  - [ ] Background color
+- **Pliki do utworzenia**:
+  - `app/api/collage/route.ts`
+  - `components/CollageMaker.tsx`
+  - `app/[locale]/tools/collage-maker/page.tsx`
 
-- [x] **Format Converter** (DARMOWE - Sharp) ✅ *Już zaimplementowane*
-  - Konwersja: HEIC, AVIF, WebP ↔ PNG, JPG, GIF
+### 2.3 Text Effects (Efekty tekstowe AI)
+- **Rozwiązanie**: Ideogram 3.0 lub Recraft V3
+- **Model**: `ideogram-ai/ideogram-v2-turbo`
+- **Koszt API**: ~$0.02/generacja
+- **Koszt kredytów**: 3-5 kredytów
+- **Funkcje**:
+  - [ ] Text input
+  - [ ] Style presets (3D, neon, graffiti, fire, ice, etc.)
+  - [ ] Color customization
+  - [ ] Background options (transparent, solid, gradient)
+- **Pliki do utworzenia**:
+  - `app/api/text-effects/route.ts`
+  - `components/TextEffects.tsx`
+  - `app/[locale]/tools/text-effects/page.tsx`
 
-- [ ] **Image to Vector (SVG)**
-  - Model: Vectorizer.AI API
-  - Koszt: ~$0.01/obraz
+### 2.4 Filters & Effects (Filtry obrazu)
+- **Rozwiązanie**: Sharp + custom LUTs (bez API zewnętrznego)
+- **Koszt kredytów**: FREE lub 1 kredt
+- **Funkcje**:
+  - [ ] Basic adjustments (brightness, contrast, saturation)
+  - [ ] Preset filters (Vintage, B&W, Sepia, Cool, Warm)
+  - [ ] Blur/Sharpen
+  - [ ] Vignette
+- **Pliki do utworzenia**:
+  - `app/api/image-filters/route.ts`
+  - `components/ImageFilters.tsx`
+  - `app/[locale]/tools/image-filters/page.tsx`
 
-#### Kategoria: ULEPSZANIE
+---
 
-- [x] **Portrait Relight** ✅ *Już zaimplementowane*
-  - Model: fal.ai/ic-light-v2 (klucz już skonfigurowany)
-  - Koszt: ~$0.05/obraz
+## 🟡 PRIORYTET 3: Ulepszenia Istniejących
 
-- [ ] **Face Enhancer Pro**
-  - Model: Replicate codeformer
-  - Koszt: ~$0.01/obraz
+### 3.1 Połączenie Email Templates z systemem wysyłania
+- **Problem**: Admin panel Email Templates nie jest połączony z `lib/email.ts`
+- **Rozwiązanie**:
+  - [ ] Przenieść szablony z hardcoded do bazy danych
+  - [ ] Funkcja `getEmailTemplate(slug)` z DB fallback
+  - [ ] Admin UI do edycji szablonów
+  - [ ] Preview email przed wysłaniem
+- **Pliki do modyfikacji**:
+  - `lib/email.ts`
+  - `lib/db.ts`
+  - `app/api/admin/email-templates/route.ts`
 
-#### Kategoria: USUWANIE
+### 3.2 Usprawnienie Text to Image
+- **Obecny stan**: Działa, ale można ulepszyć
+- **Ulepszenia**:
+  - [ ] Więcej stylów/presetów
+  - [ ] Aspect ratio selection
+  - [ ] Negative prompts
+  - [ ] Batch generation (2-4 warianty)
 
-- [x] **Watermark Remover** ✅ *Już zaimplementowane*
-  - Model: Replicate LaMA inpainting
-  - Koszt: ~$0.02/obraz
+### 3.3 Video Tools Enhancement
+- **Obecne narzędzia**: AI Video Generation, Captions
+- **Brakujące funkcje Adobe**:
+  - [ ] Video Merge (łączenie klipów)
+  - [ ] Video Trim (przycinanie)
+  - [ ] Speed Control (przyspieszenie/zwolnienie)
+  - [ ] Video Resize
 
-- [ ] **Shadow Remover**
-  - Model: fal.ai shadow-removal
-  - Koszt: ~$0.02/obraz
+---
 
-#### Kategoria: GENEROWANIE
+## 📐 ZMIANY W UI/MENU
 
-- [ ] **Sketch to Image**
-  - Model: Replicate flux-kontext
-  - Koszt: ~$0.04/obraz
+### Struktura menu po dodaniu nowych narzędzi
 
-- [ ] **Image to 3D**
-  - Model: Replicate meshy/triposr
-  - Koszt: ~$0.10/model
+```
+TOOLS (dropdown)
+├── Enhance
+│   ├── AI Upscaler ✅
+│   ├── Face Restore ✅
+│   ├── Colorize ✅
+│   └── Portrait Relight ✅
+├── Remove
+│   ├── Remove Background ✅
+│   ├── Object Removal ✅
+│   └── Watermark Remover ✅
+├── Generate
+│   ├── Background Generator ✅
+│   ├── AI Packshot ✅
+│   ├── Image Expand ✅
+│   ├── Inpainting ✅
+│   ├── Logo Maker 🆕
+│   ├── QR Code Generator 🆕
+│   └── Text Effects 🆕
+├── Transform
+│   ├── Style Transfer ✅
+│   ├── Reimagine ✅
+│   ├── Structure Control ✅
+│   └── Convert to SVG 🆕
+├── Edit 🆕 (nowa kategoria)
+│   ├── Crop Image 🆕
+│   ├── Resize Image 🆕
+│   ├── Filters & Effects 🆕
+│   └── Collage Maker 🆕
+└── Utilities
+    ├── Image Compressor ✅
+    └── Format Converter ✅
 
-#### Kategoria: PRZEKSZTAŁCANIE
+AI IMAGE ✅
+AI VIDEO ✅
+```
 
-- [ ] **Face Swap**
-  - Model: Replicate face-swap
-  - Koszt: ~$0.05/obraz
+### Modyfikacje plików menu
+- [ ] `components/Header.tsx` - dodać nową kategorię "Edit"
+- [ ] `messages/*/common.json` - tłumaczenia dla nowych narzędzi (4 języki)
+- [ ] `lib/credits-config.ts` - koszty kredytów
 
-- [ ] **Age Transform**
-  - Model: Replicate age-transformation
-  - Koszt: ~$0.03/obraz
+---
 
-### Rozszerzenie Copy Link
+## 🔧 DECYZJE TECHNICZNE
 
-Narzędzia wymagające integracji z CopyLinkButton:
+### API Stack
+| Kategoria | Wybór | Uzasadnienie |
+|-----------|-------|--------------|
+| AI Models | **Replicate** | Największy wybór modeli, sprawdzona integracja |
+| Fast Inference | fal.ai (backup) | Dla zadań wymagających <1s response |
+| Image Processing | **Sharp** | Lokalne, bezpłatne, bardzo szybkie |
+| Logo/Text AI | **Ideogram 3.0** | Najlepsza jakość tekstu w obrazach |
+| Vectorization | **Vectorizer.AI** | Najlepsza jakość SVG |
+| QR Codes | **Illusion (Replicate)** | Artystyczne QR z AI |
 
-- [ ] ImageExpander (`/api/expand-image`)
-- [ ] PackshotGenerator (`/api/generate-packshot`)
-- [ ] ObjectRemover (`/api/object-removal`)
-- [ ] ImageColorizer (`/api/colorize`)
-- [ ] ImageDenoiser (`/api/denoise`)
-- [ ] StyleTransfer (`/api/style-transfer`)
-- [ ] ImageReimagine (`/api/reimagine`)
-- [ ] InpaintingPro (`/api/inpainting`)
-- [ ] StructureControl (`/api/structure-control`)
+### Dlaczego Replicate?
+1. ✅ 1000+ modeli do wyboru
+2. ✅ Już zintegrowane w projekcie (20+ endpointów)
+3. ✅ Pay-per-use (bez subskrypcji)
+4. ✅ Dobra dokumentacja
+5. ✅ Szybkie wdrożenie nowych modeli
 
-### Social Share
+### Kiedy użyć fal.ai?
+- Real-time applications (<120ms latency)
+- Portrait Relight (już używane)
+- Jako fallback gdy Replicate jest wolny
 
-- [ ] **Social Share Buttons** na stronie `/share/[id]`
-  - Facebook Share
-  - Twitter/X Share
-  - Pinterest Pin
-  - WhatsApp Share
-  - LinkedIn Share
+---
 
-### UX Improvements
+## 📋 KOLEJNOŚĆ WDRAŻANIA
 
-- [ ] Batch processing - przetwarzanie wielu obrazów
-- [ ] History page - historia przetworzonych obrazów
-- [ ] Before/After comparison na share page
-- [ ] QR code do share link
-- [ ] Dark mode improvements
+### Faza 1 (ASAP)
+1. [ ] Crop Image
+2. [ ] Resize Image
+3. [ ] Logo Maker
+4. [ ] QR Code Generator
+
+### Faza 2
+5. [ ] Convert to SVG
+6. [ ] Collage Maker
+7. [ ] Text Effects
+8. [ ] Filters & Effects
+
+### Faza 3
+9. [ ] Email Templates integration
+10. [ ] Text to Image improvements
+11. [ ] Video Tools (merge, trim, speed)
+12. [ ] Templates Gallery
 
 ---
 
@@ -198,24 +305,6 @@ Narzędzia wymagające integracji z CopyLinkButton:
 - [ ] Przegląd logów Sentry co tydzień
 - [ ] Backup bazy danych (automatyczny, dzienny)
 - [ ] Penetration testing przed major release
-
----
-
-## 📊 MONITORING (Do wdrożenia)
-
-- [ ] **Web Vitals Dashboard**
-  - LCP, FID, CLS tracking
-  - Integracja z Google Analytics
-
-- [ ] **Alerting**
-  - Error rate > 1%
-  - Response time > 3s
-  - Failed payments
-
-- [ ] **Business Metrics**
-  - Daily Active Users
-  - Conversion rate
-  - Credit usage patterns
 
 ---
 
@@ -245,36 +334,40 @@ npx prisma migrate deploy
 
 ---
 
-## 📝 NOTATKI TECHNICZNE
+## 📝 WZORZEC DODAWANIA NOWEGO NARZĘDZIA
 
-### Wzorzec dodawania nowego narzędzia AI
+### 1. Backend (API)
+```
+app/api/[tool-name]/route.ts
+```
 
-1. `app/api/[tool-name]/route.ts` - API endpoint
-2. `components/[ToolName].tsx` - Komponent React
-3. `app/[locale]/tools/[tool-name]/page.tsx` - Strona
-4. `components/Header.tsx` - Dodać do menu
-5. `messages/[locale]/common.json` - Tłumaczenia (4 języki)
-6. `lib/credits-config.ts` - Koszt kredytów
+### 2. Frontend (Component)
+```
+components/[ToolName].tsx
+```
 
-### Kluczowe pliki
+### 3. Page
+```
+app/[locale]/tools/[tool-name]/page.tsx
+```
 
-| Plik | Opis |
-|------|------|
-| `lib/prisma.ts` | Klient bazy danych |
-| `lib/redis.ts` | Cache i kolejki |
-| `lib/stripe.ts` | Integracja płatności |
-| `lib/auth.ts` | Autentykacja |
-| `middleware.ts` | CSRF, locale, admin |
+### 4. Menu
+```
+components/Header.tsx (toolCategories)
+```
 
----
+### 5. Translations (4 języki)
+```
+messages/en/common.json
+messages/pl/common.json
+messages/es/common.json
+messages/fr/common.json
+```
 
-## 📅 HISTORIA AUDYTÓW
-
-| Data | Wersja | Uwagi |
-|------|--------|-------|
-| 2024-11-23 | 1.0 | Pierwszy pełny audyt |
-| 2024-12-16 | 1.1 | Audyt przed zamknięciem fazy dev |
-| 2024-12-17 | 1.2 | Poprawki bezpieczeństwa (xlsx→exceljs, Next.js audit fix, i18n) |
+### 6. Credits
+```
+lib/credits-config.ts
+```
 
 ---
 
@@ -285,6 +378,23 @@ npx prisma migrate deploy
 - **Dokumentacja API:** https://pixelift.pl/api-docs
 - **Sentry:** https://sentry.io/organizations/pixelift
 
+### API Documentation
+- **Replicate:** https://replicate.com/docs
+- **Ideogram:** https://replicate.com/ideogram-ai/ideogram-v2-turbo
+- **Vectorizer.AI:** https://vectorizer.ai/api
+- **Illusion QR:** https://replicate.com/catacolabs/illusion
+
 ---
 
-*Ostatnia aktualizacja: 17.12.2024*
+## 📅 HISTORIA AUDYTÓW
+
+| Data | Wersja | Uwagi |
+|------|--------|-------|
+| 2024-11-23 | 1.0 | Pierwszy pełny audyt |
+| 2024-12-16 | 1.1 | Audyt przed zamknięciem fazy dev |
+| 2024-12-17 | 1.2 | Poprawki bezpieczeństwa (xlsx→exceljs, Next.js audit fix, i18n) |
+| 2024-12-18 | 2.0 | **Strategia konkurencji z Adobe Express** - analiza i roadmap |
+
+---
+
+*Ostatnia aktualizacja: 18.12.2024*
