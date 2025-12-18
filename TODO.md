@@ -371,6 +371,75 @@ lib/credits-config.ts
 
 ---
 
+## 🌍 WYMAGANE TŁUMACZENIA DLA NOWYCH NARZĘDZI
+
+### Nowa kategoria menu "Edit"
+
+| Klucz | EN | PL | ES | FR |
+|-------|----|----|----|----|
+| `toolCategories.edit` | Edit | Edytuj | Editar | Éditer |
+
+### Crop Image
+
+| Klucz | EN | PL | ES | FR |
+|-------|----|----|----|----|
+| `tools.cropImage.name` | Crop Image | Kadruj Obraz | Recortar Imagen | Rogner l'Image |
+| `tools.cropImage.description` | Crop and frame your images | Kadruj i przycinaj obrazy | Recorta y enmarca tus imágenes | Recadrez et cadrez vos images |
+
+### Resize Image
+
+| Klucz | EN | PL | ES | FR |
+|-------|----|----|----|----|
+| `tools.resizeImage.name` | Resize Image | Zmień Rozmiar | Cambiar Tamaño | Redimensionner |
+| `tools.resizeImage.description` | Change image dimensions | Zmień wymiary obrazu | Cambia las dimensiones de la imagen | Modifier les dimensions de l'image |
+
+### Logo Maker
+
+| Klucz | EN | PL | ES | FR |
+|-------|----|----|----|----|
+| `tools.logoMaker.name` | Logo Maker | Generator Logo | Creador de Logo | Créateur de Logo |
+| `tools.logoMaker.description` | Create AI-powered logos | Twórz logo z pomocą AI | Crea logos con IA | Créez des logos avec l'IA |
+| `tools.logoMaker.badge` | AI | AI | IA | IA |
+
+### QR Code Generator
+
+| Klucz | EN | PL | ES | FR |
+|-------|----|----|----|----|
+| `tools.qrGenerator.name` | QR Code Generator | Generator Kodów QR | Generador de Códigos QR | Générateur de QR Code |
+| `tools.qrGenerator.description` | Create artistic QR codes | Twórz artystyczne kody QR | Crea códigos QR artísticos | Créez des QR codes artistiques |
+| `tools.qrGenerator.badge` | AI | AI | IA | IA |
+
+### Convert to SVG
+
+| Klucz | EN | PL | ES | FR |
+|-------|----|----|----|----|
+| `tools.vectorize.name` | Convert to SVG | Konwertuj do SVG | Convertir a SVG | Convertir en SVG |
+| `tools.vectorize.description` | Vectorize images to SVG | Wektoryzuj obrazy do SVG | Vectoriza imágenes a SVG | Vectorisez les images en SVG |
+
+### Collage Maker
+
+| Klucz | EN | PL | ES | FR |
+|-------|----|----|----|----|
+| `tools.collageMaker.name` | Collage Maker | Kreator Kolaży | Creador de Collage | Créateur de Collage |
+| `tools.collageMaker.description` | Create photo collages | Twórz kolaże zdjęć | Crea collages de fotos | Créez des collages photo |
+
+### Text Effects
+
+| Klucz | EN | PL | ES | FR |
+|-------|----|----|----|----|
+| `tools.textEffects.name` | Text Effects | Efekty Tekstowe | Efectos de Texto | Effets de Texte |
+| `tools.textEffects.description` | Create stylized text art | Twórz stylizowany tekst | Crea texto estilizado | Créez du texte stylisé |
+| `tools.textEffects.badge` | AI | AI | IA | IA |
+
+### Filters & Effects
+
+| Klucz | EN | PL | ES | FR |
+|-------|----|----|----|----|
+| `tools.imageFilters.name` | Filters & Effects | Filtry i Efekty | Filtros y Efectos | Filtres et Effets |
+| `tools.imageFilters.description` | Apply filters and adjustments | Zastosuj filtry i korekty | Aplica filtros y ajustes | Appliquez des filtres et des ajustements |
+
+---
+
 ## 🔗 LINKI
 
 - **Repo:** https://github.com/Mitjano/upsizer
