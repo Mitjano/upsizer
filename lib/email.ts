@@ -1,5 +1,6 @@
 import { Resend } from 'resend';
 import { prisma } from './prisma';
+import { Prisma } from '@/lib/generated/prisma';
 
 // Lazy initialization - only create Resend instance when needed
 let resendInstance: Resend | null = null;
@@ -61,7 +62,7 @@ async function logEmail(data: EmailLogData): Promise<void> {
         statusMessage: data.statusMessage,
         provider: 'resend',
         providerMessageId: data.providerMessageId,
-        metadata: data.metadata ?? undefined,
+        metadata: data.metadata as Prisma.InputJsonValue | undefined,
       },
     });
   } catch (error) {
