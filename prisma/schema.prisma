@@ -36,7 +36,7 @@ model User {
   password      String?   // Hashed password for email/password auth (bcrypt)
   role          UserRole  @default(user)
   status        UserStatus @default(active)
-  credits       Int       @default(0)
+  credits       Int       @default(3)
   totalUsage    Int       @default(0)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
