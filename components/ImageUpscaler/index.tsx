@@ -35,7 +35,7 @@ const CREDIT_COSTS: Record<ImageType, Record<UpscaleScale, number>> = {
   product: { 2: 1, 4: 1, 8: 2 },
   portrait: { 2: 2, 4: 3, 8: 3 },
   general: { 2: 2, 4: 2, 8: 1 },
-  faithful: { 2: 0, 4: 0, 8: 0 }, // Sharp Lanczos (FREE - local processing)
+  faithful: { 2: 1, 4: 1, 8: 1 }, // Sharp Lanczos (local processing, 1 credit)
 }
 
 interface ImageUpscalerProps {
@@ -223,7 +223,6 @@ export function ImageUpscaler({ userRole = 'user' }: ImageUpscalerProps) {
       label: t('typeFaithful'),
       description: t('typeFaithfulDesc'),
       color: 'from-emerald-500 to-teal-500',
-      isFree: true,
     },
   ]
 
@@ -305,8 +304,8 @@ export function ImageUpscaler({ userRole = 'user' }: ImageUpscalerProps) {
                   className={`
                     relative p-4 rounded-xl border-2 transition-all text-left
                     ${imageType === item.type
-                      ? `border-purple-500 bg-gradient-to-br ${item.color} bg-opacity-10 dark:bg-opacity-20`
-                      : 'border-gray-200 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-600'
+                      ? `border-transparent bg-gradient-to-br ${item.color} shadow-lg`
+                      : 'border-gray-200 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-600 bg-white dark:bg-gray-800'
                     }
                   `}
                 >
@@ -319,16 +318,16 @@ export function ImageUpscaler({ userRole = 'user' }: ImageUpscalerProps) {
                   <div className="flex items-start gap-3">
                     <span className="text-2xl">{item.icon}</span>
                     <div>
-                      <div className={`font-semibold ${imageType === item.type ? 'text-purple-700 dark:text-purple-300' : 'text-gray-900 dark:text-white'}`}>
+                      <div className={`font-semibold ${imageType === item.type ? 'text-white dark:text-white' : 'text-gray-900 dark:text-white'}`}>
                         {item.label}
                       </div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      <div className={`text-xs mt-1 ${imageType === item.type ? 'text-white/80 dark:text-white/80' : 'text-gray-500 dark:text-gray-400'}`}>
                         {item.description}
                       </div>
                     </div>
                   </div>
                   {imageType === item.type && (
-                    <div className="absolute top-2 right-2 w-5 h-5 bg-purple-500 rounded-full flex items-center justify-center">
+                    <div className="absolute top-2 right-2 w-5 h-5 bg-white/30 rounded-full flex items-center justify-center">
                       <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>

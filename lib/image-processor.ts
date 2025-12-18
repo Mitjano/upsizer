@@ -33,6 +33,8 @@ export class ImageProcessor {
 
   /**
    * Remove background using Fal.ai BiRefNet (FREE!)
+   * Uses "General Use (Heavy)" model for best accuracy on all image types
+   * including products, portraits, and general images.
    */
   private static async removeBackgroundViaFal(dataUrl: string, apiKey: string): Promise<string> {
     try {
@@ -45,7 +47,7 @@ export class ImageProcessor {
         },
         body: JSON.stringify({
           image_url: dataUrl,
-          model: 'Portrait',  // Optimized for portraits - better hair/face edges
+          model: 'General Use (Heavy)',  // Best accuracy for ALL image types (products, portraits, etc.)
           operating_resolution: '2048x2048',  // Higher resolution for better quality
           output_format: 'png',
           refine_foreground: true,

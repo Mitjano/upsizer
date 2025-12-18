@@ -16,7 +16,7 @@ const CREDIT_COSTS = {
   product: { 2: 1, 4: 1, 8: 2 },    // Recraft Crisp (cheap, 8x = 2 passes)
   portrait: { 2: 2, 4: 3, 8: 3 },   // CodeFormer + Clarity
   general: { 2: 2, 4: 2, 8: 1 },    // Clarity for 2x/4x, Real-ESRGAN for 8x
-  faithful: { 2: 0, 4: 0, 8: 0 },   // Sharp Lanczos (FREE - local processing)
+  faithful: { 2: 1, 4: 1, 8: 1 },   // Sharp Lanczos (local processing, 1 credit)
 } as const;
 
 type ImageType = 'product' | 'portrait' | 'general' | 'faithful';
