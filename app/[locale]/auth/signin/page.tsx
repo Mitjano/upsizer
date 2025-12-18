@@ -157,7 +157,7 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
                         className="w-full flex items-center justify-center gap-3 bg-[#1877F2] text-white hover:bg-[#166FE5] py-3 px-6 rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                       >
                         <FaFacebook className="text-xl" />
-                        Continue with Facebook
+                        {t('continueWithFacebook')}
                       </button>
                     </form>
                   )}

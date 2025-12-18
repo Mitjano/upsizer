@@ -23,16 +23,18 @@ export const authConfig: NextAuthConfig = {
         }
       }
     }),
-    // Facebook OAuth Provider
-    FacebookProvider({
-      clientId: process.env.FACEBOOK_CLIENT_ID!,
-      clientSecret: process.env.FACEBOOK_CLIENT_SECRET!,
-      authorization: {
-        params: {
-          scope: "email,public_profile"
+    // Facebook OAuth Provider - only include if credentials are configured
+    ...(process.env.FACEBOOK_CLIENT_ID && process.env.FACEBOOK_CLIENT_SECRET ? [
+      FacebookProvider({
+        clientId: process.env.FACEBOOK_CLIENT_ID,
+        clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+        authorization: {
+          params: {
+            scope: "email,public_profile"
+          }
         }
-      }
-    }),
+      }),
+    ] : []),
     // Email/Password Credentials Provider
     // Note: The actual password verification happens in auth.ts
     CredentialsProvider({

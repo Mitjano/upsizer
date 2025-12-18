@@ -489,7 +489,7 @@ export default function Header() {
                   aria-label="User menu"
                   onKeyDown={userNavigation.handleKeyDown}
                   tabIndex={userDropdownOpen ? 0 : -1}
-                  className={`absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl transition-all duration-200 z-[9999] ${
+                  className={`absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl transition-all duration-200 z-[9999] overflow-hidden ${
                     userDropdownOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'
                   }`}
                 >
@@ -511,7 +511,7 @@ export default function Header() {
                   <button
                     role="menuitem"
                     data-user-index={userMenuItems.length}
-                    onClick={() => signOut({ callbackUrl: "/" })}
+                    onClick={async () => { setUserDropdownOpen(false); await signOut({ callbackUrl: "/" }); }}
                     className={`w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition text-red-500 dark:text-red-400 ${
                       userNavigation.activeIndex === userMenuItems.length ? 'bg-gray-100 dark:bg-gray-700' : ''
                     }`}
