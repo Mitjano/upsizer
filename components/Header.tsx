@@ -229,7 +229,7 @@ export default function Header() {
         if (link) link.click();
       } else {
         // Sign out
-        signOut({ callbackUrl: "/", redirect: true });
+        window.location.href = "/api/auth/signout";
       }
     },
     onEscape: () => {
@@ -511,7 +511,7 @@ export default function Header() {
                   <button
                     role="menuitem"
                     data-user-index={userMenuItems.length}
-                    onClick={() => signOut({ callbackUrl: "/", redirect: true })}
+                    onClick={() => window.location.href = "/api/auth/signout"}
                     className={`w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition text-red-500 dark:text-red-400 ${
                       userNavigation.activeIndex === userMenuItems.length ? 'bg-gray-100 dark:bg-gray-700' : ''
                     }`}
@@ -525,13 +525,13 @@ export default function Header() {
             <>
               <Link
                 href="/auth/signin"
-                className="px-4 py-2 text-gray-700 dark:text-white hover:text-green-500 dark:hover:text-green-400 transition"
+                className="px-4 py-2 text-gray-700 dark:text-white hover:text-green-500 dark:hover:text-green-400 transition whitespace-nowrap"
               >
                 {t('nav.login')}
               </Link>
               <Link
                 href="/auth/signin"
-                className="px-6 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium transition"
+                className="px-6 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium transition whitespace-nowrap"
               >
                 {t('nav.signUp')}
               </Link>
