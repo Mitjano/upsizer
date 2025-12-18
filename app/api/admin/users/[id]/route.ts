@@ -108,14 +108,47 @@ export async function DELETE(
     }
 
     const { id } = await params;
+    const { searchParams } = new URL(request.url);
+    const hardDelete = searchParams.get('hard') === 'true';
 
-    // Soft delete - just mark as banned
-    await prisma.user.update({
-      where: { id },
-      data: { status: 'banned' },
-    });
+    if (hardDelete) {
+      // Hard delete - permanently remove user and all related data
+      // Delete in correct order to respect foreign keys
+      await prisma.$transaction(async (tx) => {
+        // Delete related data first (all models that have userId)
+        await tx.usage.deleteMany({ where: { userId: id } });
+        await tx.transaction.deleteMany({ where: { userId: id } });
+        await tx.imageHistory.deleteMany({ where: { userId: id } });
+        await tx.apiKey.deleteMany({ where: { userId: id } });
+        await tx.userSession.deleteMany({ where: { userId: id } });
+        await tx.userEvent.deleteMany({ where: { userId: id } });
+        await tx.pageView.deleteMany({ where: { userId: id } });
+        await tx.socialPost.deleteMany({ where: { userId: id } });
+        await tx.socialAccount.deleteMany({ where: { userId: id } });
+        await tx.captionTemplate.deleteMany({ where: { userId: id } });
+        await tx.hashtagCollection.deleteMany({ where: { userId: id } });
+        await tx.brandKit.deleteMany({ where: { userId: id } });
+        await tx.generatedVideo.deleteMany({ where: { userId: id } });
+        await tx.generatedMusic.deleteMany({ where: { userId: id } });
+        await tx.musicFolder.deleteMany({ where: { userId: id } });
+        await tx.ticket.deleteMany({ where: { userId: id } }); // TicketMessages cascade delete
+        await tx.emailVerificationToken.deleteMany({ where: { userId: id } });
+        await tx.passwordResetToken.deleteMany({ where: { userId: id } });
+        await tx.account.deleteMany({ where: { userId: id } });
+        // Finally delete the user
+        await tx.user.delete({ where: { id } });
+      });
 
-    return NextResponse.json({ success: true });
+      return NextResponse.json({ success: true, deleted: true });
+    } else {
+      // Soft delete - just mark as banned
+      await prisma.user.update({
+        where: { id },
+        data: { status: 'banned' },
+      });
+
+      return NextResponse.json({ success: true, banned: true });
+    }
   } catch (error) {
     console.error('Error deleting user:', error);
     return NextResponse.json(

@@ -709,19 +709,44 @@ export default function UserDetailClient({ user }: Props) {
             <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-6">
               <h3 className="text-lg font-semibold mb-4 text-red-400">Danger Zone</h3>
               <p className="text-sm text-gray-400 mb-4">
-                Banning a user will prevent them from accessing the platform.
+                Banning a user will prevent them from accessing the platform. Permanent deletion removes all data.
               </p>
-              <button
-                onClick={() => {
-                  if (confirm("Are you sure you want to ban this user?")) {
-                    updateUser({ status: "banned" });
-                  }
-                }}
-                disabled={saving || userData.status === "banned"}
-                className="px-4 py-2 bg-red-500/20 text-red-400 border border-red-500/30 rounded-lg hover:bg-red-500/30 transition disabled:opacity-50"
-              >
-                Ban User
-              </button>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    if (confirm("Are you sure you want to ban this user?")) {
+                      updateUser({ status: "banned" });
+                    }
+                  }}
+                  disabled={saving || userData.status === "banned"}
+                  className="px-4 py-2 bg-red-500/20 text-red-400 border border-red-500/30 rounded-lg hover:bg-red-500/30 transition disabled:opacity-50"
+                >
+                  Ban User
+                </button>
+                <button
+                  onClick={async () => {
+                    if (confirm("Are you sure you want to PERMANENTLY DELETE this user? This action cannot be undone!")) {
+                      if (confirm("This will delete ALL user data. Are you absolutely sure?")) {
+                        try {
+                          const res = await fetch(`/api/admin/users/${userData.id}?hard=true`, { method: "DELETE" });
+                          if (res.ok) {
+                            alert("User deleted permanently");
+                            window.location.href = "/admin/users";
+                          } else {
+                            alert("Failed to delete user");
+                          }
+                        } catch {
+                          alert("Error deleting user");
+                        }
+                      }
+                    }
+                  }}
+                  disabled={saving}
+                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition disabled:opacity-50"
+                >
+                  Delete Permanently
+                </button>
+              </div>
             </div>
           </div>
         )}
