@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { fal } from '@fal-ai/client'
 import { getUserByEmail, createUsage } from '@/lib/db'
 import { sendCreditsLowEmail, sendCreditsDepletedEmail } from '@/lib/email'
 import { imageProcessingLimiter, getClientIdentifier, rateLimitResponse } from '@/lib/rate-limit'
@@ -8,10 +9,12 @@ import { CREDIT_COSTS } from '@/lib/credits-config'
 export const maxDuration = 120
 export const dynamic = 'force-dynamic'
 
-const CREDITS_PER_CONVERSION = CREDIT_COSTS.vectorize.cost
+// Configure fal.ai client
+fal.config({
+  credentials: process.env.FAL_API_KEY,
+})
 
-// Vectorizer.AI API endpoint
-const VECTORIZER_API_URL = 'https://api.vectorizer.ai/api/v1/vectorize'
+const CREDITS_PER_CONVERSION = CREDIT_COSTS.vectorize.cost
 
 export async function POST(request: NextRequest) {
   try {
@@ -48,132 +51,89 @@ export async function POST(request: NextRequest) {
 
     const formData = await request.formData()
     const file = formData.get('file') as File
-    const mode = (formData.get('mode') as string) || 'production' // production, preview, or test
-    const colorMode = (formData.get('colorMode') as string) || 'color' // color, grayscale, bw
-    const maxColors = parseInt(formData.get('maxColors') as string) || 0 // 0 = unlimited
 
     if (!file) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 })
     }
 
     // Validate file type
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif', 'image/bmp']
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
     if (!allowedTypes.includes(file.type)) {
-      return NextResponse.json({ error: 'Invalid file type. Supported: JPEG, PNG, WebP, GIF, BMP' }, { status: 400 })
+      return NextResponse.json({ error: 'Invalid file type. Supported: JPEG, PNG, WebP' }, { status: 400 })
     }
 
-    // Max 10MB for vectorizer
-    const MAX_SIZE = 10 * 1024 * 1024
+    // Max 5MB for Recraft
+    const MAX_SIZE = 5 * 1024 * 1024
     if (file.size > MAX_SIZE) {
-      return NextResponse.json({ error: 'File too large. Maximum 10MB allowed.' }, { status: 400 })
+      return NextResponse.json({ error: 'File too large. Maximum 5MB allowed.' }, { status: 400 })
     }
 
-    // Check for API key
-    const vectorizerApiKey = process.env.VECTORIZER_API_KEY
-
-    if (!vectorizerApiKey) {
-      // Fallback: use a simple SVG tracing method using potrace via replicate
-      // For now, return an error suggesting the feature requires configuration
-      console.warn('[Vectorize] VECTORIZER_API_KEY not configured')
+    // Check for FAL API key
+    if (!process.env.FAL_API_KEY) {
+      console.error('[Vectorize] FAL_API_KEY not configured')
       return NextResponse.json(
-        {
-          error: 'Vectorization service not configured. Please contact support.',
-          details: 'VECTORIZER_API_KEY is required'
-        },
+        { error: 'Vectorization service not configured. Please contact support.' },
         { status: 503 }
       )
     }
 
-    const bytes = await file.arrayBuffer()
-    const buffer = Buffer.from(bytes)
+    // Upload image to FAL storage
+    const arrayBuffer = await file.arrayBuffer()
+    const uploadedUrl = await fal.storage.upload(
+      new Blob([new Uint8Array(arrayBuffer)], { type: file.type })
+    )
 
-    // Build form data for Vectorizer.AI API
-    const apiFormData = new FormData()
-    apiFormData.append('image', new Blob([buffer], { type: file.type }), file.name)
-    apiFormData.append('output.file_format', 'svg')
-    apiFormData.append('processing.palette', colorMode === 'bw' ? 'bw' : colorMode === 'grayscale' ? 'grayscale' : 'color')
+    console.log('[Vectorize] Calling Fal.ai Recraft Vectorize...')
 
-    if (maxColors > 0 && colorMode === 'color') {
-      apiFormData.append('processing.max_colors', maxColors.toString())
-    }
-
-    // Set mode (production uses credits, preview is watermarked but free for testing)
-    apiFormData.append('mode', mode)
-
-    console.log('[Vectorize] Calling Vectorizer.AI API...')
-
-    // Call Vectorizer.AI API
-    const response = await fetch(VECTORIZER_API_URL, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Basic ${Buffer.from(`${vectorizerApiKey}:`).toString('base64')}`,
+    // Call Fal.ai Recraft Vectorize API
+    const result = await fal.subscribe('fal-ai/recraft/vectorize', {
+      input: {
+        image_url: uploadedUrl,
       },
-      body: apiFormData,
     })
 
-    if (!response.ok) {
-      const errorText = await response.text()
-      console.error('[Vectorize] API error:', response.status, errorText)
+    const data = result.data as { image: { url: string; file_size: number } }
 
-      if (response.status === 402) {
-        return NextResponse.json(
-          { error: 'Vectorization API credits exhausted. Please contact support.' },
-          { status: 503 }
-        )
-      }
-
-      throw new Error(`Vectorizer.AI API error: ${response.status}`)
+    if (!data.image || !data.image.url) {
+      throw new Error('No SVG generated from Recraft')
     }
 
-    // Get SVG content
-    const svgContent = await response.text()
+    // Download SVG content
+    const svgResponse = await fetch(data.image.url)
+    if (!svgResponse.ok) {
+      throw new Error('Failed to download SVG result')
+    }
+    const svgContent = await svgResponse.text()
 
-    // Only deduct credits for production mode
-    if (mode === 'production') {
-      // Log usage
-      await createUsage({
-        userId: user.id,
-        type: 'vectorize',
-        creditsUsed: CREDITS_PER_CONVERSION,
-        imageSize: `${file.size} bytes`,
-        model: 'vectorizer-ai',
-      })
+    // Log usage and deduct credits
+    await createUsage({
+      userId: user.id,
+      type: 'vectorize',
+      creditsUsed: CREDITS_PER_CONVERSION,
+      imageSize: `${file.size} bytes`,
+      model: 'recraft-vectorize',
+    })
 
-      const newCredits = user.credits - CREDITS_PER_CONVERSION
+    const newCredits = user.credits - CREDITS_PER_CONVERSION
 
-      // Send low credits warning
-      if (newCredits > 0 && newCredits <= 10) {
-        sendCreditsLowEmail({
-          userEmail: user.email,
-          userName: user.name || 'User',
-          creditsRemaining: newCredits,
-        }).catch(err => console.error('Failed to send low credits email:', err))
-      }
-
-      return NextResponse.json({
-        success: true,
-        svg: svgContent,
-        format: 'svg',
-        mode: mode,
-        colorMode: colorMode,
-        maxColors: maxColors,
-        creditsUsed: CREDITS_PER_CONVERSION,
+    // Send low credits warning
+    if (newCredits > 0 && newCredits <= 10) {
+      sendCreditsLowEmail({
+        userEmail: user.email,
+        userName: user.name || 'User',
         creditsRemaining: newCredits,
-      })
-    } else {
-      // Preview mode - no credits charged
-      return NextResponse.json({
-        success: true,
-        svg: svgContent,
-        format: 'svg',
-        mode: mode,
-        colorMode: colorMode,
-        maxColors: maxColors,
-        creditsUsed: 0,
-        creditsRemaining: user.credits,
-        note: 'Preview mode - watermarked output. Use production mode for final result.',
-      })
+      }).catch(err => console.error('Failed to send low credits email:', err))
     }
+
+    return NextResponse.json({
+      success: true,
+      svg: svgContent,
+      svgUrl: data.image.url,
+      format: 'svg',
+      fileSize: data.image.file_size,
+      creditsUsed: CREDITS_PER_CONVERSION,
+      creditsRemaining: newCredits,
+    })
 
   } catch (error) {
     console.error('[Vectorize] Error:', error)
