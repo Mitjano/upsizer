@@ -136,13 +136,13 @@ export async function POST(request: NextRequest) {
       userId: user.id,
       type: 'qr_generator',
       creditsUsed: 0,
-      imageSize: \`\${validSize}x\${validSize}\`,
+      imageSize: validSize + 'x' + validSize,
       model: 'qrcode-sharp',
     })
 
     // Convert to base64
     const base64 = finalBuffer.toString('base64')
-    const dataUrl = \`data:image/png;base64,\${base64}\`
+    const dataUrl = 'data:image/png;base64,' + base64
 
     return NextResponse.json({
       success: true,

@@ -137,12 +137,12 @@ export async function POST(request: NextRequest) {
       userId: user.id,
       type: 'collage',
       creditsUsed: 0,
-      imageSize: \`\${outputWidth}x\${outputHeight}\`,
+      imageSize: `${outputWidth}x${outputHeight}`,
       model: 'sharp-collage',
     })
 
     const base64 = collageBuffer.toString('base64')
-    const dataUrl = \`data:image/png;base64,\${base64}\`
+    const dataUrl = `data:image/png;base64,${base64}`
 
     return NextResponse.json({
       success: true,
