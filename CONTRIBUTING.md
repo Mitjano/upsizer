@@ -16,8 +16,8 @@ Thank you for your interest in contributing to Pixelift! This document provides 
 
 1. Fork and clone the repository:
 ```bash
-git clone https://github.com/YOUR_USERNAME/upsizer.git
-cd upsizer
+git clone https://github.com/YOUR_USERNAME/pixelift.git
+cd pixelift
 ```
 
 2. Install dependencies:

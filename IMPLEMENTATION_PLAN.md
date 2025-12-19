@@ -132,7 +132,7 @@
 ## Kontakty i Zasoby
 
 **Serwer produkcyjny:** 138.68.79.23
-**Repozytorium:** https://github.com/Mitjano/upsizer
+**Repozytorium:** https://github.com/Mitjano/pixelift
 **Domena:** pixelift.pl
 
 **Usługi zewnętrzne:**

@@ -67,8 +67,8 @@ Professional AI-powered image processing platform with multiple tools for upscal
 
 ```bash
 # Clone repository
-git clone https://github.com/Mitjano/upsizer.git
-cd upsizer
+git clone https://github.com/Mitjano/pixelift.git
+cd pixelift
 
 # Install dependencies
 npm install
@@ -192,4 +192,4 @@ MIT License - see [LICENSE](./LICENSE) for details.
 
 - **Production**: https://pixelift.pl
 - **API Docs**: https://pixelift.pl/api-docs
-- **GitHub**: https://github.com/Mitjano/upsizer
+- **GitHub**: https://github.com/Mitjano/pixelift

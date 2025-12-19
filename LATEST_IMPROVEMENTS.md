@@ -89,7 +89,7 @@
 
 **Content Structure**:
 - **What is AI Image Upscaling?** - Educational explanation
-- **Why Choose Upsizer?** - 6 key benefits with checkmarks
+- **Why Choose Pixelift?** - 6 key benefits with checkmarks
 - **Common Use Cases** - Photography, E-commerce, Digital Art
 - **How Does Our AI Upscaler Work?** - 4-step process with numbered icons
 - **Call-to-action** - "Start Upscaling Now" button
@@ -111,7 +111,7 @@
 **File**: `app/layout.tsx`
 
 **Improvements**:
-- **Title**: "Upsizer - Free AI Image Upscaler | Enhance Photos Online with AI"
+- **Title**: "Pixelift - Free AI Image Upscaler | Enhance Photos Online with AI"
 - **Description**: 160-character optimized description with key features
 - **Keywords**: 14 targeted SEO keywords array
 - **Open Graph tags**: For social media sharing
@@ -155,7 +155,7 @@
 
 ## 🚀 Key Advantages Over upscale.media
 
-| Feature | upscale.media | Upsizer (Our Project) |
+| Feature | upscale.media | Pixelift (Our Project) |
 |---------|---------------|----------------------|
 | Demo slider on hero | ✅ Static | ✅ **Interactive** |
 | Use cases section | ✅ Basic | ✅ **Tab-based with CTA** |

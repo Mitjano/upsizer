@@ -637,7 +637,7 @@ new_tool: {
 
 ## 🔗 LINKI
 
-- **Repo:** https://github.com/Mitjano/upsizer
+- **Repo:** https://github.com/Mitjano/pixelift
 - **Produkcja:** https://pixelift.pl
 - **Dokumentacja API:** https://pixelift.pl/api-docs
 - **Sentry:** https://sentry.io/organizations/pixelift

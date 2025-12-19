@@ -5,7 +5,7 @@
 ### ❌ PRZED optymalizacją:
 
 ```
-🔵 Upsizer - Free AI Image Upscaler | Enhance Photos Online with AI
+🔵 Pixelift - Free AI Image Upscaler | Enhance Photos Online with AI
 https://yourdomain.com
 Professional AI image upscaling tool. Increase resolution up to 8x with Real-
 ESRGAN and GFPGAN. Enhance photos, restore old images, and improve quality...
@@ -23,7 +23,7 @@ ESRGAN and GFPGAN. Enhance photos, restore old images, and improve quality...
 ### ✅ PO optymalizacji:
 
 ```
-🔵 Free AI Image Upscaler - Enhance Photos 2x-8x | Upsizer
+🔵 Free AI Image Upscaler - Enhance Photos 2x-8x | Pixelift
 https://yourdomain.com
 Upscale images up to 8x with AI. Free photo enhancer with Real-ESRGAN &
 GFPGAN. No watermarks, 10s processing. Restore old photos & improve quality...
@@ -55,7 +55,7 @@ GFPGAN. No watermarks, 10s processing. Restore old photos & improve quality...
    - Secondary keywords: "enhance photos", "upscale photos"
    - Liczby przyciągają uwagę ("2x-8x" = jasny value proposition)
 
-4. **"| Upsizer"** - Brand name na końcu
+4. **"| Pixelift"** - Brand name na końcu
    - Separator "|" jasno oddziela brand od funkcji
    - Brand na końcu = więcej miejsca na keywords
 
@@ -189,7 +189,7 @@ Upscale images up to 8x with AI. Free, no watermarks,
 ### Priorytet 2 - Content:
 1. **Blog posts** - tutorial "How to upscale images"
 2. **Use case pages** - dedykowane podstrony dla różnych zastosowań
-3. **Comparison pages** - "Upsizer vs competitors"
+3. **Comparison pages** - "Pixelift vs competitors"
 
 ### Priorytet 3 - Technical:
 1. **Sitemap.xml** - automatyczne generowanie
@@ -221,7 +221,7 @@ Upscale images up to 8x with AI. Free, no watermarks,
 
 ## 🎯 Competitor Comparison
 
-| Metric | Upsizer (Now) | upscale.media | bigjpg.com |
+| Metric | Pixelift (Now) | upscale.media | bigjpg.com |
 |--------|---------------|---------------|------------|
 | Title length | 56 ✅ | 62 ⚠️ | 48 ✅ |
 | Desc length | 159 ✅ | 172 ⚠️ | 155 ✅ |
@@ -230,7 +230,7 @@ Upscale images up to 8x with AI. Free, no watermarks,
 | Tech keywords | ✅ 2 models | ✅ 1 model | ❌ None |
 | "Free" in title | ✅ Position 1 | ✅ Position 2 | ❌ None |
 
-**Verdict**: 🏆 **Upsizer ma najlepiej zoptymalizowany SEO!**
+**Verdict**: 🏆 **Pixelift ma najlepiej zoptymalizowany SEO!**
 
 ---
 
@@ -248,7 +248,7 @@ Upscale images up to 8x with AI. Free, no watermarks,
 
 ### Local SEO (jeśli targetujesz konkretny kraj):
 - Dodaj lokalizację do tytułu subpage'ów
-- Np. "Free AI Image Upscaler UK | Upsizer"
+- Np. "Free AI Image Upscaler UK | Pixelift"
 
 ---
 

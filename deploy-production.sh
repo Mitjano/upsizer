@@ -16,7 +16,7 @@ NC='\033[0m' # No Color
 # Configuration
 REMOTE_USER="root"
 REMOTE_HOST="138.68.79.23"
-REMOTE_PATH="/root/upsizer"
+REMOTE_PATH="/root/pixelift"
 REMOTE_PASSWORD="0PRIngless"
 
 echo -e "${BLUE}📥 Step 1: Pulling latest code from GitHub...${NC}"
@@ -30,7 +30,7 @@ sshpass -p "$REMOTE_PASSWORD" ssh -o StrictHostKeyChecking=no $REMOTE_USER@$REMO
 
 echo -e "${BLUE}📂 Step 4: Syncing static files (CRITICAL FOR CSS)...${NC}"
 sshpass -p "$REMOTE_PASSWORD" ssh -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST << 'ENDSSH'
-cd /root/upsizer
+cd /root/pixelift
 
 # Copy static files to standalone folder
 echo "  → Copying .next/static to standalone..."
@@ -75,7 +75,7 @@ sshpass -p "$REMOTE_PASSWORD" ssh -o StrictHostKeyChecking=no $REMOTE_USER@$REMO
 pm2 delete pixelift-web 2>/dev/null || true
 
 # Start from standalone directory (CRITICAL for serving static files)
-cd /root/upsizer/.next/standalone
+cd /root/pixelift/.next/standalone
 
 # Export environment variables from .env.local
 set -a  # Mark variables for export

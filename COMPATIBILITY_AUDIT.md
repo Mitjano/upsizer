@@ -42,7 +42,7 @@ fetch("/api/user/sync", {
 ```
 
 ### 3. Missing data files on server
-**Location**: `/root/upsizer/data/`
+**Location**: `/root/pixelift/data/`
 **Issue**: 9 required data files are missing, causing admin features to fail
 **Impact**: Multiple admin panel features broken
 **Priority**: HIGH
@@ -99,14 +99,14 @@ fetch("/api/user/sync", {
 
 1. **Create missing data files** on server (1 min)
    ```bash
-   echo "[]" > /root/upsizer/data/notifications.json
-   echo "[]" > /root/upsizer/data/api_keys.json
-   echo "[]" > /root/upsizer/data/backups.json
-   echo "[]" > /root/upsizer/data/email_templates.json
-   echo "[]" > /root/upsizer/data/reports.json
-   echo "[]" > /root/upsizer/data/webhooks.json
-   echo "[]" > /root/upsizer/data/webhook-logs.json
-   echo "[]" > /root/upsizer/data/referrals.json
+   echo "[]" > /root/pixelift/data/notifications.json
+   echo "[]" > /root/pixelift/data/api_keys.json
+   echo "[]" > /root/pixelift/data/backups.json
+   echo "[]" > /root/pixelift/data/email_templates.json
+   echo "[]" > /root/pixelift/data/reports.json
+   echo "[]" > /root/pixelift/data/webhooks.json
+   echo "[]" > /root/pixelift/data/webhook-logs.json
+   echo "[]" > /root/pixelift/data/referrals.json
    ```
 
 2. **Remove /api/user/sync call** from dashboard (2 min)

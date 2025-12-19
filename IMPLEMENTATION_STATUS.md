@@ -1,4 +1,4 @@
-# Upsizer - Implementation Status
+# Pixelift - Implementation Status
 
 ## ✅ UKOŃCZONE FUNKCJE
 

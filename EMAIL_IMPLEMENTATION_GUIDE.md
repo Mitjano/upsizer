@@ -287,7 +287,7 @@ Stwórz prosty system logowania emaili.
 
 ```bash
 # W terminalu na serwerze
-echo "[]" > /root/upsizer/data/email_logs.json
+echo "[]" > /root/pixelift/data/email_logs.json
 ```
 
 **Krok 2 - Dodaj interface w `lib/db.ts`:**
@@ -439,7 +439,7 @@ git push origin master
 ssh root@138.68.79.23
 
 # 4. Pull latest changes
-cd /root/upsizer
+cd /root/pixelift
 git pull origin master
 
 # 5. Install dependencies (if needed)
@@ -473,7 +473,7 @@ pm2 logs pixelift-web --lines 30
 ssh root@138.68.79.23
 
 # 2. Edytuj swój user - ustaw credits na 4
-cd /root/upsizer
+cd /root/pixelift
 nano data/users.json
 # Znajdź swój email i zmień "credits": X na "credits": 4
 
@@ -506,13 +506,13 @@ nano data/users.json
 ssh root@138.68.79.23
 
 # Zobacz logi emaili
-cat /root/upsizer/data/email_logs.json | jq '.'
+cat /root/pixelift/data/email_logs.json | jq '.'
 
 # Policz wysłane emaile po typie
-cat /root/upsizer/data/email_logs.json | jq '[.[] | .emailType] | group_by(.) | map({type: .[0], count: length})'
+cat /root/pixelift/data/email_logs.json | jq '[.[] | .emailType] | group_by(.) | map({type: .[0], count: length})'
 
 # Zobacz ostatnie 10 emaili
-cat /root/upsizer/data/email_logs.json | jq 'sort_by(.sentAt) | reverse | .[0:10]'
+cat /root/pixelift/data/email_logs.json | jq 'sort_by(.sentAt) | reverse | .[0:10]'
 ```
 
 ### Resend Dashboard:
@@ -540,7 +540,7 @@ cat /root/upsizer/data/email_logs.json | jq 'sort_by(.sentAt) | reverse | .[0:10
 **Sprawdź RESEND_API_KEY:**
 ```bash
 ssh root@138.68.79.23
-cat /root/upsizer/.env.local | grep RESEND
+cat /root/pixelift/.env.local | grep RESEND
 ```
 
 **Sprawdź logi PM2:**
@@ -550,7 +550,7 @@ pm2 logs pixelift-web --lines 50 | grep -i email
 
 **Sprawdź email_logs.json:**
 ```bash
-cat /root/upsizer/data/email_logs.json | jq '.[] | select(.status == "failed")'
+cat /root/pixelift/data/email_logs.json | jq '.[] | select(.status == "failed")'
 ```
 
 ### Email trafia do spam
@@ -568,7 +568,7 @@ Free tier Resend = 100 emails/dzień.
 Jeśli przekroczysz:
 ```bash
 # Sprawdź ile emaili wysłano dzisiaj
-cat /root/upsizer/data/email_logs.json | jq '[.[] | select(.sentAt | startswith("2025-11-23"))] | length'
+cat /root/pixelift/data/email_logs.json | jq '[.[] | select(.sentAt | startswith("2025-11-23"))] | length'
 
 # Rozwiązanie: Upgrade Resend plan lub poczekaj do następnego dnia
 ```
@@ -650,20 +650,20 @@ Pozwól userom wyłączyć marketing emails:
 
 ```bash
 # Deploy całego email systemu
-git add . && git commit -m "Add email automation" && git push && ssh root@138.68.79.23 "cd /root/upsizer && git pull && npm run build && pm2 restart pixelift-web"
+git add . && git commit -m "Add email automation" && git push && ssh root@138.68.79.23 "cd /root/pixelift && git pull && npm run build && pm2 restart pixelift-web"
 
 # Sprawdź logi emaili
 ssh root@138.68.79.23 "pm2 logs pixelift-web --lines 50 | grep -i email"
 
 # Wyczyść email logs (fresh start)
-ssh root@138.68.79.23 "echo '[]' > /root/upsizer/data/email_logs.json"
+ssh root@138.68.79.23 "echo '[]' > /root/pixelift/data/email_logs.json"
 
 # Test welcome email lokalnie
 npm run dev
 # Zaloguj się przez Google OAuth
 
 # Zobacz statystyki emaili
-ssh root@138.68.79.23 "cat /root/upsizer/data/email_logs.json | jq 'group_by(.emailType) | map({type: .[0].emailType, count: length, sent: map(select(.status == \"sent\")) | length})'"
+ssh root@138.68.79.23 "cat /root/pixelift/data/email_logs.json | jq 'group_by(.emailType) | map({type: .[0].emailType, count: length, sent: map(select(.status == \"sent\")) | length})'"
 ```
 
 ---

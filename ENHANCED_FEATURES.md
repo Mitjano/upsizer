@@ -1,4 +1,4 @@
-# 🚀 Enhanced Features - Upsizer Pro
+# 🚀 Enhanced Features - Pixelift Pro
 
 ## ✨ NOWE FUNKCJE (Lepsze niż upscale.media!)
 
@@ -126,9 +126,9 @@ Funkcje:
 
 ---
 
-## 🎯 Porównanie: Upsizer vs upscale.media
+## 🎯 Porównanie: Pixelift vs upscale.media
 
-| Funkcja | upscale.media | Upsizer Pro |
+| Funkcja | upscale.media | Pixelift Pro |
 |---------|---------------|-------------|
 | **Basic Features** | | |
 | Image upload | ✅ | ✅ |
@@ -252,7 +252,7 @@ After:  Friendly messages + retry button
 ## 🎨 Design Philosophy
 
 **upscale.media:** Functional, minimal
-**Upsizer:** **Premium, delightful, powerful**
+**Pixelift:** **Premium, delightful, powerful**
 
 ### Our Principles:
 1. **Speed** - Fast AI processing

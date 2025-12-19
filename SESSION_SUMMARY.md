@@ -170,7 +170,7 @@ All 7 requested improvements have been **successfully implemented, tested, and d
 (Translation: "again the same, after every frontend change white background appears")
 
 ### Root Cause
-PM2 was starting from `/root/upsizer` instead of `/root/upsizer/.next/standalone`, causing Next.js to fail to serve static CSS files in standalone mode.
+PM2 was starting from `/root/pixelift` instead of `/root/pixelift/.next/standalone`, causing Next.js to fail to serve static CSS files in standalone mode.
 
 ### Solution Applied ✅
 1. **Created automated deployment script:** `deploy-production.sh`
@@ -186,7 +186,7 @@ PM2 was starting from `/root/upsizer` instead of `/root/upsizer/.next/standalone
 
    # Restart PM2 from standalone directory
    pm2 delete pixelift-web
-   cd /root/upsizer/.next/standalone
+   cd /root/pixelift/.next/standalone
    pm2 start server.js --name pixelift-web
    pm2 save
    ```
@@ -254,7 +254,7 @@ See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed manual steps.
 
 ## 📝 Environment Variables Needed
 
-Add these to `/root/upsizer/.env.local` on production for full Stripe functionality:
+Add these to `/root/pixelift/.env.local` on production for full Stripe functionality:
 
 ```bash
 # Stripe Payment Integration
@@ -420,7 +420,7 @@ This was a recurring issue where every deployment would break CSS. The problem w
 **If CSS breaks again:**
 ```bash
 ssh root@138.68.79.23
-cd /root/upsizer
+cd /root/pixelift
 cp -r .next/static .next/standalone/.next/
 cp -r public .next/standalone/
 pm2 delete pixelift-web
@@ -451,7 +451,7 @@ pm2 show pixelift-web
 ### Verify CSS Files
 ```bash
 ssh root@138.68.79.23
-ls -la /root/upsizer/.next/standalone/.next/static/css/
+ls -la /root/pixelift/.next/standalone/.next/static/css/
 ```
 
 ### Quick Deployment

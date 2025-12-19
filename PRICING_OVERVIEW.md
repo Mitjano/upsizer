@@ -73,7 +73,7 @@
 ### 5. **CTA Section**
 - Contact Support
 - Start Free Trial
-- Email: support@upsizer.com
+- Email: support@pixelift.pl
 
 ---
 
@@ -109,7 +109,7 @@
 - Free Plan → `/auth/signin`
 - Starter → `/auth/signin`
 - Pro → `/auth/signin`
-- Enterprise → `mailto:sales@upsizer.com`
+- Enterprise → `mailto:sales@pixelift.pl`
 
 ---
 

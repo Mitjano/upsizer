@@ -2,7 +2,7 @@
 
 ## ✅ Problem SOLVED: White Background After Deployment
 
-**Root Cause:** PM2 was starting from `/root/upsizer` instead of `/root/upsizer/.next/standalone`, 
+**Root Cause:** PM2 was starting from `/root/pixelift` instead of `/root/pixelift/.next/standalone`, 
 causing Next.js to not find static CSS files in standalone mode.
 
 **Fix Applied:** PM2 now starts from the standalone directory. This is PERMANENT.
@@ -34,7 +34,7 @@ This automated script:
 ssh root@138.68.79.23
 
 # 2. Navigate and pull
-cd /root/upsizer
+cd /root/pixelift
 git pull origin master
 
 # 3. Install and build
@@ -60,7 +60,7 @@ pm2 save
 
 ```bash
 ssh root@138.68.79.23
-cd /root/upsizer
+cd /root/pixelift
 
 # Copy static files
 cp -r .next/static .next/standalone/.next/
@@ -77,7 +77,7 @@ pm2 save
 
 ```bash
 pm2 show pixelift-web | grep "exec cwd"
-# Should show: /root/upsizer/.next/standalone
+# Should show: /root/pixelift/.next/standalone
 ```
 
 ---
@@ -128,7 +128,7 @@ User → Nginx (443) → Next.js (3000 in standalone mode)
 
 ## 🔄 Environment Variables
 
-Located at: `/root/upsizer/.env.local`
+Located at: `/root/pixelift/.env.local`
 
 ```bash
 NEXTAUTH_SECRET=...

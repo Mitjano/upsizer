@@ -481,7 +481,7 @@ components/
 
 ### Git Repository
 
-**URL:** https://github.com/Mitjano/upsizer.git
+**URL:** https://github.com/Mitjano/pixelift.git
 **Branch:** master
 **Last Commit:** 7cd82fa - "Fix: Move welcome email to server-side API route"
 **Status:** ✅ Clean, up to date with remote
@@ -494,7 +494,7 @@ components/
 
 1. **RESEND_API_KEY Not Configured**
    - **Impact:** Email system non-functional
-   - **Fix:** Add to `/root/upsizer/.env.local` and restart PM2
+   - **Fix:** Add to `/root/pixelift/.env.local` and restart PM2
    - **Time:** 5 minutes
    - **See:** [QUICKSTART_EMAIL.md](QUICKSTART_EMAIL.md)
 
@@ -549,7 +549,7 @@ components/
 1. ✅ **Add RESEND_API_KEY** - See [QUICKSTART_EMAIL.md](QUICKSTART_EMAIL.md)
    ```bash
    ssh root@138.68.79.23
-   cd /root/upsizer
+   cd /root/pixelift
    echo "RESEND_API_KEY=re_YOUR_KEY_HERE" >> .env.local
    pm2 restart pixelift-web
    ```
@@ -611,7 +611,7 @@ components/
 ### Email System Tests
 
 **Before Testing:**
-- [ ] Set RESEND_API_KEY in `/root/upsizer/.env.local`
+- [ ] Set RESEND_API_KEY in `/root/pixelift/.env.local`
 - [ ] Restart PM2: `pm2 restart pixelift-web`
 - [ ] Verify logs show "Ready in Xms" without errors
 

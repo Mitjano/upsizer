@@ -2,7 +2,7 @@
 
 **Data:** 24 listopada 2024
 **Projekt źródłowy:** https://github.com/Mitjano/bg-remover
-**Projekt docelowy:** https://github.com/Mitjano/upsizer (Pixelift)
+**Projekt docelowy:** https://github.com/Mitjano/pixelift (Pixelift)
 
 ---
 

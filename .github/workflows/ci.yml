@@ -120,7 +120,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           password: ${{ secrets.SERVER_PASSWORD }}
           script: |
-            cd /root/upsizer
+            cd /root/pixelift
             git pull origin master
             npm install --production=false
             npm run build

@@ -60,7 +60,7 @@ RESEND_API_KEY=re_your_actual_key_here
 **Production (server):**
 ```bash
 ssh root@138.68.79.23
-cd /root/upsizer
+cd /root/pixelift
 echo "RESEND_API_KEY=re_your_actual_key_here" >> .env.local
 pm2 restart pixelift-web
 ```

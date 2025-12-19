@@ -31,7 +31,7 @@ Email notifications są już zakodowane i wdrożone! Musisz tylko skonfigurować
 ssh root@138.68.79.23
 
 # Dodaj klucz do .env
-cd /root/upsizer
+cd /root/pixelift
 echo "RESEND_API_KEY=re_TWOJ_KLUCZ_TUTAJ" >> .env.local
 
 # Restart aplikacji
@@ -122,7 +122,7 @@ Zobacz pełną dokumentację: `EMAIL_SETUP.md`
 
 1. Zarejestruj się: resend.com/signup (2 min)
 2. Pobierz klucz API (1 min)
-3. Dodaj na serwer: `echo "RESEND_API_KEY=re_xxx" >> /root/upsizer/.env.local` (1 min)
+3. Dodaj na serwer: `echo "RESEND_API_KEY=re_xxx" >> /root/pixelift/.env.local` (1 min)
 4. Restart: `pm2 restart pixelift-web` (10 sek)
 5. Testuj: wyślij ticket na pixelift.pl/support
 
