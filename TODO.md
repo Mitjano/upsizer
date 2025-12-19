@@ -1,4 +1,4 @@
-# Pixelift - Lista Zadań (Aktualizacja 18.12.2024)
+# Pixelift - Lista Zadań (Aktualizacja 19.12.2024)
 
 ## Status Projektu
 
@@ -148,11 +148,13 @@
 
 ### 2.1 Convert to SVG (Wektoryzacja)
 - **Rozwiązanie OPCJA A**: Vectorizer.AI API (najlepsza jakość)
-  - Płatne API: ~$0.01/obraz
+  - Płatne API: ~$0.20/obraz (plan: 50 kredytów za $9.99/mies)
   - https://vectorizer.ai/api
-- **Rozwiązanie OPCJA B**: Recraft V3 (free tier dostępny)
+  - ⚠️ Wymaga osobnego klucza API (nie Replicate)
+- **Rozwiązanie OPCJA B**: Recraft V3 via Replicate (tańsze, ale gorsza jakość)
   - Model: `recraft-ai/recraft-v3-svg`
-- **Koszt kredytów**: 2 kredyty
+  - Koszt: ~$0.04/obraz
+- **Koszt kredytów**: 3 kredyty (przy użyciu Vectorizer.AI)
 - **Funkcje**:
   - [ ] Upload raster image
   - [ ] Preview SVG
@@ -294,7 +296,7 @@
   - `lib/db.ts`
   - `app/api/admin/email-templates/route.ts`
 
-### 3.2 Usprawnienie Text to Image
+### 3.3 Usprawnienie Text to Image
 - **Obecny stan**: Działa, ale można ulepszyć
 - **Ulepszenia**:
   - [ ] Więcej stylów/presetów
@@ -302,7 +304,7 @@
   - [ ] Negative prompts
   - [ ] Batch generation (2-4 warianty)
 
-### 3.3 Video Tools Enhancement
+### 3.4 Video Tools Enhancement
 - **Obecne narzędzia**: AI Video Generation, Captions
 - **Brakujące funkcje Adobe**:
   - [ ] Video Merge (łączenie klipów)
@@ -322,6 +324,7 @@ TOOLS (dropdown)
 │   ├── AI Upscaler ✅
 │   ├── Face Restore ✅
 │   ├── Colorize ✅
+│   ├── Denoise ✅
 │   └── Portrait Relight ✅
 ├── Remove
 │   ├── Remove Background ✅
@@ -655,7 +658,8 @@ new_tool: {
 | 2024-12-16 | 1.1 | Audyt przed zamknięciem fazy dev |
 | 2024-12-17 | 1.2 | Poprawki bezpieczeństwa (xlsx→exceljs, Next.js audit fix, i18n) |
 | 2024-12-18 | 2.0 | **Strategia konkurencji z Adobe Express** - analiza i roadmap |
+| 2024-12-19 | 2.1 | Poprawki: QR→qrcode lib, Tool Status Dashboard, numeracja sekcji |
 
 ---
 
-*Ostatnia aktualizacja: 18.12.2024*
+*Ostatnia aktualizacja: 19.12.2024*
