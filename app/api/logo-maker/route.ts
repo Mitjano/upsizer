@@ -116,14 +116,35 @@ export async function POST(request: NextRequest) {
           output_format: "png",
         }
       }
-    ) as unknown as string[]
+    )
 
-    // Ideogram returns an array of URLs
-    if (!output || !Array.isArray(output) || output.length === 0) {
-      throw new Error('No output received from Ideogram API')
+    console.log('[Logo Maker] Raw output:', JSON.stringify(output))
+
+    // Handle different output formats from Replicate
+    let logoUrl: string | null = null
+
+    if (typeof output === 'string') {
+      // Direct URL string
+      logoUrl = output
+    } else if (Array.isArray(output) && output.length > 0) {
+      // Array of URLs
+      logoUrl = output[0]
+    } else if (output && typeof output === 'object') {
+      // Object with url property
+      const outputObj = output as Record<string, unknown>
+      if (outputObj.url && typeof outputObj.url === 'string') {
+        logoUrl = outputObj.url
+      } else if (outputObj.output && typeof outputObj.output === 'string') {
+        logoUrl = outputObj.output
+      } else if (Array.isArray(outputObj.output) && outputObj.output.length > 0) {
+        logoUrl = outputObj.output[0] as string
+      }
     }
 
-    const logoUrl = output[0]
+    if (!logoUrl) {
+      console.error('[Logo Maker] Could not extract URL from output:', output)
+      throw new Error('No output received from Ideogram API')
+    }
 
     // 7. DOWNLOAD RESULT AND CONVERT TO BASE64
     const resultResponse = await fetch(logoUrl)
