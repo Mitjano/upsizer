@@ -94,7 +94,8 @@
     "remove": "Eliminar",
     "generate": "Generar",
     "transform": "Transformar",
-    "utilities": "Utilidades"
+    "utilities": "Utilidades",
+    "edit": "Editar"
   },
   "tools": {
     "upscaler": {
@@ -171,6 +172,46 @@
       "name": "Eliminador de Marcas de Agua",
       "description": "Elimina marcas de agua de imágenes",
       "badge": "NUEVO"
+    },
+    "cropImage": {
+      "name": "Recortar Imagen",
+      "description": "Recorta y enmarca tus imágenes",
+      "badge": "GRATIS"
+    },
+    "resizeImage": {
+      "name": "Cambiar Tamaño",
+      "description": "Cambia las dimensiones de la imagen",
+      "badge": "GRATIS"
+    },
+    "imageFilters": {
+      "name": "Filtros y Efectos",
+      "description": "Aplica filtros y ajustes",
+      "badge": "GRATIS"
+    },
+    "collageMaker": {
+      "name": "Creador de Collage",
+      "description": "Crea collages de fotos",
+      "badge": "GRATIS"
+    },
+    "logoMaker": {
+      "name": "Creador de Logo",
+      "description": "Crea logos con IA",
+      "badge": "IA"
+    },
+    "textEffects": {
+      "name": "Efectos de Texto",
+      "description": "Crea texto estilizado",
+      "badge": "IA"
+    },
+    "qrGenerator": {
+      "name": "Generador de QR",
+      "description": "Crea códigos QR con logo",
+      "badge": "GRATIS"
+    },
+    "vectorize": {
+      "name": "Convertir a SVG",
+      "description": "Vectoriza imágenes a SVG",
+      "badge": "IA"
     }
   },
   "home": {

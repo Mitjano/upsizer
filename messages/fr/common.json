@@ -94,7 +94,8 @@
     "remove": "Supprimer",
     "generate": "Générer",
     "transform": "Transformer",
-    "utilities": "Utilitaires"
+    "utilities": "Utilitaires",
+    "edit": "Éditer"
   },
   "tools": {
     "upscaler": {
@@ -170,6 +171,46 @@
       "name": "Suppresseur de Filigrane",
       "description": "Supprimez les filigranes des images",
       "badge": "NOUVEAU"
+    },
+    "cropImage": {
+      "name": "Rogner l'Image",
+      "description": "Recadrez et cadrez vos images",
+      "badge": "GRATUIT"
+    },
+    "resizeImage": {
+      "name": "Redimensionner",
+      "description": "Modifier les dimensions",
+      "badge": "GRATUIT"
+    },
+    "imageFilters": {
+      "name": "Filtres et Effets",
+      "description": "Appliquez des filtres",
+      "badge": "GRATUIT"
+    },
+    "collageMaker": {
+      "name": "Créateur de Collage",
+      "description": "Créez des collages photo",
+      "badge": "GRATUIT"
+    },
+    "logoMaker": {
+      "name": "Créateur de Logo",
+      "description": "Créez des logos avec l'IA",
+      "badge": "IA"
+    },
+    "textEffects": {
+      "name": "Effets de Texte",
+      "description": "Créez du texte stylisé",
+      "badge": "IA"
+    },
+    "qrGenerator": {
+      "name": "Générateur de QR",
+      "description": "Créez des QR codes avec logo",
+      "badge": "GRATUIT"
+    },
+    "vectorize": {
+      "name": "Convertir en SVG",
+      "description": "Vectorisez les images en SVG",
+      "badge": "IA"
     }
   },
   "home": {

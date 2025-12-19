@@ -23,6 +23,16 @@ export type ToolType =
   | 'portrait_relight'
   | 'watermark_remover'
   | 'face_restore'
+  | 'logo_maker'
+  // Free Image Tools
+  | 'crop_image'
+  | 'resize_image'
+  | 'qr_generator'
+  | 'collage'
+  | 'image_filters'
+  // Paid Tools
+  | 'text_effects'
+  | 'vectorize'
   // AI Video Tools
   | 'video_script'
   | 'voiceover'
@@ -163,6 +173,48 @@ export const CREDIT_COSTS: Record<ToolType, ToolCreditConfig> = {
     cost: 2,
     displayName: 'Face Restore',
     description: 'Przywróć jakość i szczegóły twarzy za pomocą CodeFormer AI',
+  },
+  logo_maker: {
+    cost: 5,
+    displayName: 'Logo Maker',
+    description: 'Wygeneruj profesjonalne logo AI za pomocą Ideogram',
+  },
+  // Free Image Tools
+  crop_image: {
+    cost: 0,
+    displayName: 'Crop Image',
+    description: 'Przytnij obraz do wybranego formatu',
+  },
+  resize_image: {
+    cost: 0,
+    displayName: 'Resize Image',
+    description: 'Zmień rozmiar obrazu',
+  },
+  qr_generator: {
+    cost: 0,
+    displayName: 'QR Generator',
+    description: 'Wygeneruj kod QR',
+  },
+  collage: {
+    cost: 0,
+    displayName: 'Collage',
+    description: 'Twórz kolaże z wielu obrazów',
+  },
+  image_filters: {
+    cost: 0,
+    displayName: 'Image Filters',
+    description: 'Zastosuj filtry do obrazów',
+  },
+  // Paid Tools
+  text_effects: {
+    cost: 5,
+    displayName: 'Text Effects',
+    description: 'Zaawansowane efekty tekstowe AI',
+  },
+  vectorize: {
+    cost: 3,
+    displayName: 'Vectorize',
+    description: 'Konwertuj obraz do formatu SVG',
   },
   // AI Video Script & Voiceover
   video_script: {
@@ -364,6 +416,29 @@ export const TOOL_API_KEYS: Record<string, ToolType> = {
   'watermarkRemover': 'watermark_remover',
   'face-restore': 'face_restore',
   'faceRestore': 'face_restore',
+  'logo-maker': 'logo_maker',
+  'logoMaker': 'logo_maker',
+  // Free Image Tools
+  'crop-image': 'crop_image',
+  'cropImage': 'crop_image',
+  'crop_image': 'crop_image',
+  'resize-image': 'resize_image',
+  'resizeImage': 'resize_image',
+  'resize_image': 'resize_image',
+  'qr-generator': 'qr_generator',
+  'qrGenerator': 'qr_generator',
+  'qr_generator': 'qr_generator',
+  'collage': 'collage',
+  'image-filters': 'image_filters',
+  'imageFilters': 'image_filters',
+  'image_filters': 'image_filters',
+  // Paid Tools
+  'text-effects': 'text_effects',
+  'textEffects': 'text_effects',
+  'text_effects': 'text_effects',
+  'vectorize': 'vectorize',
+  'convert-to-svg': 'vectorize',
+  'convertToSvg': 'vectorize',
   // AI Video Tools
   'video-script': 'video_script',
   'video_script': 'video_script',

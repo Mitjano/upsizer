@@ -94,7 +94,8 @@
     "remove": "Remove",
     "generate": "Generate",
     "transform": "Transform",
-    "utilities": "Utilities"
+    "utilities": "Utilities",
+    "edit": "Edit"
   },
   "tools": {
     "upscaler": {
@@ -171,6 +172,46 @@
       "name": "Watermark Remover",
       "description": "Remove watermarks from images",
       "badge": "NEW"
+    },
+    "cropImage": {
+      "name": "Crop Image",
+      "description": "Crop and frame your images",
+      "badge": "FREE"
+    },
+    "resizeImage": {
+      "name": "Resize Image",
+      "description": "Change image dimensions",
+      "badge": "FREE"
+    },
+    "imageFilters": {
+      "name": "Filters & Effects",
+      "description": "Apply filters and adjustments",
+      "badge": "FREE"
+    },
+    "collageMaker": {
+      "name": "Collage Maker",
+      "description": "Create photo collages",
+      "badge": "FREE"
+    },
+    "logoMaker": {
+      "name": "Logo Maker",
+      "description": "Create AI-powered logos",
+      "badge": "AI"
+    },
+    "textEffects": {
+      "name": "Text Effects",
+      "description": "Create stylized text art",
+      "badge": "AI"
+    },
+    "qrGenerator": {
+      "name": "QR Code Generator",
+      "description": "Create QR codes with logo",
+      "badge": "FREE"
+    },
+    "vectorize": {
+      "name": "Convert to SVG",
+      "description": "Vectorize images to SVG",
+      "badge": "AI"
     }
   },
   "home": {

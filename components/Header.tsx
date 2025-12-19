@@ -82,6 +82,60 @@ const toolIcons = {
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
     </svg>
   ),
+  // New Edit Tools
+  cropImage: (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18h12M6 6h12M6 6v12m12-12v12" />
+    </svg>
+  ),
+  resizeImage: (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+    </svg>
+  ),
+  imageFilters: (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+    </svg>
+  ),
+  collageMaker: (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 5a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 16a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1H5a1 1 0 01-1-1v-3zM14 11a1 1 0 011-1h4a1 1 0 011 1v8a1 1 0 01-1 1h-4a1 1 0 01-1-1v-8z" />
+    </svg>
+  ),
+  // Generate Tools
+  logoMaker: (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+    </svg>
+  ),
+  textEffects: (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+    </svg>
+  ),
+  // Utilities Tools
+  qrGenerator: (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0-3h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+    </svg>
+  ),
+  // Transform Tools
+  vectorize: (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758a3 3 0 10-4.243 4.243 3 3 0 004.243-4.243zm0-5.758a3 3 0 10-4.243-4.243 3 3 0 004.243 4.243z" />
+    </svg>
+  ),
+  portraitRelight: (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+    </svg>
+  ),
+  watermarkRemover: (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+    </svg>
+  ),
 };
 
 // Tool categories for mega menu
@@ -99,6 +153,21 @@ const toolCategories = [
       { key: 'restore', href: '/tools/restore', color: 'from-cyan-500 to-blue-600' },
       { key: 'colorize', href: '/tools/colorize', color: 'from-violet-500 to-purple-600' },
       { key: 'portraitRelight', href: '/tools/portrait-relight', color: 'from-amber-500 to-orange-600' },
+    ],
+  },
+  {
+    id: 'edit',
+    labelKey: 'toolCategories.edit',
+    icon: (
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+      </svg>
+    ),
+    tools: [
+      { key: 'cropImage', href: '/tools/crop-image', color: 'from-green-500 to-emerald-600' },
+      { key: 'resizeImage', href: '/tools/resize-image', color: 'from-blue-500 to-cyan-600' },
+      { key: 'imageFilters', href: '/tools/image-filters', color: 'from-pink-500 to-rose-600' },
+      { key: 'collageMaker', href: '/tools/collage', color: 'from-orange-500 to-amber-600' },
     ],
   },
   {
@@ -128,6 +197,8 @@ const toolCategories = [
       { key: 'packshot', href: '/tools/ai-background-generator', color: 'from-amber-500 to-orange-600' },
       { key: 'expand', href: '/tools/image-expand', color: 'from-indigo-500 to-indigo-600' },
       { key: 'inpainting', href: '/tools/inpainting', color: 'from-emerald-500 to-teal-600' },
+      { key: 'logoMaker', href: '/tools/logo-maker', color: 'from-violet-500 to-purple-600' },
+      { key: 'textEffects', href: '/tools/text-effects', color: 'from-cyan-500 to-blue-600' },
     ],
   },
   {
@@ -142,6 +213,7 @@ const toolCategories = [
       { key: 'styleTransfer', href: '/tools/style-transfer', color: 'from-pink-500 to-purple-600' },
       { key: 'reimagine', href: '/tools/reimagine', color: 'from-violet-500 to-indigo-600' },
       { key: 'structureControl', href: '/tools/structure-control', color: 'from-amber-500 to-red-600' },
+      { key: 'vectorize', href: '/tools/vectorize', color: 'from-teal-500 to-emerald-600' },
     ],
   },
   {
@@ -156,6 +228,7 @@ const toolCategories = [
     tools: [
       { key: 'compressor', href: '/tools/image-compressor', color: 'from-teal-500 to-cyan-600' },
       { key: 'formatConverter', href: '/tools/format-converter', color: 'from-emerald-500 to-teal-600' },
+      { key: 'qrGenerator', href: '/tools/qr-generator', color: 'from-gray-500 to-gray-700' },
     ],
   },
 ];

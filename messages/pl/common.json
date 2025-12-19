@@ -94,7 +94,8 @@
     "remove": "Usuwanie",
     "generate": "Generowanie",
     "transform": "Przekształcanie",
-    "utilities": "Narzędzia"
+    "utilities": "Narzędzia",
+    "edit": "Edytuj"
   },
   "tools": {
     "upscaler": {
@@ -171,6 +172,46 @@
       "name": "Usuwanie Watermarków",
       "description": "Usuń znaki wodne ze zdjęć",
       "badge": "NOWOŚĆ"
+    },
+    "cropImage": {
+      "name": "Kadruj Obraz",
+      "description": "Kadruj i przycinaj obrazy",
+      "badge": "FREE"
+    },
+    "resizeImage": {
+      "name": "Zmień Rozmiar",
+      "description": "Zmień wymiary obrazu",
+      "badge": "FREE"
+    },
+    "imageFilters": {
+      "name": "Filtry i Efekty",
+      "description": "Zastosuj filtry i korekty",
+      "badge": "FREE"
+    },
+    "collageMaker": {
+      "name": "Kreator Kolaży",
+      "description": "Twórz kolaże zdjęć",
+      "badge": "FREE"
+    },
+    "logoMaker": {
+      "name": "Generator Logo",
+      "description": "Twórz logo z pomocą AI",
+      "badge": "AI"
+    },
+    "textEffects": {
+      "name": "Efekty Tekstowe",
+      "description": "Twórz stylizowany tekst",
+      "badge": "AI"
+    },
+    "qrGenerator": {
+      "name": "Generator QR",
+      "description": "Twórz kody QR z logo",
+      "badge": "FREE"
+    },
+    "vectorize": {
+      "name": "Konwertuj do SVG",
+      "description": "Wektoryzuj obrazy do SVG",
+      "badge": "AI"
     }
   },
   "home": {
