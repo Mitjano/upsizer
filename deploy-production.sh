@@ -17,7 +17,17 @@ NC='\033[0m' # No Color
 REMOTE_USER="root"
 REMOTE_HOST="138.68.79.23"
 REMOTE_PATH="/root/pixelift"
-REMOTE_PASSWORD="0PRIngless"
+
+# Load password from environment variable or .env file
+if [ -z "$DEPLOY_PASSWORD" ]; then
+    if [ -f ".env.deploy" ]; then
+        source .env.deploy
+    else
+        echo "❌ Error: DEPLOY_PASSWORD not set. Create .env.deploy with DEPLOY_PASSWORD=your_password"
+        exit 1
+    fi
+fi
+REMOTE_PASSWORD="$DEPLOY_PASSWORD"
 
 echo -e "${BLUE}📥 Step 1: Pulling latest code from GitHub...${NC}"
 sshpass -p "$REMOTE_PASSWORD" ssh -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST "cd $REMOTE_PATH && git pull origin master"

@@ -42,3 +42,4 @@ deploy.sh
 nul
 
 /lib/generated/prisma
+.env.deploy
