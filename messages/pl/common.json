@@ -4658,86 +4658,152 @@
     "success": "Watermark usunięty!"
   },
   "watermarkRemoverPage": {
-    "badge": "Usuwanie watermarków AI",
-    "title": "AI Watermark Remover",
-    "subtitle": "Usuń znaki wodne, logo i napisy ze zdjęć za pomocą AI.",
-    "termsNotice": "Korzystając z tego narzędzia, akceptujesz Regulamin.",
+    "badge": "Usuwanie Watermarków AI",
+    "title": "Usuń Znaki Wodne z",
+    "titleHighlight": "Precyzją AI",
+    "subtitle": "Usuń znaki wodne, logo, datowniki i napisy ze zdjęć bezszwowo dzięki zaawansowanemu AI inpainting. Idealne do czyszczenia zdjęć, usuwania watermarków ze zdjęć stockowych i przywracania obrazom oryginalnego piękna.",
+    "termsNotice": "Korzystając z tego narzędzia, akceptujesz nasz Regulamin.",
     "stats": {
-      "aiPowered": "LaMA",
-      "aiPoweredLabel": "Model AI",
+      "credits": "2",
+      "creditsLabel": "Kredyty",
       "modes": "2",
-      "modesLabel": "Tryby usuwania",
-      "creditCost": "2 Kredyty",
-      "creditCostLabel": "Za zdjęcie"
+      "modesLabel": "Tryby Usuwania",
+      "accuracy": "95%+",
+      "accuracyLabel": "Dokładność"
     },
-    "howItWorks": {
-      "title": "Jak to działa",
-      "step1": {
-        "title": "Prześlij zdjęcie",
-        "description": "Prześlij zdjęcie z watermarkiem"
+    "options": {
+      "title": "Tryby Usuwania",
+      "autoDetect": {
+        "name": "Auto Wykrywanie",
+        "description": "AI automatycznie znajduje i usuwa znaki wodne, logo i napisy bez ręcznego zaznaczania."
       },
-      "step2": {
-        "title": "Wybierz tryb",
-        "description": "Auto-wykrywanie lub ręczne zaznaczenie"
+      "manualMask": {
+        "name": "Ręczna Maska",
+        "description": "Zamaluj konkretne obszary, które chcesz usunąć, dla precyzyjnej kontroli nad procesem usuwania."
       },
-      "step3": {
-        "title": "Pobierz czyste",
-        "description": "Pobierz zdjęcie bez watermarku"
+      "combined": {
+        "name": "Tryb Łączony",
+        "description": "Użyj auto-wykrywania jako punktu wyjścia, a następnie dopracuj ręcznym maskowaniem dla najlepszych rezultatów."
       }
     },
     "features": {
+      "title": "Dlaczego Wybrać Nasz Remover Watermarków",
       "autoDetect": {
-        "title": "Auto wykrywanie",
-        "description": "AI automatycznie znajduje i usuwa watermarki"
+        "title": "Automatyczne Wykrywanie",
+        "description": "Wykrywanie oparte na AI automatycznie znajduje znaki wodne, logo i napisy na całym obrazie."
       },
       "manualMask": {
-        "title": "Ręczna maska",
-        "description": "Zamaluj konkretne obszary do usunięcia"
+        "title": "Ręczne Maskowanie",
+        "description": "Precyzyjny pędzel do zaznaczania dokładnie tego, co chcesz usunąć - idealny dla złożonych lub subtelnych watermarków."
       },
       "seamless": {
-        "title": "Bezszwowe wyniki",
-        "description": "AI naturalnie wypełnia tło"
+        "title": "Bezszwowe Rezultaty",
+        "description": "Zaawansowany inpainting wypełnia usunięte obszary realistyczną zawartością dopasowaną do otoczenia."
+      }
+    },
+    "howItWorks": {
+      "title": "Jak To",
+      "titleHighlight": "Działa",
+      "step1": {
+        "title": "Prześlij Obraz",
+        "description": "Prześlij dowolny obraz ze znakami wodnymi, logo lub napisami do usunięcia."
+      },
+      "step2": {
+        "title": "Wybierz Tryb",
+        "description": "Użyj automatycznego wykrywania lub ręcznie zamaluj obszary do usunięcia."
+      },
+      "step3": {
+        "title": "Przetwórz Obraz",
+        "description": "AI analizuje i inteligentnie usuwa zaznaczone obszary, wypełniając realistyczną zawartością."
+      },
+      "step4": {
+        "title": "Pobierz Czysty",
+        "description": "Pobierz swój czysty obraz bez watermarków w wysokiej jakości."
       }
     },
     "useCases": {
-      "title": "Zastosowania",
+      "title": "Idealne Do Każdego Zastosowania",
       "stockPhotos": {
-        "title": "Zdjęcia stockowe",
-        "description": "Usuń watermarki podglądu"
-      },
-      "screenshots": {
-        "title": "Screenshoty",
-        "description": "Oczyść zrzuty ekranu"
+        "icon": "📸",
+        "title": "Zdjęcia Stockowe",
+        "description": "Usuń watermarki podglądu ze zdjęć stockowych, aby ocenić przed zakupem."
       },
       "oldPhotos": {
-        "title": "Stare zdjęcia",
-        "description": "Usuń datowniki"
+        "icon": "📅",
+        "title": "Stare Zdjęcia",
+        "description": "Usuń datowniki i watermarki aparatu ze starych zdjęć cyfrowych."
+      },
+      "screenshots": {
+        "icon": "🖥️",
+        "title": "Zrzuty Ekranu",
+        "description": "Oczyść zrzuty ekranu usuwając niechciane napisy i elementy interfejsu."
       },
       "documents": {
-        "title": "Dokumenty",
-        "description": "Oczyść zeskanowane dokumenty"
+        "icon": "📄",
+        "title": "Skanowane Dokumenty",
+        "description": "Usuń pieczątki, podpisy lub niechciane znaki ze skanowanych dokumentów."
       }
     },
-    "relatedTools": {
-      "title": "Powiązane narzędzia",
-      "objectRemoval": {
-        "title": "Usuwanie obiektów",
-        "description": "Usuń dowolny obiekt"
+    "technology": {
+      "title": "Zaawansowany AI Inpainting",
+      "description": "Nasz remover watermarków wykorzystuje model AI LaMA (Large Mask Inpainting), wytrenowany na milionach obrazów, aby rozumieć kontekst i bezszwowo wypełniać usunięte obszary realistyczną zawartością dopasowaną do otaczającego obrazu.",
+      "feature1": "Model LaMA AI dla kontekstowego inpaintingu",
+      "feature2": "Rozumie kontekst i tekstury obrazu",
+      "feature3": "Równie dobrze radzi sobie z dużymi i małymi watermarkami",
+      "feature4": "Zachowuje jakość obrazu podczas usuwania"
+    },
+    "limitations": {
+      "title": "Czego Się Spodziewać",
+      "worksWell": {
+        "title": "Świetnie Sprawdza Się Przy",
+        "item1": "Tekstowych znakach wodnych i logo na prostych tłach",
+        "item2": "Półprzezroczystych nakładkach i datownikach",
+        "item3": "Znakach wodnych, które nie zakrywają kluczowych detali obrazu"
       },
-      "inpainting": {
-        "title": "AI Inpainting",
-        "description": "Wypełnij i rozszerz obrazy"
+      "limitations": {
+        "title": "Uwagi",
+        "item1": "Złożone wzory pod watermarkami mogą wymagać ręcznego dopracowania",
+        "item2": "Duże watermarki zakrywające twarze mogą wpływać na rezultaty",
+        "item3": "Szanuj prawa autorskie - używaj tylko na obrazach, do których masz prawa"
+      }
+    },
+    "tips": {
+      "title": "Wskazówki Dla Najlepszych Rezultatów",
+      "tip1": "Najpierw użyj auto-wykrywania, a następnie dopracuj ręcznym maskowaniem jeśli potrzeba.",
+      "tip2": "Dla przezroczystych watermarków spróbuj zwiększyć rozmiar pędzla, aby pokryć cały obszar.",
+      "tip3": "Przetwarzaj wielokrotnie z mniejszymi obszarami dla złożonych watermarków.",
+      "tip4": "Obrazy w wyższej rozdzielczości zazwyczaj dają lepsze rezultaty.",
+      "tip5": "Watermarki na ruchliwych tłach są łatwiejsze do usunięcia niż na twarzach.",
+      "tip6": "Zawsze szanuj prawa autorskie - używaj odpowiedzialnie na własnych obrazach."
+    },
+    "faq": {
+      "title": "Często Zadawane Pytania",
+      "q1": {
+        "question": "Czy mogę usunąć watermarki ze zdjęć stockowych?",
+        "answer": "Nasze narzędzie może usuwać watermarki do celów podglądowych, ale proszę szanować prawa autorskie. Zawsze kupuj odpowiednie licencje do użytku komercyjnego."
       },
-      "removeBackground": {
-        "title": "Usuń tło",
-        "description": "Przezroczyste tła"
+      "q2": {
+        "question": "Czy usunięcie będzie niewidoczne?",
+        "answer": "W większości przypadków tak. AI wypełnia usunięty obszar zawartością dopasowaną do otoczenia. Złożone tła mogą wymagać kilku prób."
+      },
+      "q3": {
+        "question": "Czy mogę usunąć duże watermarki?",
+        "answer": "Tak, ale rezultaty zależą od tego, co jest pod spodem. Małe watermarki na prostych tłach działają najlepiej. Duże watermarki na twarzach mogą być wyzwaniem."
+      },
+      "q4": {
+        "question": "Czy to jest legalne?",
+        "answer": "Usuwanie watermarków z obrazów, które posiadasz lub masz pozwolenie na edycję, jest w porządku. Usuwanie watermarków, aby uniknąć płacenia za licencjonowaną zawartość, nie jest."
+      },
+      "q5": {
+        "question": "Jaka jest różnica między trybem auto a ręcznym?",
+        "answer": "Tryb auto używa AI do wykrywania watermarków. Tryb ręczny pozwala zamalować konkretne obszary. Użyj ręcznego dla precyzyjnej kontroli lub gdy auto pomija części."
       }
     },
     "cta": {
-      "title": "Gotowy na usunięcie watermarków?",
-      "subtitle": "Oczyść swoje zdjęcia z AI",
-      "exploreTools": "Przeglądaj narzędzia",
-      "viewPricing": "Zobacz ceny"
+      "title": "Gotowy Usunąć Znaki Wodne?",
+      "subtitle": "Oczyść swoje obrazy dzięki AI usuwaniu watermarków. Profesjonalne rezultaty w kilka sekund.",
+      "getStarted": "Zacznij Za Darmo",
+      "startAction": "Usuń Watermark Teraz"
     }
   },
   "logoMakerPage": {

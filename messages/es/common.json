@@ -6055,41 +6055,41 @@
     "subtitle": "Elimina marcas de agua, logos y superposiciones de texto de imágenes de forma perfecta con inpainting de IA. Limpia imágenes de stock, elimina sellos de fecha y restaura fotos a su estado original. Rápido, preciso y fácil de usar.",
     "stats": {
       "credits": "2",
-      "creditsLabel": "Créditos/Imagen",
+      "creditsLabel": "Créditos",
       "modes": "2",
       "modesLabel": "Modos de Eliminación",
-      "aiModel": "LaMA",
-      "aiModelLabel": "Motor de Inpainting"
+      "accuracy": "95%+",
+      "accuracyLabel": "Precisión"
     },
     "termsNotice": "Al usar esta herramienta aceptas nuestros Términos de Uso y Política de Privacidad.",
     "options": {
-      "title": "Modos de Eliminación de Marcas de Agua",
-      "auto": {
+      "title": "Modos de Eliminación",
+      "autoDetect": {
         "name": "Detección Automática",
         "description": "La IA detecta y elimina automáticamente marcas de agua comunes, logos y texto superpuesto."
       },
-      "manual": {
+      "manualMask": {
         "name": "Máscara Manual",
         "description": "Pinta sobre las áreas específicas que quieres eliminar para control preciso."
       },
-      "batch": {
-        "name": "Procesamiento por Lotes",
-        "description": "Procesa múltiples imágenes con marcas de agua similares eficientemente."
+      "combined": {
+        "name": "Modo Combinado",
+        "description": "Usa detección automática como punto de partida, luego refina con máscara manual para mejores resultados."
       }
     },
     "features": {
-      "title": "Características de Eliminación de Marcas de Agua",
-      "aiPowered": {
-        "title": "Inpainting LaMA",
-        "description": "Usa el modelo de inpainting LaMA de última generación que rellena inteligentemente las áreas eliminadas con contenido contextualmente apropiado."
-      },
+      "title": "Por Qué Elegir Nuestro Eliminador de Marcas",
       "autoDetect": {
         "title": "Detección Automática",
-        "description": "Detecta automáticamente marcas de agua, logos, sellos de fecha y texto superpuesto comunes para eliminación con un clic."
+        "description": "Detección impulsada por IA que encuentra automáticamente marcas de agua, logos y texto superpuesto en toda tu imagen."
+      },
+      "manualMask": {
+        "title": "Máscara Manual",
+        "description": "Herramienta de pincel precisa para marcar exactamente lo que quieres eliminar - perfecto para marcas de agua complejas o sutiles."
       },
       "seamless": {
         "title": "Resultados Perfectos",
-        "description": "Rellena el área de la marca de agua con textura, colores e iluminación que coinciden para integración invisible."
+        "description": "Inpainting avanzado que rellena las áreas eliminadas con contenido realista que coincide con la imagen circundante."
       }
     },
     "howItWorks": {
@@ -6113,53 +6113,53 @@
       }
     },
     "useCases": {
-      "title": "Perfecto Para Eliminación de Marcas de Agua",
-      "stock": {
-        "icon": "📷",
+      "title": "Perfecto Para Cada Caso de Uso",
+      "stockPhotos": {
+        "icon": "📸",
         "title": "Fotos de Stock",
-        "description": "Elimina marcas de agua de vista previa de imágenes de stock que hayas comprado pero recibido con marcas de agua."
+        "description": "Elimina marcas de agua de vista previa de imágenes de stock para evaluar antes de comprar."
       },
       "oldPhotos": {
         "icon": "📅",
         "title": "Fotos Antiguas",
-        "description": "Elimina sellos de fecha, marcas de cámara y logos de estudio de fotos familiares antiguas."
+        "description": "Elimina sellos de fecha y marcas de agua de cámara de fotos digitales antiguas."
       },
       "screenshots": {
         "icon": "🖥️",
         "title": "Capturas de Pantalla",
-        "description": "Limpia capturas de pantalla eliminando texto superpuesto, banners y elementos de UI no deseados."
+        "description": "Limpia capturas de pantalla eliminando texto superpuesto y elementos de UI no deseados."
       },
       "documents": {
         "icon": "📄",
-        "title": "Documentos",
-        "description": "Elimina sellos de borrador, marcas de agua de muestra y superposiciones de documentos escaneados."
+        "title": "Documentos Escaneados",
+        "description": "Elimina sellos, firmas o marcas no deseadas de documentos escaneados."
       }
     },
     "technology": {
-      "title": "🧹 Tecnología de Inpainting LaMA",
-      "description": "Nuestra eliminación de marcas de agua usa el modelo LaMA (Large Mask Inpainting), específicamente diseñado para rellenar regiones faltantes con contenido realista. A diferencia de herramientas simples de clonar, LaMA entiende el contexto de la imagen y genera rellenos apropiados.",
-      "feature1": "Inpainting consciente del contexto para relleno realista",
-      "feature2": "Soporte de regiones grandes y pequeñas por igual",
-      "feature3": "Coincidencia de textura con contenido circundante",
-      "feature4": "Preservación de bordes y transiciones naturales"
+      "title": "Impulsado por Inpainting IA Avanzado",
+      "description": "Nuestro eliminador de marcas de agua usa el modelo de IA LaMA (Large Mask Inpainting), entrenado en millones de imágenes para entender el contexto y rellenar áreas eliminadas de forma perfecta con contenido realista que coincide con la imagen circundante.",
+      "feature1": "Modelo LaMA AI para inpainting contextual",
+      "feature2": "Entiende el contexto y texturas de la imagen",
+      "feature3": "Maneja marcas de agua grandes y pequeñas por igual",
+      "feature4": "Preserva la calidad de imagen durante la eliminación"
     },
     "limitations": {
       "title": "Qué Esperar",
       "worksWell": {
-        "title": "✓ Funciona Mejor Para",
-        "item1": "Marcas de agua en áreas simples o con textura (cielo, paredes, fondos)",
-        "item2": "Logos y texto pequeños a medianos",
-        "item3": "Marcas de agua semitransparentes y superposiciones"
+        "title": "Funciona Excelente Para",
+        "item1": "Marcas de agua de texto y logos en fondos simples",
+        "item2": "Superposiciones semitransparentes y sellos de fecha",
+        "item3": "Marcas de agua que no cubren detalles críticos de la imagen"
       },
       "limitations": {
-        "title": "✗ Limitaciones Actuales",
-        "item1": "Marcas de agua sobre detalles complejos pueden dejar artefactos",
-        "item2": "Marcas de agua muy grandes pueden no reconstruirse perfectamente",
-        "item3": "Patrones repetitivos detrás de marcas de agua pueden no coincidir exactamente"
+        "title": "Consideraciones",
+        "item1": "Patrones complejos bajo marcas de agua pueden necesitar refinamiento manual",
+        "item2": "Marcas de agua grandes cubriendo rostros pueden afectar los resultados",
+        "item3": "Respeta los derechos de autor - solo usa en imágenes sobre las que tienes derechos"
       }
     },
     "tips": {
-      "title": "💡 Consejos Para Mejor Eliminación de Marcas de Agua",
+      "title": "Consejos Para Mejores Resultados",
       "tip1": "Para mejores resultados, usa modo manual para marcar precisamente el área de la marca de agua",
       "tip2": "Las marcas de agua sobre fondos simples se eliminan más limpiamente",
       "tip3": "Prueba primero con detección automática - a menudo funciona para marcas de agua estándar",
@@ -6539,88 +6539,5 @@
     },
     "processing": "Eliminando marca de agua...",
     "success": "¡Marca de agua eliminada exitosamente!"
-  },
-  "watermarkRemoverPage": {
-    "badge": "Eliminación de Marcas de Agua con IA",
-    "title": "Eliminador de Marcas de Agua con IA",
-    "subtitle": "Elimina marcas de agua, logos y superposiciones de texto de imágenes de forma perfecta con inpainting de IA.",
-    "termsNotice": "Al usar esta herramienta, aceptas nuestros Términos de Servicio.",
-    "stats": {
-      "aiPowered": "LaMA",
-      "aiPoweredLabel": "Modelo IA",
-      "modes": "2",
-      "modesLabel": "Modos de Eliminación",
-      "creditCost": "2 Créditos",
-      "creditCostLabel": "Por Imagen"
-    },
-    "howItWorks": {
-      "title": "Cómo Funciona",
-      "step1": {
-        "title": "Subir Imagen",
-        "description": "Sube una imagen con marca de agua"
-      },
-      "step2": {
-        "title": "Seleccionar Modo",
-        "description": "Auto-detectar o marcar manualmente la marca de agua"
-      },
-      "step3": {
-        "title": "Descargar Limpio",
-        "description": "Obtén tu imagen sin marca de agua"
-      }
-    },
-    "features": {
-      "autoDetect": {
-        "title": "Detección Automática",
-        "description": "La IA encuentra y elimina automáticamente las marcas de agua"
-      },
-      "manualMask": {
-        "title": "Enmascarado Manual",
-        "description": "Pinta sobre áreas específicas para eliminar"
-      },
-      "seamless": {
-        "title": "Resultados Perfectos",
-        "description": "La IA rellena el fondo de forma natural"
-      }
-    },
-    "useCases": {
-      "title": "Casos de Uso",
-      "stockPhotos": {
-        "title": "Fotos de Stock",
-        "description": "Elimina marcas de agua de vista previa de imágenes de stock"
-      },
-      "screenshots": {
-        "title": "Capturas de Pantalla",
-        "description": "Limpia capturas de pantalla con superposiciones no deseadas"
-      },
-      "oldPhotos": {
-        "title": "Fotos Antiguas",
-        "description": "Elimina sellos de fecha de fotos antiguas"
-      },
-      "documents": {
-        "title": "Documentos",
-        "description": "Limpia documentos escaneados"
-      }
-    },
-    "relatedTools": {
-      "title": "Herramientas Relacionadas",
-      "objectRemoval": {
-        "title": "Eliminación de Objetos",
-        "description": "Elimina cualquier objeto de las fotos"
-      },
-      "inpainting": {
-        "title": "Inpainting IA",
-        "description": "Rellena y extiende imágenes"
-      },
-      "removeBackground": {
-        "title": "Eliminar Fondo",
-        "description": "Fondos transparentes"
-      }
-    },
-    "cta": {
-      "title": "¿Listo para Eliminar Marcas de Agua?",
-      "subtitle": "Limpia tus imágenes con IA hoy",
-      "exploreTools": "Explorar Todas las Herramientas",
-      "viewPricing": "Ver Precios"
-    }
   }
 }

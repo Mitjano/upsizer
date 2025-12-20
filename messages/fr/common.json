@@ -6142,41 +6142,41 @@
     "subtitle": "Supprimez les filigranes, logos et superpositions de texte des images de manière transparente avec l'inpainting IA. Nettoyez les images de stock, supprimez les tampons de date et restaurez les photos à leur état original. Rapide, précis et facile à utiliser.",
     "stats": {
       "credits": "2",
-      "creditsLabel": "Crédits/Image",
+      "creditsLabel": "Crédits",
       "modes": "2",
       "modesLabel": "Modes de Suppression",
-      "aiModel": "LaMA",
-      "aiModelLabel": "Moteur d'Inpainting"
+      "accuracy": "95%+",
+      "accuracyLabel": "Précision"
     },
     "termsNotice": "En utilisant cet outil, vous acceptez nos Conditions d'Utilisation et Politique de Confidentialité.",
     "options": {
-      "title": "Modes de Suppression de Filigrane",
-      "auto": {
+      "title": "Modes de Suppression",
+      "autoDetect": {
         "name": "Détection Automatique",
-        "description": "L'IA détecte et supprime automatiquement les filigranes courants, logos et texte superposé."
+        "description": "L'IA détecte et supprime automatiquement les filigranes, logos et texte superposé sans sélection manuelle."
       },
-      "manual": {
+      "manualMask": {
         "name": "Masque Manuel",
-        "description": "Peignez sur les zones spécifiques que vous voulez supprimer pour un contrôle précis."
+        "description": "Peignez sur les zones spécifiques que vous voulez supprimer pour un contrôle précis sur le processus."
       },
-      "batch": {
-        "name": "Traitement par Lots",
-        "description": "Traitez plusieurs images avec des filigranes similaires efficacement."
+      "combined": {
+        "name": "Mode Combiné",
+        "description": "Utilisez la détection automatique comme point de départ, puis affinez avec le masquage manuel pour les meilleurs résultats."
       }
     },
     "features": {
-      "title": "Fonctionnalités de Suppression de Filigrane",
-      "aiPowered": {
-        "title": "Inpainting LaMA",
-        "description": "Utilise le modèle d'inpainting LaMA de pointe qui remplit intelligemment les zones supprimées avec un contenu contextuellement approprié."
-      },
+      "title": "Pourquoi Choisir Notre Suppresseur de Filigrane",
       "autoDetect": {
         "title": "Détection Automatique",
-        "description": "Détecte automatiquement les filigranes, logos, tampons de date et texte superposé courants pour une suppression en un clic."
+        "description": "Détection alimentée par IA qui trouve automatiquement les filigranes, logos et texte superposé sur toute votre image."
+      },
+      "manualMask": {
+        "title": "Masquage Manuel",
+        "description": "Outil pinceau précis pour marquer exactement ce que vous voulez supprimer - parfait pour les filigranes complexes ou subtils."
       },
       "seamless": {
         "title": "Résultats Parfaits",
-        "description": "Remplit la zone du filigrane avec une texture, des couleurs et un éclairage correspondants pour une intégration invisible."
+        "description": "Inpainting avancé qui remplit les zones supprimées avec un contenu réaliste correspondant à l'image environnante."
       }
     },
     "howItWorks": {
@@ -6200,53 +6200,53 @@
       }
     },
     "useCases": {
-      "title": "Parfait Pour la Suppression de Filigrane",
-      "stock": {
-        "icon": "📷",
+      "title": "Parfait Pour Chaque Cas d'Utilisation",
+      "stockPhotos": {
+        "icon": "📸",
         "title": "Photos de Stock",
-        "description": "Supprimez les filigranes d'aperçu des images de stock que vous avez achetées mais reçues avec filigrane."
+        "description": "Supprimez les filigranes d'aperçu des images de stock pour évaluer avant d'acheter."
       },
       "oldPhotos": {
         "icon": "📅",
         "title": "Anciennes Photos",
-        "description": "Supprimez les tampons de date, marques de caméra et logos de studio des anciennes photos de famille."
+        "description": "Supprimez les tampons de date et filigranes de caméra des anciennes photos numériques."
       },
       "screenshots": {
         "icon": "🖥️",
         "title": "Captures d'Écran",
-        "description": "Nettoyez les captures d'écran en supprimant le texte superposé, les bannières et éléments UI indésirables."
+        "description": "Nettoyez les captures d'écran en supprimant le texte superposé et éléments UI indésirables."
       },
       "documents": {
         "icon": "📄",
-        "title": "Documents",
-        "description": "Supprimez les tampons de brouillon, filigranes d'exemple et superpositions des documents numérisés."
+        "title": "Documents Numérisés",
+        "description": "Supprimez les tampons, signatures ou marques indésirables des documents numérisés."
       }
     },
     "technology": {
-      "title": "🧹 Technologie d'Inpainting LaMA",
-      "description": "Notre suppression de filigrane utilise le modèle LaMA (Large Mask Inpainting), spécifiquement conçu pour remplir les régions manquantes avec un contenu réaliste. Contrairement aux outils simples de clonage, LaMA comprend le contexte de l'image et génère des remplissages appropriés.",
-      "feature1": "Inpainting conscient du contexte pour un remplissage réaliste",
-      "feature2": "Prise en charge des grandes et petites régions également",
-      "feature3": "Correspondance de texture avec le contenu environnant",
-      "feature4": "Préservation des bords et transitions naturelles"
+      "title": "Alimenté par l'Inpainting IA Avancé",
+      "description": "Notre suppresseur de filigrane utilise le modèle IA LaMA (Large Mask Inpainting), entraîné sur des millions d'images pour comprendre le contexte et remplir les zones supprimées de manière transparente avec un contenu réaliste correspondant à l'image environnante.",
+      "feature1": "Modèle LaMA AI pour l'inpainting contextuel",
+      "feature2": "Comprend le contexte et les textures de l'image",
+      "feature3": "Gère les grands et petits filigranes également",
+      "feature4": "Préserve la qualité de l'image pendant la suppression"
     },
     "limitations": {
       "title": "À Quoi S'Attendre",
       "worksWell": {
-        "title": "✓ Fonctionne Mieux Pour",
-        "item1": "Filigranes sur des zones simples ou texturées (ciel, murs, fonds)",
-        "item2": "Logos et texte de petite à moyenne taille",
-        "item3": "Filigranes semi-transparents et superpositions"
+        "title": "Fonctionne Excellemment Pour",
+        "item1": "Filigranes textuels et logos sur des fonds simples",
+        "item2": "Superpositions semi-transparentes et tampons de date",
+        "item3": "Filigranes qui ne couvrent pas les détails critiques de l'image"
       },
       "limitations": {
-        "title": "✗ Limitations Actuelles",
-        "item1": "Les filigranes sur des détails complexes peuvent laisser des artefacts",
-        "item2": "Les très grands filigranes peuvent ne pas se reconstruire parfaitement",
-        "item3": "Les motifs répétitifs derrière les filigranes peuvent ne pas correspondre exactement"
+        "title": "Considérations",
+        "item1": "Les motifs complexes sous les filigranes peuvent nécessiter un raffinement manuel",
+        "item2": "Les grands filigranes couvrant les visages peuvent affecter les résultats",
+        "item3": "Respectez les droits d'auteur - utilisez uniquement sur les images dont vous avez les droits"
       }
     },
     "tips": {
-      "title": "💡 Conseils Pour une Meilleure Suppression de Filigrane",
+      "title": "Conseils Pour les Meilleurs Résultats",
       "tip1": "Pour de meilleurs résultats, utilisez le mode manuel pour marquer précisément la zone du filigrane",
       "tip2": "Les filigranes sur des fonds simples se suppriment plus proprement",
       "tip3": "Essayez d'abord la détection automatique - elle fonctionne souvent pour les filigranes standards",
@@ -6626,88 +6626,5 @@
     },
     "processing": "Suppression du filigrane...",
     "success": "Filigrane supprimé avec succès!"
-  },
-  "watermarkRemoverPage": {
-    "badge": "Suppression de Filigrane par IA",
-    "title": "Suppresseur de Filigrane IA",
-    "subtitle": "Supprimez les filigranes, logos et superpositions de texte des images de manière transparente avec l'inpainting IA.",
-    "termsNotice": "En utilisant cet outil, vous acceptez nos Conditions d'Utilisation.",
-    "stats": {
-      "aiPowered": "LaMA",
-      "aiPoweredLabel": "Modèle IA",
-      "modes": "2",
-      "modesLabel": "Modes de Suppression",
-      "creditCost": "2 Crédits",
-      "creditCostLabel": "Par Image"
-    },
-    "howItWorks": {
-      "title": "Comment Ça Marche",
-      "step1": {
-        "title": "Télécharger Image",
-        "description": "Téléchargez une image avec filigrane"
-      },
-      "step2": {
-        "title": "Sélectionner le Mode",
-        "description": "Auto-détecter ou marquer manuellement le filigrane"
-      },
-      "step3": {
-        "title": "Télécharger Propre",
-        "description": "Obtenez votre image sans filigrane"
-      }
-    },
-    "features": {
-      "autoDetect": {
-        "title": "Détection Automatique",
-        "description": "L'IA trouve et supprime automatiquement les filigranes"
-      },
-      "manualMask": {
-        "title": "Masquage Manuel",
-        "description": "Peignez sur des zones spécifiques à supprimer"
-      },
-      "seamless": {
-        "title": "Résultats Parfaits",
-        "description": "L'IA remplit le fond naturellement"
-      }
-    },
-    "useCases": {
-      "title": "Cas d'Utilisation",
-      "stockPhotos": {
-        "title": "Photos de Stock",
-        "description": "Supprimez les filigranes d'aperçu des images de stock"
-      },
-      "screenshots": {
-        "title": "Captures d'Écran",
-        "description": "Nettoyez les captures d'écran avec des superpositions indésirables"
-      },
-      "oldPhotos": {
-        "title": "Anciennes Photos",
-        "description": "Supprimez les tampons de date des anciennes photos"
-      },
-      "documents": {
-        "title": "Documents",
-        "description": "Nettoyez les documents numérisés"
-      }
-    },
-    "relatedTools": {
-      "title": "Outils Connexes",
-      "objectRemoval": {
-        "title": "Suppression d'Objets",
-        "description": "Supprimez n'importe quel objet des photos"
-      },
-      "inpainting": {
-        "title": "Inpainting IA",
-        "description": "Remplissez et étendez les images"
-      },
-      "removeBackground": {
-        "title": "Supprimer le Fond",
-        "description": "Fonds transparents"
-      }
-    },
-    "cta": {
-      "title": "Prêt à Supprimer les Filigranes?",
-      "subtitle": "Nettoyez vos images avec l'IA aujourd'hui",
-      "exploreTools": "Explorer Tous les Outils",
-      "viewPricing": "Voir les Prix"
-    }
   }
 }
