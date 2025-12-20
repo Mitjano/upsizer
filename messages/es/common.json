@@ -5155,301 +5155,301 @@
     }
   },
   "collageMakerPage": {
-    "badge": "Creador de Collages Gratuito",
-    "title": "Crea Collages de Fotos",
-    "titleHighlight": "Impresionantes",
-    "subtitle": "Combina múltiples fotos en hermosos collages con plantillas de cuadrícula personalizables. Herramienta de creación de collages gratuita con procesamiento local - tus fotos nunca salen de tu dispositivo.",
+    "badge": "Herramienta de Collage Gratuita",
+    "title": "Crea Hermosos",
+    "titleHighlight": "Collages de Fotos",
+    "subtitle": "Combina múltiples fotos en impresionantes collages con nuestra herramienta online gratuita. Elige entre varios diseños, personaliza espaciados y fondos, y descarga resultados de alta calidad. Perfecto para redes sociales, recuerdos y proyectos.",
     "stats": {
       "cost": "GRATIS",
       "costLabel": "Sin Créditos",
-      "layouts": "10+",
-      "layoutsLabel": "Plantillas de Cuadrícula",
-      "processing": "Local",
-      "processingLabel": "En Tu Navegador"
+      "images": "2-9",
+      "imagesLabel": "Fotos",
+      "layouts": "6+",
+      "layoutsLabel": "Plantillas"
     },
-    "termsNotice": "Las imágenes se procesan localmente en tu navegador y nunca se suben.",
+    "termsNotice": "Las imágenes se procesan localmente en tu navegador.",
     "options": {
       "title": "Opciones de Diseño de Collage",
       "grid": {
-        "name": "Cuadrícula Clásica",
-        "description": "Cuadrículas simétrica 2x2, 3x3 y 4x4 perfectas para series de fotos uniformes."
+        "name": "Diseños de Cuadrícula",
+        "description": "Cuadrículas clásicas 2x2, 3x3 y 4x4 para composiciones organizadas y equilibradas."
       },
-      "masonry": {
-        "name": "Disposición Mampostería",
-        "description": "Estilo Pinterest con alturas variables para collages creativos y dinámicos."
+      "asymmetric": {
+        "name": "Asimétrico",
+        "description": "Destaca una imagen principal con fotos de apoyo más pequeñas."
       },
-      "freeform": {
-        "name": "Diseño Personalizado",
-        "description": "Arrastra y redimensiona fotos libremente para crear composiciones únicas."
+      "horizontal": {
+        "name": "Tira Horizontal",
+        "description": "Diseños lado a lado perfectos para comparaciones antes/después."
       }
     },
     "features": {
       "title": "Características del Creador de Collages",
-      "templates": {
-        "title": "Plantillas Profesionales",
-        "description": "Elige entre más de 10 plantillas de cuadrícula diseñadas para redes sociales, impresión y propósitos de presentación."
+      "layouts": {
+        "title": "Múltiples Diseños",
+        "description": "Elige entre diseños 2x1, 1x2, 2x2, 3x3, 4x4 y asimétricos para cualquier cantidad de fotos."
       },
       "customization": {
         "title": "Personalización Completa",
-        "description": "Ajusta el espaciado entre fotos, colores de borde, esquinas redondeadas y color de fondo para que coincida con tu estilo."
+        "description": "Ajusta el tamaño del espaciado, color de fondo, radio de esquinas y dimensiones de salida según tus necesidades."
       },
-      "privacy": {
-        "title": "Primero la Privacidad",
-        "description": "Toda la creación de collages ocurre en tu navegador. Tus fotos permanecen privadas - sin subidas, sin almacenamiento."
+      "quality": {
+        "title": "Salida de Alta Calidad",
+        "description": "Exporta en resoluciones personalizadas hasta 4K. Perfecto para impresión y pantallas grandes."
       }
     },
     "howItWorks": {
       "title": "Cómo",
       "titleHighlight": "Crear Collages",
       "step1": {
-        "title": "Sube las Fotos",
-        "description": "Selecciona múltiples fotos de tu dispositivo para incluir en el collage."
+        "title": "Sube Fotos",
+        "description": "Selecciona 2-9 fotos de tu dispositivo."
       },
       "step2": {
-        "title": "Elige el Diseño",
-        "description": "Selecciona una plantilla de cuadrícula que se ajuste a tu número de fotos."
+        "title": "Elige Diseño",
+        "description": "Elige entre diseños de cuadrícula, asimétrico o tira."
       },
       "step3": {
-        "title": "Personaliza el Diseño",
-        "description": "Ajusta el espaciado, bordes y colores de fondo a tu preferencia."
+        "title": "Personaliza",
+        "description": "Ajusta espaciado, color de fondo y dimensiones."
       },
       "step4": {
-        "title": "Descarga el Collage",
-        "description": "Guarda tu collage terminado como imagen de alta calidad."
+        "title": "Descarga",
+        "description": "Guarda tu collage como imagen de alta calidad."
       }
     },
     "useCases": {
-      "title": "Perfecto Para Creación de Collages",
-      "social": {
-        "icon": "📱",
-        "title": "Publicaciones en Redes Sociales",
-        "description": "Crea carruseles de Instagram, fotos de portada de Facebook y collages de fotos de Twitter."
-      },
+      "title": "Perfecto Para Collages de Fotos",
       "memories": {
         "icon": "📸",
-        "title": "Compilaciones de Recuerdos",
-        "description": "Combina fotos de vacaciones, eventos o momentos especiales en recuerdos compartibles."
+        "title": "Recuerdos Fotográficos",
+        "description": "Combina fotos de vacaciones, eventos familiares o momentos especiales en imágenes memorables únicas."
       },
-      "products": {
-        "icon": "🛍️",
-        "title": "Exhibición de Productos",
-        "description": "Muestra múltiples vistas o variantes de productos en una sola imagen atractiva."
+      "social": {
+        "icon": "📱",
+        "title": "Redes Sociales",
+        "description": "Crea publicaciones atractivas con múltiples fotos para Instagram, Facebook y otras plataformas."
       },
       "comparison": {
-        "icon": "🔄",
-        "title": "Comparaciones Antes/Después",
-        "description": "Crea comparaciones lado a lado para transformaciones y resultados de progreso."
+        "icon": "⚖️",
+        "title": "Antes y Después",
+        "description": "Diseños lado a lado perfectos para mostrar transformaciones y progreso."
+      },
+      "portfolios": {
+        "icon": "💼",
+        "title": "Portafolios",
+        "description": "Muestra múltiples trabajos en una presentación única y profesional."
       }
     },
     "technology": {
-      "title": "🎨 Creación de Collages en Navegador",
-      "description": "Nuestro creador de collages usa la API Canvas de HTML5 para combinar y organizar imágenes directamente en tu navegador. Sin procesamiento del lado del servidor significa resultados instantáneos y privacidad total.",
-      "feature1": "Combinación y diseño de imágenes en tiempo real",
-      "feature2": "Funciona sin conexión después de la carga inicial",
-      "feature3": "Salida de alta resolución adecuada para impresión",
-      "feature4": "Sin límites de tamaño de archivo ni restricciones de subida"
+      "title": "🖼️ Creación de Collages en el Navegador",
+      "description": "Nuestro creador de collages usa HTML5 Canvas para combinar tus fotos completamente en tu navegador. Esto asegura privacidad (sin subidas), resultados instantáneos y sin pérdida de calidad durante el procesamiento.",
+      "feature1": "Procesamiento local - las fotos nunca salen de tu dispositivo",
+      "feature2": "Salida de alta resolución hasta 4K",
+      "feature3": "Ajuste y recorte inteligente de imágenes",
+      "feature4": "Vista previa instantánea mientras ajustas la configuración"
     },
     "limitations": {
       "title": "Qué Esperar",
       "worksWell": {
         "title": "✓ Funciona Mejor Para",
-        "item1": "Collages de 2-9 fotos con diseños de cuadrícula",
-        "item2": "Imágenes cuadradas o de orientación similar",
-        "item3": "Creación rápida de collages en redes sociales"
+        "item1": "2-9 fotos de orientación similar",
+        "item2": "Diseños basados en cuadrícula y simples",
+        "item3": "Collages rápidos para redes sociales y recuerdos"
       },
       "limitations": {
         "title": "✗ Limitaciones Actuales",
-        "item1": "Sin formas personalizadas ni recortes avanzados",
-        "item2": "Sin capacidades de superposición de texto",
-        "item3": "El número de fotos limitado por la plantilla"
+        "item1": "Sin arrastrar y soltar para reposicionar dentro de celdas",
+        "item2": "Limitado a plantillas de diseño preestablecidas",
+        "item3": "No se puede añadir texto o stickers a los collages"
       }
     },
     "tips": {
       "title": "💡 Consejos Para Mejores Collages",
-      "tip1": "Usa fotos con colores o temas similares para collages cohesivos",
-      "tip2": "Recorta las fotos a proporciones similares antes de crear el collage",
-      "tip3": "El espaciado consistente crea diseños más profesionales",
-      "tip4": "Usa colores de borde que complementen tus fotos",
-      "tip5": "Las fotos de menor cantidad a menudo crean collages más impactantes",
-      "tip6": "Considera el propósito (impresión vs web) al elegir el tamaño de salida"
+      "tip1": "Usa fotos con tonos de color similares para un aspecto cohesivo",
+      "tip2": "Combina orientaciones de fotos con tu diseño elegido",
+      "tip3": "Añade espacio para una apariencia más limpia y moderna",
+      "tip4": "Usa fondos blancos o neutros para un aspecto profesional",
+      "tip5": "Los diseños cuadrados funcionan mejor para Instagram",
+      "tip6": "Prueba diseños asimétricos para destacar fotos clave"
     },
     "faq": {
       "title": "Preguntas Frecuentes",
       "q1": {
-        "question": "¿Cuántas fotos puedo incluir en un collage?",
-        "answer": "Dependiendo de la plantilla, puedes incluir 2-9 fotos en un solo collage. Diferentes plantillas acomodan diferentes cantidades de fotos."
+        "question": "¿Es gratuito el creador de collages?",
+        "answer": "¡Sí! El creador de collages es 100% gratuito sin límites. No se requiere cuenta ni créditos."
       },
       "q2": {
-        "question": "¿Puedo reordenar las fotos después de subirlas?",
-        "answer": "Sí, puedes arrastrar y soltar fotos para reorganizarlas dentro de la cuadrícula del collage antes de descargar."
+        "question": "¿Cuántas fotos puedo combinar?",
+        "answer": "Puedes combinar 2-9 fotos por collage. Los diseños disponibles se adaptan al número de fotos que subas."
       },
       "q3": {
-        "question": "¿Cuál es la resolución de salida?",
-        "answer": "Los collages se exportan en alta resolución adecuada tanto para visualización web como impresión. El tamaño exacto depende de tu selección de plantilla."
+        "question": "¿Qué tamaños de salida están disponibles?",
+        "answer": "Puedes establecer dimensiones personalizadas hasta resolución 4K. Preajustes comunes incluyen 1080x1080 para Instagram y 1920x1080 para pantalla panorámica."
       },
       "q4": {
-        "question": "¿Mis fotos se almacenan en algún lugar?",
-        "answer": "No. Todo el procesamiento ocurre localmente en tu navegador. Tus fotos nunca salen de tu dispositivo."
+        "question": "¿Mis fotos se suben a un servidor?",
+        "answer": "No. Todo el procesamiento ocurre en tu navegador. Tus fotos nunca salen de tu dispositivo, asegurando privacidad completa."
       },
       "q5": {
-        "question": "¿Puedo añadir texto a mi collage?",
-        "answer": "Actualmente, el creador de collages se enfoca en composición de fotos. Para superposiciones de texto, recomendamos usar nuestra herramienta de efectos de texto o un editor de imágenes."
+        "question": "¿Puedo guardar en diferentes formatos?",
+        "answer": "Los collages se guardan como PNG para mejor calidad, lo cual funciona genial para todos los usos incluyendo impresión y web."
       }
     },
     "cta": {
-      "title": "Crea Tu Collage de Fotos",
-      "subtitle": "Gratis, privado, fácil. Combina tus fotos favoritas en collages hermosos.",
-      "getStarted": "Crear Collage",
-      "startAction": "Comenzar"
+      "title": "Crea Tu Collage de Fotos Ahora",
+      "subtitle": "Gratis, instantáneo, privado. Combina tus fotos en hermosos collages.",
+      "getStarted": "Hacer Collage",
+      "startAction": "Crear Ahora"
     }
   },
   "cropImagePage": {
     "badge": "Herramienta de Recorte Gratuita",
-    "title": "Recorta y Redimensiona",
-    "titleHighlight": "Imágenes Fácilmente",
-    "subtitle": "Recorta tus fotos a proporciones perfectas para redes sociales, impresión y web. Herramienta de recorte gratuita con presets populares para Instagram, Facebook, YouTube y más. Procesamiento local - tus imágenes permanecen privadas.",
+    "title": "Recorta Imágenes con",
+    "titleHighlight": "Precisión",
+    "subtitle": "Recorta y redimensiona tus imágenes con precisión de píxel. Elige entre proporciones preestablecidas o define dimensiones personalizadas. Gratis, rápido y funciona completamente en tu navegador sin subir archivos.",
     "stats": {
       "cost": "GRATIS",
       "costLabel": "Sin Créditos",
-      "presets": "12+",
-      "presetsLabel": "Proporciones de Aspecto",
-      "processing": "Local",
-      "processingLabel": "En Tu Navegador"
+      "ratios": "8+",
+      "ratiosLabel": "Proporciones",
+      "processing": "Instant",
+      "processingLabel": "Resultados"
     },
-    "termsNotice": "Las imágenes se procesan localmente en tu navegador y nunca se suben.",
+    "termsNotice": "Las imágenes se procesan localmente en tu navegador.",
     "options": {
-      "title": "Presets de Recorte Populares",
+      "title": "Proporciones de Recorte",
       "square": {
-        "name": "Cuadrado 1:1",
-        "description": "Perfecto para publicaciones de Instagram, fotos de perfil y visualización de productos."
+        "name": "1:1 Cuadrado",
+        "description": "Perfecto para publicaciones de Instagram y fotos de perfil."
       },
       "landscape": {
-        "name": "Paisaje 16:9",
-        "description": "Ideal para miniaturas de YouTube, fotos de portada y fondos de escritorio."
+        "name": "16:9 Panorámico",
+        "description": "Ideal para miniaturas de YouTube y fondos de escritorio."
       },
       "portrait": {
-        "name": "Retrato 4:5",
-        "description": "Optimizado para publicaciones de retrato de Instagram, Pinterest y visualización móvil."
+        "name": "4:5 Retrato",
+        "description": "Optimizado para retratos de Instagram y Pinterest."
       }
     },
     "features": {
-      "title": "Características de la Herramienta de Recorte",
-      "presets": {
-        "title": "Presets de Redes Sociales",
-        "description": "Un clic para proporciones de recorte perfectas para Instagram, Facebook, Twitter, YouTube, LinkedIn y más."
+      "title": "Funciones de Recorte de Imágenes",
+      "ratios": {
+        "title": "Proporciones Preestablecidas",
+        "description": "Presets rápidos para 1:1, 4:3, 16:9, 3:2, 4:5 y más. Perfectos para redes sociales y formatos comunes."
       },
-      "custom": {
-        "title": "Proporción Personalizada",
-        "description": "Establece cualquier proporción de aspecto personalizada o recorta en forma libre para dimensiones exactas que necesitas."
+      "precision": {
+        "title": "Control a Nivel de Píxel",
+        "description": "Ingresa valores exactos de X, Y, ancho y alto para recorte preciso cuando necesitas dimensiones exactas."
       },
-      "privacy": {
-        "title": "Privacidad Total",
-        "description": "Todas las imágenes se procesan localmente en tu navegador. Nada se sube a servidores."
+      "preview": {
+        "title": "Vista Previa en Vivo",
+        "description": "Ve tu área de recorte en tiempo real con manejadores arrastrables para ajustes intuitivos."
       }
     },
     "howItWorks": {
-      "title": "Cómo",
-      "titleHighlight": "Recortar Tus Imágenes",
+      "title": "Cómo Funciona",
+      "titleHighlight": "el Recorte de Imágenes",
       "step1": {
-        "title": "Sube la Imagen",
-        "description": "Selecciona cualquier imagen de tu dispositivo para recortar."
+        "title": "Sube una Imagen",
+        "description": "Selecciona cualquier imagen JPG, PNG o WEBP desde tu dispositivo."
       },
       "step2": {
-        "title": "Elige Proporción de Aspecto",
-        "description": "Selecciona un preset o introduce proporciones personalizadas."
+        "title": "Selecciona el Área",
+        "description": "Usa proporciones preestablecidas o dibuja un área de recorte personalizada."
       },
       "step3": {
-        "title": "Ajusta el Área de Recorte",
-        "description": "Arrastra y redimensiona el cuadro de recorte para seleccionar tu área deseada."
+        "title": "Ajusta la Posición",
+        "description": "Arrastra y redimensiona el cuadro de recorte para enmarcar tu toma."
       },
       "step4": {
-        "title": "Descarga el Resultado",
-        "description": "Guarda tu imagen recortada en formato de alta calidad."
+        "title": "Descarga",
+        "description": "Guarda tu imagen recortada en alta calidad."
       }
     },
     "useCases": {
       "title": "Perfecto Para Recorte de Imágenes",
       "social": {
         "icon": "📱",
-        "title": "Contenido de Redes Sociales",
-        "description": "Recorta fotos a proporciones perfectas para publicaciones de Instagram, portadas de Facebook y banners de Twitter."
-      },
-      "profile": {
-        "icon": "👤",
-        "title": "Fotos de Perfil",
-        "description": "Crea fotos de perfil cuadradas perfectas para cualquier plataforma o aplicación."
+        "title": "Redes Sociales",
+        "description": "Recorta a dimensiones exactas para publicaciones de Instagram, Facebook, Twitter y LinkedIn."
       },
       "ecommerce": {
-        "icon": "🛒",
+        "icon": "🛍️",
         "title": "Fotos de Productos",
-        "description": "Estandariza imágenes de productos a proporciones de aspecto consistentes para tiendas online."
+        "description": "Crea dimensiones consistentes de imágenes de productos para tiendas online."
       },
-      "print": {
-        "icon": "🖨️",
-        "title": "Preparación para Impresión",
-        "description": "Recorta imágenes a proporciones de impresión estándar como 4x6, 5x7 o 8x10."
+      "documents": {
+        "icon": "📄",
+        "title": "Documentos e ID",
+        "description": "Recorta fotos para pasaportes, visas y documentos oficiales."
+      },
+      "design": {
+        "icon": "🎨",
+        "title": "Proyectos de Diseño",
+        "description": "Prepara imágenes para requisitos específicos de diseño y composiciones."
       }
     },
     "technology": {
-      "title": "🖼️ Recorte de Imágenes en Navegador",
-      "description": "Nuestra herramienta de recorte usa la API Canvas de HTML5 para manipulación de imágenes en tiempo real directamente en tu navegador. El procesamiento del lado del cliente asegura privacidad y operación instantánea.",
-      "feature1": "Selección de área de recorte interactiva en tiempo real",
-      "feature2": "Sin compresión de imagen ni pérdida de calidad",
-      "feature3": "Funciona sin conexión después de la carga de la página",
-      "feature4": "Soporta imágenes de alta resolución sin límites de tamaño"
+      "title": "✂️ Recorte en el Navegador",
+      "description": "Nuestra herramienta de recorte usa HTML5 Canvas para recorte de imágenes preciso e instantáneo directamente en tu navegador. Sin procesamiento de servidor significa privacidad completa y cero tiempo de espera.",
+      "feature1": "Vista previa instantánea sin necesidad de subir",
+      "feature2": "Control de recorte preciso a nivel de píxel",
+      "feature3": "Mantiene la calidad de imagen original",
+      "feature4": "Funciona sin conexión una vez cargada la página"
     },
     "limitations": {
       "title": "Qué Esperar",
       "worksWell": {
         "title": "✓ Funciona Mejor Para",
-        "item1": "Recorte preciso de área de imagen única",
-        "item2": "Dimensiones de redes sociales y fotos de perfil",
-        "item3": "Estandarizar proporciones de imagen"
+        "item1": "Preparación rápida de imágenes para redes sociales",
+        "item2": "Ajustes dimensionales precisos",
+        "item3": "Preparación por lotes con proporciones consistentes"
       },
       "limitations": {
         "title": "✗ Limitaciones Actuales",
-        "item1": "Sin procesamiento por lotes de múltiples imágenes",
-        "item2": "Sin recorte de forma (solo rectangular)",
-        "item3": "Sin escalado - solo recorte al tamaño original"
+        "item1": "No puede rotar imágenes (usa herramienta separada)",
+        "item2": "Sin relleno consciente del contenido para áreas extendidas",
+        "item3": "La salida máxima es la resolución de imagen original"
       }
     },
     "tips": {
       "title": "💡 Consejos Para Mejor Recorte",
-      "tip1": "Usa la regla de los tercios para composiciones visualmente atractivas",
-      "tip2": "Deja espacio alrededor de los sujetos para recorte posterior",
-      "tip3": "Los recortes cuadrados funcionan mejor para la mayoría de fotos de perfil",
-      "tip4": "Previsualiza cómo se verá tu recorte en su destino previsto",
-      "tip5": "Para redes sociales, verifica los requisitos actuales de la plataforma",
-      "tip6": "Mantén sujetos importantes alejados de los bordes del área de recorte"
+      "tip1": "Usa la regla de los tercios - posiciona sujetos en puntos de intersección",
+      "tip2": "Deja algo de espacio alrededor de los sujetos",
+      "tip3": "Verifica las proporciones preestablecidas para tu plataforma objetivo",
+      "tip4": "Usa entrada de píxeles para requisitos dimensionales exactos",
+      "tip5": "Recorta para enfocar la atención en elementos clave",
+      "tip6": "Considera el uso final al elegir la proporción"
     },
     "faq": {
       "title": "Preguntas Frecuentes",
       "q1": {
-        "question": "¿El recorte reduce la calidad de la imagen?",
-        "answer": "Recortar no reduce la calidad - simplemente selecciona una porción de la imagen original. Sin embargo, recortar extensivamente un área pequeña resultará en una imagen más pequeña."
+        "question": "¿Es gratuita la herramienta de recorte?",
+        "answer": "¡Sí! El recorte de imágenes es 100% gratis sin límites. No se requiere cuenta ni créditos."
       },
       "q2": {
-        "question": "¿Qué proporciones de aspecto están disponibles?",
-        "answer": "Ofrecemos presets para todos los tamaños principales de redes sociales (1:1, 4:5, 9:16, 16:9), tamaños de impresión (4x6, 5x7, 8x10), y proporciones personalizadas."
+        "question": "¿Qué proporciones están disponibles?",
+        "answer": "Los presets incluyen 1:1, 4:3, 3:2, 16:9, 4:5, 2:3, 9:16 y recorte libre para dimensiones personalizadas."
       },
       "q3": {
-        "question": "¿Puedo recortar la misma imagen múltiples veces?",
-        "answer": "Sí, puedes crear múltiples recortes de la misma imagen para diferentes propósitos antes de descargar."
+        "question": "¿Mi imagen se sube a algún lugar?",
+        "answer": "No. Todo el procesamiento ocurre en tu navegador. Tus imágenes nunca salen de tu dispositivo."
       },
       "q4": {
-        "question": "¿En qué formato se guarda la imagen recortada?",
-        "answer": "Las imágenes recortadas se guardan en formato PNG de alta calidad, preservando la calidad original."
+        "question": "¿Cuál es el tamaño máximo de archivo?",
+        "answer": "No hay límite estricto para el procesamiento local, pero imágenes muy grandes pueden ralentizar tu navegador. Imágenes hasta 20MB funcionan sin problemas."
       },
       "q5": {
-        "question": "¿Hay algún límite de tamaño de archivo?",
-        "answer": "Sin límites estrictos ya que todo el procesamiento ocurre localmente. Imágenes muy grandes pueden procesar más lento dependiendo de las capacidades de tu dispositivo."
+        "question": "¿Puedo ampliar mientras recorto?",
+        "answer": "El recorte solo corta del original. Para ampliar, usa nuestra herramienta AI Upscaler después de recortar."
       }
     },
     "cta": {
-      "title": "Recorta Tus Imágenes Ahora",
-      "subtitle": "Gratis, privado, instantáneo. Proporciones perfectas para cualquier plataforma.",
-      "getStarted": "Abrir Herramienta de Recorte",
-      "startAction": "Recortar Imagen"
+      "title": "Comienza a Recortar Tus Imágenes",
+      "subtitle": "Gratis, instantáneo, preciso. Recortes perfectos sin registro.",
+      "getStarted": "Recortar Imagen",
+      "startAction": "Comenzar a Recortar"
     }
   },
   "resizeImagePage": {

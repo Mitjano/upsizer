@@ -5552,301 +5552,301 @@
     }
   },
   "collageMakerPage": {
-    "badge": "Kreator Kolaży AI",
-    "title": "Kreator",
-    "titleHighlight": "Kolaży AI",
-    "subtitle": "Twórz oszałamiające kolaże zdjęć z wieloma układami i stylami. Idealne do mediów społecznościowych, albumów rodzinnych, portfolio i wspomnień z wydarzeń.",
-    "termsNotice": "Używając tego narzędzia, zgadzasz się z naszymi warunkami korzystania.",
+    "badge": "Darmowy Kreator Kolaży",
+    "title": "Twórz Piękne",
+    "titleHighlight": "Kolaże Zdjęć",
+    "subtitle": "Łącz wiele zdjęć w oszałamiające kolaże za pomocą naszego darmowego narzędzia online. Wybieraj spośród różnych układów, dostosowuj odstępy i tła, i pobieraj wysokiej jakości wyniki. Idealne do mediów społecznościowych, wspomnień i projektów.",
     "stats": {
-      "credits": "1",
-      "creditsLabel": "Kredyt/kolaż",
-      "layouts": "15+",
-      "layoutsLabel": "Układów",
-      "processing": "~10s",
-      "processingLabel": "Czas tworzenia"
+      "cost": "GRATIS",
+      "costLabel": "Bez Kredytów",
+      "images": "2-9",
+      "imagesLabel": "Zdjęć",
+      "layouts": "6+",
+      "layoutsLabel": "Szablonów"
     },
+    "termsNotice": "Obrazy są przetwarzane lokalnie w Twojej przeglądarce.",
     "options": {
-      "title": "Style kolaży",
+      "title": "Opcje Układu Kolażu",
       "grid": {
-        "name": "Siatka",
-        "description": "Klasyczny układ z równymi komórkami"
+        "name": "Układ Siatki",
+        "description": "Klasyczne siatki 2x2, 3x3 i 4x4 dla zorganizowanych, zrównoważonych kompozycji."
       },
-      "freeform": {
-        "name": "Swobodny",
-        "description": "Kreatywne, nakładające się układy"
+      "asymmetric": {
+        "name": "Asymetryczny",
+        "description": "Wyróżnij jedno główne zdjęcie z mniejszymi wspierającymi."
       },
-      "polaroid": {
-        "name": "Polaroid",
-        "description": "Retro styl z ramkami Polaroid"
+      "horizontal": {
+        "name": "Pasek Poziomy",
+        "description": "Układy obok siebie idealne do porównań przed/po."
       }
     },
     "features": {
-      "title": "Funkcje",
-      "manyLayouts": {
-        "title": "15+ układów",
-        "description": "Szeroki wybór gotowych szablonów kolaży"
-      },
-      "dragDrop": {
-        "title": "Przeciągnij i upuść",
-        "description": "Intuicyjne rozmieszczanie zdjęć"
+      "title": "Funkcje Kreatora Kolaży",
+      "layouts": {
+        "title": "Wiele Układów",
+        "description": "Wybieraj z układów 2x1, 1x2, 2x2, 3x3, 4x4 i asymetrycznych dla dowolnej liczby zdjęć."
       },
       "customization": {
-        "title": "Personalizacja",
-        "description": "Dostosuj odstępy, tło i zaokrąglenia"
+        "title": "Pełna Personalizacja",
+        "description": "Dostosuj wielkość odstępów, kolor tła, zaokrąglenie rogów i wymiary wyjściowe do swoich potrzeb."
+      },
+      "quality": {
+        "title": "Wysoka Jakość Wyjściowa",
+        "description": "Eksportuj w niestandardowych rozdzielczościach do 4K. Idealne do druku i dużych wyświetlaczy."
       }
     },
     "howItWorks": {
-      "title": "Jak to",
-      "titleHighlight": "działa",
+      "title": "Jak",
+      "titleHighlight": "Tworzyć Kolaże",
       "step1": {
-        "title": "Prześlij zdjęcia",
-        "description": "Wybierz od 2 do 12 zdjęć"
+        "title": "Prześlij Zdjęcia",
+        "description": "Wybierz 2-9 zdjęć z urządzenia."
       },
       "step2": {
-        "title": "Wybierz układ",
-        "description": "Przeglądaj i wybierz szablon"
+        "title": "Wybierz Układ",
+        "description": "Wybierz układ siatki, asymetryczny lub paska."
       },
       "step3": {
         "title": "Dostosuj",
-        "description": "Rozmieść zdjęcia i ustaw opcje"
+        "description": "Dostosuj odstępy, kolor tła i wymiary."
       },
       "step4": {
         "title": "Pobierz",
-        "description": "Zapisz gotowy kolaż"
+        "description": "Zapisz kolaż jako obraz wysokiej jakości."
       }
     },
     "useCases": {
-      "title": "Zastosowania",
-      "social": {
-        "icon": "📱",
-        "title": "Media społecznościowe",
-        "description": "Przyciągające wzrok posty z wieloma zdjęciami"
-      },
+      "title": "Idealne Do Kolaży Zdjęć",
       "memories": {
         "icon": "📸",
-        "title": "Wspomnienia",
-        "description": "Podsumuj wakacje lub wydarzenia"
+        "title": "Wspomnienia Fotograficzne",
+        "description": "Łącz zdjęcia z wakacji, wydarzeń rodzinnych lub wyjątkowych chwil w pojedyncze pamiątkowe obrazy."
       },
-      "portfolio": {
+      "social": {
+        "icon": "📱",
+        "title": "Media Społecznościowe",
+        "description": "Twórz angażujące posty wielozdjęciowe na Instagram, Facebook i inne platformy."
+      },
+      "comparison": {
+        "icon": "⚖️",
+        "title": "Przed i Po",
+        "description": "Idealne układy obok siebie do prezentacji transformacji i postępów."
+      },
+      "portfolios": {
         "icon": "💼",
         "title": "Portfolio",
-        "description": "Pokaż wiele prac naraz"
-      },
-      "prints": {
-        "icon": "🖨️",
-        "title": "Druki",
-        "description": "Kolaże do wydruku i oprawienia"
+        "description": "Wyświetlaj wiele prac w jednej, profesjonalnej prezentacji."
       }
     },
     "technology": {
-      "title": "Technologia",
-      "description": "Nasz kreator kolaży automatycznie optymalizuje rozmieszczenie i proporcje zdjęć dla najlepszego efektu.",
-      "feature1": "Inteligentne kadrowanie",
-      "feature2": "Automatyczne dopasowanie kolorów",
-      "feature3": "Eksport w wysokiej rozdzielczości",
-      "feature4": "Predefiniowane proporcje dla social media"
+      "title": "🖼️ Tworzenie Kolaży w Przeglądarce",
+      "description": "Nasz kreator kolaży wykorzystuje HTML5 Canvas do łączenia zdjęć bezpośrednio w Twojej przeglądarce. Zapewnia to prywatność (bez przesyłania), natychmiastowe wyniki i brak utraty jakości podczas przetwarzania.",
+      "feature1": "Lokalne przetwarzanie - zdjęcia nigdy nie opuszczają Twojego urządzenia",
+      "feature2": "Wyjście wysokiej rozdzielczości do 4K",
+      "feature3": "Inteligentne dopasowywanie i kadrowanie obrazów",
+      "feature4": "Natychmiastowy podgląd podczas dostosowywania ustawień"
     },
     "limitations": {
-      "title": "Co warto wiedzieć",
+      "title": "Czego Się Spodziewać",
       "worksWell": {
-        "title": "Działa dobrze z",
-        "item1": "Zdjęciami o podobnej tematyce",
-        "item2": "Obrazami w zbliżonej kolorystyce",
-        "item3": "Od 2 do 12 zdjęć na kolaż"
+        "title": "✓ Działa Najlepiej Dla",
+        "item1": "2-9 zdjęć o podobnej orientacji",
+        "item2": "Układy oparte na siatce i proste szablony",
+        "item3": "Szybkie kolaże do mediów społecznościowych i wspomnień"
       },
       "limitations": {
-        "title": "Ograniczenia",
-        "item1": "Maksymalnie 12 zdjęć na kolaż",
-        "item2": "Bardzo różne proporcje mogą wymagać kadrowania",
-        "item3": "Każde zdjęcie ma minimalny rozmiar wyświetlania"
+        "title": "✗ Obecne Ograniczenia",
+        "item1": "Brak przeciągania i upuszczania w komórkach",
+        "item2": "Ograniczone do predefiniowanych szablonów układu",
+        "item3": "Nie można dodawać tekstu ani naklejek do kolaży"
       }
     },
     "tips": {
-      "title": "Wskazówki",
-      "tip1": "Wybieraj zdjęcia o podobnej kolorystyce",
-      "tip2": "Używaj nieparzystych liczb zdjęć dla ciekawszych układów",
-      "tip3": "Zadbaj o jedno zdjęcie główne, większe",
-      "tip4": "Testuj różne układy z tymi samymi zdjęciami",
-      "tip5": "Dodaj obramowanie dla czystszego wyglądu",
-      "tip6": "Eksportuj w rozdzielczości odpowiedniej do platformy"
+      "title": "💡 Wskazówki Dla Lepszych Kolaży",
+      "tip1": "Używaj zdjęć o podobnych tonach kolorystycznych dla spójnego wyglądu",
+      "tip2": "Dopasuj orientację zdjęć do wybranego układu",
+      "tip3": "Dodaj odstępy dla czystszego, bardziej nowoczesnego wyglądu",
+      "tip4": "Używaj białych lub neutralnych teł dla profesjonalnego wyglądu",
+      "tip5": "Kwadratowe układy działają najlepiej na Instagramie",
+      "tip6": "Wypróbuj asymetryczne układy, aby wyróżnić kluczowe zdjęcia"
     },
     "faq": {
-      "title": "Często zadawane pytania",
+      "title": "Często Zadawane Pytania",
       "q1": {
-        "question": "Ile zdjęć mogę użyć?",
-        "answer": "Od 2 do 12 zdjęć, w zależności od wybranego układu."
+        "question": "Czy kreator kolaży jest darmowy?",
+        "answer": "Tak! Kreator kolaży jest w 100% darmowy bez limitów. Nie wymaga konta ani kredytów."
       },
       "q2": {
-        "question": "Czy mogę zmienić kolejność zdjęć?",
-        "answer": "Tak, możesz przeciągać zdjęcia między pozycjami w wybranym układzie."
+        "question": "Ile zdjęć mogę połączyć?",
+        "answer": "Możesz połączyć 2-9 zdjęć na kolaż. Dostępne układy dostosowują się do liczby przesłanych zdjęć."
       },
       "q3": {
-        "question": "Jakie formaty są obsługiwane?",
-        "answer": "PNG, JPG i WebP. Eksport domyślnie w PNG dla najlepszej jakości."
+        "question": "Jakie rozmiary wyjściowe są dostępne?",
+        "answer": "Możesz ustawić niestandardowe wymiary do rozdzielczości 4K. Typowe presety to 1080x1080 dla Instagrama i 1920x1080 dla panoramicznego."
       },
       "q4": {
-        "question": "Czy mogę dodać tekst?",
-        "answer": "Obecnie koncentrujemy się na układach zdjęć. Tekst można dodać w edytorze graficznym."
+        "question": "Czy moje zdjęcia są przesyłane na serwer?",
+        "answer": "Nie. Całe przetwarzanie odbywa się w przeglądarce. Twoje zdjęcia nigdy nie opuszczają Twojego urządzenia, zapewniając pełną prywatność."
       },
       "q5": {
-        "question": "Jaka jest maksymalna rozdzielczość?",
-        "answer": "Eksportujemy w rozdzielczości do 4K, idealnej do druku i wyświetlania."
+        "question": "Czy mogę zapisać w różnych formatach?",
+        "answer": "Kolaże są zapisywane jako PNG dla najlepszej jakości, co sprawdza się świetnie we wszystkich zastosowaniach, w tym do druku i w internecie."
       }
     },
     "cta": {
-      "title": "Stwórz swój kolaż",
-      "subtitle": "Połącz wspomnienia w jednym, pięknym obrazie.",
-      "getStarted": "Rozpocznij za darmo",
-      "startAction": "Twórz kolaż"
+      "title": "Stwórz Swój Kolaż Zdjęć Teraz",
+      "subtitle": "Darmowy, natychmiastowy, prywatny. Połącz swoje zdjęcia w piękne kolaże.",
+      "getStarted": "Zrób Kolaż",
+      "startAction": "Stwórz Teraz"
     }
   },
   "cropImagePage": {
-    "badge": "Inteligentne Kadrowanie AI",
-    "title": "Inteligentne",
-    "titleHighlight": "Kadrowanie AI",
-    "subtitle": "Kadruj zdjęcia z precyzją AI. Automatyczne wykrywanie głównego obiektu, predefiniowane proporcje dla social media i inteligentne sugestie kadrowania dla najlepszych rezultatów.",
-    "termsNotice": "Używając tego narzędzia, zgadzasz się z naszymi warunkami korzystania.",
+    "badge": "Darmowe Narzędzie do Kadrowania",
+    "title": "Kadruj Obrazy z",
+    "titleHighlight": "Precyzją",
+    "subtitle": "Kadruj i zmieniaj rozmiar obrazów z precyzją do piksela. Wybieraj z predefiniowanych proporcji lub definiuj niestandardowe wymiary. Darmowe, szybkie i działa całkowicie w przeglądarce bez przesyłania.",
     "stats": {
-      "credits": "Darmowe",
-      "creditsLabel": "Podstawowe kadrowanie",
-      "ratios": "15+",
-      "ratiosLabel": "Predefiniowanych proporcji",
+      "cost": "GRATIS",
+      "costLabel": "Bez Kredytów",
+      "ratios": "8+",
+      "ratiosLabel": "Proporcji",
       "processing": "Natychmiast",
-      "processingLabel": "Przetwarzanie"
+      "processingLabel": "Wyniki"
     },
+    "termsNotice": "Obrazy są przetwarzane lokalnie w Twojej przeglądarce.",
     "options": {
-      "title": "Tryby kadrowania",
-      "smart": {
-        "name": "Inteligentne",
-        "description": "AI wykrywa i centruje główny obiekt"
+      "title": "Proporcje Kadrowania",
+      "square": {
+        "name": "1:1 Kwadrat",
+        "description": "Idealny do postów na Instagramie i zdjęć profilowych."
       },
-      "manual": {
-        "name": "Ręczne",
-        "description": "Pełna kontrola nad obszarem kadrowania"
+      "landscape": {
+        "name": "16:9 Panoramiczny",
+        "description": "Idealny do miniatur YouTube i tapet na pulpit."
       },
-      "presets": {
-        "name": "Presety",
-        "description": "Gotowe proporcje dla social media"
+      "portrait": {
+        "name": "4:5 Pionowy",
+        "description": "Zoptymalizowany dla portretów Instagram i Pinterest."
       }
     },
     "features": {
-      "title": "Funkcje",
-      "smartCrop": {
-        "title": "Inteligentne kadrowanie",
-        "description": "AI automatycznie wykrywa główny obiekt zdjęcia"
+      "title": "Funkcje Kadrowania Obrazów",
+      "ratios": {
+        "title": "Predefiniowane Proporcje",
+        "description": "Szybkie presety dla 1:1, 4:3, 16:9, 3:2, 4:5 i więcej. Idealne dla mediów społecznościowych i popularnych formatów."
       },
-      "presets": {
-        "title": "Presety proporcji",
-        "description": "Instagram, Facebook, Twitter i więcej"
+      "precision": {
+        "title": "Kontrola na Poziomie Pikseli",
+        "description": "Wprowadź dokładne wartości X, Y, szerokości i wysokości dla precyzyjnego kadrowania gdy potrzebujesz dokładnych wymiarów."
       },
-      "instant": {
-        "title": "Natychmiastowe",
-        "description": "Podgląd w czasie rzeczywistym"
+      "preview": {
+        "title": "Podgląd Na Żywo",
+        "description": "Zobacz obszar kadrowania w czasie rzeczywistym z przeciągalnymi uchwytami do intuicyjnych dostosowań."
       }
     },
     "howItWorks": {
-      "title": "Jak to",
-      "titleHighlight": "działa",
+      "title": "Jak Działa",
+      "titleHighlight": "Kadrowanie Obrazów",
       "step1": {
-        "title": "Prześlij obraz",
-        "description": "Wybierz zdjęcie do kadrowania"
+        "title": "Prześlij Obraz",
+        "description": "Wybierz dowolny obraz JPG, PNG lub WEBP z urządzenia."
       },
       "step2": {
-        "title": "Wybierz tryb",
-        "description": "Inteligentne, ręczne lub preset"
+        "title": "Wybierz Obszar",
+        "description": "Użyj predefiniowanych proporcji lub narysuj własny obszar kadrowania."
       },
       "step3": {
-        "title": "Dostosuj",
-        "description": "Doprecyzuj obszar kadrowania"
+        "title": "Dostosuj Pozycję",
+        "description": "Przeciągaj i zmieniaj rozmiar ramki kadrowania."
       },
       "step4": {
         "title": "Pobierz",
-        "description": "Zapisz wykadrowany obraz"
+        "description": "Zapisz wykadrowany obraz w wysokiej jakości."
       }
     },
     "useCases": {
-      "title": "Zastosowania",
+      "title": "Idealne do Kadrowania Obrazów",
       "social": {
         "icon": "📱",
-        "title": "Media społecznościowe",
-        "description": "Idealne proporcje dla każdej platformy"
+        "title": "Media Społecznościowe",
+        "description": "Kadruj do dokładnych wymiarów dla postów na Instagram, Facebook, Twitter i LinkedIn."
       },
-      "portraits": {
-        "icon": "👤",
-        "title": "Portrety",
-        "description": "Centrowanie twarzy i kadrowanie"
+      "ecommerce": {
+        "icon": "🛍️",
+        "title": "Zdjęcia Produktów",
+        "description": "Twórz spójne wymiary zdjęć produktów dla sklepów internetowych."
       },
-      "products": {
-        "icon": "📦",
-        "title": "Produkty",
-        "description": "Spójne kadrowanie dla e-commerce"
+      "documents": {
+        "icon": "📄",
+        "title": "Dokumenty i ID",
+        "description": "Kadruj zdjęcia do paszportów, wiz i oficjalnych dokumentów."
       },
-      "thumbnails": {
-        "icon": "🎬",
-        "title": "Miniatury",
-        "description": "Idealne kadry na miniatury wideo"
+      "design": {
+        "icon": "🎨",
+        "title": "Projekty Graficzne",
+        "description": "Przygotuj obrazy dla określonych wymagań układu i kompozycji."
       }
     },
     "technology": {
-      "title": "Technologia",
-      "description": "Nasze inteligentne kadrowanie wykorzystuje AI do wykrywania głównych obiektów i sugerowania optymalnych kadrów.",
-      "feature1": "Wykrywanie obiektów i twarzy",
-      "feature2": "Reguła trójpodziału",
-      "feature3": "Zachowanie jakości oryginału",
-      "feature4": "Presety dla platform social media"
+      "title": "✂️ Kadrowanie w Przeglądarce",
+      "description": "Nasze narzędzie do kadrowania wykorzystuje HTML5 Canvas do precyzyjnego, natychmiastowego kadrowania obrazów bezpośrednio w przeglądarce. Brak przetwarzania serwerowego oznacza pełną prywatność i zero czasu oczekiwania.",
+      "feature1": "Natychmiastowy podgląd bez przesyłania",
+      "feature2": "Precyzyjna kontrola na poziomie pikseli",
+      "feature3": "Zachowanie oryginalnej jakości obrazu",
+      "feature4": "Działa offline po załadowaniu strony"
     },
     "limitations": {
-      "title": "Co warto wiedzieć",
+      "title": "Czego Się Spodziewać",
       "worksWell": {
-        "title": "Działa dobrze z",
-        "item1": "Zdjęciami z wyraźnym głównym obiektem",
-        "item2": "Portretami i zdjęciami produktów",
-        "item3": "Obrazami do social media"
+        "title": "✓ Działa Najlepiej Dla",
+        "item1": "Szybkiego przygotowania obrazów dla mediów społecznościowych",
+        "item2": "Precyzyjnych dostosowań wymiarów",
+        "item3": "Przygotowania wsadowego ze spójnymi proporcjami"
       },
       "limitations": {
-        "title": "Ograniczenia",
-        "item1": "Bardzo złożone sceny mogą wymagać ręcznej korekty",
-        "item2": "Kadrowanie zmniejsza rozdzielczość",
-        "item3": "AI może nie rozpoznać wszystkich obiektów"
+        "title": "✗ Obecne Ograniczenia",
+        "item1": "Nie może obracać obrazów (użyj osobnego narzędzia)",
+        "item2": "Brak wypełnienia świadomego treści dla rozszerzonych obszarów",
+        "item3": "Maksymalne wyjście to oryginalna rozdzielczość obrazu"
       }
     },
     "tips": {
-      "title": "Wskazówki",
-      "tip1": "Sprawdź sugestie AI przed zaakceptowaniem",
-      "tip2": "Używaj presetów dla spójności na social media",
-      "tip3": "Zachowaj margines wokół głównego obiektu",
-      "tip4": "Dla portretów zachowaj przestrzeń nad głową",
-      "tip5": "Testuj różne proporcje",
-      "tip6": "Eksportuj w najwyższej dostępnej jakości"
+      "title": "💡 Wskazówki Dla Lepszego Kadrowania",
+      "tip1": "Stosuj regułę trójpodziału - pozycjonuj obiekty w punktach przecięcia",
+      "tip2": "Zostaw trochę przestrzeni wokół obiektów",
+      "tip3": "Sprawdź predefiniowane proporcje dla docelowej platformy",
+      "tip4": "Użyj wprowadzania pikseli dla dokładnych wymagań wymiarowych",
+      "tip5": "Kadruj aby skupić uwagę na kluczowych elementach",
+      "tip6": "Rozważ końcowe zastosowanie przy wyborze proporcji"
     },
     "faq": {
-      "title": "Często zadawane pytania",
+      "title": "Często Zadawane Pytania",
       "q1": {
-        "question": "Czy kadrowanie jest darmowe?",
-        "answer": "Tak, podstawowe kadrowanie jest darmowe. Inteligentne AI wymaga 1 kredytu."
+        "question": "Czy narzędzie do kadrowania jest darmowe?",
+        "answer": "Tak! Kadrowanie obrazów jest w 100% darmowe bez limitów. Nie wymaga konta ani kredytów."
       },
       "q2": {
         "question": "Jakie proporcje są dostępne?",
-        "answer": "1:1 (Instagram), 16:9 (YouTube), 9:16 (Stories), 4:5, 3:2, niestandardowe i więcej."
+        "answer": "Presety obejmują 1:1, 4:3, 3:2, 16:9, 4:5, 2:3, 9:16 i swobodne kadrowanie dla niestandardowych wymiarów."
       },
       "q3": {
-        "question": "Czy mogę kadrować dowolnie?",
-        "answer": "Tak, tryb ręczny pozwala na dowolne proporcje i rozmieszczenie."
+        "question": "Czy mój obraz jest gdzieś przesyłany?",
+        "answer": "Nie. Całe przetwarzanie odbywa się w przeglądarce. Twoje obrazy nigdy nie opuszczają Twojego urządzenia."
       },
       "q4": {
-        "question": "Co to jest inteligentne kadrowanie?",
-        "answer": "AI analizuje obraz i automatycznie wykrywa główny obiekt, sugerując optymalny kadr."
+        "question": "Jaki jest maksymalny rozmiar pliku?",
+        "answer": "Nie ma ścisłego limitu dla lokalnego przetwarzania, ale bardzo duże obrazy mogą spowolnić przeglądarkę. Obrazy do 20MB działają płynnie."
       },
       "q5": {
-        "question": "Czy tracę na jakości?",
-        "answer": "Kadrowanie usuwa piksele, więc wynikowy obraz będzie mniejszy, ale bez kompresji."
+        "question": "Czy mogę powiększyć podczas kadrowania?",
+        "answer": "Kadrowanie tylko wycina z oryginału. Do powiększenia użyj naszego narzędzia AI Upscaler po kadrowaniu."
       }
     },
     "cta": {
-      "title": "Wykadruj idealnie",
-      "subtitle": "Inteligentne kadrowanie dla perfekcyjnych zdjęć.",
-      "getStarted": "Rozpocznij za darmo",
-      "startAction": "Kadruj zdjęcie"
+      "title": "Zacznij Kadrować Swoje Obrazy",
+      "subtitle": "Darmowe, natychmiastowe, precyzyjne. Idealne kadry bez rejestracji.",
+      "getStarted": "Kadruj Obraz",
+      "startAction": "Zacznij Kadrować"
     }
   },
   "resizeImagePage": {

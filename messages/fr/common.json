@@ -5242,301 +5242,301 @@
     }
   },
   "collageMakerPage": {
-    "badge": "Créateur de Collages Gratuit",
-    "title": "Créez des Collages Photo",
-    "titleHighlight": "Époustouflants",
-    "subtitle": "Combinez plusieurs photos en de beaux collages avec des modèles de grille personnalisables. Outil de création de collages gratuit avec traitement local - vos photos ne quittent jamais votre appareil.",
+    "badge": "Outil de Collage Photo Gratuit",
+    "title": "Créez de Beaux",
+    "titleHighlight": "Collages Photos",
+    "subtitle": "Combinez plusieurs photos en de superbes collages avec notre outil en ligne gratuit. Choisissez parmi différentes mises en page, personnalisez les espacements et les arrière-plans, et téléchargez des résultats de haute qualité. Parfait pour les réseaux sociaux, les souvenirs et les projets.",
     "stats": {
       "cost": "GRATUIT",
       "costLabel": "Sans Crédits",
-      "layouts": "10+",
-      "layoutsLabel": "Modèles de Grille",
-      "processing": "Local",
-      "processingLabel": "Dans Votre Navigateur"
+      "images": "2-9",
+      "imagesLabel": "Photos",
+      "layouts": "6+",
+      "layoutsLabel": "Modèles"
     },
-    "termsNotice": "Les images sont traitées localement dans votre navigateur et ne sont jamais téléchargées.",
+    "termsNotice": "Les images sont traitées localement dans votre navigateur.",
     "options": {
       "title": "Options de Mise en Page de Collage",
       "grid": {
-        "name": "Grille Classique",
-        "description": "Grilles symétriques 2x2, 3x3 et 4x4 parfaites pour des séries de photos uniformes."
+        "name": "Mises en Page Grille",
+        "description": "Grilles classiques 2x2, 3x3 et 4x4 pour des compositions organisées et équilibrées."
       },
-      "masonry": {
-        "name": "Disposition Maçonnerie",
-        "description": "Style Pinterest avec des hauteurs variables pour des collages créatifs et dynamiques."
+      "asymmetric": {
+        "name": "Asymétrique",
+        "description": "Mettez en valeur une image principale avec des photos de support plus petites."
       },
-      "freeform": {
-        "name": "Mise en Page Personnalisée",
-        "description": "Glissez et redimensionnez les photos librement pour créer des compositions uniques."
+      "horizontal": {
+        "name": "Bande Horizontale",
+        "description": "Mises en page côte à côte parfaites pour les comparaisons avant/après."
       }
     },
     "features": {
       "title": "Fonctionnalités du Créateur de Collages",
-      "templates": {
-        "title": "Modèles Professionnels",
-        "description": "Choisissez parmi plus de 10 modèles de grille conçus pour les réseaux sociaux, l'impression et la présentation."
+      "layouts": {
+        "title": "Multiples Mises en Page",
+        "description": "Choisissez parmi les mises en page 2x1, 1x2, 2x2, 3x3, 4x4 et asymétriques pour tout nombre de photos."
       },
       "customization": {
         "title": "Personnalisation Complète",
-        "description": "Ajustez l'espacement entre les photos, les couleurs de bordure, les coins arrondis et la couleur de fond pour correspondre à votre style."
+        "description": "Ajustez la taille des espacements, la couleur de fond, le rayon des coins et les dimensions de sortie selon vos besoins."
       },
-      "privacy": {
-        "title": "Confidentialité d'Abord",
-        "description": "Toute la création de collages se fait dans votre navigateur. Vos photos restent privées - pas de téléchargement, pas de stockage."
+      "quality": {
+        "title": "Sortie Haute Qualité",
+        "description": "Exportez en résolutions personnalisées jusqu'à 4K. Parfait pour l'impression et les grands écrans."
       }
     },
     "howItWorks": {
       "title": "Comment",
       "titleHighlight": "Créer des Collages",
       "step1": {
-        "title": "Téléchargez les Photos",
-        "description": "Sélectionnez plusieurs photos de votre appareil à inclure dans le collage."
+        "title": "Téléchargez des Photos",
+        "description": "Sélectionnez 2-9 photos depuis votre appareil."
       },
       "step2": {
-        "title": "Choisissez la Mise en Page",
-        "description": "Sélectionnez un modèle de grille qui correspond au nombre de vos photos."
+        "title": "Choisissez une Mise en Page",
+        "description": "Choisissez parmi les mises en page grille, asymétrique ou bande."
       },
       "step3": {
-        "title": "Personnalisez le Design",
-        "description": "Ajustez l'espacement, les bordures et les couleurs de fond à votre préférence."
+        "title": "Personnalisez",
+        "description": "Ajustez l'espacement, la couleur de fond et les dimensions."
       },
       "step4": {
-        "title": "Téléchargez le Collage",
-        "description": "Sauvegardez votre collage terminé comme image haute qualité."
+        "title": "Téléchargez",
+        "description": "Sauvegardez votre collage comme image haute qualité."
       }
     },
     "useCases": {
-      "title": "Parfait Pour la Création de Collages",
-      "social": {
-        "icon": "📱",
-        "title": "Publications Réseaux Sociaux",
-        "description": "Créez des carrousels Instagram, photos de couverture Facebook et collages photo Twitter."
-      },
+      "title": "Parfait Pour les Collages Photos",
       "memories": {
         "icon": "📸",
-        "title": "Compilations de Souvenirs",
-        "description": "Combinez des photos de vacances, événements ou moments spéciaux en souvenirs partageables."
+        "title": "Souvenirs Photo",
+        "description": "Combinez photos de vacances, événements familiaux ou moments spéciaux en images mémorables uniques."
       },
-      "products": {
-        "icon": "🛍️",
-        "title": "Vitrine de Produits",
-        "description": "Montrez plusieurs vues ou variantes de produits dans une seule image attrayante."
+      "social": {
+        "icon": "📱",
+        "title": "Réseaux Sociaux",
+        "description": "Créez des publications multi-photos engageantes pour Instagram, Facebook et autres plateformes."
       },
       "comparison": {
-        "icon": "🔄",
-        "title": "Comparaisons Avant/Après",
-        "description": "Créez des comparaisons côte à côte pour les transformations et résultats de progression."
+        "icon": "⚖️",
+        "title": "Avant et Après",
+        "description": "Mises en page côte à côte parfaites pour présenter les transformations et les progrès."
+      },
+      "portfolios": {
+        "icon": "💼",
+        "title": "Portfolios",
+        "description": "Affichez plusieurs travaux dans une présentation unique et professionnelle."
       }
     },
     "technology": {
-      "title": "🎨 Création de Collages dans le Navigateur",
-      "description": "Notre créateur de collages utilise l'API Canvas HTML5 pour combiner et arranger les images directement dans votre navigateur. Pas de traitement côté serveur signifie des résultats instantanés et une confidentialité totale.",
-      "feature1": "Combinaison et mise en page d'images en temps réel",
-      "feature2": "Fonctionne hors ligne après le chargement initial",
-      "feature3": "Sortie haute résolution adaptée à l'impression",
-      "feature4": "Pas de limites de taille de fichier ni de restrictions de téléchargement"
+      "title": "🖼️ Création de Collages dans le Navigateur",
+      "description": "Notre créateur de collages utilise HTML5 Canvas pour combiner vos photos entièrement dans votre navigateur. Cela garantit la confidentialité (pas de téléversement), des résultats instantanés et aucune perte de qualité pendant le traitement.",
+      "feature1": "Traitement local - les photos ne quittent jamais votre appareil",
+      "feature2": "Sortie haute résolution jusqu'à 4K",
+      "feature3": "Ajustement et recadrage intelligent des images",
+      "feature4": "Aperçu instantané pendant l'ajustement des paramètres"
     },
     "limitations": {
       "title": "À Quoi S'Attendre",
       "worksWell": {
         "title": "✓ Fonctionne Mieux Pour",
-        "item1": "Collages de 2-9 photos avec mises en page en grille",
-        "item2": "Images carrées ou d'orientation similaire",
-        "item3": "Création rapide de collages pour réseaux sociaux"
+        "item1": "2-9 photos d'orientation similaire",
+        "item2": "Mises en page basées sur grille et simples",
+        "item3": "Collages rapides pour réseaux sociaux et souvenirs"
       },
       "limitations": {
         "title": "✗ Limitations Actuelles",
-        "item1": "Pas de formes personnalisées ni de recadrages avancés",
-        "item2": "Pas de capacités de superposition de texte",
-        "item3": "Nombre de photos limité par le modèle"
+        "item1": "Pas de glisser-déposer pour repositionner dans les cellules",
+        "item2": "Limité aux modèles de mise en page prédéfinis",
+        "item3": "Impossible d'ajouter du texte ou des autocollants aux collages"
       }
     },
     "tips": {
       "title": "💡 Conseils Pour de Meilleurs Collages",
-      "tip1": "Utilisez des photos avec des couleurs ou thèmes similaires pour des collages cohésifs",
-      "tip2": "Recadrez les photos à des proportions similaires avant de créer le collage",
-      "tip3": "Un espacement cohérent crée des designs plus professionnels",
-      "tip4": "Utilisez des couleurs de bordure qui complètent vos photos",
-      "tip5": "Moins de photos créent souvent des collages plus percutants",
-      "tip6": "Considérez l'objectif (impression vs web) lors du choix de la taille de sortie"
+      "tip1": "Utilisez des photos aux tons de couleur similaires pour un look cohérent",
+      "tip2": "Faites correspondre les orientations des photos à votre mise en page choisie",
+      "tip3": "Ajoutez de l'espace pour une apparence plus propre et moderne",
+      "tip4": "Utilisez des arrière-plans blancs ou neutres pour un look professionnel",
+      "tip5": "Les mises en page carrées fonctionnent mieux pour Instagram",
+      "tip6": "Essayez les mises en page asymétriques pour mettre en valeur les photos clés"
     },
     "faq": {
       "title": "Questions Fréquentes",
       "q1": {
-        "question": "Combien de photos puis-je inclure dans un collage?",
-        "answer": "Selon le modèle, vous pouvez inclure 2-9 photos dans un seul collage. Différents modèles accueillent différents nombres de photos."
+        "question": "Le créateur de collages est-il gratuit?",
+        "answer": "Oui! Le créateur de collages est 100% gratuit sans limites. Aucun compte ni crédits requis."
       },
       "q2": {
-        "question": "Puis-je réorganiser les photos après le téléchargement?",
-        "answer": "Oui, vous pouvez glisser-déposer les photos pour les réorganiser dans la grille du collage avant de télécharger."
+        "question": "Combien de photos puis-je combiner?",
+        "answer": "Vous pouvez combiner 2-9 photos par collage. Les mises en page disponibles s'adaptent au nombre de photos téléchargées."
       },
       "q3": {
-        "question": "Quelle est la résolution de sortie?",
-        "answer": "Les collages sont exportés en haute résolution adaptée à la visualisation web et à l'impression. La taille exacte dépend de votre sélection de modèle."
+        "question": "Quelles tailles de sortie sont disponibles?",
+        "answer": "Vous pouvez définir des dimensions personnalisées jusqu'à la résolution 4K. Les préréglages courants incluent 1080x1080 pour Instagram et 1920x1080 pour l'écran large."
       },
       "q4": {
-        "question": "Mes photos sont-elles stockées quelque part?",
-        "answer": "Non. Tout le traitement se fait localement dans votre navigateur. Vos photos ne quittent jamais votre appareil."
+        "question": "Mes photos sont-elles téléversées sur un serveur?",
+        "answer": "Non. Tout le traitement se fait dans votre navigateur. Vos photos ne quittent jamais votre appareil, garantissant une confidentialité totale."
       },
       "q5": {
-        "question": "Puis-je ajouter du texte à mon collage?",
-        "answer": "Actuellement, le créateur de collages se concentre sur la composition de photos. Pour les superpositions de texte, nous recommandons d'utiliser notre outil d'effets de texte ou un éditeur d'images."
+        "question": "Puis-je sauvegarder dans différents formats?",
+        "answer": "Les collages sont sauvegardés en PNG pour la meilleure qualité, ce qui fonctionne très bien pour tous les usages y compris l'impression et le web."
       }
     },
     "cta": {
-      "title": "Créez Votre Collage Photo",
-      "subtitle": "Gratuit, privé, facile. Combinez vos photos préférées en de beaux collages.",
-      "getStarted": "Créer un Collage",
-      "startAction": "Commencer"
+      "title": "Créez Votre Collage Photo Maintenant",
+      "subtitle": "Gratuit, instantané, privé. Combinez vos photos en de beaux collages.",
+      "getStarted": "Faire un Collage",
+      "startAction": "Créer Maintenant"
     }
   },
   "cropImagePage": {
     "badge": "Outil de Recadrage Gratuit",
-    "title": "Recadrez et Redimensionnez",
-    "titleHighlight": "les Images Facilement",
-    "subtitle": "Recadrez vos photos aux proportions parfaites pour les réseaux sociaux, l'impression et le web. Outil de recadrage gratuit avec préréglages populaires pour Instagram, Facebook, YouTube et plus. Traitement local - vos images restent privées.",
+    "title": "Recadrez les Images avec",
+    "titleHighlight": "Précision",
+    "subtitle": "Recadrez et redimensionnez vos images avec une précision au pixel près. Choisissez parmi des ratios d'aspect prédéfinis ou définissez des dimensions personnalisées. Gratuit, rapide et fonctionne entièrement dans votre navigateur sans téléversement.",
     "stats": {
       "cost": "GRATUIT",
       "costLabel": "Sans Crédits",
-      "presets": "12+",
-      "presetsLabel": "Ratios d'Aspect",
-      "processing": "Local",
-      "processingLabel": "Dans Votre Navigateur"
+      "ratios": "8+",
+      "ratiosLabel": "Ratios Prédéfinis",
+      "processing": "Instant",
+      "processingLabel": "Résultats"
     },
-    "termsNotice": "Les images sont traitées localement dans votre navigateur et ne sont jamais téléchargées.",
+    "termsNotice": "Les images sont traitées localement dans votre navigateur.",
     "options": {
-      "title": "Préréglages de Recadrage Populaires",
+      "title": "Ratios de Recadrage",
       "square": {
-        "name": "Carré 1:1",
-        "description": "Parfait pour les publications Instagram, photos de profil et affichage de produits."
+        "name": "1:1 Carré",
+        "description": "Parfait pour les publications Instagram et les photos de profil."
       },
       "landscape": {
-        "name": "Paysage 16:9",
-        "description": "Idéal pour les miniatures YouTube, photos de couverture et fonds d'écran."
+        "name": "16:9 Panoramique",
+        "description": "Idéal pour les miniatures YouTube et les fonds d'écran."
       },
       "portrait": {
-        "name": "Portrait 4:5",
-        "description": "Optimisé pour les publications portrait Instagram, Pinterest et affichage mobile."
+        "name": "4:5 Portrait",
+        "description": "Optimisé pour les portraits Instagram et Pinterest."
       }
     },
     "features": {
-      "title": "Fonctionnalités de l'Outil de Recadrage",
-      "presets": {
-        "title": "Préréglages Réseaux Sociaux",
-        "description": "Un clic pour des proportions de recadrage parfaites pour Instagram, Facebook, Twitter, YouTube, LinkedIn et plus."
+      "title": "Fonctionnalités de Recadrage d'Images",
+      "ratios": {
+        "title": "Ratios d'Aspect Prédéfinis",
+        "description": "Préréglages rapides pour 1:1, 4:3, 16:9, 3:2, 4:5 et plus. Parfaits pour les réseaux sociaux et les formats courants."
       },
-      "custom": {
-        "title": "Ratio Personnalisé",
-        "description": "Définissez n'importe quel ratio d'aspect personnalisé ou recadrez librement pour les dimensions exactes dont vous avez besoin."
+      "precision": {
+        "title": "Contrôle au Niveau du Pixel",
+        "description": "Entrez des valeurs exactes de X, Y, largeur et hauteur pour un recadrage précis quand vous avez besoin de dimensions exactes."
       },
-      "privacy": {
-        "title": "Confidentialité Totale",
-        "description": "Toutes les images sont traitées localement dans votre navigateur. Rien n'est téléchargé sur des serveurs."
+      "preview": {
+        "title": "Aperçu en Direct",
+        "description": "Voyez votre zone de recadrage en temps réel avec des poignées glissantes pour des ajustements intuitifs."
       }
     },
     "howItWorks": {
-      "title": "Comment",
-      "titleHighlight": "Recadrer Vos Images",
+      "title": "Comment Fonctionne",
+      "titleHighlight": "le Recadrage d'Images",
       "step1": {
-        "title": "Téléchargez l'Image",
-        "description": "Sélectionnez n'importe quelle image de votre appareil à recadrer."
+        "title": "Téléchargez une Image",
+        "description": "Sélectionnez n'importe quelle image JPG, PNG ou WEBP depuis votre appareil."
       },
       "step2": {
-        "title": "Choisissez le Ratio d'Aspect",
-        "description": "Sélectionnez un préréglage ou entrez des proportions personnalisées."
+        "title": "Sélectionnez la Zone",
+        "description": "Utilisez des ratios prédéfinis ou dessinez une zone de recadrage personnalisée."
       },
       "step3": {
-        "title": "Ajustez la Zone de Recadrage",
-        "description": "Glissez et redimensionnez la boîte de recadrage pour sélectionner votre zone désirée."
+        "title": "Ajustez la Position",
+        "description": "Glissez et redimensionnez la boîte de recadrage pour cadrer votre photo."
       },
       "step4": {
-        "title": "Téléchargez le Résultat",
-        "description": "Sauvegardez votre image recadrée en format haute qualité."
+        "title": "Téléchargez",
+        "description": "Sauvegardez votre image recadrée en haute qualité."
       }
     },
     "useCases": {
       "title": "Parfait Pour le Recadrage d'Images",
       "social": {
         "icon": "📱",
-        "title": "Contenu Réseaux Sociaux",
-        "description": "Recadrez les photos aux proportions parfaites pour les publications Instagram, couvertures Facebook et bannières Twitter."
-      },
-      "profile": {
-        "icon": "👤",
-        "title": "Photos de Profil",
-        "description": "Créez des photos de profil carrées parfaites pour n'importe quelle plateforme ou application."
+        "title": "Réseaux Sociaux",
+        "description": "Recadrez aux dimensions exactes pour les publications Instagram, Facebook, Twitter et LinkedIn."
       },
       "ecommerce": {
-        "icon": "🛒",
+        "icon": "🛍️",
         "title": "Photos de Produits",
-        "description": "Standardisez les images de produits à des ratios d'aspect cohérents pour les boutiques en ligne."
+        "description": "Créez des dimensions d'images de produits cohérentes pour les boutiques en ligne."
       },
-      "print": {
-        "icon": "🖨️",
-        "title": "Préparation pour l'Impression",
-        "description": "Recadrez les images aux ratios d'impression standards comme 4x6, 5x7 ou 8x10."
+      "documents": {
+        "icon": "📄",
+        "title": "Documents et ID",
+        "description": "Recadrez les photos pour les passeports, visas et documents officiels."
+      },
+      "design": {
+        "icon": "🎨",
+        "title": "Projets de Design",
+        "description": "Préparez des images pour des exigences de mise en page spécifiques et des compositions."
       }
     },
     "technology": {
-      "title": "🖼️ Recadrage d'Image dans le Navigateur",
-      "description": "Notre outil de recadrage utilise l'API Canvas HTML5 pour la manipulation d'images en temps réel directement dans votre navigateur. Le traitement côté client assure la confidentialité et une opération instantanée.",
-      "feature1": "Sélection de zone de recadrage interactive en temps réel",
-      "feature2": "Pas de compression d'image ni de perte de qualité",
-      "feature3": "Fonctionne hors ligne après le chargement de la page",
-      "feature4": "Prend en charge les images haute résolution sans limites de taille"
+      "title": "✂️ Recadrage dans le Navigateur",
+      "description": "Notre outil de recadrage utilise HTML5 Canvas pour un recadrage d'images précis et instantané directement dans votre navigateur. Pas de traitement serveur signifie confidentialité totale et zéro temps d'attente.",
+      "feature1": "Aperçu instantané sans téléversement requis",
+      "feature2": "Contrôle de recadrage précis au niveau du pixel",
+      "feature3": "Maintient la qualité d'image originale",
+      "feature4": "Fonctionne hors ligne une fois la page chargée"
     },
     "limitations": {
       "title": "À Quoi S'Attendre",
       "worksWell": {
         "title": "✓ Fonctionne Mieux Pour",
-        "item1": "Recadrage précis d'une seule zone d'image",
-        "item2": "Dimensions de réseaux sociaux et photos de profil",
-        "item3": "Standardisation des proportions d'image"
+        "item1": "Préparation rapide d'images pour les réseaux sociaux",
+        "item2": "Ajustements dimensionnels précis",
+        "item3": "Préparation par lots avec des ratios cohérents"
       },
       "limitations": {
         "title": "✗ Limitations Actuelles",
-        "item1": "Pas de traitement par lots de plusieurs images",
-        "item2": "Pas de recadrage de forme (rectangulaire uniquement)",
-        "item3": "Pas de mise à l'échelle - recadrage uniquement à la taille originale"
+        "item1": "Ne peut pas faire pivoter les images (utilisez un outil séparé)",
+        "item2": "Pas de remplissage conscient du contenu pour les zones étendues",
+        "item3": "La sortie maximale est la résolution d'image originale"
       }
     },
     "tips": {
       "title": "💡 Conseils Pour un Meilleur Recadrage",
-      "tip1": "Utilisez la règle des tiers pour des compositions visuellement attrayantes",
-      "tip2": "Laissez de l'espace autour des sujets pour un recadrage ultérieur",
-      "tip3": "Les recadrages carrés fonctionnent mieux pour la plupart des photos de profil",
-      "tip4": "Prévisualisez comment votre recadrage apparaîtra à sa destination prévue",
-      "tip5": "Pour les réseaux sociaux, vérifiez les exigences actuelles de la plateforme",
-      "tip6": "Gardez les sujets importants éloignés des bords de la zone de recadrage"
+      "tip1": "Utilisez la règle des tiers - positionnez les sujets aux points d'intersection",
+      "tip2": "Laissez de l'espace autour des sujets",
+      "tip3": "Vérifiez les ratios prédéfinis pour votre plateforme cible",
+      "tip4": "Utilisez l'entrée en pixels pour les exigences dimensionnelles exactes",
+      "tip5": "Recadrez pour concentrer l'attention sur les éléments clés",
+      "tip6": "Considérez l'utilisation finale lors du choix du ratio"
     },
     "faq": {
       "title": "Questions Fréquentes",
       "q1": {
-        "question": "Le recadrage réduit-il la qualité de l'image?",
-        "answer": "Le recadrage ne réduit pas la qualité - il sélectionne simplement une portion de l'image originale. Cependant, recadrer de manière extensive une petite zone résultera en une image plus petite."
+        "question": "L'outil de recadrage est-il gratuit?",
+        "answer": "Oui! Le recadrage d'images est 100% gratuit sans limites. Aucun compte ni crédits requis."
       },
       "q2": {
-        "question": "Quels ratios d'aspect sont disponibles?",
-        "answer": "Nous offrons des préréglages pour toutes les principales tailles de réseaux sociaux (1:1, 4:5, 9:16, 16:9), tailles d'impression (4x6, 5x7, 8x10), et ratios personnalisés."
+        "question": "Quels ratios sont disponibles?",
+        "answer": "Les préréglages incluent 1:1, 4:3, 3:2, 16:9, 4:5, 2:3, 9:16 et recadrage libre pour des dimensions personnalisées."
       },
       "q3": {
-        "question": "Puis-je recadrer la même image plusieurs fois?",
-        "answer": "Oui, vous pouvez créer plusieurs recadrages de la même image pour différents usages avant de télécharger."
+        "question": "Mon image est-elle téléversée quelque part?",
+        "answer": "Non. Tout le traitement se fait dans votre navigateur. Vos images ne quittent jamais votre appareil."
       },
       "q4": {
-        "question": "Dans quel format l'image recadrée est-elle sauvegardée?",
-        "answer": "Les images recadrées sont sauvegardées en format PNG haute qualité, préservant la qualité originale."
+        "question": "Quelle est la taille de fichier maximale?",
+        "answer": "Il n'y a pas de limite stricte pour le traitement local, mais les très grandes images peuvent ralentir votre navigateur. Les images jusqu'à 20Mo fonctionnent parfaitement."
       },
       "q5": {
-        "question": "Y a-t-il une limite de taille de fichier?",
-        "answer": "Pas de limites strictes car tout le traitement se fait localement. Les très grandes images peuvent traiter plus lentement selon les capacités de votre appareil."
+        "question": "Puis-je agrandir pendant le recadrage?",
+        "answer": "Le recadrage ne fait que couper de l'original. Pour agrandir, utilisez notre outil AI Upscaler après le recadrage."
       }
     },
     "cta": {
-      "title": "Recadrez Vos Images Maintenant",
-      "subtitle": "Gratuit, privé, instantané. Proportions parfaites pour n'importe quelle plateforme.",
-      "getStarted": "Ouvrir l'Outil de Recadrage",
-      "startAction": "Recadrer une Image"
+      "title": "Commencez à Recadrer Vos Images",
+      "subtitle": "Gratuit, instantané, précis. Recadrages parfaits sans inscription.",
+      "getStarted": "Recadrer une Image",
+      "startAction": "Commencer à Recadrer"
     }
   },
   "resizeImagePage": {
