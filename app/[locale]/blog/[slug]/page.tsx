@@ -42,8 +42,8 @@ export async function generateMetadata({ params }: PageProps) {
       description: post.excerpt || '',
       type: 'article',
       url: `https://pixelift.pl/${locale}/blog/${slug}`,
-      publishedTime: post.publishedAt?.toISOString(),
-      modifiedTime: post.updatedAt?.toISOString(),
+      publishedTime: post.publishedAt ? new Date(post.publishedAt).toISOString() : undefined,
+      modifiedTime: post.updatedAt ? new Date(post.updatedAt).toISOString() : undefined,
       authors: post.author?.name ? [post.author.name] : [],
       tags: post.tags || [],
       images: [
