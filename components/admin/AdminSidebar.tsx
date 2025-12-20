@@ -37,6 +37,11 @@ const navigation = [
     icon: "🔍",
   },
   {
+    name: "Tool Status",
+    href: "/admin/tool-status",
+    icon: "🔧",
+  },
+  {
     name: "System",
     href: "/admin/system",
     icon: "⚡",

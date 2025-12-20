@@ -2297,6 +2297,29 @@ enum EmailLogStatus {
   clicked
 }
 
+// ===================
+// Service Status Monitoring
+// ===================
+
+model ServiceStatus {
+  id            String   @id @default(cuid())
+  serviceName   String   @unique // replicate, fal, openai, stripe, resend, etc.
+  displayName   String   // Human readable name
+  status        String   @default("unknown") // online, offline, degraded, unknown
+  latency       Int?     // Response time in ms
+  lastCheck     DateTime @default(now())
+  lastOnline    DateTime?
+  lastError     String?  // Last error message
+  checkCount24h Int      @default(0)
+  errorCount24h Int      @default(0)
+  uptime24h     Float    @default(100) // Percentage uptime in last 24h
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([serviceName])
+  @@index([status])
+}
+
 model EmailLog {
   id              String         @id @default(cuid())
 

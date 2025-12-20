@@ -31,6 +31,8 @@ export default function AIImageGenerator() {
   const { data: session } = useSession();
   const [mode, setMode] = useState<AIImageMode>('text-to-image');
   const [prompt, setPrompt] = useState('');
+  const [negativePrompt, setNegativePrompt] = useState('');
+  const [showAdvanced, setShowAdvanced] = useState(false);
   const [model, setModel] = useState(DEFAULT_MODEL);
   const [aspectRatio, setAspectRatio] = useState(DEFAULT_ASPECT_RATIO);
   const [imageCount, setImageCount] = useState<ImageCount>(DEFAULT_IMAGE_COUNT);
@@ -165,6 +167,7 @@ export default function AIImageGenerator() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           prompt: prompt.trim(),
+          negativePrompt: negativePrompt.trim() || undefined,
           mode,
           model,
           aspectRatio,
@@ -371,6 +374,36 @@ export default function AIImageGenerator() {
               {isPublic ? '🌐 Public' : '🔒 Private'}
             </button>
           </div>
+        </div>
+
+        {/* Advanced Options Toggle */}
+        <div className="mb-6">
+          <button
+            onClick={() => setShowAdvanced(!showAdvanced)}
+            className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition"
+          >
+            <span className={`transform transition ${showAdvanced ? 'rotate-90' : ''}`}>&#9654;</span>
+            Advanced Options
+          </button>
+
+          {showAdvanced && (
+            <div className="mt-4 p-4 bg-gray-900/50 rounded-lg border border-gray-700">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Negative Prompt
+                <span className="text-gray-500 font-normal ml-2">(Things to avoid in the image)</span>
+              </label>
+              <textarea
+                value={negativePrompt}
+                onChange={(e) => setNegativePrompt(e.target.value)}
+                placeholder="blurry, low quality, distorted, deformed, ugly, bad anatomy, watermark..."
+                className="w-full h-20 px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none text-white placeholder-gray-500 text-sm"
+                maxLength={1000}
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                Describe elements you want to exclude from the generated image
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Generate Button */}

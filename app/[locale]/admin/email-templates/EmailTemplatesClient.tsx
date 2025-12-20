@@ -31,8 +31,17 @@ interface EmailTemplatesClientProps {
   };
 }
 
+interface PreviewData {
+  subject: string;
+  html: string;
+  text: string;
+}
+
 export default function EmailTemplatesClient({ templates, stats }: EmailTemplatesClientProps) {
   const [showModal, setShowModal] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const [previewData, setPreviewData] = useState<PreviewData | null>(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
   const [editingTemplate, setEditingTemplate] = useState<EmailTemplate | null>(null);
   const [name, setName] = useState('');
   const [slug, setSlug] = useState('');
@@ -132,6 +141,29 @@ export default function EmailTemplatesClient({ templates, stats }: EmailTemplate
       method: 'DELETE',
     });
     window.location.reload();
+  };
+
+  const handlePreview = async (templateSlug: string) => {
+    setPreviewLoading(true);
+    setShowPreview(true);
+    try {
+      const response = await fetch('/api/admin/email-templates/preview', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ slug: templateSlug }),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setPreviewData(data.preview);
+      } else {
+        setPreviewData(null);
+      }
+    } catch (err) {
+      console.error('Failed to preview template:', err);
+      setPreviewData(null);
+    } finally {
+      setPreviewLoading(false);
+    }
   };
 
   const filteredTemplates = templates.filter(t => {
@@ -267,6 +299,12 @@ export default function EmailTemplatesClient({ templates, stats }: EmailTemplate
                   </div>
                 </div>
                 <div className="flex gap-2">
+                  <button
+                    onClick={() => handlePreview(template.slug)}
+                    className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition"
+                  >
+                    Preview
+                  </button>
                   <button
                     onClick={() => handleEdit(template)}
                     className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition"
@@ -424,6 +462,73 @@ export default function EmailTemplatesClient({ templates, stats }: EmailTemplate
                 className="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-medium transition"
               >
                 Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Preview Modal */}
+      {showPreview && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 overflow-y-auto p-4">
+          <div className="bg-gray-800 border border-gray-700 rounded-xl p-8 max-w-5xl w-full my-8">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold">Email Preview</h2>
+              <button
+                onClick={() => {
+                  setShowPreview(false);
+                  setPreviewData(null);
+                }}
+                className="text-gray-400 hover:text-white text-2xl"
+              >
+                &times;
+              </button>
+            </div>
+
+            {previewLoading ? (
+              <div className="flex items-center justify-center py-20">
+                <div className="animate-spin text-4xl">&#9696;</div>
+              </div>
+            ) : previewData ? (
+              <div className="space-y-6">
+                <div className="bg-gray-900 rounded-lg p-4">
+                  <div className="text-sm text-gray-400 mb-1">Subject:</div>
+                  <div className="text-lg font-medium text-white">{previewData.subject}</div>
+                </div>
+
+                <div>
+                  <div className="text-sm text-gray-400 mb-2">HTML Preview:</div>
+                  <div className="bg-white rounded-lg overflow-hidden">
+                    <iframe
+                      srcDoc={previewData.html}
+                      className="w-full h-[500px] border-0"
+                      title="Email HTML Preview"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <div className="text-sm text-gray-400 mb-2">Plain Text:</div>
+                  <pre className="bg-gray-900 rounded-lg p-4 text-sm text-gray-300 whitespace-pre-wrap overflow-auto max-h-64">
+                    {previewData.text}
+                  </pre>
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-20 text-gray-400">
+                <p>Failed to load preview. Make sure the template has content.</p>
+              </div>
+            )}
+
+            <div className="flex justify-end mt-6">
+              <button
+                onClick={() => {
+                  setShowPreview(false);
+                  setPreviewData(null);
+                }}
+                className="px-6 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-medium transition"
+              >
+                Close
               </button>
             </div>
           </div>

@@ -24,6 +24,161 @@ const SUPPORT_EMAIL = 'support@pixelift.pl';
 const UNSUBSCRIBE_URL = 'https://pixelift.pl/settings/notifications';
 
 // =============================================================================
+// DATABASE EMAIL TEMPLATES
+// =============================================================================
+
+interface EmailTemplateData {
+  name: string;
+  subject: string;
+  htmlContent: string;
+  textContent: string;
+  variables: string[];
+}
+
+/**
+ * Get email template from database by slug, with usage tracking
+ * Returns null if template not found or not active
+ */
+async function getEmailTemplate(slug: string): Promise<EmailTemplateData | null> {
+  try {
+    const template = await prisma.emailTemplate.findUnique({
+      where: { slug },
+    });
+
+    if (!template || template.status !== 'active') {
+      return null;
+    }
+
+    // Update usage count
+    await prisma.emailTemplate.update({
+      where: { id: template.id },
+      data: {
+        usageCount: { increment: 1 },
+        lastUsedAt: new Date(),
+      },
+    });
+
+    return {
+      name: template.name,
+      subject: template.subject,
+      htmlContent: template.htmlContent,
+      textContent: template.textContent,
+      variables: template.variables,
+    };
+  } catch (error) {
+    console.error(`Failed to get email template '${slug}':`, error);
+    return null;
+  }
+}
+
+/**
+ * Replace template variables with actual values
+ * Supports {{variableName}} syntax
+ */
+function replaceTemplateVariables(content: string, variables: Record<string, string | number>): string {
+  let result = content;
+  for (const [key, value] of Object.entries(variables)) {
+    const regex = new RegExp(`{{\\s*${key}\\s*}}`, 'g');
+    result = result.replace(regex, String(value));
+  }
+  return result;
+}
+
+/**
+ * Send email using a database template with fallback to inline template
+ */
+async function sendTemplatedEmail(
+  slug: string,
+  to: string,
+  variables: Record<string, string | number>,
+  fallbackHtml: string,
+  fallbackText: string,
+  fallbackSubject: string,
+  options: {
+    recipientName?: string;
+    recipientUserId?: string;
+    category: 'transactional' | 'marketing' | 'system' | 'support';
+    emailType: string;
+    replyTo?: string;
+    metadata?: Record<string, unknown>;
+  }
+): Promise<boolean> {
+  const resend = getResend();
+  if (!resend) {
+    console.warn('RESEND_API_KEY not configured - skipping email');
+    return false;
+  }
+
+  // Try to get template from database
+  const dbTemplate = await getEmailTemplate(slug);
+
+  let html: string;
+  let text: string;
+  let subject: string;
+
+  if (dbTemplate) {
+    // Use database template
+    html = replaceTemplateVariables(dbTemplate.htmlContent, variables);
+    text = replaceTemplateVariables(dbTemplate.textContent, variables);
+    subject = replaceTemplateVariables(dbTemplate.subject, variables);
+  } else {
+    // Fall back to inline template
+    html = fallbackHtml;
+    text = fallbackText;
+    subject = fallbackSubject;
+  }
+
+  try {
+    const result = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: [to],
+      replyTo: options.replyTo || SUPPORT_EMAIL,
+      subject,
+      html,
+      text,
+      headers: {
+        'List-Unsubscribe': `<${UNSUBSCRIBE_URL}>`,
+        'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+      },
+    });
+
+    // Log successful email
+    await logEmail({
+      recipientEmail: to,
+      recipientName: options.recipientName,
+      recipientUserId: options.recipientUserId,
+      subject,
+      category: options.category,
+      emailType: options.emailType,
+      templateSlug: dbTemplate ? slug : undefined,
+      replyTo: options.replyTo,
+      providerMessageId: result.data?.id,
+      metadata: options.metadata,
+    });
+
+    console.log(`Email sent to ${to} (template: ${dbTemplate ? slug : 'inline'})`);
+    return true;
+  } catch (error) {
+    // Log failed email
+    await logEmail({
+      recipientEmail: to,
+      recipientName: options.recipientName,
+      recipientUserId: options.recipientUserId,
+      subject,
+      category: options.category,
+      emailType: options.emailType,
+      templateSlug: dbTemplate ? slug : undefined,
+      status: 'failed',
+      statusMessage: error instanceof Error ? error.message : 'Unknown error',
+      metadata: options.metadata,
+    });
+
+    console.error('Failed to send email:', error);
+    return false;
+  }
+}
+
+// =============================================================================
 // EMAIL LOGGING
 // =============================================================================
 
@@ -1542,3 +1697,90 @@ If you didn't request this password reset, you can safely ignore this email. You
     return false;
   }
 }
+
+// =============================================================================
+// EXPORTED TEMPLATE UTILITIES
+// =============================================================================
+
+/**
+ * Preview an email template with sample variables
+ * Used by admin panel for previewing templates before activation
+ */
+export async function previewEmailTemplate(
+  templateSlug: string,
+  sampleVariables?: Record<string, string | number>
+): Promise<{
+  subject: string;
+  html: string;
+  text: string;
+} | null> {
+  try {
+    const template = await prisma.emailTemplate.findUnique({
+      where: { slug: templateSlug },
+    });
+
+    if (!template) {
+      return null;
+    }
+
+    // Use sample values for preview
+    const variables = sampleVariables || {
+      userName: 'John Doe',
+      userEmail: 'john@example.com',
+      freeCredits: 3,
+      creditsRemaining: 10,
+      planName: 'Pro Plan',
+      amount: 49.99,
+      currency: '$',
+      transactionId: 'txn_sample123',
+      ticketId: 'TICKET-001',
+      subject: 'Sample Subject',
+      category: 'general',
+    };
+
+    return {
+      subject: replaceTemplateVariables(template.subject, variables),
+      html: replaceTemplateVariables(template.htmlContent, variables),
+      text: replaceTemplateVariables(template.textContent, variables),
+    };
+  } catch (error) {
+    console.error(`Failed to preview template '${templateSlug}':`, error);
+    return null;
+  }
+}
+
+/**
+ * Get list of available template slugs for admin reference
+ */
+export const EMAIL_TEMPLATE_SLUGS = {
+  WELCOME: 'welcome',
+  CREDITS_LOW: 'credits-low',
+  CREDITS_DEPLETED: 'credits-depleted',
+  FIRST_UPLOAD: 'first-upload',
+  PURCHASE_CONFIRMATION: 'purchase-confirmation',
+  PAYMENT_FAILED: 'payment-failed',
+  SUBSCRIPTION_CANCELLED: 'subscription-cancelled',
+  TICKET_CREATED: 'ticket-created',
+  TICKET_REPLY: 'ticket-reply',
+  TICKET_CONFIRMATION: 'ticket-confirmation',
+  ACCOUNT_DELETED: 'account-deleted',
+  PASSWORD_RESET: 'password-reset',
+} as const;
+
+/**
+ * Get template variable hints for each template type
+ */
+export const EMAIL_TEMPLATE_VARIABLES: Record<string, string[]> = {
+  'welcome': ['userName', 'userEmail', 'freeCredits'],
+  'credits-low': ['userName', 'userEmail', 'creditsRemaining'],
+  'credits-depleted': ['userName', 'userEmail', 'totalImagesProcessed'],
+  'first-upload': ['userName', 'userEmail', 'creditsRemaining'],
+  'purchase-confirmation': ['userName', 'userEmail', 'planName', 'creditsAdded', 'amountPaid', 'currency', 'transactionId', 'nextBillingDate'],
+  'payment-failed': ['userName', 'userEmail', 'planName', 'amount', 'currency', 'attemptCount', 'nextRetryDate'],
+  'subscription-cancelled': ['userName', 'userEmail', 'planName', 'endDate', 'creditsRemaining'],
+  'ticket-created': ['ticketId', 'subject', 'description', 'category', 'userName', 'userEmail', 'createdAt'],
+  'ticket-reply': ['ticketId', 'subject', 'replyMessage', 'replyAuthor', 'userName', 'userEmail'],
+  'ticket-confirmation': ['ticketId', 'subject', 'userName', 'userEmail', 'category'],
+  'account-deleted': ['userName', 'userEmail', 'deletionDate'],
+  'password-reset': ['userEmail', 'userName', 'resetUrl'],
+};

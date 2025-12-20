@@ -43,6 +43,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const {
       prompt,
+      negativePrompt: userNegativePrompt,
       mode = 'text-to-image',
       model: modelId = 'flux-1.1-pro',
       aspectRatio: aspectRatioId = '1:1',
@@ -134,7 +135,12 @@ export async function POST(request: NextRequest) {
 
     // Apply style to prompt
     const styledPrompt = applyStyleToPrompt(prompt.trim(), styleId);
-    const negativePrompt = getStyleNegativePrompt(styleId);
+    const styleNegativePrompt = getStyleNegativePrompt(styleId);
+
+    // Combine style negative prompt with user's custom negative prompt
+    const negativePrompt = [styleNegativePrompt, userNegativePrompt]
+      .filter(Boolean)
+      .join(', ') || undefined;
 
     // Generate images
     const generateInput = {
