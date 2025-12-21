@@ -5931,152 +5931,152 @@
     }
   },
   "resizeImagePage": {
-    "badge": "Zmiana Rozmiaru AI",
-    "title": "Inteligentna",
-    "titleHighlight": "Zmiana Rozmiaru",
-    "subtitle": "Zmień rozmiar obrazów z zachowaniem jakości. Zmniejszaj lub powiększaj z AI upscalingiem. Predefiniowane rozmiary dla social media, web i druku.",
-    "termsNotice": "Używając tego narzędzia, zgadzasz się z naszymi warunkami korzystania.",
+    "badge": "Darmowy Resizer Obrazów",
+    "title": "Zmień rozmiar obrazów na",
+    "titleHighlight": "Dowolny Wymiar",
+    "subtitle": "Szybko zmień rozmiar obrazów do dokładnych wymiarów. Używaj popularnych presetów dla social media, web i druku lub wprowadź własne wymiary w pikselach. Szybko, za darmo i przetwarzane w przeglądarce.",
+    "termsNotice": "Obrazy są przetwarzane lokalnie w Twojej przeglądarce.",
     "stats": {
-      "credits": "Darmowe",
-      "creditsLabel": "Podstawowe skalowanie",
-      "sizes": "20+",
-      "sizesLabel": "Predefiniowanych rozmiarów",
+      "cost": "DARMOWE",
+      "costLabel": "Bez kredytów",
+      "presets": "10+",
+      "presetsLabel": "Presetów rozmiarów",
       "processing": "Natychmiast",
-      "processingLabel": "Przetwarzanie"
+      "processingLabel": "Rezultaty"
     },
     "options": {
-      "title": "Tryby skalowania",
-      "percentage": {
-        "name": "Procentowo",
-        "description": "Skaluj o procent oryginału"
+      "title": "Popularne presety rozmiarów",
+      "instagram": {
+        "name": "Post na Instagram",
+        "description": "Format kwadratowy 1080x1080, zoptymalizowany dla postów na Instagram."
       },
-      "dimensions": {
-        "name": "Wymiary",
-        "description": "Ustaw dokładną szerokość i wysokość"
+      "youtube": {
+        "name": "Miniatura YouTube",
+        "description": "Format panoramiczny 1280x720 dla przyciągających wzrok miniatur wideo."
       },
-      "presets": {
-        "name": "Presety",
-        "description": "Gotowe rozmiary dla platform"
+      "linkedin": {
+        "name": "Baner LinkedIn",
+        "description": "Format 1584x396 dla profesjonalnych banerów profilowych."
       }
     },
     "features": {
-      "title": "Funkcje",
-      "keepAspect": {
-        "title": "Zachowanie proporcji",
-        "description": "Automatyczne zachowanie oryginalnych proporcji"
-      },
+      "title": "Funkcje zmiany rozmiaru",
       "presets": {
-        "title": "Presety rozmiarów",
-        "description": "Instagram, Facebook, LinkedIn i więcej"
+        "title": "Inteligentne presety",
+        "description": "Presety jednym kliknięciem dla Instagram, YouTube, LinkedIn, Twitter, Facebook i popularnych wymiarów web."
       },
-      "aiUpscale": {
-        "title": "AI Upscaling",
-        "description": "Powiększ z zachowaniem szczegółów"
+      "custom": {
+        "title": "Własne wymiary",
+        "description": "Wprowadź dokładną szerokość i wysokość w pikselach. Zablokuj proporcje dla proporcjonalnego skalowania."
+      },
+      "fitModes": {
+        "title": "Tryby dopasowania",
+        "description": "Wybierz cover (przytnij do wypełnienia), contain (zmieść w środku) lub stretch dla różnych potrzeb skalowania."
       }
     },
     "howItWorks": {
-      "title": "Jak to",
-      "titleHighlight": "działa",
+      "title": "Jak działa",
+      "titleHighlight": "zmiana rozmiaru",
       "step1": {
         "title": "Prześlij obraz",
-        "description": "Wybierz obraz do zmiany rozmiaru"
+        "description": "Wybierz dowolny obraz JPG, PNG lub WEBP z urządzenia."
       },
       "step2": {
         "title": "Wybierz rozmiar",
-        "description": "Procent, wymiary lub preset"
+        "description": "Wybierz preset lub wprowadź własne wymiary."
       },
       "step3": {
-        "title": "Ustaw opcje",
-        "description": "Proporcje, jakość, format"
+        "title": "Wybierz tryb dopasowania",
+        "description": "Określ jak obraz ma być skalowany: cover, contain lub stretch."
       },
       "step4": {
         "title": "Pobierz",
-        "description": "Zapisz przeskalowany obraz"
+        "description": "Zapisz przeskalowany obraz w wysokiej jakości."
       }
     },
     "useCases": {
-      "title": "Zastosowania",
-      "web": {
-        "icon": "🌐",
-        "title": "Web",
-        "description": "Optymalizacja obrazów na stronę"
-      },
+      "title": "Idealne do zmiany rozmiaru",
       "social": {
         "icon": "📱",
         "title": "Social Media",
-        "description": "Idealne rozmiary dla platform"
+        "description": "Zmień rozmiar dla Instagram, Facebook, Twitter, LinkedIn z idealnymi wymiarami za każdym razem."
       },
-      "email": {
-        "icon": "📧",
-        "title": "Email",
-        "description": "Lekkie obrazy do newsletterów"
+      "web": {
+        "icon": "🌐",
+        "title": "Web i Email",
+        "description": "Optymalizuj obrazy dla szybszego ładowania strony i kompatybilności z emailami."
       },
       "print": {
         "icon": "🖨️",
-        "title": "Druk",
-        "description": "Przygotowanie do druku"
+        "title": "Przygotowanie do druku",
+        "description": "Skaluj obrazy do dokładnych wymiarów druku z uwzględnieniem DPI."
+      },
+      "thumbnails": {
+        "icon": "🎬",
+        "title": "Miniatury",
+        "description": "Twórz spójne rozmiary miniatur dla wideo, bloga i list produktów."
       }
     },
     "technology": {
-      "title": "Technologia",
-      "description": "Nasze narzędzie używa zaawansowanych algorytmów do skalowania z minimalną utratą jakości.",
-      "feature1": "Bicubic interpolation dla zmniejszania",
-      "feature2": "AI upscaling dla powiększania",
-      "feature3": "Automatyczna optymalizacja ostrości",
-      "feature4": "Zachowanie metadanych EXIF"
+      "title": "📐 Zmiana rozmiaru w przeglądarce",
+      "description": "Nasze narzędzie używa HTML5 Canvas z interpolacją bicubic dla płynnego skalowania. Przetwarzanie odbywa się w Twojej przeglądarce dla prywatności i szybkości.",
+      "feature1": "Wysokiej jakości algorytm skalowania bicubic",
+      "feature2": "Opcje zachowania proporcji",
+      "feature3": "Brak utraty jakości przy zmniejszaniu",
+      "feature4": "Natychmiastowe rezultaty bez przesyłania"
     },
     "limitations": {
-      "title": "Co warto wiedzieć",
+      "title": "Czego się spodziewać",
       "worksWell": {
-        "title": "Działa dobrze z",
-        "item1": "Zmniejszaniem obrazów",
-        "item2": "Umiarkowanym powiększaniem (do 2x)",
-        "item3": "Obrazami o wysokiej jakości wejściowej"
+        "title": "✓ Najlepiej sprawdza się dla",
+        "item1": "Zmniejszania obrazów do mniejszych rozmiarów",
+        "item2": "Spełniania wymagań konkretnych platform",
+        "item3": "Szybkiej zmiany rozmiaru ze spójnymi wymiarami"
       },
       "limitations": {
-        "title": "Ograniczenia",
-        "item1": "Duże powiększenia mogą powodować rozmycie",
-        "item2": "Bardzo małe obrazy trudno powiększyć",
-        "item3": "Dla większych powiększeń użyj Upscalera AI"
+        "title": "✗ Obecne ograniczenia",
+        "item1": "Powiększanie zmniejsza jakość (użyj AI Upscalera)",
+        "item2": "Nie można zachować ostrego tekstu przy znacznym zmniejszaniu",
+        "item3": "Bardzo duże powiększenia dadzą rozmyte rezultaty"
       }
     },
     "tips": {
-      "title": "Wskazówki",
-      "tip1": "Dla web zmniejszaj obrazy do potrzebnego rozmiaru",
-      "tip2": "Zachowuj proporcje dla naturalnego wyglądu",
-      "tip3": "Używaj presetów dla spójności na platformach",
-      "tip4": "Dla dużych powiększeń użyj naszego Upscalera",
-      "tip5": "Sprawdź jakość przed zapisaniem",
-      "tip6": "Optymalizuj format dla szybszego ładowania"
+      "title": "💡 Wskazówki dla lepszej zmiany rozmiaru",
+      "tip1": "Użyj trybu 'contain' aby zachować całą zawartość obrazu",
+      "tip2": "Użyj trybu 'cover' dla miniatur wypełniających ramkę",
+      "tip3": "Zablokuj proporcje aby zapobiec zniekształceniom",
+      "tip4": "Do powiększania użyj naszego AI Upscalera dla lepszej jakości",
+      "tip5": "Sprawdź wytyczne platform dla dokładnych wymagań rozmiaru",
+      "tip6": "Zmniejszaj z najwyższej jakości źródła dla najlepszych rezultatów"
     },
     "faq": {
       "title": "Często zadawane pytania",
       "q1": {
-        "question": "Czy zmiana rozmiaru jest darmowa?",
-        "answer": "Tak, podstawowa zmiana rozmiaru jest darmowa. AI upscaling wymaga kredytów."
+        "question": "Czy narzędzie do zmiany rozmiaru jest darmowe?",
+        "answer": "Tak! Zmiana rozmiaru jest w 100% darmowa bez limitów. Nie wymaga konta ani kredytów."
       },
       "q2": {
-        "question": "Jakie presety są dostępne?",
-        "answer": "Instagram (1080x1080), Facebook Cover (820x312), LinkedIn Banner, YouTube thumbnail i więcej."
+        "question": "Jaka jest różnica między cover, contain i stretch?",
+        "answer": "Cover wypełnia docelowy rozmiar (może przyciąć krawędzie). Contain mieści cały obraz (może dodać marginesy). Stretch zniekształca do dokładnych wymiarów."
       },
       "q3": {
-        "question": "Czy mogę powiększyć obraz?",
-        "answer": "Tak, do 2x za darmo. Dla większych powiększeń polecamy AI Upscaler z zachowaniem jakości."
+        "question": "Czy mogę powiększyć obrazy?",
+        "answer": "Podstawowe powiększanie jest możliwe ale zmniejsza jakość. Dla najlepszych rezultatów powiększania użyj naszego AI Upscalera który inteligentnie dodaje szczegóły."
       },
       "q4": {
-        "question": "Czy zachowam jakość?",
-        "answer": "Przy zmniejszaniu tak. Przy powiększaniu jakość może się pogorszyć - wtedy użyj AI Upscalera."
+        "question": "Czy moje obrazy są gdzieś przesyłane?",
+        "answer": "Nie. Całe przetwarzanie odbywa się lokalnie w Twojej przeglądarce. Twoje obrazy nigdy nie opuszczają urządzenia."
       },
       "q5": {
-        "question": "Jakie formaty są obsługiwane?",
-        "answer": "PNG, JPG, WebP na wejściu i wyjściu. Możesz też konwertować między formatami."
+        "question": "Jakie formaty plików są obsługiwane?",
+        "answer": "Obsługujemy JPG, PNG i WEBP na wejściu. Wyjście zachowuje oryginalny format dla najlepszej kompatybilności."
       }
     },
     "cta": {
-      "title": "Zmień rozmiar obrazu",
-      "subtitle": "Szybko i łatwo dostosuj rozmiar do swoich potrzeb.",
-      "getStarted": "Rozpocznij za darmo",
-      "startAction": "Zmień rozmiar"
+      "title": "Zmień rozmiar obrazów teraz",
+      "subtitle": "Darmowe, natychmiastowe, łatwe. Idealne rozmiary dla każdej platformy.",
+      "getStarted": "Zmień rozmiar obrazu",
+      "startAction": "Zacznij zmieniać rozmiar"
     }
   },
   "reimaginePage": {
