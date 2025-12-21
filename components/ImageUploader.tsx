@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import toast from "react-hot-toast";
 
 export default function ImageUploader() {
   const [dragActive, setDragActive] = useState(false);
@@ -44,13 +45,13 @@ export default function ImageUploader() {
     // Validate file type
     const validTypes = ["image/png", "image/jpeg", "image/jpg", "image/webp", "image/heic", "image/bmp"];
     if (!validTypes.includes(file.type)) {
-      alert("Please upload a valid image file (PNG, JPG, JPEG, WEBP, HEIC, BMP)");
+      toast.error("Please upload a valid image file (PNG, JPG, JPEG, WEBP, HEIC, BMP)");
       return;
     }
 
     // Validate file size (max 10MB for free tier)
     if (file.size > 10 * 1024 * 1024) {
-      alert("File size must be less than 10MB");
+      toast.error("File size must be less than 10MB");
       return;
     }
 
@@ -100,7 +101,7 @@ export default function ImageUploader() {
 
     } catch (error: any) {
       console.error("Error:", error);
-      alert(`Failed to process image: ${error.message}`);
+      toast.error(`Failed to process image: ${error.message}`);
       setProgress("");
     } finally {
       setProcessing(false);
@@ -123,7 +124,7 @@ export default function ImageUploader() {
       document.body.removeChild(a);
     } catch (error) {
       console.error("Download error:", error);
-      alert("Failed to download image");
+      toast.error("Failed to download image");
     }
   };
 

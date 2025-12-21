@@ -53,15 +53,41 @@ export function handleApiError(
 
 /**
  * Common error responses
+ *
+ * HTTP Status Code Guidelines:
+ * - 400 Bad Request: Malformed syntax, invalid parameters
+ * - 401 Unauthorized: Missing or invalid authentication
+ * - 403 Forbidden: Authenticated but not authorized for this action
+ * - 404 Not Found: Resource doesn't exist
+ * - 409 Conflict: Resource already exists or state conflict
+ * - 422 Unprocessable Entity: Valid syntax but semantic errors (validation failed)
+ * - 429 Too Many Requests: Rate limit exceeded
+ * - 500 Internal Server Error: Unexpected server error
  */
 export const ApiErrors = {
-  unauthorized: () => apiError('Unauthorized', 401),
-  forbidden: () => apiError('Forbidden', 403),
-  notFound: (resource: string = 'Resource') => apiError(`${resource} not found`, 404),
+  // Authentication errors (401)
+  unauthorized: (message: string = 'Authentication required') =>
+    apiError(message, 401),
+
+  // Authorization errors (403)
+  forbidden: (message: string = 'Access denied') =>
+    apiError(message, 403),
+
+  // Resource errors (404, 409)
+  notFound: (resource: string = 'Resource') =>
+    apiError(`${resource} not found`, 404),
+  conflict: (message: string = 'Resource already exists') =>
+    apiError(message, 409),
+
+  // Request errors (400, 422)
   badRequest: (message: string = 'Bad request', details?: unknown) =>
     apiError(message, 400, details),
   validationFailed: (details: unknown) =>
-    apiError('Validation failed', 400, details),
+    apiError('Validation failed', 422, details),
+  invalidInput: (message: string, details?: unknown) =>
+    apiError(message, 422, details),
+
+  // Rate limiting (429)
   rateLimited: (retryAfter: number) =>
     NextResponse.json(
       { error: 'Too many requests', retryAfter },
@@ -70,8 +96,14 @@ export const ApiErrors = {
         headers: { 'Retry-After': retryAfter.toString() }
       }
     ),
+
+  // Size limits (413)
   payloadTooLarge: (maxSize: number) =>
     apiError(`Request body too large. Maximum size is ${Math.round(maxSize / 1024 / 1024)}MB`, 413),
+
+  // Payment required (402)
+  insufficientCredits: (required: number, available: number) =>
+    apiError(`Insufficient credits. Required: ${required}, Available: ${available}`, 402),
 };
 
 /**

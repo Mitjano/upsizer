@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback } from "react";
+import toast from "react-hot-toast";
 
 /**
  * Generic drop zone for file uploads
@@ -90,18 +91,18 @@ export default function DropZone({
 
   const validateFiles = useCallback((files: File[]): File[] => {
     if (files.length > maxFiles) {
-      alert(`Maximum ${maxFiles} images allowed at once`);
+      toast.error(`Maximum ${maxFiles} images allowed at once`);
       return [];
     }
 
     return files.filter(file => {
       if (!acceptedTypes.includes(file.type)) {
         const extensions = acceptedTypes.map(t => t.split('/')[1].toUpperCase()).join(', ');
-        alert(`${file.name}: Invalid file type. Supported: ${extensions}`);
+        toast.error(`${file.name}: Invalid file type. Supported: ${extensions}`);
         return false;
       }
       if (file.size > maxSize) {
-        alert(`${file.name}: File size must be less than ${Math.round(maxSize / 1024 / 1024)}MB`);
+        toast.error(`${file.name}: File size must be less than ${Math.round(maxSize / 1024 / 1024)}MB`);
         return false;
       }
       return true;

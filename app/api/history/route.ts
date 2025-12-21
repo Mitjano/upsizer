@@ -13,6 +13,7 @@ import {
   type ImageProcessingType,
   type ImageProcessingStatus,
 } from '@/lib/image-history';
+import { userEndpointLimiter, getClientIdentifier, rateLimitResponse } from '@/lib/rate-limit';
 
 /**
  * GET /api/history
@@ -20,6 +21,13 @@ import {
  */
 export async function GET(request: NextRequest) {
   try {
+    // Rate limiting
+    const identifier = getClientIdentifier(request);
+    const { allowed, resetAt } = userEndpointLimiter.check(identifier);
+    if (!allowed) {
+      return rateLimitResponse(resetAt);
+    }
+
     const session = await auth();
 
     if (!session?.user?.email) {
@@ -87,6 +95,13 @@ export async function GET(request: NextRequest) {
  */
 export async function DELETE(request: NextRequest) {
   try {
+    // Rate limiting
+    const identifier = getClientIdentifier(request);
+    const { allowed, resetAt } = userEndpointLimiter.check(identifier);
+    if (!allowed) {
+      return rateLimitResponse(resetAt);
+    }
+
     const session = await auth();
 
     if (!session?.user?.email) {

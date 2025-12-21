@@ -3,6 +3,7 @@ import { auth } from '@/lib/auth';
 import { getUserByEmail, createUser } from '@/lib/db';
 import { getGeneratedImagesByUserId, getUserGenerationStats } from '@/lib/ai-image/db';
 import { prisma } from '@/lib/prisma';
+import { userEndpointLimiter, getClientIdentifier, rateLimitResponse } from '@/lib/rate-limit';
 
 interface CreationItem {
   id: string;
@@ -29,6 +30,13 @@ interface CreationItem {
 
 export async function GET(request: NextRequest) {
   try {
+    // Rate limiting
+    const identifier = getClientIdentifier(request);
+    const { allowed, resetAt } = userEndpointLimiter.check(identifier);
+    if (!allowed) {
+      return rateLimitResponse(resetAt);
+    }
+
     const session = await auth();
 
     if (!session?.user?.email) {
