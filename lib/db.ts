@@ -374,6 +374,44 @@ export async function updateUserLoginAsync(email: string): Promise<void> {
   updateUserLogin(email);
 }
 
+/**
+ * Update user's lastActiveAt timestamp
+ * Call this when user performs any meaningful action (API calls, tool usage, etc.)
+ */
+export async function updateUserActivity(userId: string): Promise<void> {
+  if (USE_POSTGRES) {
+    const prisma = await getPrisma();
+    try {
+      await prisma.user.update({
+        where: { id: userId },
+        data: { lastActiveAt: new Date() },
+      });
+    } catch {
+      // Silently fail - activity tracking should not break main functionality
+    }
+    return;
+  }
+  // For JSON mode, we don't track lastActiveAt
+}
+
+/**
+ * Update user's lastActiveAt by email
+ */
+export async function updateUserActivityByEmail(email: string): Promise<void> {
+  if (USE_POSTGRES) {
+    const prisma = await getPrisma();
+    try {
+      await prisma.user.update({
+        where: { email },
+        data: { lastActiveAt: new Date() },
+      });
+    } catch {
+      // Silently fail
+    }
+    return;
+  }
+}
+
 export function deleteUser(id: string): boolean {
   if (USE_POSTGRES) {
     console.warn('deleteUser() called in sync mode with PostgreSQL. Use async version.');
@@ -1149,52 +1187,169 @@ export function deleteFeatureFlag(id: string): boolean {
 // STATS HELPERS
 // ============================================
 
-// getUserStats - now async to support PostgreSQL
-export async function getUserStats(): Promise<{ total: number; active: number; premium: number; newThisMonth: number; admins: number }> {
+export interface UserMetrics {
+  // Core counts
+  total: number;
+  admins: number;
+  premium: number;
+
+  // Activity-based metrics (based on lastActiveAt)
+  dau: number;           // Daily Active Users (active in last 24h)
+  wau: number;           // Weekly Active Users (active in last 7 days)
+  mau: number;           // Monthly Active Users (active in last 30 days)
+
+  // Percentage calculations
+  dauPercent: number;    // DAU as % of total
+  wauPercent: number;    // WAU as % of total
+  mauPercent: number;    // MAU as % of total
+
+  // Growth metrics
+  newToday: number;      // Signups today
+  newThisWeek: number;   // Signups this week
+  newThisMonth: number;  // Signups this month
+
+  // Engagement metrics
+  totalCredits: number;
+  totalUsage: number;
+  avgCreditsPerUser: number;
+  avgUsagePerUser: number;
+  powerUsers: number;    // Users with totalUsage > 10
+
+  // Conversion metrics
+  conversionRate: number; // Premium users as % of total (excluding admins)
+
+  // Retention (simplified - users who returned after signup day)
+  returningUsers: number; // Users whose lastActiveAt > createdAt + 1 day
+  retentionRate: number;
+}
+
+// getUserStats - Enhanced with DAU/WAU/MAU metrics
+export async function getUserStats(): Promise<UserMetrics> {
   if (USE_POSTGRES) {
     const prisma = await getPrisma();
     const now = new Date();
-    const monthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
 
-    const [total, active, premium, newThisMonth, admins] = await Promise.all([
+    // Time boundaries
+    const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+    const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const oneMonthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const startOfWeek = new Date(now.getTime() - now.getDay() * 24 * 60 * 60 * 1000);
+    startOfWeek.setHours(0, 0, 0, 0);
+
+    const [
+      total,
+      admins,
+      premium,
+      dau,
+      wau,
+      mau,
+      newToday,
+      newThisWeek,
+      newThisMonth,
+      aggregates,
+      powerUsers,
+      returningUsers,
+    ] = await Promise.all([
+      // Core counts
       prisma.user.count(),
-      prisma.user.count({ where: { status: 'active' } }),
-      prisma.user.count({ where: { role: { in: ['premium', 'admin'] } } }),
-      prisma.user.count({ where: { createdAt: { gt: monthAgo } } }),
       prisma.user.count({ where: { role: 'admin' } }),
+      prisma.user.count({ where: { role: 'premium' } }),
+
+      // Activity-based (lastActiveAt)
+      prisma.user.count({ where: { lastActiveAt: { gte: oneDayAgo } } }),
+      prisma.user.count({ where: { lastActiveAt: { gte: oneWeekAgo } } }),
+      prisma.user.count({ where: { lastActiveAt: { gte: oneMonthAgo } } }),
+
+      // Growth metrics
+      prisma.user.count({ where: { createdAt: { gte: startOfToday } } }),
+      prisma.user.count({ where: { createdAt: { gte: startOfWeek } } }),
+      prisma.user.count({ where: { createdAt: { gte: oneMonthAgo } } }),
+
+      // Aggregates for credits/usage
+      prisma.user.aggregate({
+        _sum: { credits: true, totalUsage: true },
+      }),
+
+      // Power users (usage > 10)
+      prisma.user.count({ where: { totalUsage: { gt: 10 } } }),
+
+      // Returning users (active after first day) - approximate
+      prisma.user.count({
+        where: {
+          AND: [
+            { lastActiveAt: { not: null } },
+            { totalUsage: { gt: 0 } },
+          ]
+        }
+      }),
     ]);
 
-    return { total, active, premium, newThisMonth, admins };
+    const totalCredits = aggregates._sum.credits || 0;
+    const totalUsage = aggregates._sum.totalUsage || 0;
+    const nonAdminUsers = total - admins;
+
+    return {
+      total,
+      admins,
+      premium,
+      dau,
+      wau,
+      mau,
+      dauPercent: total > 0 ? Math.round((dau / total) * 100 * 10) / 10 : 0,
+      wauPercent: total > 0 ? Math.round((wau / total) * 100 * 10) / 10 : 0,
+      mauPercent: total > 0 ? Math.round((mau / total) * 100 * 10) / 10 : 0,
+      newToday,
+      newThisWeek,
+      newThisMonth,
+      totalCredits,
+      totalUsage,
+      avgCreditsPerUser: total > 0 ? Math.round(totalCredits / total) : 0,
+      avgUsagePerUser: total > 0 ? Math.round((totalUsage / total) * 10) / 10 : 0,
+      powerUsers,
+      conversionRate: nonAdminUsers > 0 ? Math.round((premium / nonAdminUsers) * 100 * 10) / 10 : 0,
+      returningUsers,
+      retentionRate: total > 0 ? Math.round((returningUsers / total) * 100 * 10) / 10 : 0,
+    };
   }
+
+  // Fallback for JSON mode (simplified)
   const users = await getAllUsers();
   const now = new Date();
-  const monthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+  const oneMonthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+  const total = users.length;
+  const admins = users.filter(u => u.role === 'admin').length;
+  const premium = users.filter(u => u.role === 'premium').length;
+  const totalCredits = users.reduce((sum, u) => sum + u.credits, 0);
+  const totalUsage = users.reduce((sum, u) => sum + u.totalUsage, 0);
+  const nonAdminUsers = total - admins;
 
   return {
-    total: users.length,
-    active: users.filter(u => u.status === 'active').length,
-    premium: users.filter(u => u.role === 'premium' || u.role === 'admin').length,
-    newThisMonth: users.filter(u => new Date(u.createdAt) > monthAgo).length,
-    admins: users.filter(u => u.role === 'admin').length,
+    total,
+    admins,
+    premium,
+    dau: 0,
+    wau: 0,
+    mau: 0,
+    dauPercent: 0,
+    wauPercent: 0,
+    mauPercent: 0,
+    newToday: 0,
+    newThisWeek: 0,
+    newThisMonth: users.filter(u => new Date(u.createdAt) > oneMonthAgo).length,
+    totalCredits,
+    totalUsage,
+    avgCreditsPerUser: total > 0 ? Math.round(totalCredits / total) : 0,
+    avgUsagePerUser: total > 0 ? Math.round((totalUsage / total) * 10) / 10 : 0,
+    powerUsers: users.filter(u => u.totalUsage > 10).length,
+    conversionRate: nonAdminUsers > 0 ? Math.round((premium / nonAdminUsers) * 100 * 10) / 10 : 0,
+    returningUsers: 0,
+    retentionRate: 0,
   };
 }
 
+// Legacy alias for backward compatibility
 export async function getUserStatsAsync() {
-  if (USE_POSTGRES) {
-    const prisma = await getPrisma();
-    const now = new Date();
-    const monthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
-
-    const [total, active, premium, newThisMonth, admins] = await Promise.all([
-      prisma.user.count(),
-      prisma.user.count({ where: { status: 'active' } }),
-      prisma.user.count({ where: { role: { in: ['premium', 'admin'] } } }),
-      prisma.user.count({ where: { createdAt: { gte: monthAgo } } }),
-      prisma.user.count({ where: { role: 'admin' } }),
-    ]);
-
-    return { total, active, premium, newThisMonth, admins };
-  }
   return getUserStats();
 }
 

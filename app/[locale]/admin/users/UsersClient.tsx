@@ -2,14 +2,15 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { User } from '@/lib/db';
+import { User, UserMetrics } from '@/lib/db';
 import toast from 'react-hot-toast';
 
 interface UsersClientProps {
   users: User[];
+  stats: UserMetrics;
 }
 
-export default function UsersClient({ users: initialUsers }: UsersClientProps) {
+export default function UsersClient({ users: initialUsers, stats }: UsersClientProps) {
   const router = useRouter();
   const [users, setUsers] = useState(initialUsers);
   const [search, setSearch] = useState('');
@@ -48,9 +49,6 @@ export default function UsersClient({ users: initialUsers }: UsersClientProps) {
       console.error(error);
     }
   };
-
-  const totalCredits = users.reduce((sum, u) => sum + u.credits, 0);
-  const totalUsage = users.reduce((sum, u) => sum + u.totalUsage, 0);
 
   const handleExport = (type: 'all' | 'emails' | 'newsletter') => {
     let url = '/api/admin/users/export?';
@@ -94,24 +92,6 @@ export default function UsersClient({ users: initialUsers }: UsersClientProps) {
           </svg>
           Newsletter Subscribers
         </button>
-      </div>
-
-      {/* Summary */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
-          <div className="text-sm text-gray-400 mb-1">Total Credits</div>
-          <div className="text-2xl font-bold text-green-400">{totalCredits.toLocaleString()}</div>
-        </div>
-        <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
-          <div className="text-sm text-gray-400 mb-1">Total Usage</div>
-          <div className="text-2xl font-bold text-blue-400">{totalUsage.toLocaleString()}</div>
-        </div>
-        <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
-          <div className="text-sm text-gray-400 mb-1">Premium Users</div>
-          <div className="text-2xl font-bold text-purple-400">
-            {users.filter(u => u.role === 'premium' || u.role === 'admin').length}
-          </div>
-        </div>
       </div>
 
       {/* Filters */}

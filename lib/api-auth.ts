@@ -7,6 +7,7 @@ import { NextRequest } from 'next/server';
 import crypto from 'crypto';
 import { auth } from '@/lib/auth';
 import { getUserByEmail, getUserById, getApiKeyByKey, incrementApiKeyUsage } from '@/lib/database';
+import { updateUserActivity } from '@/lib/db';
 
 // Standard rate limit for all API users (requests per minute)
 export const API_RATE_LIMIT = 100;
@@ -44,12 +45,23 @@ export async function authenticateRequest(request: NextRequest): Promise<AuthRes
   // Try API key first (from headers)
   const apiKey = extractApiKey(request);
 
+  let result: AuthResult;
+
   if (apiKey) {
-    return authenticateWithApiKey(apiKey);
+    result = await authenticateWithApiKey(apiKey);
+  } else {
+    // Fall back to session auth
+    result = await authenticateWithSession();
   }
 
-  // Fall back to session auth
-  return authenticateWithSession();
+  // Update lastActiveAt for successful authentications (fire-and-forget)
+  if (result.success && result.user?.id) {
+    updateUserActivity(result.user.id).catch(() => {
+      // Silently ignore errors - activity tracking should not affect main flow
+    });
+  }
+
+  return result;
 }
 
 /**
