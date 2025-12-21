@@ -111,7 +111,7 @@ describe('api-utils.ts', () => {
       expect(response.status).toBe(401);
 
       const body = await response.json();
-      expect(body.error).toBe('Unauthorized');
+      expect(body.error).toBe('Authentication required');
     });
 
     it('forbidden should return 403', async () => {
@@ -119,7 +119,7 @@ describe('api-utils.ts', () => {
       expect(response.status).toBe(403);
 
       const body = await response.json();
-      expect(body.error).toBe('Forbidden');
+      expect(body.error).toBe('Access denied');
     });
 
     it('notFound should return 404 with default message', async () => {
@@ -153,10 +153,10 @@ describe('api-utils.ts', () => {
       expect(body.details).toEqual(details);
     });
 
-    it('validationFailed should return 400 with details', async () => {
+    it('validationFailed should return 422 with details', async () => {
       const details = { email: ['required'], name: ['too short'] };
       const response = ApiErrors.validationFailed(details);
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(422);
 
       const body = await response.json();
       expect(body.error).toBe('Validation failed');

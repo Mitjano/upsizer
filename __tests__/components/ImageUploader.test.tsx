@@ -1,9 +1,18 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import ImageUploader from '@/components/ImageUploader';
+import toast from 'react-hot-toast';
 
 // Mock fetch
 global.fetch = vi.fn();
+
+// Mock react-hot-toast
+vi.mock('react-hot-toast', () => ({
+  default: {
+    error: vi.fn(),
+    success: vi.fn(),
+  },
+}));
 
 // Store original FileReader
 const OriginalFileReader = window.FileReader;
@@ -12,7 +21,6 @@ describe('ImageUploader', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.spyOn(console, 'error').mockImplementation(() => {});
-    vi.spyOn(window, 'alert').mockImplementation(() => {});
 
     // Mock FileReader properly
     class MockFileReader {
@@ -60,8 +68,6 @@ describe('ImageUploader', () => {
 
   describe('File validation', () => {
     it('should reject invalid file types', async () => {
-      const alertMock = vi.spyOn(window, 'alert').mockImplementation(() => {});
-
       render(<ImageUploader />);
 
       const input = document.querySelector('input[type="file"]') as HTMLInputElement;
@@ -69,14 +75,12 @@ describe('ImageUploader', () => {
 
       fireEvent.change(input, { target: { files: [invalidFile] } });
 
-      expect(alertMock).toHaveBeenCalledWith(
+      expect(toast.error).toHaveBeenCalledWith(
         'Please upload a valid image file (PNG, JPG, JPEG, WEBP, HEIC, BMP)'
       );
     });
 
     it('should reject files larger than 10MB', async () => {
-      const alertMock = vi.spyOn(window, 'alert').mockImplementation(() => {});
-
       render(<ImageUploader />);
 
       const input = document.querySelector('input[type="file"]') as HTMLInputElement;
@@ -85,7 +89,7 @@ describe('ImageUploader', () => {
 
       fireEvent.change(input, { target: { files: [largeFile] } });
 
-      expect(alertMock).toHaveBeenCalledWith('File size must be less than 10MB');
+      expect(toast.error).toHaveBeenCalledWith('File size must be less than 10MB');
     });
 
     it('should accept valid PNG file', async () => {
@@ -226,8 +230,6 @@ describe('ImageUploader', () => {
     });
 
     it('should handle API error', async () => {
-      const alertMock = vi.spyOn(window, 'alert').mockImplementation(() => {});
-
       await setupAndProcess();
 
       (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
@@ -239,7 +241,7 @@ describe('ImageUploader', () => {
       fireEvent.click(processButton);
 
       await waitFor(() => {
-        expect(alertMock).toHaveBeenCalledWith(expect.stringContaining('Insufficient credits'));
+        expect(toast.error).toHaveBeenCalledWith(expect.stringContaining('Insufficient credits'));
       });
     });
   });

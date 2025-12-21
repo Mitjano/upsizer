@@ -1,63 +1,66 @@
 /**
- * Simple logging utility for development and production
+ * Structured logging with pino
+ * Provides consistent, searchable logs with request tracing
  */
 
-type LogLevel = 'debug' | 'info' | 'warn' | 'error';
+import pino from 'pino';
 
-interface LogEntry {
-  timestamp: string;
-  level: LogLevel;
-  message: string;
-  data?: any;
-  stack?: string;
+const isDev = process.env.NODE_ENV !== 'production';
+
+// Create base pino logger
+const pinoLogger = pino({
+  level: process.env.LOG_LEVEL || (isDev ? 'debug' : 'info'),
+  ...(isDev && {
+    transport: {
+      target: 'pino-pretty',
+      options: {
+        colorize: true,
+        translateTime: 'HH:MM:ss',
+        ignore: 'pid,hostname',
+      },
+    },
+  }),
+  base: {
+    env: process.env.NODE_ENV,
+    service: 'pixelift',
+  },
+  formatters: {
+    level: (label) => ({ level: label }),
+  },
+  timestamp: pino.stdTimeFunctions.isoTime,
+});
+
+/**
+ * Generate a unique request ID
+ */
+export function generateRequestId(): string {
+  return `req_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
 }
 
+/**
+ * Create a child logger with request context
+ */
+export function createRequestLogger(requestId: string, context?: Record<string, unknown>) {
+  return pinoLogger.child({
+    requestId,
+    ...context,
+  });
+}
+
+/**
+ * Logger class wrapping pino for backwards compatibility
+ */
 class Logger {
-  private isDev = process.env.NODE_ENV === 'development';
-
-  private formatMessage(level: LogLevel, message: string, data?: any): LogEntry {
-    return {
-      timestamp: new Date().toISOString(),
-      level,
-      message,
-      data,
-    };
-  }
-
-  private log(level: LogLevel, message: string, data?: any) {
-    const entry = this.formatMessage(level, message, data);
-
-    if (this.isDev) {
-      // Pretty print in development
-      const color = {
-        debug: '\x1b[36m', // Cyan
-        info: '\x1b[34m',  // Blue
-        warn: '\x1b[33m',  // Yellow
-        error: '\x1b[31m', // Red
-      }[level];
-
-      console.log(
-        `${color}[${entry.timestamp}] ${level.toUpperCase()}\x1b[0m: ${message}`,
-        data ? data : ''
-      );
-    } else {
-      // JSON format in production for better parsing
-      console.log(JSON.stringify(entry));
-    }
-  }
-
   debug(message: string, data?: any) {
-    if (this.isDev) {
-      this.log('debug', message, data);
-    }
+    pinoLogger.debug(data || {}, message);
   }
 
   info(message: string, data?: any) {
-    this.log('info', message, data);
+    pinoLogger.info(data || {}, message);
   }
 
   warn(message: string, data?: any) {
-    this.log('warn', message, data);
+    pinoLogger.warn(data || {}, message);
   }
 
   error(message: string, error?: any) {
@@ -68,36 +71,48 @@ class Logger {
           stack: error.stack,
         }
       : error;
-
-    this.log('error', message, errorData);
+    pinoLogger.error(errorData || {}, message);
   }
 
   // API-specific logging
-  apiRequest(method: string, path: string, userId?: string) {
-    this.info(`API ${method} ${path}`, { userId });
+  apiRequest(method: string, path: string, userId?: string, durationMs?: number) {
+    pinoLogger.info({ type: 'api_request', method, path, userId, durationMs }, `${method} ${path}`);
   }
 
   apiError(method: string, path: string, error: any, userId?: string) {
-    this.error(`API ${method} ${path} failed`, { error, userId });
+    pinoLogger.error({ type: 'api_error', method, path, error, userId }, `${method} ${path} failed`);
   }
 
   // Performance logging
   performance(operation: string, duration: number) {
-    this.info(`Performance: ${operation} took ${duration}ms`);
+    pinoLogger.info({ type: 'performance', operation, durationMs: duration }, `${operation} took ${duration}ms`);
   }
 
   // Database operations
   dbQuery(query: string, duration?: number) {
-    this.debug(`DB Query: ${query}`, { duration });
+    pinoLogger.debug({ type: 'db_query', query, durationMs: duration }, `DB Query: ${query}`);
   }
 
   // Image processing
   imageProcessing(type: string, userId: string, details?: any) {
-    this.info(`Image processing: ${type}`, { userId, ...details });
+    pinoLogger.info({ type: 'image_processing', processingType: type, userId, ...details }, `Image processing: ${type}`);
+  }
+
+  // Security events
+  security(event: string, data?: any) {
+    pinoLogger.warn({ type: 'security', event, ...data }, `[SECURITY] ${event}`);
+  }
+
+  // Business events
+  event(event: string, data?: any) {
+    pinoLogger.info({ type: 'event', event, ...data }, event);
   }
 }
 
 export const logger = new Logger();
+
+// Export raw pino logger for advanced usage
+export { pinoLogger };
 
 /**
  * Performance measurement decorator
