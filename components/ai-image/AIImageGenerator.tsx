@@ -13,7 +13,6 @@ import ProgressIndicator from './ProgressIndicator';
 import SeedInput from './SeedInput';
 import GeneratedImageActions from './GeneratedImageActions';
 import PromptExamples from './PromptExamples';
-import GenerationHistory, { type HistoryImage } from './GenerationHistory';
 import {
   AI_MODELS,
   ASPECT_RATIOS,
@@ -240,11 +239,6 @@ export default function AIImageGenerator() {
       setUseRandomSeed(false);
     }
   }, [lastSeed]);
-
-  const handleHistorySelect = (image: HistoryImage) => {
-    // Navigate to view the image or load it
-    window.location.href = `/ai-image/${image.id}`;
-  };
 
   const currentImage = generatedImages[selectedImageIndex];
 
@@ -640,12 +634,6 @@ export default function AIImageGenerator() {
                 </div>
               )}
             </div>
-
-            {/* Generation History */}
-            <GenerationHistory
-              onSelectImage={handleHistorySelect}
-              currentImageId={currentImage?.id}
-            />
 
           </div>
         </div>
