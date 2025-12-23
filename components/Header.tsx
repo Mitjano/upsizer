@@ -249,6 +249,7 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [toolsDropdownOpen, setToolsDropdownOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const [mobileToolsExpanded, setMobileToolsExpanded] = useState(false);
   const t = useTranslations();
   const { theme, resolvedTheme, setTheme } = useTheme();
 
@@ -665,63 +666,128 @@ export default function Header() {
       {/* Mobile Menu */}
       {mobileMenuOpen && (
         <div id="mobile-menu" className="md:hidden border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900" role="navigation" aria-label="Mobile navigation">
-          <div className="container mx-auto px-4 py-4 space-y-3">
-            {/* Tools Section */}
-            <div className="border-b border-gray-200 dark:border-gray-800 pb-3 mb-3">
-              <div className="text-xs font-semibold text-gray-500 uppercase mb-2">{t('nav.tools')}</div>
-              {tools.map((tool) => (
-                <Link
-                  key={tool.href}
-                  href={tool.href}
-                  className="block py-2 text-gray-700 dark:text-white hover:text-green-500 dark:hover:text-green-400 transition"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {tool.name} {tool.badge && <span className="text-xs bg-green-500 text-white px-2 py-0.5 rounded-full ml-2">{tool.badge}</span>}
-                </Link>
-              ))}
-            </div>
-
+          <div className="container mx-auto px-4 py-4 space-y-1">
+            {/* Main Links - Most Important First */}
             <Link
               href="/ai-image"
-              className="block py-2 text-purple-500 dark:text-purple-400 hover:text-purple-400 dark:hover:text-purple-300 transition font-medium"
+              className="flex items-center gap-3 py-3 px-3 rounded-lg text-gray-700 dark:text-white hover:bg-purple-50 dark:hover:bg-purple-900/20 transition"
               onClick={() => setMobileMenuOpen(false)}
             >
-              <span aria-hidden="true">✨</span> {t('nav.aiImage')}
+              <span className="text-xl" aria-hidden="true">✨</span>
+              <div>
+                <div className="font-medium text-purple-600 dark:text-purple-400">{t('nav.aiImage')}</div>
+                <div className="text-xs text-gray-500 dark:text-gray-400">Generuj obrazy AI</div>
+              </div>
             </Link>
             <Link
               href="/ai-video"
-              className="block py-2 text-cyan-500 dark:text-cyan-400 hover:text-cyan-400 dark:hover:text-cyan-300 transition font-medium"
+              className="flex items-center gap-3 py-3 px-3 rounded-lg text-gray-700 dark:text-white hover:bg-cyan-50 dark:hover:bg-cyan-900/20 transition"
               onClick={() => setMobileMenuOpen(false)}
             >
-              <span aria-hidden="true">🎬</span> {t('nav.aiVideo')}
+              <span className="text-xl" aria-hidden="true">🎬</span>
+              <div>
+                <div className="font-medium text-cyan-600 dark:text-cyan-400">{t('nav.aiVideo')}</div>
+                <div className="text-xs text-gray-500 dark:text-gray-400">Twórz wideo AI</div>
+              </div>
             </Link>
             <Link
               href="/ai-chat"
-              className="block py-2 text-green-500 dark:text-green-400 hover:text-green-400 dark:hover:text-green-300 transition font-medium"
+              className="flex items-center gap-3 py-3 px-3 rounded-lg text-gray-700 dark:text-white hover:bg-green-50 dark:hover:bg-green-900/20 transition"
               onClick={() => setMobileMenuOpen(false)}
             >
-              <span aria-hidden="true">💬</span> {t('nav.aiChat')}
+              <span className="text-xl" aria-hidden="true">💬</span>
+              <div>
+                <div className="font-medium text-green-600 dark:text-green-400">{t('nav.aiChat')}</div>
+                <div className="text-xs text-gray-500 dark:text-gray-400">Rozmawiaj z AI</div>
+              </div>
             </Link>
+
+            <hr className="border-gray-200 dark:border-gray-800 my-2" />
+
+            {/* Tools Section - Collapsible */}
+            <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+              <button
+                onClick={() => setMobileToolsExpanded(!mobileToolsExpanded)}
+                className="w-full flex items-center justify-between px-4 py-3 text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-800 transition"
+              >
+                <div className="flex items-center gap-2">
+                  <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                  <span className="font-medium">{t('nav.tools')}</span>
+                  <span className="text-xs text-gray-500 bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-full">
+                    {tools.length}
+                  </span>
+                </div>
+                <svg
+                  className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${mobileToolsExpanded ? 'rotate-180' : ''}`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {mobileToolsExpanded && (
+                <div className="border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 max-h-64 overflow-y-auto">
+                  {categories.map((category) => (
+                    <div key={category.id} className="px-4 py-2">
+                      <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
+                        {category.label}
+                      </div>
+                      {category.tools.map((tool) => (
+                        <Link
+                          key={tool.href}
+                          href={tool.href}
+                          className="block py-1.5 text-sm text-gray-700 dark:text-gray-300 hover:text-green-500 dark:hover:text-green-400 transition"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          {tool.name}
+                          {tool.badge && (
+                            <span className="text-[10px] bg-green-500 text-white px-1.5 py-0.5 rounded ml-2">
+                              {tool.badge}
+                            </span>
+                          )}
+                        </Link>
+                      ))}
+                    </div>
+                  ))}
+                  <Link
+                    href="/tools"
+                    className="block px-4 py-3 text-sm text-center text-green-600 dark:text-green-400 font-medium hover:bg-gray-100 dark:hover:bg-gray-700 border-t border-gray-200 dark:border-gray-700"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {t('nav.viewAllTools')} →
+                  </Link>
+                </div>
+              )}
+            </div>
+
+            <hr className="border-gray-200 dark:border-gray-800 my-2" />
+
+            {/* Other Links */}
             <Link
               href="/pricing"
-              className="block py-2 text-gray-700 dark:text-white hover:text-green-500 dark:hover:text-green-400 transition"
+              className="block py-2 px-3 text-gray-700 dark:text-white hover:text-green-500 dark:hover:text-green-400 transition"
               onClick={() => setMobileMenuOpen(false)}
             >
               {t('nav.pricing')}
             </Link>
             <Link
               href="/blog"
-              className="block py-2 text-gray-700 dark:text-white hover:text-green-500 dark:hover:text-green-400 transition"
+              className="block py-2 px-3 text-gray-700 dark:text-white hover:text-green-500 dark:hover:text-green-400 transition"
               onClick={() => setMobileMenuOpen(false)}
             >
               {t('nav.blog')}
             </Link>
+
             {session && (
               <>
-                <hr className="border-gray-200 dark:border-gray-800" />
+                <hr className="border-gray-200 dark:border-gray-800 my-2" />
                 <Link
                   href="/dashboard"
-                  className="block py-2 text-gray-700 dark:text-white hover:text-green-500 dark:hover:text-green-400 transition"
+                  className="block py-2 px-3 text-gray-700 dark:text-white hover:text-green-500 dark:hover:text-green-400 transition font-medium"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {t('nav.dashboard')}

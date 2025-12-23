@@ -102,7 +102,7 @@ export default function ChatSidebar({
   }
 
   return (
-    <div className="w-72 h-full bg-gray-100 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 flex flex-col">
+    <div className="w-64 lg:w-72 h-full bg-gray-100 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 flex flex-col shrink-0">
       {/* Header */}
       <div className="p-4 space-y-3">
         {/* New chat button */}

@@ -8,10 +8,11 @@ export default getRequestConfig(async ({ requestLocale }) => {
     locale = 'en';
   }
 
-  const [common, aiVideo, aiImage] = await Promise.all([
+  const [common, aiVideo, aiImage, chat] = await Promise.all([
     import(`../messages/${locale}/common.json`).then(m => m.default),
     import(`../messages/${locale}/aiVideo.json`).then(m => m.default).catch(() => ({})),
     import(`../messages/${locale}/aiImage.json`).then(m => m.default).catch(() => ({})),
+    import(`../messages/${locale}/chat.json`).then(m => m.default).catch(() => ({})),
   ]);
 
   return {
@@ -20,6 +21,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
       ...common,
       aiVideo,
       aiImage,
+      chat,
     }
   };
 });

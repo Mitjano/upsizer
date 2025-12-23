@@ -47,7 +47,7 @@ export default function ChatWindow() {
   const [isLoading, setIsLoading] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
   const [credits, setCredits] = useState<number>(0);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(true); // Start collapsed on mobile
   const [showSettings, setShowSettings] = useState(false);
   const [temperature, setTemperature] = useState(0.7);
   const [systemPrompt, setSystemPrompt] = useState("");
@@ -341,19 +341,34 @@ export default function ChatWindow() {
 
   return (
     <div className="flex h-screen bg-white dark:bg-gray-900">
+      {/* Mobile sidebar overlay */}
+      {!sidebarCollapsed && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          onClick={() => setSidebarCollapsed(true)}
+        />
+      )}
+
       {/* Sidebar */}
-      <ChatSidebar
-        conversations={conversations}
-        currentConversationId={currentConversationId || undefined}
-        onNewChat={handleNewChat}
-        onSelectConversation={loadConversation}
-        onDeleteConversation={handleDeleteConversation}
-        onRenameConversation={handleRenameConversation}
-        onPinConversation={handlePinConversation}
-        onArchiveConversation={handleArchiveConversation}
-        isCollapsed={sidebarCollapsed}
-        onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
-      />
+      <div className={`
+        fixed lg:relative inset-y-0 left-0 z-50
+        transform transition-transform duration-300 ease-in-out
+        ${sidebarCollapsed ? '-translate-x-full lg:translate-x-0' : 'translate-x-0'}
+        ${sidebarCollapsed ? 'lg:w-16' : ''}
+      `}>
+        <ChatSidebar
+          conversations={conversations}
+          currentConversationId={currentConversationId || undefined}
+          onNewChat={() => { handleNewChat(); setSidebarCollapsed(true); }}
+          onSelectConversation={(id) => { loadConversation(id); setSidebarCollapsed(true); }}
+          onDeleteConversation={handleDeleteConversation}
+          onRenameConversation={handleRenameConversation}
+          onPinConversation={handlePinConversation}
+          onArchiveConversation={handleArchiveConversation}
+          isCollapsed={false}
+          onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
+        />
+      </div>
 
       {/* Main chat area */}
       <div className="flex-1 flex flex-col min-w-0">
@@ -446,7 +461,7 @@ export default function ChatWindow() {
         {/* Messages area */}
         <div className="flex-1 overflow-y-auto">
           {messages.length === 0 ? (
-            <EmptyState t={t} />
+            <EmptyState t={t} onSuggestionClick={(text) => handleSendMessage(text)} />
           ) : (
             <div className="max-w-3xl mx-auto">
               {messages.map((msg, idx) => (
@@ -483,8 +498,32 @@ export default function ChatWindow() {
   );
 }
 
+// Suggestion prompts pool
+const SUGGESTION_PROMPTS = [
+  "Wyjaśnij teorię względności prostymi słowami",
+  "Napisz kod Python do sortowania listy",
+  "Pomóż mi zaplanować wycieczkę do Włoch",
+  "Jak działa sztuczna inteligencja?",
+  "Napisz przepis na ciasto czekoladowe",
+  "Jak nauczyć się programowania od zera?",
+  "Jakie są korzyści medytacji?",
+  "Wymień 10 najlepszych książek wszech czasów",
+  "Jak oszczędzać pieniądze na co dzień?",
+  "Wyjaśnij blockchain dla początkujących",
+  "Jak przygotować się do rozmowy kwalifikacyjnej?",
+  "Napisz haiku o wschodzie słońca",
+];
+
+// Get random suggestions
+function getRandomSuggestions(count: number = 3): string[] {
+  const shuffled = [...SUGGESTION_PROMPTS].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, count);
+}
+
 // Empty state component
-function EmptyState({ t }: { t: ReturnType<typeof useTranslations> }) {
+function EmptyState({ t, onSuggestionClick }: { t: ReturnType<typeof useTranslations>; onSuggestionClick: (text: string) => void }) {
+  const [suggestions] = useState(() => getRandomSuggestions(3));
+
   return (
     <div className="h-full flex flex-col items-center justify-center px-4 py-8">
       <div className="text-center max-w-md">
@@ -503,14 +542,11 @@ function EmptyState({ t }: { t: ReturnType<typeof useTranslations> }) {
             {t("empty.suggestions.title")}
           </h3>
           <div className="space-y-2">
-            {[
-              "Wyjaśnij teorię względności prostymi słowami",
-              "Napisz kod Python do sortowania listy",
-              "Pomóż mi zaplanować wycieczkę do Włoch",
-            ].map((suggestion, idx) => (
+            {suggestions.map((suggestion, idx) => (
               <button
                 key={idx}
-                className="w-full text-left px-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 text-sm text-gray-700 dark:text-gray-300 transition-colors"
+                onClick={() => onSuggestionClick(suggestion)}
+                className="w-full text-left px-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-purple-50 dark:hover:bg-purple-900/20 hover:border-purple-300 dark:hover:border-purple-700 text-sm text-gray-700 dark:text-gray-300 transition-all"
               >
                 {suggestion}
               </button>
