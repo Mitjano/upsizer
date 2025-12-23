@@ -359,7 +359,6 @@ export default function ExploreGallery({ showMyCreations = false }: ExploreGalle
       {selectedImage && (
         <ImageModal
           image={selectedImage}
-          showMyCreations={showMyCreations}
           onClose={handleCloseModal}
           onLikeUpdate={handleLikeUpdate}
           onPublishToggle={handlePublishToggle}

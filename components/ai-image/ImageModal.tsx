@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 import toast from 'react-hot-toast';
-import Link from 'next/link';
 import { AI_MODELS, ASPECT_RATIOS } from '@/lib/ai-image/models';
 import ShareModal from './ShareModal';
 
@@ -32,7 +31,6 @@ interface GalleryImage {
 
 interface ImageModalProps {
   image: GalleryImage;
-  showMyCreations?: boolean;
   onClose: () => void;
   onLikeUpdate: (imageId: string, likes: number) => void;
   onPublishToggle: (imageId: string, isPublic: boolean) => void;
@@ -41,7 +39,6 @@ interface ImageModalProps {
 
 export default function ImageModal({
   image,
-  showMyCreations = false,
   onClose,
   onLikeUpdate,
   onPublishToggle,
@@ -379,16 +376,8 @@ export default function ImageModal({
                 )}
               </div>
 
-              {/* View Full Page Link */}
-              <Link
-                href={`/ai-image/${image.id}`}
-                className="w-full py-2.5 bg-gray-800 hover:bg-gray-700 rounded-lg font-medium transition flex items-center justify-center gap-2 text-sm text-gray-300"
-              >
-                <span>🔗</span> {t('modal.viewFullPage') || 'View Full Page'}
-              </Link>
-
               {/* Owner Actions */}
-              {details?.isOwner && showMyCreations && (
+              {details?.isOwner && (
                 <>
                   <button
                     onClick={handlePublish}
