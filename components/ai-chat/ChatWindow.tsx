@@ -428,23 +428,21 @@ export default function ChatWindow() {
           </div>
 
           <div className="flex items-center gap-2 sm:gap-3">
-            {/* Navigation links */}
-            <div className="flex items-center gap-1">
-              <Link
-                href="/"
-                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400 transition-colors"
-                title={t("backToHome")}
-              >
-                <FaHome className="w-4 h-4" />
-              </Link>
-              <Link
-                href="/#tools"
-                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400 transition-colors"
-                title={t("tools")}
-              >
-                <FaTools className="w-4 h-4" />
-              </Link>
-            </div>
+            {/* Navigation links - visible buttons */}
+            <Link
+              href="/"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors text-sm font-medium"
+            >
+              <FaHome className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">{t("backToHome")}</span>
+            </Link>
+            <Link
+              href="/#tools"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-purple-100 hover:bg-purple-200 dark:bg-purple-900/30 dark:hover:bg-purple-900/50 text-purple-700 dark:text-purple-300 transition-colors text-sm font-medium"
+            >
+              <FaTools className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">{t("tools")}</span>
+            </Link>
 
             <div className="w-px h-6 bg-gray-200 dark:bg-gray-700 hidden sm:block" />
 
