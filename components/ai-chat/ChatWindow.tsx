@@ -541,31 +541,21 @@ export default function ChatWindow() {
   );
 }
 
-// Suggestion prompts pool
-const SUGGESTION_PROMPTS = [
-  "Wyjaśnij teorię względności prostymi słowami",
-  "Napisz kod Python do sortowania listy",
-  "Pomóż mi zaplanować wycieczkę do Włoch",
-  "Jak działa sztuczna inteligencja?",
-  "Napisz przepis na ciasto czekoladowe",
-  "Jak nauczyć się programowania od zera?",
-  "Jakie są korzyści medytacji?",
-  "Wymień 10 najlepszych książek wszech czasów",
-  "Jak oszczędzać pieniądze na co dzień?",
-  "Wyjaśnij blockchain dla początkujących",
-  "Jak przygotować się do rozmowy kwalifikacyjnej?",
-  "Napisz haiku o wschodzie słońca",
-];
-
-// Get random suggestions
-function getRandomSuggestions(count: number = 3): string[] {
-  const shuffled = [...SUGGESTION_PROMPTS].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, count);
-}
-
 // Empty state component
 function EmptyState({ t, onSuggestionClick }: { t: ReturnType<typeof useTranslations>; onSuggestionClick: (text: string) => void }) {
-  const [suggestions] = useState(() => getRandomSuggestions(3));
+  // Get suggestions from translations
+  const allSuggestions = [
+    t("empty.suggestions.items.0"),
+    t("empty.suggestions.items.1"),
+    t("empty.suggestions.items.2"),
+    t("empty.suggestions.items.3"),
+  ];
+
+  // Get 3 random suggestions
+  const [suggestions] = useState(() => {
+    const shuffled = [...allSuggestions].sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, 3);
+  });
 
   return (
     <div className="h-full flex flex-col items-center justify-center px-4 py-8">
