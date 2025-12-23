@@ -47,7 +47,7 @@ export default function ChatWindow() {
   const [isLoading, setIsLoading] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
   const [credits, setCredits] = useState<number>(0);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(true); // Start collapsed on mobile
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false); // Desktop: expanded, Mobile: hidden initially
   const [showSettings, setShowSettings] = useState(false);
   const [temperature, setTemperature] = useState(0.7);
   const [systemPrompt, setSystemPrompt] = useState("");
@@ -351,11 +351,27 @@ export default function ChatWindow() {
         />
       )}
 
-      {/* Sidebar */}
+      {/* Sidebar - Desktop: always visible, Mobile: slide in/out */}
+      <div className="hidden lg:block shrink-0">
+        <ChatSidebar
+          conversations={conversations}
+          currentConversationId={currentConversationId || undefined}
+          onNewChat={handleNewChat}
+          onSelectConversation={loadConversation}
+          onDeleteConversation={handleDeleteConversation}
+          onRenameConversation={handleRenameConversation}
+          onPinConversation={handlePinConversation}
+          onArchiveConversation={handleArchiveConversation}
+          isCollapsed={sidebarCollapsed}
+          onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
+        />
+      </div>
+
+      {/* Mobile sidebar - slides from left */}
       <div className={`
-        fixed lg:relative inset-y-0 left-0 z-50
+        lg:hidden fixed inset-y-0 left-0 z-50
         transform transition-transform duration-300 ease-in-out
-        ${sidebarCollapsed ? '-translate-x-full lg:translate-x-0' : 'translate-x-0'}
+        ${sidebarCollapsed ? '-translate-x-full' : 'translate-x-0'}
       `}>
         <ChatSidebar
           conversations={conversations}
@@ -366,8 +382,8 @@ export default function ChatWindow() {
           onRenameConversation={handleRenameConversation}
           onPinConversation={handlePinConversation}
           onArchiveConversation={handleArchiveConversation}
-          isCollapsed={sidebarCollapsed}
-          onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
+          isCollapsed={false}
+          onToggleCollapse={() => setSidebarCollapsed(true)}
         />
       </div>
 
