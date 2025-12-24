@@ -133,6 +133,10 @@
       "name": "Kompresor Obrazów",
       "description": "Zmniejsz rozmiar pliku inteligentnie"
     },
+    "imageCompressor": {
+      "name": "Kompresor Obrazów",
+      "description": "Kompresuj obrazy bez utraty jakości"
+    },
     "packshot": {
       "name": "Generator Packshot",
       "description": "Profesjonalne zdjęcia produktów"
@@ -140,6 +144,14 @@
     "expand": {
       "name": "Rozszerzanie Obrazu",
       "description": "Rozszerz obrazy za pomocą AI"
+    },
+    "imageExpand": {
+      "name": "Rozszerzanie Obrazów",
+      "description": "Rozszerz i powiększ obrazy za pomocą AI outpainting"
+    },
+    "aiBackgroundGenerator": {
+      "name": "Generator Tła AI",
+      "description": "Generuj niesamowite tła AI dla swoich obrazów"
     },
     "styleTransfer": {
       "name": "Transfer Stylu",

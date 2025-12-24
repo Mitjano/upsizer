@@ -141,6 +141,18 @@
       "name": "Expansión de Imagen",
       "description": "Extiende imágenes con IA"
     },
+    "imageCompressor": {
+      "name": "Compresor de Imágenes",
+      "description": "Comprime imágenes sin perder calidad"
+    },
+    "imageExpand": {
+      "name": "Expansor de Imágenes",
+      "description": "Extiende y expande imágenes con AI outpainting"
+    },
+    "aiBackgroundGenerator": {
+      "name": "Generador de Fondos IA",
+      "description": "Genera impresionantes fondos IA para tus imágenes"
+    },
     "styleTransfer": {
       "name": "Transferencia de Estilo",
       "description": "Transforma fotos en estilos artísticos",
@@ -6238,6 +6250,7 @@
       }
     },
     "features": {
+      "title": "Características de Reiluminación de Retratos",
       "aiPowered": {
         "title": "Impulsado por IA",
         "description": "ICLight V2 para reiluminación realista"
@@ -6274,18 +6287,22 @@
     "useCases": {
       "title": "Casos de Uso",
       "photographers": {
+        "icon": "📷",
         "title": "Fotógrafos",
         "description": "Arregla iluminación en post"
       },
       "contentCreators": {
+        "icon": "🎬",
         "title": "Creadores de Contenido",
         "description": "Iluminación consistente"
       },
       "ecommerce": {
+        "icon": "🛒",
         "title": "E-commerce",
         "description": "Fotos de cabecera profesionales"
       },
       "socialMedia": {
+        "icon": "📱",
         "title": "Redes Sociales",
         "description": "Selfies mejorados"
       }

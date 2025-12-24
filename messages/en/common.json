@@ -133,6 +133,10 @@
       "name": "Image Compressor",
       "description": "Reduce file size smartly"
     },
+    "imageCompressor": {
+      "name": "Image Compressor",
+      "description": "Compress images without losing quality"
+    },
     "packshot": {
       "name": "Packshot Generator",
       "description": "Professional product photos"
@@ -140,6 +144,14 @@
     "expand": {
       "name": "Image Expand",
       "description": "Extend images with AI"
+    },
+    "imageExpand": {
+      "name": "Image Expand",
+      "description": "Extend and expand images with AI outpainting"
+    },
+    "aiBackgroundGenerator": {
+      "name": "AI Background Generator",
+      "description": "Generate stunning AI backgrounds for your images"
     },
     "styleTransfer": {
       "name": "Style Transfer",
@@ -3358,7 +3370,7 @@
         "title": "Product Photos",
         "description": "Enhance product images with brightness and contrast adjustments."
       },
-      "memories": {
+      "personal": {
         "icon": "🎞️",
         "title": "Personal Photos",
         "description": "Improve old or poorly lit photos with quick adjustments."
