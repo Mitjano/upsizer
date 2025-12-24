@@ -140,7 +140,7 @@ export async function POST(request: NextRequest) {
       ) as unknown as string
     }
 
-    // 8. DOWNLOAD RESULT AND CONVERT TO BASE64
+    // 8. DOWNLOAD RESULT
     const resultResponse = await fetch(output)
     if (!resultResponse.ok) {
       throw new Error('Failed to download processed image')
@@ -149,15 +149,34 @@ export async function POST(request: NextRequest) {
     const resultBase64 = resultBuffer.toString('base64')
     const resultDataUrl = `data:image/png;base64,${resultBase64}`
 
-    // 8.5 SAVE TO DATABASE FOR SHARE LINK
+    // 8.5 SAVE FILES TO DISK FOR SHARE LINK
+    // Get image dimensions
+    const dimensions = await ImageProcessor.getImageDimensions(buffer)
+
+    // Save original image to disk
+    const originalPath = await ImageProcessor.saveFile(
+      buffer,
+      file.name,
+      'original'
+    )
+
+    // Save processed image to disk
+    const processedFilename = file.name.replace(/\.[^.]+$/, '_restored.png')
+    const processedPath = await ImageProcessor.saveFile(
+      resultBuffer,
+      processedFilename,
+      'processed'
+    )
+
+    // Create database record with file paths (not base64)
     const imageRecord = await ProcessedImagesDB.create({
       userId: user.email,
-      originalPath: dataUrl,
-      processedPath: resultDataUrl,
+      originalPath,
+      processedPath,
       originalFilename: file.name,
       fileSize: file.size,
-      width: 0,
-      height: 0,
+      width: dimensions.width,
+      height: dimensions.height,
       isProcessed: true,
     })
 
