@@ -277,23 +277,23 @@ export default function AIChatPage() {
               </p>
             </div>
 
-            <div className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700/50 rounded-2xl overflow-hidden shadow-lg">
-              <table className="w-full">
+            <div className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700/50 rounded-2xl overflow-hidden shadow-lg overflow-x-auto">
+              <table className="w-full min-w-[400px]">
                 <thead className="bg-gray-50 dark:bg-gray-900/50">
                   <tr>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">{tLanding('comparison.feature')}</th>
-                    <th className="px-6 py-4 text-center text-sm font-semibold text-purple-600 dark:text-purple-400">Pixelift</th>
-                    <th className="px-6 py-4 text-center text-sm font-semibold text-gray-500">{tLanding('comparison.others')}</th>
+                    <th className="px-4 sm:px-6 py-4 text-left text-xs sm:text-sm font-semibold text-gray-900 dark:text-white">{tLanding('comparison.feature')}</th>
+                    <th className="px-3 sm:px-6 py-4 text-center text-xs sm:text-sm font-semibold text-purple-600 dark:text-purple-400">Pixelift</th>
+                    <th className="px-3 sm:px-6 py-4 text-center text-xs sm:text-sm font-semibold text-gray-500">{tLanding('comparison.others')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                   {['freeModels', 'noSubscription', 'multipleProviders', 'contextLength', 'fileUploads'].map((feature) => (
                     <tr key={feature}>
-                      <td className="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">{tLanding(`comparison.features.${feature}`)}</td>
-                      <td className="px-6 py-4 text-center">
-                        <FaCheck className="w-5 h-5 text-green-500 mx-auto" />
+                      <td className="px-4 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-700 dark:text-gray-300">{tLanding(`comparison.features.${feature}`)}</td>
+                      <td className="px-3 sm:px-6 py-3 sm:py-4 text-center">
+                        <FaCheck className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 mx-auto" />
                       </td>
-                      <td className="px-6 py-4 text-center text-gray-400">—</td>
+                      <td className="px-3 sm:px-6 py-3 sm:py-4 text-center text-gray-400">—</td>
                     </tr>
                   ))}
                 </tbody>

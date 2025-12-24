@@ -111,7 +111,7 @@ export default function UseCases() {
       </div>
 
       {/* Stats Row */}
-      <div className="grid md:grid-cols-4 gap-6 mt-12">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mt-12">
         <div className="bg-white dark:bg-gray-800/30 rounded-xl p-6 text-center border border-gray-300 dark:border-gray-700 shadow-sm">
           <div className="text-3xl font-bold text-green-600 dark:text-green-400 mb-2">10M+</div>
           <div className="text-sm text-gray-600 dark:text-gray-400">{t('stats.imagesEnhanced')}</div>

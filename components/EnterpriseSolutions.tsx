@@ -112,7 +112,7 @@ export default function EnterpriseSolutions() {
       </div>
 
       {/* Enterprise Features Grid */}
-      <div className="grid md:grid-cols-4 gap-6 mt-12 max-w-6xl mx-auto">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mt-12 max-w-6xl mx-auto">
         <div className="bg-white dark:bg-gray-800/30 rounded-xl p-6 border border-gray-300 dark:border-gray-700 shadow-sm">
           <div className="text-3xl mb-3">🔒</div>
           <h4 className="font-semibold mb-2 text-gray-900 dark:text-white">{t('features.secure.title')}</h4>
@@ -155,7 +155,7 @@ export default function EnterpriseSolutions() {
           </button>
         </div>
 
-        <div className="mt-8 flex items-center justify-center gap-8 text-sm text-gray-500 dark:text-gray-400">
+        <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-8 text-sm text-gray-500 dark:text-gray-400">
           <div>✓ {t('cta.badges.sla')}</div>
           <div>✓ {t('cta.badges.volume')}</div>
           <div>✓ {t('cta.badges.whiteLabel')}</div>

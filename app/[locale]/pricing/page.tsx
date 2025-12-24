@@ -136,7 +136,7 @@ export default function PricingPage() {
         </div>
 
         {/* Plans Grid */}
-        <div className="grid lg:grid-cols-4 gap-6 max-w-7xl mx-auto mb-16 items-stretch">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto mb-16 items-stretch">
           {/* Free Plan */}
           <div className="bg-white/50 dark:bg-gray-800/50 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 flex flex-col h-full">
             <h3 className="text-xl font-bold mb-4 h-8">{t('freePlan.title')}</h3>

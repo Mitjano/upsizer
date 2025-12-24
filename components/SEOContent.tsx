@@ -103,7 +103,7 @@ export default function SEOContent() {
             </button>
           </div>
 
-          <div className="mt-8 grid md:grid-cols-4 gap-4 text-center text-sm">
+          <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4 text-center text-sm">
             <div className="bg-gray-100/30 dark:bg-gray-800/30 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
               <div className="font-bold text-2xl text-green-600 dark:text-green-400 mb-1">2-8x</div>
               <div className="text-gray-500 dark:text-gray-400">{t('stats.upscalingOptions')}</div>
