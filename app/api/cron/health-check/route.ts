@@ -259,13 +259,18 @@ async function sendAlertEmail(serviceName: string, displayName: string, error: s
 
 // Verify request is from Vercel Cron
 function verifyCronRequest(request: NextRequest): boolean {
-  // In production, verify the Authorization header
   const authHeader = request.headers.get("authorization");
   const cronSecret = process.env.CRON_SECRET;
 
-  // If no CRON_SECRET is set, allow in development
+  // If no CRON_SECRET is set, allow in development only
+  if (!cronSecret && process.env.NODE_ENV === "development") {
+    return true;
+  }
+
+  // In production, CRON_SECRET must be configured
   if (!cronSecret) {
-    return process.env.NODE_ENV === "development";
+    console.error("[health-check] CRON_SECRET not configured");
+    return false;
   }
 
   return authHeader === `Bearer ${cronSecret}`;

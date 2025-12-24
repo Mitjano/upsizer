@@ -32,8 +32,16 @@ const prismaClientSingleton = (): PrismaClient | null => {
     return null;
   }
 
-  // Create a connection pool
-  const pool = new Pool({ connectionString });
+  // Create a connection pool with optimized settings
+  const pool = new Pool({
+    connectionString,
+    // Pool configuration
+    max: parseInt(process.env.DATABASE_POOL_MAX || '20', 10),  // Maximum connections
+    min: parseInt(process.env.DATABASE_POOL_MIN || '2', 10),   // Minimum connections to keep
+    idleTimeoutMillis: 30000,  // Close idle connections after 30s
+    connectionTimeoutMillis: 10000,  // Timeout for acquiring connection
+    maxUses: 7500,  // Recycle connections after N queries (prevents memory leaks)
+  });
   globalThis.__pgPool = pool;
 
   // Create the Prisma adapter

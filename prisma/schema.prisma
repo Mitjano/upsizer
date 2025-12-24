@@ -128,11 +128,11 @@ model User {
   paidCreditsUsed   Int       @default(0)
 
   // ========== SOCIAL & AUTH DATA ==========
-  googleId          String?   // Google OAuth ID
-  facebookId        String?   // Facebook OAuth ID
-  appleId           String?   // Apple OAuth ID
-  linkedinId        String?   // LinkedIn OAuth ID
-  githubId          String?   // GitHub OAuth ID
+  googleId          String?   @unique // Google OAuth ID
+  facebookId        String?   @unique // Facebook OAuth ID
+  appleId           String?   @unique // Apple OAuth ID
+  linkedinId        String?   @unique // LinkedIn OAuth ID
+  githubId          String?   @unique // GitHub OAuth ID
   authProvider      String?   // Primary auth method
   twoFactorEnabled  Boolean   @default(false)
 

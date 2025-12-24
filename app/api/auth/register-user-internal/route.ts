@@ -60,9 +60,18 @@ function parseUserAgent(ua: string) {
 }
 
 // Internal endpoint for user registration during OAuth callback
-// Does NOT require authentication (called by NextAuth signIn callback)
+// Requires internal auth token (only called by NextAuth signIn callback)
 export async function POST(request: NextRequest) {
   try {
+    // Verify internal authentication token
+    const internalAuth = request.headers.get('x-internal-auth');
+    const expectedSecret = process.env.NEXTAUTH_SECRET;
+
+    if (!expectedSecret || !internalAuth || internalAuth !== expectedSecret) {
+      console.error('[register-user-internal] Unauthorized access attempt');
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     // Rate limiting to prevent abuse
     const identifier = getClientIdentifier(request);
     const { allowed, resetAt } = authLimiter.check(identifier);

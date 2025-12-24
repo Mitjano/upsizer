@@ -99,6 +99,8 @@
     "edit": "Edytuj"
   },
   "tools": {
+    "pageTitle": "Narzędzia AI do Edycji Zdjęć - Darmowy Edytor Online",
+    "pageDescription": "Profesjonalne narzędzia AI do edycji zdjęć. Powiększanie obrazów, usuwanie tła, kolorowanie zdjęć, tworzenie logo i więcej. Darmowy pakiet edycji online.",
     "upscaler": {
       "name": "Upscaler Obrazów",
       "description": "Powiększ obrazy do 8x rozdzielczości"
@@ -800,6 +802,7 @@
   },
   "pricing": {
     "title": "Wybierz Odpowiedni Plan",
+    "metaDescription": "Elastyczne plany cenowe narzędzi AI Pixelift. Plan darmowy, subskrypcje i jednorazowe kredyty. Zacznij za darmo z 3 kredytami.",
     "freePlan": {
       "title": "Darmowy Plan",
       "perCredit": "/kredyt",

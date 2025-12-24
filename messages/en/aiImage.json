@@ -1,4 +1,6 @@
 {
+  "pageTitle": "AI Image Generator - Create Images with AI",
+  "pageDescription": "Generate stunning images with AI. Text to image, image to image, multiple AI models including FLUX, Stable Diffusion, and more. Create art, photos, and illustrations.",
   "mode": {
     "textToImage": "Text to Image",
     "imageToImage": "Image to Image"

@@ -1,63 +1,77 @@
 import { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
 
-export const metadata: Metadata = {
-  title: 'AI Photo Editing Tools - Free Online Image Editor | Pixelift',
-  description: 'Professional AI-powered photo editing tools. Upscale images, remove backgrounds, colorize photos, create logos, and more. Free online image editing suite.',
-  keywords: [
-    'AI photo editing',
-    'online image editor',
-    'free photo tools',
-    'image editing online',
-    'AI image tools',
-    'photo enhancement',
-    'background remover',
-    'image upscaler',
-    'photo colorizer',
-    'logo maker',
-    'text effects',
-    'image vectorizer',
-    'photo restoration',
-    'object removal',
-    'style transfer',
-    'photo filters',
-    'image converter',
-    'photo collage',
-    'QR generator',
-    'AI photo editor',
-    'free image editing',
-    'online photo tools',
-    'image processing',
-    'photo manipulation',
-    'creative tools',
-  ],
-  openGraph: {
-    title: 'AI Photo Editing Tools | Pixelift',
-    description: 'Professional AI photo editing tools. Upscale, remove backgrounds, colorize, and more.',
-    url: 'https://pixelift.pl/tools',
-    type: 'website',
-    images: [
-      {
-        url: 'https://pixelift.pl/api/og?tool=tools',
-        width: 1200,
-        height: 630,
-        alt: 'Pixelift AI Photo Editing Tools',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'AI Photo Editing Tools | Pixelift',
-    description: 'Professional AI photo tools. Free online image editor.',
-  },
-  alternates: {
-    canonical: 'https://pixelift.pl/tools',
-  },
-};
-
-export default function ToolsLayout({
-  children,
-}: {
+interface LayoutProps {
   children: React.ReactNode;
-}) {
-  return children;
+  params: Promise<{ locale: string }>;
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'tools' });
+
+  const title = `${t('pageTitle')} - Pixelift`;
+  const description = t('pageDescription');
+
+  return {
+    title,
+    description,
+    keywords: [
+      'AI photo editing',
+      'online image editor',
+      'free photo tools',
+      'image editing online',
+      'AI image tools',
+      'photo enhancement',
+      'background remover',
+      'image upscaler',
+      'photo colorizer',
+      'logo maker',
+      'text effects',
+      'image vectorizer',
+      'photo restoration',
+      'object removal',
+      'style transfer',
+      'photo filters',
+      'image converter',
+      'photo collage',
+      'QR generator',
+    ],
+    openGraph: {
+      title,
+      description,
+      url: `https://pixelift.pl/${locale}/tools`,
+      type: 'website',
+      images: [
+        {
+          url: 'https://pixelift.pl/api/og?tool=tools',
+          width: 1200,
+          height: 630,
+          alt: 'Pixelift AI Photo Editing Tools',
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+    },
+    alternates: {
+      canonical: `https://pixelift.pl/${locale}/tools`,
+      languages: {
+        en: 'https://pixelift.pl/en/tools',
+        pl: 'https://pixelift.pl/pl/tools',
+        es: 'https://pixelift.pl/es/tools',
+        fr: 'https://pixelift.pl/fr/tools',
+      },
+    },
+  };
+}
+
+export default async function ToolsLayout({ children }: LayoutProps) {
+  return <>{children}</>;
 }

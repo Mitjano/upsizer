@@ -111,7 +111,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           const baseUrl = process.env.AUTH_URL || process.env.NEXTAUTH_URL || 'http://localhost:3000';
           const response = await fetch(`${baseUrl}/api/auth/register-user-internal`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Internal-Auth': process.env.NEXTAUTH_SECRET || '',
+            },
             body: JSON.stringify({
               email: user.email,
               name: user.name,

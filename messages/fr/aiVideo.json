@@ -167,7 +167,7 @@
     "errors": {
       "fileRequired": "Téléchargez un fichier audio ou vidéo",
       "urlRequired": "Entrez une URL de média",
-      "fileTooLarge": "Le fichier est trop volumineux. Taille maximale: 100MB."
+      "fileTooLarge": "Le fichier est trop volumineux (max 10MB). Convertissez WAV en MP3 ou compressez le fichier."
     }
   },
   "lipsync": {

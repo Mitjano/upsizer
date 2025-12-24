@@ -99,6 +99,8 @@
     "edit": "Éditer"
   },
   "tools": {
+    "pageTitle": "Outils AI d'Édition Photo - Éditeur en Ligne Gratuit",
+    "pageDescription": "Outils professionnels d'édition photo alimentés par IA. Agrandissement d'images, suppression de fond, colorisation et plus. Suite d'édition en ligne gratuite.",
     "upscaler": {
       "name": "Agrandisseur d'Images",
       "description": "Améliorez les images jusqu'à 8x résolution"
@@ -759,6 +761,7 @@
   },
   "pricing": {
     "title": "Choisissez le Plan Adapté",
+    "metaDescription": "Plans tarifaires flexibles pour les outils d'image AI Pixelift. Plan gratuit, abonnements et crédits ponctuels. Commencez gratuitement avec 3 crédits.",
     "freePlan": {
       "title": "Plan Gratuit",
       "perCredit": "/crédit",

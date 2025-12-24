@@ -99,6 +99,8 @@
     "edit": "Edit"
   },
   "tools": {
+    "pageTitle": "AI Photo Editing Tools - Free Online Image Editor",
+    "pageDescription": "Professional AI-powered photo editing tools. Upscale images, remove backgrounds, colorize photos, create logos, and more. Free online image editing suite.",
     "upscaler": {
       "name": "Image Upscaler",
       "description": "Enhance images up to 8x resolution"
@@ -800,6 +802,7 @@
   },
   "pricing": {
     "title": "Choose the Right Plan for You",
+    "metaDescription": "Flexible pricing plans for Pixelift AI image tools. Free plan, subscriptions, and one-time credits. Start free with 3 credits.",
     "freePlan": {
       "title": "Free Plan",
       "perCredit": "/credit",

@@ -68,6 +68,7 @@ function createMockRequest(body: object, headers: Record<string, string> = {}): 
       'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0 Safari/537.36',
       'accept-language': 'pl-PL,pl;q=0.9,en-US;q=0.8,en;q=0.7',
       'x-forwarded-for': '192.168.1.1',
+      'x-internal-auth': process.env.NEXTAUTH_SECRET || 'test-secret',
       ...headers,
     },
   });

@@ -1,4 +1,6 @@
 {
+  "pageTitle": "Generator Obrazów AI - Twórz Obrazy z AI",
+  "pageDescription": "Generuj niesamowite obrazy za pomocą AI. Tekst na obraz, obraz na obraz, wiele modeli AI w tym FLUX, Stable Diffusion i więcej. Twórz sztukę, zdjęcia i ilustracje.",
   "mode": {
     "textToImage": "Tekst na obraz",
     "imageToImage": "Obraz na obraz"

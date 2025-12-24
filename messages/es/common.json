@@ -99,6 +99,8 @@
     "edit": "Editar"
   },
   "tools": {
+    "pageTitle": "Herramientas AI para Edición de Fotos - Editor Online Gratis",
+    "pageDescription": "Herramientas profesionales de IA para edición de fotos. Escalador de imágenes, eliminador de fondo, colorización y más. Suite de edición online gratuita.",
     "upscaler": {
       "name": "Escalador de Imágenes",
       "description": "Mejora imágenes hasta 8x resolución"
@@ -760,6 +762,7 @@
   },
   "pricing": {
     "title": "Elige el Plan Adecuado para Ti",
+    "metaDescription": "Planes de precios flexibles para las herramientas de imagen AI de Pixelift. Plan gratuito, suscripciones y créditos únicos. Comienza gratis con 3 créditos.",
     "freePlan": {
       "title": "Plan Gratuito",
       "perCredit": "/crédito",

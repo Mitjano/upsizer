@@ -32,11 +32,26 @@ const serverEnvSchema = z.object({
   // AI Services - Fal.ai
   FAL_API_KEY: z.string().optional(),
 
+  // AI Services - OpenAI
+  OPENAI_API_KEY: z.string().startsWith('sk-', 'OPENAI_API_KEY must start with sk-').optional(),
+
+  // AI Services - Anthropic
+  ANTHROPIC_API_KEY: z.string().startsWith('sk-ant-', 'ANTHROPIC_API_KEY must start with sk-ant-').optional(),
+
+  // AI Services - OpenRouter
+  OPENROUTER_API_KEY: z.string().startsWith('sk-or-', 'OPENROUTER_API_KEY must start with sk-or-').optional(),
+
+  // AI Services - GoAPI (Suno AI Music)
+  GOAPI_API_KEY: z.string().optional(),
+
   // AI Services - PiAPI
   PIAPI_API_KEY: z.string().optional(),
 
   // AI Services - Runway
   RUNWAY_API_KEY: z.string().optional(),
+
+  // Cron Jobs Security
+  CRON_SECRET: z.string().min(16, 'CRON_SECRET must be at least 16 characters').optional(),
 
   // Stripe
   STRIPE_SECRET_KEY: z.string().startsWith('sk_', 'STRIPE_SECRET_KEY must start with sk_').optional(),

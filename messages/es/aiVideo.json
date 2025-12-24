@@ -167,7 +167,7 @@
     "errors": {
       "fileRequired": "Sube un archivo de audio o video",
       "urlRequired": "Ingresa una URL del medio",
-      "fileTooLarge": "El archivo es muy grande. El tamaño máximo es 100MB."
+      "fileTooLarge": "El archivo es muy grande (máx. 10MB). Convierte WAV a MP3 o comprime el archivo."
     }
   },
   "lipsync": {

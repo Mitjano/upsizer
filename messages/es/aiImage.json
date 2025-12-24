@@ -1,4 +1,6 @@
 {
+  "pageTitle": "Generador de Imágenes AI - Crea Imágenes con IA",
+  "pageDescription": "Genera imágenes impresionantes con IA. Texto a imagen, imagen a imagen, múltiples modelos de IA incluyendo FLUX, Stable Diffusion y más. Crea arte, fotos e ilustraciones.",
   "mode": {
     "textToImage": "Texto a imagen",
     "imageToImage": "Imagen a imagen"
