@@ -1,0 +1,103 @@
+{
+  "hero": {
+    "badge": "Free AI Models Available!",
+    "titlePart1": "Free",
+    "titleHighlight": "AI Chat",
+    "description": "Chat with 20+ AI models including GPT-5.2, Claude Opus 4.5, Gemini 2.5, and DeepSeek R1. No subscription required - pay only for what you use.",
+    "cta": "Start Free",
+    "ctaSecondary": "View Pricing"
+  },
+  "stats": {
+    "models": "AI Models",
+    "freeModels": "Free Models",
+    "contextTokens": "Context Tokens",
+    "subscription": "Subscription"
+  },
+  "features": {
+    "title": "Everything You Need in",
+    "titleHighlight": "One Place",
+    "subtitle": "Professional AI chatbot with access to the world's best language models"
+  },
+  "models": {
+    "title": "Best AI Models Available",
+    "subtitle": "Access the latest models from OpenAI, Anthropic, Google, Meta, and more",
+    "more": "...and many more! Over 20 AI models to choose from.",
+    "tiers": {
+      "free": "FREE",
+      "pro": "PRO",
+      "premium": "PREMIUM",
+      "reasoning": "REASONING"
+    }
+  },
+  "useCases": {
+    "title": "What Can You Do?",
+    "subtitle": "AI Chat helps with a wide range of tasks",
+    "coding": {
+      "icon": "💻",
+      "title": "Code & Debug",
+      "description": "Write, review, and debug code. Get explanations and optimize your programs."
+    },
+    "writing": {
+      "icon": "✍️",
+      "title": "Write & Edit",
+      "description": "Create content, emails, articles, and documents. Improve your writing style."
+    },
+    "research": {
+      "icon": "🔍",
+      "title": "Research & Analyze",
+      "description": "Get answers to complex questions. Analyze data and summarize documents."
+    },
+    "learning": {
+      "icon": "📚",
+      "title": "Learn & Explore",
+      "description": "Learn new topics, languages, and skills. Get personalized explanations."
+    }
+  },
+  "comparison": {
+    "title": "Why Choose Pixelift?",
+    "subtitle": "Compare us with other AI chat services",
+    "feature": "Feature",
+    "others": "Others",
+    "features": {
+      "freeModels": "Free AI models included",
+      "noSubscription": "No monthly subscription",
+      "multipleProviders": "20+ models from 8 providers",
+      "contextLength": "Up to 1M token context",
+      "fileUploads": "Image & file uploads"
+    }
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "q1": {
+      "question": "Is AI Chat really free?",
+      "answer": "Yes! We offer 4 completely free AI models: Gemini Flash-Lite, Llama 3.3, DeepSeek V3, and Qwen 2.5. These models have no usage limits and are perfect for everyday tasks."
+    },
+    "q2": {
+      "question": "How does pay-per-use pricing work?",
+      "answer": "You only pay for the tokens you use with premium models. Buy credits when you need them - no monthly subscription, no hidden fees. Track your usage in real-time."
+    },
+    "q3": {
+      "question": "Which AI model should I choose?",
+      "answer": "For most tasks, free models work great. For complex coding, try GPT-5.2 or Claude Opus 4.5. For reasoning tasks, DeepSeek R1 excels. For creative writing, try Claude models."
+    },
+    "q4": {
+      "question": "Can I upload images and files?",
+      "answer": "Yes! You can upload images, PDFs, and text files. AI will analyze the content and answer your questions about it. This works with most models."
+    },
+    "q5": {
+      "question": "Is my data private?",
+      "answer": "Absolutely. We don't train models on your conversations. Your chat history is encrypted and only accessible by you. You can delete your data at any time."
+    }
+  },
+  "cta": {
+    "title": "Ready to Chat with AI?",
+    "description": "Create a free account and start chatting with the best AI models. No commitments, no subscription - pay only for what you use.",
+    "button": "Start Free"
+  },
+  "seoContent": {
+    "title": "Free AI Chat Online - ChatGPT, Claude, Gemini Alternative",
+    "p1": "Pixelift AI Chat is a powerful alternative to ChatGPT, Claude, and Gemini. Access over 20 AI models from leading providers including OpenAI's GPT-5.2, Anthropic's Claude Opus 4.5, Google's Gemini 2.5 Pro, and open-source models like DeepSeek and Llama. Unlike other services, we offer completely free AI models with no usage limits.",
+    "p2": "Our pay-per-use pricing model means you never pay for a subscription you don't fully use. Buy credits when you need them and use any model you want. Perfect for students, developers, writers, researchers, and anyone who needs occasional access to powerful AI without monthly commitments.",
+    "p3": "Start chatting today with our free AI models - no credit card required. When you need more power, upgrade to premium models like GPT-5.2 or Claude Opus 4.5 for complex tasks. Your conversations are private, encrypted, and never used for training."
+  }
+}

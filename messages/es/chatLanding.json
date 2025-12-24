@@ -1,0 +1,103 @@
+{
+  "hero": {
+    "badge": "¡Modelos de IA gratuitos disponibles!",
+    "titlePart1": "Chat de IA",
+    "titleHighlight": "Gratis",
+    "description": "Chatea con más de 20 modelos de IA incluyendo GPT-5.2, Claude Opus 4.5, Gemini 2.5 y DeepSeek R1. Sin suscripción - paga solo por lo que uses.",
+    "cta": "Comenzar gratis",
+    "ctaSecondary": "Ver precios"
+  },
+  "stats": {
+    "models": "Modelos de IA",
+    "freeModels": "Modelos gratuitos",
+    "contextTokens": "Tokens de contexto",
+    "subscription": "Suscripción"
+  },
+  "features": {
+    "title": "Todo lo que necesitas en",
+    "titleHighlight": "un solo lugar",
+    "subtitle": "Chatbot de IA profesional con acceso a los mejores modelos de lenguaje del mundo"
+  },
+  "models": {
+    "title": "Los mejores modelos de IA",
+    "subtitle": "Acceso a los últimos modelos de OpenAI, Anthropic, Google, Meta y más",
+    "more": "...¡y muchos más! Más de 20 modelos de IA para elegir.",
+    "tiers": {
+      "free": "GRATIS",
+      "pro": "PRO",
+      "premium": "PREMIUM",
+      "reasoning": "RAZONAMIENTO"
+    }
+  },
+  "useCases": {
+    "title": "¿Qué puedes hacer?",
+    "subtitle": "AI Chat te ayuda con una amplia gama de tareas",
+    "coding": {
+      "icon": "💻",
+      "title": "Programar",
+      "description": "Escribe, revisa y depura código. Obtén explicaciones y optimiza tus programas."
+    },
+    "writing": {
+      "icon": "✍️",
+      "title": "Escribir",
+      "description": "Crea contenido, correos, artículos y documentos. Mejora tu estilo de escritura."
+    },
+    "research": {
+      "icon": "🔍",
+      "title": "Investigar",
+      "description": "Obtén respuestas a preguntas complejas. Analiza datos y resume documentos."
+    },
+    "learning": {
+      "icon": "📚",
+      "title": "Aprender",
+      "description": "Aprende nuevos temas, idiomas y habilidades. Explicaciones personalizadas."
+    }
+  },
+  "comparison": {
+    "title": "¿Por qué elegir Pixelift?",
+    "subtitle": "Compáranos con otros servicios de chat de IA",
+    "feature": "Característica",
+    "others": "Otros",
+    "features": {
+      "freeModels": "Modelos de IA gratuitos incluidos",
+      "noSubscription": "Sin suscripción mensual",
+      "multipleProviders": "20+ modelos de 8 proveedores",
+      "contextLength": "Hasta 1M tokens de contexto",
+      "fileUploads": "Carga de imágenes y archivos"
+    }
+  },
+  "faq": {
+    "title": "Preguntas frecuentes",
+    "q1": {
+      "question": "¿El Chat de IA es realmente gratis?",
+      "answer": "¡Sí! Ofrecemos 4 modelos de IA completamente gratuitos: Gemini Flash-Lite, Llama 3.3, DeepSeek V3 y Qwen 2.5. Estos modelos no tienen límites de uso y son perfectos para tareas cotidianas."
+    },
+    "q2": {
+      "question": "¿Cómo funciona el pago por uso?",
+      "answer": "Solo pagas por los tokens que usas con modelos premium. Compra créditos cuando los necesites - sin suscripción mensual, sin tarifas ocultas. Rastrea tu uso en tiempo real."
+    },
+    "q3": {
+      "question": "¿Qué modelo de IA debería elegir?",
+      "answer": "Para la mayoría de las tareas, los modelos gratuitos funcionan muy bien. Para programación compleja, prueba GPT-5.2 o Claude Opus 4.5. Para tareas de razonamiento, DeepSeek R1 destaca. Para escritura creativa, prueba los modelos Claude."
+    },
+    "q4": {
+      "question": "¿Puedo subir imágenes y archivos?",
+      "answer": "¡Sí! Puedes subir imágenes, PDFs y archivos de texto. La IA analizará el contenido y responderá tus preguntas sobre él. Funciona con la mayoría de los modelos."
+    },
+    "q5": {
+      "question": "¿Mis datos son privados?",
+      "answer": "Absolutamente. No entrenamos modelos con tus conversaciones. Tu historial de chat está encriptado y solo es accesible por ti. Puedes eliminar tus datos en cualquier momento."
+    }
+  },
+  "cta": {
+    "title": "¿Listo para chatear con IA?",
+    "description": "Crea una cuenta gratis y comienza a chatear con los mejores modelos de IA. Sin compromisos, sin suscripción - paga solo por lo que uses.",
+    "button": "Comenzar gratis"
+  },
+  "seoContent": {
+    "title": "Chat de IA gratis en línea - Alternativa a ChatGPT, Claude, Gemini",
+    "p1": "Pixelift AI Chat es una potente alternativa a ChatGPT, Claude y Gemini. Accede a más de 20 modelos de IA de proveedores líderes incluyendo GPT-5.2 de OpenAI, Claude Opus 4.5 de Anthropic, Gemini 2.5 Pro de Google, y modelos de código abierto como DeepSeek y Llama. A diferencia de otros servicios, ofrecemos modelos de IA completamente gratuitos sin límites de uso.",
+    "p2": "Nuestro modelo de precios de pago por uso significa que nunca pagas por una suscripción que no usas completamente. Compra créditos cuando los necesites y usa cualquier modelo que quieras. Perfecto para estudiantes, desarrolladores, escritores, investigadores y cualquiera que necesite acceso ocasional a IA potente sin compromisos mensuales.",
+    "p3": "Comienza a chatear hoy con nuestros modelos de IA gratuitos - no se requiere tarjeta de crédito. Cuando necesites más potencia, actualiza a modelos premium como GPT-5.2 o Claude Opus 4.5 para tareas complejas. Tus conversaciones son privadas, encriptadas y nunca se usan para entrenamiento."
+  }
+}
