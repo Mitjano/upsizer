@@ -131,7 +131,7 @@ export default function Testimonials() {
             </button>
 
             {/* Testimonial Card */}
-            <div className="relative bg-white dark:bg-gradient-to-br dark:from-gray-800/80 dark:to-gray-900/80 backdrop-blur-sm border border-gray-300 dark:border-gray-700 rounded-3xl p-8 md:p-12 shadow-lg">
+            <div className="relative bg-white dark:bg-gradient-to-br dark:from-slate-800/90 dark:to-slate-900/90 backdrop-blur-sm border border-gray-300 dark:border-slate-600/50 rounded-3xl p-8 md:p-12 shadow-lg dark:shadow-slate-900/50">
               {/* Quote Icon */}
               <div className="absolute top-6 right-8 text-green-500/20">
                 <svg className="w-16 h-16" fill="currentColor" viewBox="0 0 24 24">
@@ -187,7 +187,7 @@ export default function Testimonials() {
           {testimonialKeys.slice(0, 3).map((key, index) => (
             <div
               key={key}
-              className={`group p-6 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-2xl hover:border-green-500/50 transition-all duration-300 shadow-sm ${
+              className={`group p-6 bg-white dark:bg-gradient-to-br dark:from-slate-800/90 dark:to-slate-900/90 border border-gray-300 dark:border-slate-600/50 rounded-2xl hover:border-green-500/50 transition-all duration-300 shadow-sm dark:shadow-slate-900/50 ${
                 index === currentIndex ? 'ring-2 ring-green-500/30' : ''
               }`}
             >

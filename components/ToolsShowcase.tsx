@@ -172,7 +172,7 @@ export default function ToolsShowcase() {
           <Link
             key={tool.href}
             href={tool.href}
-            className="group relative bg-white dark:bg-gradient-to-br dark:from-gray-800/80 dark:to-gray-900/80 backdrop-blur-sm rounded-2xl border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-500 p-6 transition-all duration-300 hover:scale-[1.02] shadow-sm hover:shadow-xl overflow-hidden"
+            className="group relative bg-white dark:bg-gradient-to-br dark:from-slate-800/90 dark:to-slate-900/90 backdrop-blur-sm rounded-2xl border border-gray-200 dark:border-slate-600/50 hover:border-gray-300 dark:hover:border-slate-500 p-6 transition-all duration-300 hover:scale-[1.02] shadow-sm hover:shadow-xl dark:shadow-slate-900/50 overflow-hidden"
           >
             {/* Gradient overlay on hover */}
             <div className={`absolute inset-0 bg-gradient-to-br ${tool.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}></div>
@@ -204,7 +204,7 @@ export default function ToolsShowcase() {
 
               {/* Footer */}
               <div className="flex items-center justify-between">
-                <span className="text-xs font-medium text-gray-500 bg-gray-200 dark:bg-gray-800 px-3 py-1 rounded-full">
+                <span className="text-xs font-medium text-gray-500 dark:text-gray-300 bg-gray-200 dark:bg-slate-700/80 px-3 py-1 rounded-full">
                   {t(`credits.${tool.creditsKey}`)}
                 </span>
                 <div className="flex items-center gap-1 text-sm font-medium text-gray-500 dark:text-gray-400 group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">
