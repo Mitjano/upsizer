@@ -6,7 +6,7 @@ import ActionButton from './ActionButton';
 
 export interface CopyLinkButtonProps {
   imageId: string;
-  accentColor?: 'green' | 'blue' | 'purple' | 'gray';
+  accentColor?: 'green' | 'blue' | 'purple' | 'gray' | 'amber';
   variant?: 'primary' | 'secondary' | 'outline';
   className?: string;
 }

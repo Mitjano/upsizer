@@ -9,7 +9,7 @@ export interface CreditsInfoProps {
   message: string;
   creditsRemaining: number;
   extraInfo?: string;
-  accentColor?: 'green' | 'blue' | 'purple';
+  accentColor?: 'green' | 'blue' | 'purple' | 'amber';
 }
 
 const COLOR_CLASSES = {
@@ -30,6 +30,12 @@ const COLOR_CLASSES = {
     border: 'border-purple-200 dark:border-purple-800',
     text: 'text-purple-800 dark:text-purple-300',
     subtext: 'text-purple-600 dark:text-purple-400',
+  },
+  amber: {
+    bg: 'bg-amber-50 dark:bg-amber-900/20',
+    border: 'border-amber-200 dark:border-amber-800',
+    text: 'text-amber-800 dark:text-amber-300',
+    subtext: 'text-amber-600 dark:text-amber-400',
   },
 };
 

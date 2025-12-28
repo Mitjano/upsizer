@@ -5725,112 +5725,151 @@
   },
   "portraitRelightPage": {
     "badge": "AI-Powered Portrait Lighting",
-    "title": "AI Portrait Relight",
-    "subtitle": "Transform your portrait lighting with studio-quality AI relighting.",
+    "title": "Professional Portrait",
+    "titleHighlight": "Relighting",
+    "subtitle": "Transform your portrait lighting with studio-quality AI relighting. Change any portrait from harsh outdoor lighting to soft studio setups, golden hour glow, or dramatic cinematic looks with one click.",
     "termsNotice": "By using this tool, you agree to our Terms of Service.",
     "stats": {
+      "credits": "2",
+      "creditsLabel": "Credits",
       "presets": "6",
       "presetsLabel": "Lighting Presets",
-      "aiPowered": "ICLight V2",
-      "aiPoweredLabel": "AI Model",
-      "creditCost": "2 Credits",
-      "creditCostLabel": "Per Image"
+      "quality": "HD",
+      "qualityLabel": "Output"
     },
-    "howItWorks": {
-      "title": "How It Works",
-      "step1": {
-        "title": "Upload Portrait",
-        "description": "Upload any portrait photo"
-      },
-      "step2": {
-        "title": "Choose Lighting",
-        "description": "Select a preset or custom style"
-      },
-      "step3": {
-        "title": "Download Result",
-        "description": "Get your relit portrait"
-      }
-    },
-    "lightingPresets": {
+    "options": {
       "title": "Lighting Presets",
       "studio": {
-        "title": "Studio",
-        "description": "Professional three-point lighting"
+        "name": "Studio Light",
+        "description": "Professional three-point lighting setup with soft, even illumination."
       },
       "golden": {
-        "title": "Golden Hour",
-        "description": "Warm sunset lighting"
+        "name": "Golden Hour",
+        "description": "Warm, romantic sunset lighting with soft shadows and golden tones."
       },
       "dramatic": {
-        "title": "Dramatic",
-        "description": "High contrast shadows"
-      },
-      "neon": {
-        "title": "Neon",
-        "description": "Cyberpunk colored lighting"
-      },
-      "natural": {
-        "title": "Natural",
-        "description": "Soft window light"
-      },
-      "rembrandt": {
-        "title": "Rembrandt",
-        "description": "Classic triangle lighting"
+        "name": "Dramatic",
+        "description": "High-contrast lighting with deep shadows for cinematic portraits."
       }
     },
     "features": {
+      "title": "Why Choose Portrait Relight",
       "aiPowered": {
         "title": "AI-Powered",
-        "description": "ICLight V2 for realistic relighting"
+        "description": "ICLight V2 model understands facial features and applies realistic lighting transformations."
       },
       "customPrompts": {
-        "title": "Custom Prompts",
-        "description": "Describe any lighting scenario"
+        "title": "Custom Lighting",
+        "description": "Use presets or describe any lighting scenario with custom prompts."
       },
       "fastProcessing": {
         "title": "Fast Processing",
-        "description": "Results in seconds"
+        "description": "Get professionally relit portraits in seconds, not hours of manual editing."
+      }
+    },
+    "howItWorks": {
+      "title": "How It",
+      "titleHighlight": "Works",
+      "step1": {
+        "title": "Upload Portrait",
+        "description": "Upload any portrait photo with a clear face visible."
+      },
+      "step2": {
+        "title": "Choose Lighting",
+        "description": "Select a preset or describe custom lighting with a prompt."
+      },
+      "step3": {
+        "title": "AI Relight",
+        "description": "Our AI analyzes and applies the new lighting realistically."
+      },
+      "step4": {
+        "title": "Download Result",
+        "description": "Download your professionally relit portrait."
       }
     },
     "useCases": {
-      "title": "Use Cases",
+      "title": "Perfect For Every Photographer",
       "photographers": {
+        "icon": "📸",
         "title": "Photographers",
-        "description": "Fix lighting in post"
+        "description": "Fix bad lighting in post-production or offer relighting as an additional service."
       },
       "contentCreators": {
+        "icon": "📱",
         "title": "Content Creators",
-        "description": "Consistent lighting"
+        "description": "Achieve consistent, professional lighting across all your content."
       },
       "ecommerce": {
-        "title": "E-commerce",
-        "description": "Professional headshots"
+        "icon": "💼",
+        "title": "Business Headshots",
+        "description": "Transform casual photos into professional headshots with studio lighting."
       },
       "socialMedia": {
+        "icon": "✨",
         "title": "Social Media",
-        "description": "Enhanced selfies"
+        "description": "Enhance selfies and portraits with cinematic or golden hour lighting."
       }
     },
-    "relatedTools": {
-      "title": "Related Tools",
-      "packshot": {
-        "title": "Packshot Generator",
-        "description": "Product photography"
+    "technology": {
+      "title": "Powered by ICLight V2",
+      "description": "Portrait Relight uses ICLight V2, an advanced AI model specifically trained for portrait relighting. It understands 3D facial structure, skin tones, and lighting physics to apply new lighting that looks natural and professional.",
+      "feature1": "ICLight V2 specialized portrait model",
+      "feature2": "Understands 3D facial structure",
+      "feature3": "Natural skin tone preservation",
+      "feature4": "Realistic shadow and highlight generation"
+    },
+    "limitations": {
+      "title": "What to Expect",
+      "worksWell": {
+        "title": "Works Great For",
+        "item1": "Clear portraits with visible faces",
+        "item2": "Headshots and upper body portraits",
+        "item3": "Both indoor and outdoor lighting fixes"
       },
-      "removeBackground": {
-        "title": "Remove Background",
-        "description": "Transparent backgrounds"
+      "limitations": {
+        "title": "Considerations",
+        "item1": "Multiple faces may produce varied results",
+        "item2": "Extreme angles or occlusions may affect quality",
+        "item3": "Very dark or overexposed photos may need enhancement first"
+      }
+    },
+    "tips": {
+      "title": "Tips for Best Results",
+      "tip1": "Use portraits with clear, unobstructed faces for best results.",
+      "tip2": "Start with preset lighting before trying custom prompts.",
+      "tip3": "For outdoor photos, try studio or golden hour presets.",
+      "tip4": "Dramatic lighting works best on images with some existing contrast.",
+      "tip5": "Combine with our face restoration tool for maximum impact.",
+      "tip6": "Higher resolution portraits produce more detailed relighting."
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "q1": {
+        "question": "What is portrait relighting?",
+        "answer": "It's AI-powered technology that changes the lighting in portrait photos, making it look like they were taken under different lighting conditions."
       },
-      "restore": {
-        "title": "Face Restore",
-        "description": "Enhance facial features"
+      "q2": {
+        "question": "Will it look natural?",
+        "answer": "Yes, our AI understands facial structure and applies lighting physically correctly. Results look professionally lit."
+      },
+      "q3": {
+        "question": "Can I use custom lighting descriptions?",
+        "answer": "Absolutely! Beyond presets, you can describe any lighting scenario like 'neon cyberpunk lighting' or 'soft candlelight'."
+      },
+      "q4": {
+        "question": "Does it work on group photos?",
+        "answer": "Best results are with single subjects. Group photos may have inconsistent results across different faces."
+      },
+      "q5": {
+        "question": "What portrait types work best?",
+        "answer": "Headshots and upper body portraits with clear, front-facing or 3/4 view faces produce the best results."
       }
     },
     "cta": {
       "title": "Ready to Transform Your Portraits?",
-      "subtitle": "Start relighting your photos with AI today",
-      "exploreTools": "Explore All Tools",
-      "viewPricing": "View Pricing"
+      "subtitle": "Professional studio lighting is just one click away. Transform any portrait with AI.",
+      "getStarted": "Get Started Free",
+      "startAction": "Relight Portrait Now"
     }
   },
   "watermarkRemover": {
@@ -6468,155 +6507,6 @@
       "startAction": "Generate Now"
     }
   },
-  "portraitRelightPage": {
-    "badge": "AI-Powered Portrait Lighting",
-    "title": "Professional Portrait",
-    "titleHighlight": "Relighting",
-    "subtitle": "Transform your portrait lighting with studio-quality AI relighting. Change any portrait from harsh outdoor lighting to soft studio setups, golden hour glow, or dramatic cinematic looks with one click.",
-    "termsNotice": "By using this tool, you agree to our Terms of Service.",
-    "stats": {
-      "credits": "2",
-      "creditsLabel": "Credits",
-      "presets": "6",
-      "presetsLabel": "Lighting Presets",
-      "quality": "HD",
-      "qualityLabel": "Output"
-    },
-    "options": {
-      "title": "Lighting Presets",
-      "studio": {
-        "name": "Studio Light",
-        "description": "Professional three-point lighting setup with soft, even illumination."
-      },
-      "golden": {
-        "name": "Golden Hour",
-        "description": "Warm, romantic sunset lighting with soft shadows and golden tones."
-      },
-      "dramatic": {
-        "name": "Dramatic",
-        "description": "High-contrast lighting with deep shadows for cinematic portraits."
-      }
-    },
-    "features": {
-      "title": "Why Choose Portrait Relight",
-      "aiPowered": {
-        "title": "AI-Powered",
-        "description": "ICLight V2 model understands facial features and applies realistic lighting transformations."
-      },
-      "customPrompts": {
-        "title": "Custom Lighting",
-        "description": "Use presets or describe any lighting scenario with custom prompts."
-      },
-      "fastProcessing": {
-        "title": "Fast Processing",
-        "description": "Get professionally relit portraits in seconds, not hours of manual editing."
-      }
-    },
-    "howItWorks": {
-      "title": "How It",
-      "titleHighlight": "Works",
-      "step1": {
-        "title": "Upload Portrait",
-        "description": "Upload any portrait photo with a clear face visible."
-      },
-      "step2": {
-        "title": "Choose Lighting",
-        "description": "Select a preset or describe custom lighting with a prompt."
-      },
-      "step3": {
-        "title": "AI Relight",
-        "description": "Our AI analyzes and applies the new lighting realistically."
-      },
-      "step4": {
-        "title": "Download Result",
-        "description": "Download your professionally relit portrait."
-      }
-    },
-    "useCases": {
-      "title": "Perfect For Every Photographer",
-      "photographers": {
-        "icon": "📸",
-        "title": "Photographers",
-        "description": "Fix bad lighting in post-production or offer relighting as an additional service."
-      },
-      "contentCreators": {
-        "icon": "📱",
-        "title": "Content Creators",
-        "description": "Achieve consistent, professional lighting across all your content."
-      },
-      "ecommerce": {
-        "icon": "💼",
-        "title": "Business Headshots",
-        "description": "Transform casual photos into professional headshots with studio lighting."
-      },
-      "socialMedia": {
-        "icon": "✨",
-        "title": "Social Media",
-        "description": "Enhance selfies and portraits with cinematic or golden hour lighting."
-      }
-    },
-    "technology": {
-      "title": "Powered by ICLight V2",
-      "description": "Portrait Relight uses ICLight V2, an advanced AI model specifically trained for portrait relighting. It understands 3D facial structure, skin tones, and lighting physics to apply new lighting that looks natural and professional.",
-      "feature1": "ICLight V2 specialized portrait model",
-      "feature2": "Understands 3D facial structure",
-      "feature3": "Natural skin tone preservation",
-      "feature4": "Realistic shadow and highlight generation"
-    },
-    "limitations": {
-      "title": "What to Expect",
-      "worksWell": {
-        "title": "Works Great For",
-        "item1": "Clear portraits with visible faces",
-        "item2": "Headshots and upper body portraits",
-        "item3": "Both indoor and outdoor lighting fixes"
-      },
-      "limitations": {
-        "title": "Considerations",
-        "item1": "Multiple faces may produce varied results",
-        "item2": "Extreme angles or occlusions may affect quality",
-        "item3": "Very dark or overexposed photos may need enhancement first"
-      }
-    },
-    "tips": {
-      "title": "Tips for Best Results",
-      "tip1": "Use portraits with clear, unobstructed faces for best results.",
-      "tip2": "Start with preset lighting before trying custom prompts.",
-      "tip3": "For outdoor photos, try studio or golden hour presets.",
-      "tip4": "Dramatic lighting works best on images with some existing contrast.",
-      "tip5": "Combine with our face restoration tool for maximum impact.",
-      "tip6": "Higher resolution portraits produce more detailed relighting."
-    },
-    "faq": {
-      "title": "Frequently Asked Questions",
-      "q1": {
-        "question": "What is portrait relighting?",
-        "answer": "It's AI-powered technology that changes the lighting in portrait photos, making it look like they were taken under different lighting conditions."
-      },
-      "q2": {
-        "question": "Will it look natural?",
-        "answer": "Yes, our AI understands facial structure and applies lighting physically correctly. Results look professionally lit."
-      },
-      "q3": {
-        "question": "Can I use custom lighting descriptions?",
-        "answer": "Absolutely! Beyond presets, you can describe any lighting scenario like 'neon cyberpunk lighting' or 'soft candlelight'."
-      },
-      "q4": {
-        "question": "Does it work on group photos?",
-        "answer": "Best results are with single subjects. Group photos may have inconsistent results across different faces."
-      },
-      "q5": {
-        "question": "What portrait types work best?",
-        "answer": "Headshots and upper body portraits with clear, front-facing or 3/4 view faces produce the best results."
-      }
-    },
-    "cta": {
-      "title": "Ready to Transform Your Portraits?",
-      "subtitle": "Professional studio lighting is just one click away. Transform any portrait with AI.",
-      "getStarted": "Get Started Free",
-      "startAction": "Relight Portrait Now"
-    }
-  },
   "aiProducts": {
     "badge": "AI Products",
     "title": "Powerful AI Tools",
@@ -6664,5 +6554,44 @@
       "videoModels": "5+ Video Models",
       "perToken": "Pay Per Token"
     }
+  },
+  "productShotPro": {
+    "loginTitle": "Product Shot Pro",
+    "loginDescription": "Professional AI product photography for e-commerce. Generate studio-quality backgrounds and perfect lighting.",
+    "modeBackground": "AI Background",
+    "modeRelight": "Pro Lighting",
+    "dropHere": "Drop your product photo here!",
+    "uploadTitle": "Upload your product photo",
+    "uploadSubtitle": "Drag & drop or click to browse",
+    "uploadFormats": "JPG, PNG, WEBP",
+    "uploadMaxSize": "Max 12MB",
+    "preview": "Preview",
+    "changeImage": "Change image",
+    "usePresets": "Use Presets",
+    "customPrompt": "Custom Prompt",
+    "selectCategory": "Select Category",
+    "selectPreset": "Select Background Style",
+    "describeBackground": "Describe Your Background",
+    "customPromptPlaceholder": "Professional marble surface, soft studio lighting, luxury brand aesthetic, e-commerce product photography...",
+    "productPlacement": "Product Placement",
+    "selectLighting": "Select Lighting Style",
+    "lightDirection": "Light Direction",
+    "enableHrFix": "Enable high-resolution enhancement",
+    "numberOfVariants": "Number of Variants",
+    "estimatedCost": "Estimated Cost",
+    "credit": "credit",
+    "credits": "credits",
+    "generating": "Generating...",
+    "generateBackground": "Generate Product Shot",
+    "applyLighting": "Apply Professional Lighting",
+    "original": "Original",
+    "aiBackground": "AI Background",
+    "relitProduct": "Relit Product",
+    "selectVariant": "Select variant",
+    "successMessage": "Professional product shot generated successfully!",
+    "downloadSelected": "Download Selected",
+    "downloadAll": "Download All",
+    "tryAgain": "Try Different Settings",
+    "newImage": "New Image"
   }
 }

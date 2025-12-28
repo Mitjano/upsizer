@@ -9,7 +9,7 @@ export interface ActionButtonProps {
   onClick: () => void;
   disabled?: boolean;
   variant?: 'primary' | 'secondary' | 'outline';
-  accentColor?: 'green' | 'blue' | 'purple' | 'gray';
+  accentColor?: 'green' | 'blue' | 'purple' | 'gray' | 'amber';
   icon?: 'download' | 'upload' | 'refresh' | 'lightning' | 'new' | 'link';
   children: React.ReactNode;
   className?: string;
@@ -21,18 +21,21 @@ const VARIANT_CLASSES = {
     blue: 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl',
     purple: 'bg-purple-600 hover:bg-purple-700 text-white shadow-lg hover:shadow-xl',
     gray: 'bg-gray-600 hover:bg-gray-700 text-white shadow-lg hover:shadow-xl',
+    amber: 'bg-amber-600 hover:bg-amber-700 text-white shadow-lg hover:shadow-xl',
   },
   secondary: {
     green: 'bg-green-100 dark:bg-green-900/30 hover:bg-green-200 dark:hover:bg-green-900/50 text-green-800 dark:text-green-200',
     blue: 'bg-blue-100 dark:bg-blue-900/30 hover:bg-blue-200 dark:hover:bg-blue-900/50 text-blue-800 dark:text-blue-200',
     purple: 'bg-purple-100 dark:bg-purple-900/30 hover:bg-purple-200 dark:hover:bg-purple-900/50 text-purple-800 dark:text-purple-200',
     gray: 'bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-white',
+    amber: 'bg-amber-100 dark:bg-amber-900/30 hover:bg-amber-200 dark:hover:bg-amber-900/50 text-amber-800 dark:text-amber-200',
   },
   outline: {
     green: 'border-2 border-green-500 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20',
     blue: 'border-2 border-blue-500 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20',
     purple: 'border-2 border-purple-500 text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-900/20',
     gray: 'border-2 border-gray-500 text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-900/20',
+    amber: 'border-2 border-amber-500 text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/20',
   },
 };
 

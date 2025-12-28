@@ -15,6 +15,8 @@ export type ToolType =
   | 'expand'
   | 'object_removal'
   | 'packshot'
+  | 'product_shot'
+  | 'product_shot_relight'
   | 'reimagine'
   | 'background_generate'
   | 'style_transfer'
@@ -132,6 +134,23 @@ export const CREDIT_COSTS: Record<ToolType, ToolCreditConfig> = {
     cost: 2,
     displayName: 'Packshot',
     description: 'Profesjonalne tła produktowe',
+  },
+  product_shot: {
+    cost: 2,
+    minCost: 2,
+    maxCost: 8,
+    isDynamic: true,
+    costDescription: {
+      en: '2 credits × number of variants (1-4)',
+      pl: '2 kredyty × liczba wariantów (1-4)',
+    },
+    displayName: 'Product Shot Pro',
+    description: 'Profesjonalna fotografia produktowa e-commerce z AI',
+  },
+  product_shot_relight: {
+    cost: 3,
+    displayName: 'Product Relight',
+    description: 'Profesjonalna zmiana oświetlenia produktu',
   },
   reimagine: {
     cost: 2,
@@ -415,6 +434,15 @@ export function calculateReimagineCost(variants: number): number {
 }
 
 /**
+ * Oblicz koszt dla product shot (zależny od liczby wariantów)
+ * 2 kredyty × liczba wariantów (1-4)
+ */
+export function calculateProductShotCost(variants: number): number {
+  const clampedVariants = Math.min(Math.max(variants, 1), 4);
+  return CREDIT_COSTS.product_shot.cost * clampedVariants; // 2 × variants
+}
+
+/**
  * Formatuj koszt do wyświetlenia
  */
 export function formatCreditCost(cost: number, locale: string = 'pl'): string {
@@ -462,6 +490,12 @@ export const TOOL_API_KEYS: Record<string, ToolType> = {
   'objectRemoval': 'object_removal',
   'packshot': 'packshot',
   'generate-packshot': 'packshot',
+  'product-shot': 'product_shot',
+  'productShot': 'product_shot',
+  'product_shot': 'product_shot',
+  'product-shot-relight': 'product_shot_relight',
+  'productShotRelight': 'product_shot_relight',
+  'product_shot_relight': 'product_shot_relight',
   'reimagine': 'reimagine',
   'background-generate': 'background_generate',
   'backgroundGenerate': 'background_generate',
