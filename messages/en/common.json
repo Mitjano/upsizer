@@ -6512,6 +6512,66 @@
       "startAction": "Generate Now"
     }
   },
+  "structureControl": {
+    "loginTitle": "Sign in to Use AI Structure Control",
+    "loginDescription": "Create a free account to transform images while preserving their structure.",
+    "signIn": "Sign In",
+    "signUpFree": "Sign Up Free",
+    "uploadButton": "Upload Reference Image",
+    "dropHint": "or drop image anywhere",
+    "supportedFormats": "Supported formats: PNG, JPEG, JPG, WEBP",
+    "maxFileSize": "Maximum file size: 20MB",
+    "controlMode": "Control Mode",
+    "modes": {
+      "depth": {
+        "name": "Depth Control",
+        "description": "Preserve 3D structure and perspective",
+        "examples": ["Interior redesign", "Landscape transformation", "Product mockups"]
+      },
+      "canny": {
+        "name": "Edge Control",
+        "description": "Preserve shapes and outlines",
+        "examples": ["Logo redesign", "Character transformation", "Architecture concepts"]
+      }
+    },
+    "promptLabel": "Describe what you want to generate",
+    "promptPlaceholder": "e.g., 'a futuristic cyberpunk city at night with neon lights'",
+    "promptSuggestions": [
+      "photorealistic, high quality, detailed",
+      "digital art, vibrant colors",
+      "oil painting style, artistic",
+      "cyberpunk cityscape, neon lights"
+    ],
+    "strengthLabel": "Structure Adherence",
+    "moreCreative": "More Creative",
+    "strictStructure": "Strict Structure",
+    "referenceImage": "Reference Image",
+    "generatedPreview": "Generated Preview",
+    "previewHint": "Enter a prompt and click \"Generate\"",
+    "previewDescription": "The AI will generate a new image following the structure of your reference",
+    "generateButton": "Generate with Structure Control",
+    "generating": "Generating...",
+    "downloadResult": "Download Result",
+    "tryDifferent": "Try Different Prompt",
+    "uploadNew": "Upload New Image",
+    "poweredBy": "Powered by FLUX",
+    "depthPro": "Depth Pro AI",
+    "cannyPro": "Canny Pro AI",
+    "perGeneration": "per generation",
+    "creditsRemaining": "credits remaining",
+    "errors": {
+      "invalidFile": "Please upload a valid image file (PNG, JPG, JPEG, WEBP)",
+      "fileTooLarge": "File size must be less than 20MB",
+      "noPrompt": "Please enter a prompt describing what you want to generate",
+      "processFailed": "Failed to process image",
+      "downloadFailed": "Failed to download image"
+    },
+    "progress": {
+      "uploading": "Uploading image...",
+      "processing": "Processing with FLUX {mode} Pro AI...",
+      "complete": "Structure control complete!"
+    }
+  },
   "aiProducts": {
     "badge": "AI Products",
     "title": "Powerful AI Tools",

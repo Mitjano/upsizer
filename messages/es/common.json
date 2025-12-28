@@ -6076,6 +6076,66 @@
       "startAction": "Generar con Control"
     }
   },
+  "structureControl": {
+    "loginTitle": "Inicia sesión para usar Control de Estructura IA",
+    "loginDescription": "Crea una cuenta gratuita para transformar imágenes preservando su estructura.",
+    "signIn": "Iniciar sesión",
+    "signUpFree": "Registrarse gratis",
+    "uploadButton": "Subir imagen de referencia",
+    "dropHint": "o arrastra la imagen aquí",
+    "supportedFormats": "Formatos soportados: PNG, JPEG, JPG, WEBP",
+    "maxFileSize": "Tamaño máximo: 20MB",
+    "controlMode": "Modo de control",
+    "modes": {
+      "depth": {
+        "name": "Control de profundidad",
+        "description": "Preserva estructura 3D y perspectiva",
+        "examples": ["Rediseño de interiores", "Transformación de paisajes", "Mockups de productos"]
+      },
+      "canny": {
+        "name": "Control de bordes",
+        "description": "Preserva formas y contornos",
+        "examples": ["Rediseño de logos", "Transformación de personajes", "Conceptos arquitectónicos"]
+      }
+    },
+    "promptLabel": "Describe lo que quieres generar",
+    "promptPlaceholder": "ej. 'una ciudad cyberpunk futurista de noche con luces neón'",
+    "promptSuggestions": [
+      "fotorrealista, alta calidad, detallado",
+      "arte digital, colores vibrantes",
+      "estilo pintura al óleo, artístico",
+      "paisaje urbano cyberpunk, neones"
+    ],
+    "strengthLabel": "Adherencia a la estructura",
+    "moreCreative": "Más creativo",
+    "strictStructure": "Estructura estricta",
+    "referenceImage": "Imagen de referencia",
+    "generatedPreview": "Vista previa generada",
+    "previewHint": "Escribe un prompt y haz clic en \"Generar\"",
+    "previewDescription": "La IA generará una nueva imagen siguiendo la estructura de tu referencia",
+    "generateButton": "Generar con control de estructura",
+    "generating": "Generando...",
+    "downloadResult": "Descargar resultado",
+    "tryDifferent": "Probar otro prompt",
+    "uploadNew": "Subir nueva imagen",
+    "poweredBy": "Impulsado por FLUX",
+    "depthPro": "Depth Pro AI",
+    "cannyPro": "Canny Pro AI",
+    "perGeneration": "por generación",
+    "creditsRemaining": "créditos restantes",
+    "errors": {
+      "invalidFile": "Sube un archivo de imagen válido (PNG, JPG, JPEG, WEBP)",
+      "fileTooLarge": "El tamaño del archivo debe ser menor a 20MB",
+      "noPrompt": "Ingresa un prompt describiendo lo que quieres generar",
+      "processFailed": "Error al procesar la imagen",
+      "downloadFailed": "Error al descargar la imagen"
+    },
+    "progress": {
+      "uploading": "Subiendo imagen...",
+      "processing": "Procesando con FLUX {mode} Pro AI...",
+      "complete": "¡Control de estructura completado!"
+    }
+  },
   "watermarkRemoverPage": {
     "badge": "Eliminación de Marcas de Agua con IA",
     "title": "Elimina Marcas de Agua",

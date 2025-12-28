@@ -6163,6 +6163,66 @@
       "startAction": "Générer avec Contrôle"
     }
   },
+  "structureControl": {
+    "loginTitle": "Connectez-vous pour utiliser le Contrôle de Structure IA",
+    "loginDescription": "Créez un compte gratuit pour transformer des images en préservant leur structure.",
+    "signIn": "Se connecter",
+    "signUpFree": "S'inscrire gratuitement",
+    "uploadButton": "Télécharger l'image de référence",
+    "dropHint": "ou déposez l'image ici",
+    "supportedFormats": "Formats supportés : PNG, JPEG, JPG, WEBP",
+    "maxFileSize": "Taille maximale : 20 Mo",
+    "controlMode": "Mode de contrôle",
+    "modes": {
+      "depth": {
+        "name": "Contrôle de profondeur",
+        "description": "Préserver la structure 3D et la perspective",
+        "examples": ["Redesign d'intérieur", "Transformation de paysage", "Maquettes de produits"]
+      },
+      "canny": {
+        "name": "Contrôle des bords",
+        "description": "Préserver les formes et les contours",
+        "examples": ["Redesign de logo", "Transformation de personnage", "Concepts architecturaux"]
+      }
+    },
+    "promptLabel": "Décrivez ce que vous voulez générer",
+    "promptPlaceholder": "ex. 'une ville cyberpunk futuriste la nuit avec des néons'",
+    "promptSuggestions": [
+      "photoréaliste, haute qualité, détaillé",
+      "art numérique, couleurs vibrantes",
+      "style peinture à l'huile, artistique",
+      "paysage urbain cyberpunk, néons"
+    ],
+    "strengthLabel": "Adhérence à la structure",
+    "moreCreative": "Plus créatif",
+    "strictStructure": "Structure stricte",
+    "referenceImage": "Image de référence",
+    "generatedPreview": "Aperçu généré",
+    "previewHint": "Entrez un prompt et cliquez sur \"Générer\"",
+    "previewDescription": "L'IA générera une nouvelle image suivant la structure de votre référence",
+    "generateButton": "Générer avec contrôle de structure",
+    "generating": "Génération...",
+    "downloadResult": "Télécharger le résultat",
+    "tryDifferent": "Essayer un autre prompt",
+    "uploadNew": "Télécharger une nouvelle image",
+    "poweredBy": "Propulsé par FLUX",
+    "depthPro": "Depth Pro AI",
+    "cannyPro": "Canny Pro AI",
+    "perGeneration": "par génération",
+    "creditsRemaining": "crédits restants",
+    "errors": {
+      "invalidFile": "Veuillez télécharger un fichier image valide (PNG, JPG, JPEG, WEBP)",
+      "fileTooLarge": "La taille du fichier doit être inférieure à 20 Mo",
+      "noPrompt": "Veuillez entrer un prompt décrivant ce que vous voulez générer",
+      "processFailed": "Échec du traitement de l'image",
+      "downloadFailed": "Échec du téléchargement de l'image"
+    },
+    "progress": {
+      "uploading": "Téléchargement de l'image...",
+      "processing": "Traitement avec FLUX {mode} Pro AI...",
+      "complete": "Contrôle de structure terminé !"
+    }
+  },
   "watermarkRemoverPage": {
     "badge": "Suppression de Filigrane par IA",
     "title": "Supprimez les Filigranes",

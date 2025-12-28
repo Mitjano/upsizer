@@ -6554,6 +6554,66 @@
       "startAction": "Generuj z Kontrolą"
     }
   },
+  "structureControl": {
+    "loginTitle": "Zaloguj się, aby używać AI Kontroli Struktury",
+    "loginDescription": "Utwórz darmowe konto, aby przekształcać obrazy z zachowaniem ich struktury.",
+    "signIn": "Zaloguj się",
+    "signUpFree": "Zarejestruj się za darmo",
+    "uploadButton": "Prześlij obraz referencyjny",
+    "dropHint": "lub upuść obraz tutaj",
+    "supportedFormats": "Obsługiwane formaty: PNG, JPEG, JPG, WEBP",
+    "maxFileSize": "Maksymalny rozmiar pliku: 20MB",
+    "controlMode": "Tryb kontroli",
+    "modes": {
+      "depth": {
+        "name": "Kontrola głębi",
+        "description": "Zachowaj strukturę 3D i perspektywę",
+        "examples": ["Przeprojektowanie wnętrza", "Transformacja krajobrazu", "Mockupy produktów"]
+      },
+      "canny": {
+        "name": "Kontrola krawędzi",
+        "description": "Zachowaj kształty i kontury",
+        "examples": ["Redesign logo", "Transformacja postaci", "Koncepcje architektoniczne"]
+      }
+    },
+    "promptLabel": "Opisz, co chcesz wygenerować",
+    "promptPlaceholder": "np. 'futurystyczne cyberpunkowe miasto nocą z neonami'",
+    "promptSuggestions": [
+      "fotorealistyczne, wysoka jakość, szczegółowe",
+      "sztuka cyfrowa, żywe kolory",
+      "styl malarstwa olejnego, artystyczne",
+      "cyberpunkowy pejzaż miejski, neony"
+    ],
+    "strengthLabel": "Zgodność ze strukturą",
+    "moreCreative": "Bardziej kreatywne",
+    "strictStructure": "Ścisła struktura",
+    "referenceImage": "Obraz referencyjny",
+    "generatedPreview": "Podgląd wygenerowanego",
+    "previewHint": "Wpisz prompt i kliknij \"Generuj\"",
+    "previewDescription": "AI wygeneruje nowy obraz zgodny ze strukturą referencji",
+    "generateButton": "Generuj z kontrolą struktury",
+    "generating": "Generowanie...",
+    "downloadResult": "Pobierz wynik",
+    "tryDifferent": "Spróbuj innego promptu",
+    "uploadNew": "Prześlij nowy obraz",
+    "poweredBy": "Zasilane przez FLUX",
+    "depthPro": "Depth Pro AI",
+    "cannyPro": "Canny Pro AI",
+    "perGeneration": "za generację",
+    "creditsRemaining": "kredytów pozostało",
+    "errors": {
+      "invalidFile": "Prześlij prawidłowy plik obrazu (PNG, JPG, JPEG, WEBP)",
+      "fileTooLarge": "Rozmiar pliku musi być mniejszy niż 20MB",
+      "noPrompt": "Wprowadź prompt opisujący to, co chcesz wygenerować",
+      "processFailed": "Nie udało się przetworzyć obrazu",
+      "downloadFailed": "Nie udało się pobrać obrazu"
+    },
+    "progress": {
+      "uploading": "Przesyłanie obrazu...",
+      "processing": "Przetwarzanie z FLUX {mode} Pro AI...",
+      "complete": "Kontrola struktury zakończona!"
+    }
+  },
   "aiProducts": {
     "badge": "Produkty AI",
     "title": "Potężne Narzędzia AI",

@@ -2,41 +2,15 @@
 
 import { useState, useCallback } from "react";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import ImageComparison from "./ImageComparison";
 import { FaTimes, FaInfoCircle, FaLayerGroup, FaRuler, FaBorderAll } from "react-icons/fa";
 import { CreditCostBadge, CopyLinkButton, ActionButton } from './shared';
 import { CREDIT_COSTS } from '@/lib/credits-config';
 
-const CONTROL_MODES = [
-  {
-    id: 'depth',
-    name: 'Depth Control',
-    icon: <FaLayerGroup className="text-2xl" />,
-    description: 'Preserve 3D structure and perspective',
-    examples: ['Interior redesign', 'Landscape transformation', 'Product mockups'],
-  },
-  {
-    id: 'canny',
-    name: 'Edge Control',
-    icon: <FaBorderAll className="text-2xl" />,
-    description: 'Preserve shapes and outlines',
-    examples: ['Logo redesign', 'Character transformation', 'Architecture concepts'],
-  },
-];
-
-const PROMPT_SUGGESTIONS = [
-  'photorealistic, high quality, detailed',
-  'digital art, vibrant colors',
-  'oil painting style, artistic',
-  'cyberpunk cityscape, neon lights',
-  'fantasy landscape, magical',
-  'anime style illustration',
-  'watercolor painting, soft',
-  'modern minimalist design',
-];
-
 export default function StructureControl() {
   const { data: session } = useSession();
+  const t = useTranslations('structureControl');
   const [dragActive, setDragActive] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -80,12 +54,12 @@ export default function StructureControl() {
   const handleFile = (file: File) => {
     const validTypes = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
     if (!validTypes.includes(file.type)) {
-      alert("Please upload a valid image file (PNG, JPG, JPEG, WEBP)");
+      alert(t('errors.invalidFile'));
       return;
     }
 
     if (file.size > 20 * 1024 * 1024) {
-      alert("File size must be less than 20MB");
+      alert(t('errors.fileTooLarge'));
       return;
     }
 
@@ -110,12 +84,12 @@ export default function StructureControl() {
 
   const handleProcess = async () => {
     if (!selectedFile || !prompt.trim()) {
-      alert("Please enter a prompt describing what you want to generate");
+      alert(t('errors.noPrompt'));
       return;
     }
 
     setProcessing(true);
-    setProgress("Uploading image...");
+    setProgress(t('progress.uploading'));
     setProcessedUrl(null);
 
     try {
@@ -125,8 +99,8 @@ export default function StructureControl() {
       formData.append("control_mode", controlMode);
       formData.append("strength", strength.toString());
 
-      const modeName = controlMode === 'depth' ? 'Depth' : 'Edge';
-      setProgress(`Processing with FLUX ${modeName} Pro AI...`);
+      const modeName = controlMode === 'depth' ? 'Depth' : 'Canny';
+      setProgress(t('progress.processing', { mode: modeName }));
 
       const response = await fetch("/api/structure-control", {
         method: "POST",
@@ -141,7 +115,7 @@ export default function StructureControl() {
       const data = await response.json();
 
       if (data.success && data.processedImage) {
-        setProgress("Structure control complete!");
+        setProgress(t('progress.complete'));
         setProcessedUrl(data.processedImage);
         setCreditsRemaining(data.creditsRemaining);
         if (data.id) {
@@ -154,7 +128,7 @@ export default function StructureControl() {
     } catch (error: unknown) {
       console.error("Structure control error:", error);
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      alert(`Failed to process image: ${errorMessage}`);
+      alert(`${t('errors.processFailed')}: ${errorMessage}`);
       setProgress("");
     } finally {
       setProcessing(false);
@@ -173,7 +147,7 @@ export default function StructureControl() {
       document.body.removeChild(link);
     } catch (error) {
       console.error("Download error:", error);
-      alert("Failed to download image");
+      alert(t('errors.downloadFailed'));
     }
   };
 
@@ -195,16 +169,16 @@ export default function StructureControl() {
             <div className="mb-6">
               <FaRuler className="mx-auto h-16 w-16 text-gray-500 dark:text-gray-500" />
             </div>
-            <h3 className="text-2xl font-bold mb-3 text-gray-900 dark:text-white">Sign in to Use AI Structure Control</h3>
+            <h3 className="text-2xl font-bold mb-3 text-gray-900 dark:text-white">{t('loginTitle')}</h3>
             <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
-              Create a free account to transform images while preserving their structure.
+              {t('loginDescription')}
             </p>
             <div className="flex gap-4 justify-center">
               <a href="/auth/signin" className="inline-block px-8 py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 rounded-lg font-medium transition">
-                Sign In
+                {t('signIn')}
               </a>
               <a href="/auth/signup" className="inline-block px-8 py-3 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-lg font-medium transition">
-                Sign Up Free
+                {t('signUpFree')}
               </a>
             </div>
           </div>
@@ -239,13 +213,13 @@ export default function StructureControl() {
             </div>
 
             <label htmlFor="file-upload" className="cursor-pointer inline-block px-8 py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 rounded-lg font-medium transition mb-4">
-              Upload Reference Image
+              {t('uploadButton')}
             </label>
 
-            <p className="text-gray-600 dark:text-gray-400 mt-4">or drop image anywhere</p>
+            <p className="text-gray-600 dark:text-gray-400 mt-4">{t('dropHint')}</p>
             <div className="mt-6 text-sm text-gray-500 dark:text-gray-500">
-              <p className="mb-2">Supported formats: PNG, JPEG, JPG, WEBP</p>
-              <p>Maximum file size: 20MB</p>
+              <p className="mb-2">{t('supportedFormats')}</p>
+              <p>{t('maxFileSize')}</p>
             </div>
           </div>
         </div>
@@ -266,7 +240,7 @@ export default function StructureControl() {
               {creditsRemaining !== null && (
                 <>
                   <span>-</span>
-                  <span className="text-amber-600 dark:text-amber-400">{creditsRemaining} credits remaining</span>
+                  <span className="text-amber-600 dark:text-amber-400">{creditsRemaining} {t('creditsRemaining')}</span>
                 </>
               )}
             </div>
@@ -275,50 +249,56 @@ export default function StructureControl() {
           {/* Control Mode Selection */}
           {!processedUrl && (
             <div className="bg-gray-100 dark:bg-gray-800/50 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-              <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Control Mode</h3>
+              <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">{t('controlMode')}</h3>
               <div className="grid md:grid-cols-2 gap-4">
-                {CONTROL_MODES.map((mode) => (
-                  <button
-                    key={mode.id}
-                    onClick={() => setControlMode(mode.id)}
-                    className={`p-4 rounded-xl border-2 transition-all text-left ${
-                      controlMode === mode.id
-                        ? 'border-amber-500 bg-amber-500/20'
-                        : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 bg-gray-100 dark:bg-gray-800/50'
-                    }`}
-                  >
-                    <div className="flex items-center gap-3 mb-2">
-                      <span className={controlMode === mode.id ? 'text-amber-600 dark:text-amber-400' : 'text-gray-600 dark:text-gray-400'}>
-                        {mode.icon}
-                      </span>
-                      <span className="font-semibold text-gray-900 dark:text-white">{mode.name}</span>
-                    </div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{mode.description}</p>
-                    <div className="flex flex-wrap gap-1">
-                      {mode.examples.map((ex, i) => (
-                        <span key={i} className="text-xs bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-1 rounded">
-                          {ex}
+                {(['depth', 'canny'] as const).map((modeId) => {
+                  const icons = {
+                    depth: <FaLayerGroup className="text-2xl" />,
+                    canny: <FaBorderAll className="text-2xl" />
+                  };
+                  return (
+                    <button
+                      key={modeId}
+                      onClick={() => setControlMode(modeId)}
+                      className={`p-4 rounded-xl border-2 transition-all text-left ${
+                        controlMode === modeId
+                          ? 'border-amber-500 bg-amber-500/20'
+                          : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 bg-gray-100 dark:bg-gray-800/50'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3 mb-2">
+                        <span className={controlMode === modeId ? 'text-amber-600 dark:text-amber-400' : 'text-gray-600 dark:text-gray-400'}>
+                          {icons[modeId]}
                         </span>
-                      ))}
-                    </div>
-                  </button>
-                ))}
+                        <span className="font-semibold text-gray-900 dark:text-white">{t(`modes.${modeId}.name`)}</span>
+                      </div>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{t(`modes.${modeId}.description`)}</p>
+                      <div className="flex flex-wrap gap-1">
+                        {(t.raw(`modes.${modeId}.examples`) as string[]).map((ex: string, i: number) => (
+                          <span key={i} className="text-xs bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-1 rounded">
+                            {ex}
+                          </span>
+                        ))}
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
 
               {/* Prompt */}
               <div className="mt-6">
                 <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
-                  Describe what you want to generate <span className="text-red-400">*</span>
+                  {t('promptLabel')} <span className="text-red-400">*</span>
                 </label>
                 <textarea
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
-                  placeholder="e.g., 'a futuristic cyberpunk city at night with neon lights'"
+                  placeholder={t('promptPlaceholder')}
                   className="w-full px-4 py-3 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg focus:border-amber-500 focus:outline-none resize-none text-gray-900 dark:text-white"
                   rows={3}
                 />
                 <div className="mt-2 flex flex-wrap gap-2">
-                  {PROMPT_SUGGESTIONS.slice(0, 4).map((suggestion, i) => (
+                  {(t.raw('promptSuggestions') as string[]).map((suggestion: string, i: number) => (
                     <button
                       key={i}
                       onClick={() => setPrompt(prompt ? `${prompt}, ${suggestion}` : suggestion)}
@@ -333,7 +313,7 @@ export default function StructureControl() {
               {/* Strength */}
               <div className="mt-4">
                 <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
-                  Structure Adherence: {(strength * 100).toFixed(0)}%
+                  {t('strengthLabel')}: {(strength * 100).toFixed(0)}%
                 </label>
                 <input
                   type="range"
@@ -345,8 +325,8 @@ export default function StructureControl() {
                   className="w-full"
                 />
                 <div className="flex justify-between text-xs text-gray-500 dark:text-gray-500 mt-1">
-                  <span>More Creative</span>
-                  <span>Strict Structure</span>
+                  <span>{t('moreCreative')}</span>
+                  <span>{t('strictStructure')}</span>
                 </div>
               </div>
             </div>
@@ -358,17 +338,17 @@ export default function StructureControl() {
               <ImageComparison
                 beforeImage={previewUrl}
                 afterImage={processedUrl}
-                beforeLabel="Reference"
-                afterLabel={`Generated (${controlMode === 'depth' ? 'Depth' : 'Edge'} Control)`}
+                beforeLabel={t('referenceImage')}
+                afterLabel={`${t('generatedPreview')} (${t(`modes.${controlMode}.name`)})`}
               />
             ) : (
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">Reference Image</h3>
-                  <img src={previewUrl || undefined} alt="Reference" className="w-full rounded-lg border border-gray-300 dark:border-gray-600" />
+                  <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">{t('referenceImage')}</h3>
+                  <img src={previewUrl || undefined} alt={t('referenceImage')} className="w-full rounded-lg border border-gray-300 dark:border-gray-600" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">Generated Preview</h3>
+                  <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">{t('generatedPreview')}</h3>
                   <div className="w-full aspect-square bg-gray-200 dark:bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-600 flex items-center justify-center">
                     {processing ? (
                       <div className="text-center">
@@ -377,9 +357,9 @@ export default function StructureControl() {
                       </div>
                     ) : (
                       <div className="text-center p-4">
-                        <p className="text-gray-500 dark:text-gray-500">Enter a prompt and click &quot;Generate&quot;</p>
+                        <p className="text-gray-500 dark:text-gray-500">{t('previewHint')}</p>
                         <p className="text-xs text-gray-600 dark:text-gray-600 mt-2">
-                          The AI will generate a new image following the structure of your reference
+                          {t('previewDescription')}
                         </p>
                       </div>
                     )}
@@ -396,7 +376,7 @@ export default function StructureControl() {
                 disabled={processing || !prompt.trim()}
                 className="px-12 py-5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 disabled:from-gray-600 disabled:to-gray-600 disabled:cursor-not-allowed rounded-xl font-bold text-xl transition shadow-xl shadow-amber-500/30"
               >
-                {processing ? "Generating..." : "Generate with Structure Control"}
+                {processing ? t('generating') : t('generateButton')}
               </button>
             ) : (
               <>
@@ -406,7 +386,7 @@ export default function StructureControl() {
                   accentColor="purple"
                   icon="download"
                 >
-                  Download Result
+                  {t('downloadResult')}
                 </ActionButton>
                 {imageId && <CopyLinkButton imageId={imageId} />}
                 <ActionButton
@@ -415,7 +395,7 @@ export default function StructureControl() {
                   variant="secondary"
                   accentColor="blue"
                 >
-                  Try Different Prompt
+                  {t('tryDifferent')}
                 </ActionButton>
               </>
             )}
@@ -424,14 +404,14 @@ export default function StructureControl() {
               disabled={processing}
               className="px-6 py-4 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 disabled:bg-gray-800 disabled:cursor-not-allowed rounded-lg font-semibold transition text-gray-900 dark:text-white"
             >
-              Upload New Image
+              {t('uploadNew')}
             </button>
           </div>
 
           <div className="text-center text-sm text-gray-500 dark:text-gray-500 flex items-center justify-center gap-2">
-            <span>Powered by FLUX {controlMode === 'depth' ? 'Depth' : 'Canny'} Pro AI -</span>
+            <span>{t('poweredBy')} {controlMode === 'depth' ? t('depthPro') : t('cannyPro')} -</span>
             <CreditCostBadge tool="structure_control" size="xs" />
-            <span>per generation</span>
+            <span>{t('perGeneration')}</span>
           </div>
         </div>
       )}
