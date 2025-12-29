@@ -235,11 +235,19 @@ export function createRateLimiter(options: {
  * Get client identifier from request
  */
 export function getClientIdentifier(request: Request): string {
+  // Check Cloudflare header first (most reliable when using CF)
+  const cfIp = request.headers.get('cf-connecting-ip');
+  if (cfIp) {
+    return cfIp;
+  }
+
+  // Check x-forwarded-for (standard proxy header)
   const forwarded = request.headers.get('x-forwarded-for');
   if (forwarded) {
     return forwarded.split(',')[0].trim();
   }
 
+  // Check x-real-ip (Nginx)
   const realIp = request.headers.get('x-real-ip');
   if (realIp) {
     return realIp;

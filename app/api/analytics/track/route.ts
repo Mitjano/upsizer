@@ -104,9 +104,10 @@ export async function POST(request: NextRequest) {
     const { type, data } = body;
 
     // Get client info
-    const ipAddress = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+    // Check Cloudflare header first, then standard proxy headers
+    const ipAddress = request.headers.get('cf-connecting-ip') ||
+                      request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
                       request.headers.get('x-real-ip') ||
-                      request.headers.get('cf-connecting-ip') ||
                       'unknown';
     const userAgent = data?.userAgent || request.headers.get('user-agent') || '';
     const language = request.headers.get('accept-language')?.split(',')[0] || undefined;

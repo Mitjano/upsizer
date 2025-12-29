@@ -39,8 +39,23 @@ export default async function UserDetailPage({ params }: PageProps) {
     notFound();
   }
 
-  // Serialize dates for client component
-  const serializedUser = JSON.parse(JSON.stringify(user));
+  // Serialize dates and map fields for client component
+  const serializedUser = {
+    ...JSON.parse(JSON.stringify(user)),
+    usages: user.usages.map(usage => ({
+      id: usage.id,
+      toolType: usage.type, // Map 'type' from DB to 'toolType' expected by client
+      creditsUsed: usage.creditsUsed,
+      createdAt: usage.createdAt.toISOString(),
+    })),
+    imageHistory: user.imageHistory.map(img => ({
+      id: img.id,
+      toolType: img.type, // Map 'type' enum to 'toolType' for consistency
+      originalUrl: img.originalUrl,
+      processedUrl: img.processedUrl,
+      createdAt: img.createdAt.toISOString(),
+    })),
+  };
 
   return <UserDetailClient user={serializedUser} />;
 }

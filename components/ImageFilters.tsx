@@ -2,22 +2,16 @@
 
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { CreditCostBadge } from './shared';
 import { useAnalytics } from '@/hooks/useAnalytics';
 
-// Filter presets
-const FILTER_PRESETS = [
-  { label: 'None', value: 'none' },
-  { label: 'Grayscale', value: 'grayscale' },
-  { label: 'Sepia', value: 'sepia' },
-  { label: 'Vintage', value: 'vintage' },
-  { label: 'Cool', value: 'cool' },
-  { label: 'Warm', value: 'warm' },
-  { label: 'Dramatic', value: 'dramatic' },
-];
+// Filter preset values
+const FILTER_PRESET_VALUES = ['none', 'grayscale', 'sepia', 'vintage', 'cool', 'warm', 'dramatic'];
 
 export default function ImageFilters() {
   const { data: session } = useSession();
+  const t = useTranslations('imageFilters');
   const { trackImageUploaded, trackImageDownloaded } = useAnalytics();
   const [originalImage, setOriginalImage] = useState<string | null>(null);
   const [filteredImage, setFilteredImage] = useState<string | null>(null);
@@ -47,12 +41,12 @@ export default function ImageFilters() {
     // Validate file
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
     if (!allowedTypes.includes(file.type)) {
-      setError('Please upload a JPG, PNG, or WebP image');
+      setError(t('errors.invalidFileType'));
       return;
     }
 
     if (file.size > 20 * 1024 * 1024) {
-      setError('File size must be less than 20MB');
+      setError(t('errors.fileTooLarge'));
       return;
     }
 
@@ -66,7 +60,7 @@ export default function ImageFilters() {
       setOriginalImage(result);
     };
     reader.onerror = () => {
-      setError('Failed to read image file');
+      setError(t('errors.readFailed'));
     };
     reader.readAsDataURL(file);
   };
@@ -76,7 +70,7 @@ export default function ImageFilters() {
 
     setLoading(true);
     setError(null);
-    setProgress('Applying filters...');
+    setProgress(t('progress.applying'));
 
     try {
       // Convert data URL to blob without using fetch (CSP-safe)
@@ -110,7 +104,7 @@ export default function ImageFilters() {
       formData.append('blur', blur.toString());
       formData.append('sharpen', sharpen.toString());
 
-      setProgress('Processing with AI...');
+      setProgress(t('progress.processing'));
 
       const res = await fetch('/api/image-filters', {
         method: 'POST',
@@ -137,9 +131,9 @@ export default function ImageFilters() {
     } catch (err) {
       console.error('Filter error:', err);
       if (err instanceof TypeError && err.message === 'Failed to fetch') {
-        setError('Network error. Please check your connection and try again.');
+        setError(t('errors.networkError'));
       } else {
-        setError(err instanceof Error ? err.message : 'Failed to apply filters');
+        setError(err instanceof Error ? err.message : t('errors.applyFailed'));
       }
       setProgress('');
     } finally {
@@ -198,22 +192,22 @@ export default function ImageFilters() {
                 />
               </svg>
             </div>
-            <h3 className="text-2xl font-bold mb-3 text-gray-900 dark:text-white">Sign in to Apply Image Filters</h3>
+            <h3 className="text-2xl font-bold mb-3 text-gray-900 dark:text-white">{t('loginTitle')}</h3>
             <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
-              Create a free account to start applying filters to your images. Get 3 free credits to try it out!
+              {t('loginDescription')}
             </p>
             <div className="flex gap-4 justify-center">
               <a
                 href="/auth/signin"
                 className="inline-block px-8 py-3 bg-green-500 hover:bg-green-600 rounded-lg font-medium transition text-gray-900 dark:text-white"
               >
-                Sign In
+                {t('signIn')}
               </a>
               <a
                 href="/auth/signup"
                 className="inline-block px-8 py-3 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-lg font-medium transition text-gray-900 dark:text-white"
               >
-                Sign Up Free
+                {t('signUpFree')}
               </a>
             </div>
           </div>
@@ -237,34 +231,34 @@ export default function ImageFilters() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
             </svg>
           </div>
-          <p className="text-lg font-medium mb-2 text-gray-900 dark:text-white">Click or drag image to apply filters</p>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">JPG, PNG, WebP up to 20MB</p>
+          <p className="text-lg font-medium mb-2 text-gray-900 dark:text-white">{t('uploadTitle')}</p>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{t('uploadFormats')}</p>
           <CreditCostBadge tool="image_filters" size="md" />
         </div>
       ) : (
         <div>
           {/* Filter Settings Panel */}
           <div className="mb-6 bg-gray-100 dark:bg-gray-800/50 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
-            <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Filter Settings</h3>
+            <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">{t('filterSettings')}</h3>
 
             {/* Preset Filters */}
             <div className="mb-6">
               <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-white">
-                Preset Filter
+                {t('presetFilter')}
               </label>
               <div className="flex flex-wrap gap-2">
-                {FILTER_PRESETS.map((filter) => (
+                {FILTER_PRESET_VALUES.map((filterValue) => (
                   <button
-                    key={filter.value}
-                    onClick={() => setPreset(filter.value)}
+                    key={filterValue}
+                    onClick={() => setPreset(filterValue)}
                     className={`px-4 py-2 rounded-lg font-medium transition ${
-                      preset === filter.value
+                      preset === filterValue
                         ? 'bg-green-500 text-white'
                         : 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600'
                     }`}
                     disabled={loading}
                   >
-                    {filter.label}
+                    {t(`presets.${filterValue}`)}
                   </button>
                 ))}
               </div>
@@ -275,7 +269,7 @@ export default function ImageFilters() {
               {/* Brightness Slider */}
               <div>
                 <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-white">
-                  Brightness: {brightness.toFixed(1)}
+                  {t('brightness')}: {brightness.toFixed(1)}
                 </label>
                 <input
                   type="range"
@@ -288,15 +282,15 @@ export default function ImageFilters() {
                   disabled={loading}
                 />
                 <div className="flex justify-between text-xs text-gray-500 dark:text-gray-500 mt-1">
-                  <span>Darker</span>
-                  <span>Brighter</span>
+                  <span>{t('darker')}</span>
+                  <span>{t('brighter')}</span>
                 </div>
               </div>
 
               {/* Contrast Slider */}
               <div>
                 <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-white">
-                  Contrast: {contrast.toFixed(1)}
+                  {t('contrast')}: {contrast.toFixed(1)}
                 </label>
                 <input
                   type="range"
@@ -309,15 +303,15 @@ export default function ImageFilters() {
                   disabled={loading}
                 />
                 <div className="flex justify-between text-xs text-gray-500 dark:text-gray-500 mt-1">
-                  <span>Lower</span>
-                  <span>Higher</span>
+                  <span>{t('lower')}</span>
+                  <span>{t('higher')}</span>
                 </div>
               </div>
 
               {/* Saturation Slider */}
               <div>
                 <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-white">
-                  Saturation: {saturation.toFixed(1)}
+                  {t('saturation')}: {saturation.toFixed(1)}
                 </label>
                 <input
                   type="range"
@@ -330,15 +324,15 @@ export default function ImageFilters() {
                   disabled={loading}
                 />
                 <div className="flex justify-between text-xs text-gray-500 dark:text-gray-500 mt-1">
-                  <span>Grayscale</span>
-                  <span>Vibrant</span>
+                  <span>{t('grayscale')}</span>
+                  <span>{t('vibrant')}</span>
                 </div>
               </div>
 
               {/* Blur Slider */}
               <div>
                 <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-white">
-                  Blur: {blur.toFixed(0)}
+                  {t('blur')}: {blur.toFixed(0)}
                 </label>
                 <input
                   type="range"
@@ -351,15 +345,15 @@ export default function ImageFilters() {
                   disabled={loading}
                 />
                 <div className="flex justify-between text-xs text-gray-500 dark:text-gray-500 mt-1">
-                  <span>Sharp</span>
-                  <span>Blurred</span>
+                  <span>{t('sharp')}</span>
+                  <span>{t('blurred')}</span>
                 </div>
               </div>
 
               {/* Sharpen Slider */}
               <div>
                 <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-white">
-                  Sharpen: {sharpen.toFixed(0)}
+                  {t('sharpen')}: {sharpen.toFixed(0)}
                 </label>
                 <input
                   type="range"
@@ -372,8 +366,8 @@ export default function ImageFilters() {
                   disabled={loading}
                 />
                 <div className="flex justify-between text-xs text-gray-500 dark:text-gray-500 mt-1">
-                  <span>Normal</span>
-                  <span>Sharpened</span>
+                  <span>{t('normal')}</span>
+                  <span>{t('sharpened')}</span>
                 </div>
               </div>
             </div>
@@ -384,20 +378,20 @@ export default function ImageFilters() {
                 disabled={loading}
                 className="px-6 py-3 bg-green-500 hover:bg-green-600 disabled:bg-gray-600 rounded-lg font-medium transition text-gray-900 dark:text-white"
               >
-                {loading ? 'Applying Filters...' : 'Apply Filters'}
+                {loading ? t('applyingFilters') : t('applyFilters')}
               </button>
               <button
                 onClick={resetFilters}
                 disabled={loading}
                 className="px-6 py-3 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-lg font-medium transition text-gray-900 dark:text-white"
               >
-                Reset Filters
+                {t('resetFilters')}
               </button>
               <button
                 onClick={reset}
                 className="px-6 py-3 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-lg font-medium transition text-gray-900 dark:text-white"
               >
-                Upload New Image
+                {t('uploadNewImage')}
               </button>
             </div>
           </div>
@@ -420,11 +414,11 @@ export default function ImageFilters() {
           <div className="grid md:grid-cols-2 gap-6">
             {/* Original */}
             <div className="bg-gray-100 dark:bg-gray-800/50 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
-              <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Original</h3>
+              <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">{t('original')}</h3>
               <div className="relative aspect-square rounded-lg overflow-hidden bg-white dark:bg-gray-900">
                 <img
                   src={originalImage}
-                  alt="Original"
+                  alt={t('original')}
                   className="w-full h-full object-contain"
                 />
               </div>
@@ -432,17 +426,17 @@ export default function ImageFilters() {
 
             {/* Filtered */}
             <div className="bg-gray-100 dark:bg-gray-800/50 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
-              <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Filtered</h3>
+              <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">{t('filtered')}</h3>
               <div className="relative aspect-square rounded-lg overflow-hidden bg-white dark:bg-gray-900">
                 {filteredImage ? (
                   <img
                     src={filteredImage}
-                    alt="Filtered"
+                    alt={t('filtered')}
                     className="w-full h-full object-contain"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-gray-500 dark:text-gray-500">
-                    {loading ? 'Processing...' : 'Click "Apply Filters" to see result'}
+                    {loading ? t('processing') : t('clickToApply')}
                   </div>
                 )}
               </div>
@@ -456,7 +450,7 @@ export default function ImageFilters() {
                 onClick={downloadImage}
                 className="w-full px-6 py-3 bg-green-500 hover:bg-green-600 rounded-lg font-medium transition text-gray-900 dark:text-white"
               >
-                Download Filtered Image
+                {t('downloadFiltered')}
               </button>
             </div>
           )}

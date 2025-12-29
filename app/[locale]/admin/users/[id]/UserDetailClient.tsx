@@ -129,14 +129,16 @@ function timeAgo(dateStr?: string): string {
 }
 
 export default function UserDetailClient({ user }: Props) {
-  const [activeTab, setActiveTab] = useState<"overview" | "activity" | "billing" | "technical" | "admin">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "activity" | "images" | "billing" | "technical" | "admin">("overview");
   const [userData, setUserData] = useState(user);
   const [saving, setSaving] = useState(false);
   const [notes, setNotes] = useState(user.internalNotes || "");
+  const [selectedImage, setSelectedImage] = useState<ImageHistory | null>(null);
 
   const tabs = [
     { id: "overview", label: "Overview", icon: "👤" },
     { id: "activity", label: "Activity", icon: "📊" },
+    { id: "images", label: "Images", icon: "🖼️" },
     { id: "billing", label: "Billing", icon: "💳" },
     { id: "technical", label: "Technical", icon: "🔧" },
     { id: "admin", label: "Admin", icon: "⚙️" },
@@ -490,14 +492,123 @@ export default function UserDetailClient({ user }: Props) {
                   <tbody className="divide-y divide-gray-700">
                     {userData.usages.map((usage) => (
                       <tr key={usage.id} className="hover:bg-gray-700/30">
-                        <td className="px-4 py-3 capitalize">{usage.toolType}</td>
-                        <td className="px-4 py-3 text-yellow-400">-{usage.creditsUsed}</td>
+                        <td className="px-4 py-3 capitalize">
+                          {usage.toolType?.replace(/_/g, ' ') || 'Unknown'}
+                          {usage.creditsUsed === 0 && (
+                            <span className="ml-2 text-xs px-2 py-0.5 rounded bg-green-500/20 text-green-400">FREE</span>
+                          )}
+                        </td>
+                        <td className="px-4 py-3">
+                          {usage.creditsUsed === 0 ? (
+                            <span className="text-gray-500">0</span>
+                          ) : (
+                            <span className="text-yellow-400">-{usage.creditsUsed}</span>
+                          )}
+                        </td>
                         <td className="px-4 py-3 text-gray-400">{formatDate(usage.createdAt)}</td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
+            )}
+          </div>
+        )}
+
+        {/* Images Tab */}
+        {activeTab === "images" && (
+          <div className="space-y-6">
+            <h3 className="text-lg font-semibold">User Created Images</h3>
+            {userData.imageHistory.length === 0 ? (
+              <p className="text-gray-400">No images processed yet</p>
+            ) : (
+              <>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {userData.imageHistory.map((img) => (
+                    <div
+                      key={img.id}
+                      className="bg-gray-800/50 border border-gray-700 rounded-xl overflow-hidden cursor-pointer hover:border-green-500 transition"
+                      onClick={() => setSelectedImage(img)}
+                    >
+                      <div className="aspect-square relative bg-gray-900">
+                        {img.processedUrl ? (
+                          <img
+                            src={img.processedUrl}
+                            alt={img.toolType}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : img.originalUrl ? (
+                          <img
+                            src={img.originalUrl}
+                            alt={img.toolType}
+                            className="w-full h-full object-cover opacity-50"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-gray-600">
+                            No preview
+                          </div>
+                        )}
+                      </div>
+                      <div className="p-3">
+                        <p className="text-sm font-medium capitalize truncate">
+                          {img.toolType?.replace(/_/g, ' ') || 'Unknown'}
+                        </p>
+                        <p className="text-xs text-gray-500">{formatDate(img.createdAt)}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Image Modal */}
+                {selectedImage && (
+                  <div
+                    className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
+                    onClick={() => setSelectedImage(null)}
+                  >
+                    <div
+                      className="bg-gray-800 border border-gray-700 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-auto"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <div className="p-4 border-b border-gray-700 flex items-center justify-between">
+                        <h3 className="text-lg font-semibold capitalize">
+                          {selectedImage.toolType?.replace(/_/g, ' ') || 'Image'}
+                        </h3>
+                        <button
+                          onClick={() => setSelectedImage(null)}
+                          className="p-2 hover:bg-gray-700 rounded-lg transition"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                      <div className="p-4 grid md:grid-cols-2 gap-4">
+                        {selectedImage.originalUrl && (
+                          <div>
+                            <p className="text-sm text-gray-400 mb-2">Original</p>
+                            <img
+                              src={selectedImage.originalUrl}
+                              alt="Original"
+                              className="w-full rounded-lg border border-gray-700"
+                            />
+                          </div>
+                        )}
+                        {selectedImage.processedUrl && (
+                          <div>
+                            <p className="text-sm text-gray-400 mb-2">Processed</p>
+                            <img
+                              src={selectedImage.processedUrl}
+                              alt="Processed"
+                              className="w-full rounded-lg border border-gray-700"
+                            />
+                          </div>
+                        )}
+                      </div>
+                      <div className="p-4 border-t border-gray-700 text-sm text-gray-400">
+                        Created: {formatDate(selectedImage.createdAt)}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </>
             )}
           </div>
         )}

@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react'
 import { useDropzone } from 'react-dropzone'
 import Image from 'next/image'
 import toast from 'react-hot-toast'
+import { useTranslations } from 'next-intl'
 import {
   LoginPrompt,
   ImageComparison,
@@ -36,73 +37,24 @@ interface ImageExpanderProps {
 
 interface ExpandPreset {
   id: string
-  name: string
-  description: string
   icon: string
   credits: number
 }
 
 const EXPAND_PRESETS: ExpandPreset[] = [
-  {
-    id: 'zoom_1.5x',
-    name: 'Zoom Out 1.5x',
-    description: 'Expand canvas by 50%',
-    icon: '🔍',
-    credits: CREDIT_COSTS.expand.cost,
-  },
-  {
-    id: 'zoom_2x',
-    name: 'Zoom Out 2x',
-    description: 'Double the canvas size',
-    icon: '🔎',
-    credits: CREDIT_COSTS.expand.cost,
-  },
-  {
-    id: 'make_square',
-    name: 'Make Square',
-    description: 'Convert to square format',
-    icon: '⬜',
-    credits: CREDIT_COSTS.expand.cost,
-  },
-  {
-    id: 'expand_horizontal',
-    name: 'Expand Left & Right',
-    description: 'Extend both sides at once',
-    icon: '↔️',
-    credits: CREDIT_COSTS.expand.cost,
-  },
-  {
-    id: 'expand_left',
-    name: 'Expand Left',
-    description: 'Extend image to the left',
-    icon: '⬅️',
-    credits: CREDIT_COSTS.expand.cost,
-  },
-  {
-    id: 'expand_right',
-    name: 'Expand Right',
-    description: 'Extend image to the right',
-    icon: '➡️',
-    credits: CREDIT_COSTS.expand.cost,
-  },
-  {
-    id: 'expand_up',
-    name: 'Expand Up',
-    description: 'Extend image upward',
-    icon: '⬆️',
-    credits: CREDIT_COSTS.expand.cost,
-  },
-  {
-    id: 'expand_down',
-    name: 'Expand Down',
-    description: 'Extend image downward',
-    icon: '⬇️',
-    credits: CREDIT_COSTS.expand.cost,
-  },
+  { id: 'zoom_1.5x', icon: '🔍', credits: CREDIT_COSTS.expand.cost },
+  { id: 'zoom_2x', icon: '🔎', credits: CREDIT_COSTS.expand.cost },
+  { id: 'make_square', icon: '⬜', credits: CREDIT_COSTS.expand.cost },
+  { id: 'expand_horizontal', icon: '↔️', credits: CREDIT_COSTS.expand.cost },
+  { id: 'expand_left', icon: '⬅️', credits: CREDIT_COSTS.expand.cost },
+  { id: 'expand_right', icon: '➡️', credits: CREDIT_COSTS.expand.cost },
+  { id: 'expand_up', icon: '⬆️', credits: CREDIT_COSTS.expand.cost },
+  { id: 'expand_down', icon: '⬇️', credits: CREDIT_COSTS.expand.cost },
 ]
 
 export function ImageExpander({ userRole = 'user' }: ImageExpanderProps) {
   const { data: session } = useSession()
+  const t = useTranslations('imageExpander')
   const { trackImageExpanded, trackImageUploaded, trackImageDownloaded } = useAnalytics()
   const [processing, setProcessing] = useState(false)
   const [result, setResult] = useState<ExpandResult | null>(null)
@@ -147,7 +99,7 @@ export function ImageExpander({ userRole = 'user' }: ImageExpanderProps) {
         formData.append('seed', useSeed.toString())
       }
 
-      toast.loading('Expanding image...', { id: 'expand' })
+      toast.loading(t('expanding'), { id: 'expand' })
 
       const response = await fetch('/api/expand-image', {
         method: 'POST',
@@ -164,7 +116,7 @@ export function ImageExpander({ userRole = 'user' }: ImageExpanderProps) {
       setLastSeed(data.seed)
       // Track successful expansion
       trackImageExpanded(selectedPreset)
-      toast.success('Image expanded successfully!', { id: 'expand' })
+      toast.success(t('successMessage'), { id: 'expand' })
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An error occurred'
       setError(errorMessage)
@@ -197,18 +149,18 @@ export function ImageExpander({ userRole = 'user' }: ImageExpanderProps) {
     document.body.removeChild(link)
     // Track download
     trackImageDownloaded('expand')
-    toast.success('Image downloaded!')
+    toast.success(t('download') + '!')
   }
 
   // Show login prompt for unauthenticated users
   if (!session) {
     return (
       <LoginPrompt
-        title="Sign in to Expand Images"
-        description="Create a free account to start expanding your images with AI. Get 3 free credits!"
+        title={t('loginTitle')}
+        description={t('loginDescription')}
         callbackUrl="/tools/image-expand"
         accentColor="purple"
-        features={["3 Free Credits", "No Credit Card", "AI Outpainting"]}
+        features={t.raw('features') as string[]}
       />
     )
   }
@@ -218,7 +170,7 @@ export function ImageExpander({ userRole = 'user' }: ImageExpanderProps) {
       {/* Preset Selection - show when no result yet */}
       {!result && !processing && (
         <div>
-          <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Choose Expand Mode</h3>
+          <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">{t('chooseExpandMode')}</h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
             {EXPAND_PRESETS.map((preset) => (
               <button
@@ -236,9 +188,9 @@ export function ImageExpander({ userRole = 'user' }: ImageExpanderProps) {
                 `}
               >
                 <div className="text-2xl mb-2">{preset.icon}</div>
-                <h4 className="font-semibold text-gray-900 dark:text-white text-sm mb-1">{preset.name}</h4>
-                <p className="text-xs text-gray-600 dark:text-gray-400">{preset.description}</p>
-                <p className="text-xs text-purple-600 dark:text-purple-400 mt-1">{preset.credits} credits</p>
+                <h4 className="font-semibold text-gray-900 dark:text-white text-sm mb-1">{t(`presets.${preset.id}.name`)}</h4>
+                <p className="text-xs text-gray-600 dark:text-gray-400">{t(`presets.${preset.id}.description`)}</p>
+                <p className="text-xs text-purple-600 dark:text-purple-400 mt-1">{preset.credits} {t('credits')}</p>
                 {selectedPreset === preset.id && (
                   <div className="absolute top-2 right-2 w-5 h-5 bg-purple-500 rounded-full flex items-center justify-center">
                     <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -285,11 +237,11 @@ export function ImageExpander({ userRole = 'user' }: ImageExpanderProps) {
 
             {/* Text */}
             <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
-              {isDragActive ? 'Drop your image here!' : 'Drag & drop your image'}
+              {isDragActive ? t('dropHere') : t('dragDropTitle')}
             </h3>
-            <p className="text-gray-600 dark:text-gray-400">or click to browse</p>
+            <p className="text-gray-600 dark:text-gray-400">{t('orClickToBrowse')}</p>
             <p className="text-sm text-gray-500 dark:text-gray-500">
-              Supports JPG, PNG, WEBP • Max 30MB • {EXPAND_PRESETS.find(p => p.id === selectedPreset)?.credits || 2} credits
+              {t('supportedFormats')} • {EXPAND_PRESETS.find(p => p.id === selectedPreset)?.credits || 2} {t('credits')}
             </p>
           </div>
         </div>
@@ -312,7 +264,7 @@ export function ImageExpander({ userRole = 'user' }: ImageExpanderProps) {
               disabled={processing}
               className="absolute top-3 right-3 bg-gray-900/70 hover:bg-gray-900/90 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition disabled:opacity-50"
             >
-              Change Image
+              {t('changeImage')}
             </button>
           </div>
 
@@ -333,7 +285,7 @@ export function ImageExpander({ userRole = 'user' }: ImageExpanderProps) {
               {processing ? (
                 <>
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                  Expanding... (10-20 sec)
+                  {t('expanding')}
                 </>
               ) : (
                 <>
@@ -345,7 +297,7 @@ export function ImageExpander({ userRole = 'user' }: ImageExpanderProps) {
                       d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"
                     />
                   </svg>
-                  Expand Image ({EXPAND_PRESETS.find(p => p.id === selectedPreset)?.credits || 2} credits)
+                  {t('expandButton')} ({EXPAND_PRESETS.find(p => p.id === selectedPreset)?.credits || 2} {t('credits')})
                 </>
               )}
             </button>
@@ -363,17 +315,17 @@ export function ImageExpander({ userRole = 'user' }: ImageExpanderProps) {
           <ImageComparison
             originalUrl={originalImage}
             processedUrl={result.expandedImage}
-            originalLabel="Original"
-            processedLabel={`Expanded (${EXPAND_PRESETS.find(p => p.id === result.expandMode)?.name})`}
+            originalLabel={t('original')}
+            processedLabel={`${t('expanded')} (${t(`presets.${result.expandMode}.name`)})`}
             accentColor="purple"
             aspectRatio="video"
           />
 
           {/* Info */}
           <CreditsInfo
-            message={`Image expanded successfully! ${result.dimensions.width}x${result.dimensions.height}px.`}
+            message={`${t('successMessage')} ${result.dimensions.width}x${result.dimensions.height}px.`}
             creditsRemaining={result.creditsRemaining}
-            extraInfo={result.seed ? `Seed: ${result.seed}` : undefined}
+            extraInfo={result.seed ? `${t('seedInfo')}: ${result.seed}` : undefined}
             accentColor="purple"
           />
 
@@ -384,7 +336,7 @@ export function ImageExpander({ userRole = 'user' }: ImageExpanderProps) {
               icon="download"
               accentColor="purple"
             >
-              Download
+              {t('download')}
             </ActionButton>
             <CopyLinkButton imageId={result.id} accentColor="purple" />
             <ActionButton
@@ -397,7 +349,7 @@ export function ImageExpander({ userRole = 'user' }: ImageExpanderProps) {
               accentColor="purple"
               variant="secondary"
             >
-              Same Result ({CREDIT_COSTS.expand.cost} cr)
+              {t('sameResult')} ({CREDIT_COSTS.expand.cost} cr)
             </ActionButton>
             <ActionButton
               onClick={() => {
@@ -408,7 +360,7 @@ export function ImageExpander({ userRole = 'user' }: ImageExpanderProps) {
               icon="lightning"
               accentColor="green"
             >
-              Try Different ({CREDIT_COSTS.expand.cost} cr)
+              {t('tryDifferent')} ({CREDIT_COSTS.expand.cost} cr)
             </ActionButton>
             <ActionButton
               onClick={() => {
@@ -421,7 +373,7 @@ export function ImageExpander({ userRole = 'user' }: ImageExpanderProps) {
               variant="secondary"
               accentColor="gray"
             >
-              New Image
+              {t('newImage')}
             </ActionButton>
           </div>
         </div>

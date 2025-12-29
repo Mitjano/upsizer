@@ -6604,5 +6604,199 @@
     "downloadAll": "Descargar todo",
     "tryAgain": "Probar otros ajustes",
     "newImage": "Nueva imagen"
+  },
+  "imageExpander": {
+    "loginTitle": "Inicia sesión para expandir imágenes",
+    "loginDescription": "Crea una cuenta gratis para comenzar a expandir tus imágenes con IA. ¡Obtén 3 créditos gratis!",
+    "features": ["3 créditos gratis", "Sin tarjeta de crédito", "Outpainting IA"],
+    "chooseExpandMode": "Elige modo de expansión",
+    "presets": {
+      "zoom_1.5x": {
+        "name": "Alejar 1.5x",
+        "description": "Expandir lienzo un 50%"
+      },
+      "zoom_2x": {
+        "name": "Alejar 2x",
+        "description": "Duplicar el tamaño del lienzo"
+      },
+      "make_square": {
+        "name": "Hacer cuadrado",
+        "description": "Convertir a formato cuadrado"
+      },
+      "expand_horizontal": {
+        "name": "Expandir izquierda y derecha",
+        "description": "Extender ambos lados a la vez"
+      },
+      "expand_left": {
+        "name": "Expandir izquierda",
+        "description": "Extender imagen a la izquierda"
+      },
+      "expand_right": {
+        "name": "Expandir derecha",
+        "description": "Extender imagen a la derecha"
+      },
+      "expand_up": {
+        "name": "Expandir arriba",
+        "description": "Extender imagen hacia arriba"
+      },
+      "expand_down": {
+        "name": "Expandir abajo",
+        "description": "Extender imagen hacia abajo"
+      }
+    },
+    "credits": "créditos",
+    "dropHere": "¡Suelta tu imagen aquí!",
+    "dragDropTitle": "Arrastra y suelta tu imagen",
+    "orClickToBrowse": "o haz clic para explorar",
+    "supportedFormats": "Soporta JPG, PNG, WEBP • Máx. 30MB",
+    "changeImage": "Cambiar imagen",
+    "expandButton": "Expandir imagen",
+    "expanding": "Expandiendo... (10-20 seg)",
+    "original": "Original",
+    "expanded": "Expandida",
+    "successMessage": "¡Imagen expandida con éxito!",
+    "seedInfo": "Seed",
+    "download": "Descargar",
+    "copyLink": "Copiar enlace",
+    "sameResult": "Mismo resultado",
+    "tryDifferent": "Probar diferente",
+    "newImage": "Nueva imagen"
+  },
+  "imageCompressor": {
+    "loginTitle": "Inicia sesión para comprimir imágenes",
+    "loginDescription": "Crea una cuenta gratis para empezar a comprimir tus imágenes. ¡Obtén 3 créditos gratis!",
+    "signIn": "Iniciar sesión",
+    "signUpFree": "Registrarse gratis",
+    "uploadTitle": "Haz clic o arrastra una imagen para comprimir",
+    "uploadFormats": "JPG, PNG, WebP hasta 20MB",
+    "compressionSettings": "Configuración de compresión",
+    "quality": "Calidad",
+    "smallerFile": "Archivo más pequeño",
+    "betterQuality": "Mejor calidad",
+    "outputFormat": "Formato de salida",
+    "formatAuto": "Auto (Recomendado)",
+    "compressButton": "Comprimir imagen",
+    "compressing": "Comprimiendo...",
+    "uploadNewImage": "Subir nueva imagen",
+    "original": "Original",
+    "compressed": "Comprimida",
+    "processing": "Procesando...",
+    "clickToStart": "Haz clic en \"Comprimir imagen\" para empezar",
+    "compressionResults": "Resultados de compresión",
+    "originalSize": "Tamaño original",
+    "compressedSize": "Tamaño comprimido",
+    "spaceSaved": "Espacio ahorrado",
+    "format": "Formato",
+    "downloadCompressed": "Descargar imagen comprimida",
+    "errors": {
+      "invalidFileType": "Sube una imagen JPG, PNG o WebP",
+      "fileTooLarge": "El tamaño del archivo debe ser menor de 20MB",
+      "readFailed": "Error al leer el archivo de imagen",
+      "networkError": "Error de red. Verifica tu conexión e intenta de nuevo.",
+      "compressionFailed": "Error al comprimir la imagen"
+    },
+    "progress": {
+      "compressing": "Comprimiendo imagen...",
+      "processing": "Procesando con IA..."
+    }
+  },
+  "imageFilters": {
+    "loginTitle": "Inicia sesión para aplicar filtros",
+    "loginDescription": "Crea una cuenta gratis para empezar a aplicar filtros a tus imágenes. ¡Obtén 3 créditos gratis!",
+    "signIn": "Iniciar sesión",
+    "signUpFree": "Registrarse gratis",
+    "uploadTitle": "Haz clic o arrastra una imagen para aplicar filtros",
+    "uploadFormats": "JPG, PNG, WebP hasta 20MB",
+    "filterSettings": "Configuración de filtros",
+    "presetFilter": "Filtro predefinido",
+    "presets": {
+      "none": "Ninguno",
+      "grayscale": "Escala de grises",
+      "sepia": "Sepia",
+      "vintage": "Vintage",
+      "cool": "Frío",
+      "warm": "Cálido",
+      "dramatic": "Dramático"
+    },
+    "brightness": "Brillo",
+    "darker": "Más oscuro",
+    "brighter": "Más brillante",
+    "contrast": "Contraste",
+    "lower": "Menor",
+    "higher": "Mayor",
+    "saturation": "Saturación",
+    "grayscale": "Escala de grises",
+    "vibrant": "Vibrante",
+    "blur": "Desenfoque",
+    "sharp": "Nítido",
+    "blurred": "Desenfocado",
+    "sharpen": "Nitidez",
+    "normal": "Normal",
+    "sharpened": "Enfocado",
+    "applyFilters": "Aplicar filtros",
+    "applyingFilters": "Aplicando filtros...",
+    "resetFilters": "Restablecer filtros",
+    "uploadNewImage": "Subir nueva imagen",
+    "original": "Original",
+    "filtered": "Filtrada",
+    "processing": "Procesando...",
+    "clickToApply": "Haz clic en \"Aplicar filtros\" para ver el resultado",
+    "downloadFiltered": "Descargar imagen filtrada",
+    "errors": {
+      "invalidFileType": "Sube una imagen JPG, PNG o WebP",
+      "fileTooLarge": "El tamaño del archivo debe ser menor de 20MB",
+      "readFailed": "Error al leer el archivo de imagen",
+      "networkError": "Error de red. Verifica tu conexión e intenta de nuevo.",
+      "applyFailed": "Error al aplicar filtros"
+    },
+    "progress": {
+      "applying": "Aplicando filtros...",
+      "processing": "Procesando con IA..."
+    }
+  },
+  "imageReimagine": {
+    "loginTitle": "Inicia sesión para usar AI Image Reimagine",
+    "loginDescription": "Crea una cuenta gratis para generar variaciones creativas de tus imágenes con IA.",
+    "signIn": "Iniciar sesión",
+    "signUpFree": "Registrarse gratis",
+    "uploadButton": "Subir imagen para reimaginar",
+    "dropHint": "o suelta la imagen en cualquier lugar",
+    "supportedFormats": "Formatos soportados: PNG, JPEG, JPG, WEBP",
+    "maxFileSize": "Tamaño máximo de archivo: 20MB",
+    "creditsRemaining": "créditos restantes",
+    "variationSettings": "Configuración de variaciones",
+    "numberOfVariations": "Número de variaciones",
+    "credits": "créditos",
+    "variationStrength": "Intensidad de variación",
+    "subtle": "Sutil",
+    "creative": "Creativo",
+    "guidingPrompt": "Prompt de guía (opcional)",
+    "promptPlaceholder": "ej., 'hazlo más vibrante', 'añade una atmósfera de ensueño'",
+    "generatedVariations": "Variaciones generadas",
+    "original": "Original",
+    "variation": "Variación",
+    "originalImage": "Imagen original",
+    "variationsPreview": "Vista previa de variaciones",
+    "clickToGenerate": "Haz clic en \"Generar variaciones\" para crear",
+    "generating": "Generando...",
+    "generateVariations": "Generar {count} variación",
+    "generateVariationsPlural": "Generar {count} variaciones",
+    "downloadSelected": "Descargar seleccionada",
+    "generateMore": "Generar más",
+    "uploadNewImage": "Subir nueva imagen",
+    "poweredBy": "Impulsado por FLUX Redux AI",
+    "perVariation": "por variación",
+    "errors": {
+      "invalidFileType": "Sube un archivo de imagen válido (PNG, JPG, JPEG, WEBP)",
+      "fileTooLarge": "El tamaño del archivo debe ser menor de 20MB",
+      "reimagineFailed": "Error al reimaginar la imagen",
+      "downloadFailed": "Error al descargar la imagen"
+    },
+    "progress": {
+      "uploading": "Subiendo imagen...",
+      "generating": "Generando {count} variación con FLUX AI...",
+      "generatingPlural": "Generando {count} variaciones con FLUX AI...",
+      "complete": "¡Variaciones generadas!"
+    }
   }
 }

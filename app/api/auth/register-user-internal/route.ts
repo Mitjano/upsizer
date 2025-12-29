@@ -87,9 +87,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Extract tracking data from headers
-    const ipAddress = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+    // Check Cloudflare header first, then standard proxy headers
+    const ipAddress = request.headers.get('cf-connecting-ip') ||
+                      request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
                       request.headers.get('x-real-ip') ||
-                      request.headers.get('cf-connecting-ip') ||
                       'unknown';
     const userAgent = request.headers.get('user-agent') || '';
     const { deviceType, browser, browserVersion, os, osVersion } = parseUserAgent(userAgent);

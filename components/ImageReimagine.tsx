@@ -2,12 +2,14 @@
 
 import { useState, useCallback } from "react";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import { FaTimes, FaInfoCircle, FaMagic, FaRandom } from "react-icons/fa";
 import { CREDIT_COSTS, calculateReimagineCost } from '@/lib/credits-config';
 import { CreditCostBadge, CopyLinkButton, ActionButton } from './shared';
 
 export default function ImageReimagine() {
   const { data: session } = useSession();
+  const t = useTranslations('imageReimagine');
   const [dragActive, setDragActive] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -52,12 +54,12 @@ export default function ImageReimagine() {
   const handleFile = (file: File) => {
     const validTypes = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
     if (!validTypes.includes(file.type)) {
-      alert("Please upload a valid image file (PNG, JPG, JPEG, WEBP)");
+      alert(t('errors.invalidFileType'));
       return;
     }
 
     if (file.size > 20 * 1024 * 1024) {
-      alert("File size must be less than 20MB");
+      alert(t('errors.fileTooLarge'));
       return;
     }
 
@@ -85,7 +87,7 @@ export default function ImageReimagine() {
     if (!selectedFile) return;
 
     setProcessing(true);
-    setProgress("Uploading image...");
+    setProgress(t('progress.uploading'));
     setVariations([]);
     setSelectedVariation(null);
 
@@ -98,7 +100,9 @@ export default function ImageReimagine() {
         formData.append("prompt", prompt);
       }
 
-      setProgress(`Generating ${numVariations} variation${numVariations > 1 ? 's' : ''} with FLUX AI...`);
+      setProgress(numVariations > 1
+        ? t('progress.generatingPlural', { count: numVariations })
+        : t('progress.generating', { count: numVariations }));
 
       const response = await fetch("/api/reimagine", {
         method: "POST",
@@ -113,7 +117,7 @@ export default function ImageReimagine() {
       const data = await response.json();
 
       if (data.success && data.variations && data.variations.length > 0) {
-        setProgress("Variations generated!");
+        setProgress(t('progress.complete'));
         setVariations(data.variations);
         setImageId(data.id);
         setCreditsRemaining(data.creditsRemaining);
@@ -124,7 +128,7 @@ export default function ImageReimagine() {
     } catch (error: unknown) {
       console.error("Reimagine error:", error);
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      alert(`Failed to reimagine image: ${errorMessage}`);
+      alert(`${t('errors.reimagineFailed')}: ${errorMessage}`);
       setProgress("");
     } finally {
       setProcessing(false);
@@ -144,7 +148,7 @@ export default function ImageReimagine() {
       document.body.removeChild(link);
     } catch (error) {
       console.error("Download error:", error);
-      alert("Failed to download image");
+      alert(t('errors.downloadFailed'));
     }
   };
 
@@ -167,16 +171,16 @@ export default function ImageReimagine() {
             <div className="mb-6">
               <FaMagic className="mx-auto h-16 w-16 text-gray-500 dark:text-gray-500" />
             </div>
-            <h3 className="text-2xl font-bold mb-3">Sign in to Use AI Image Reimagine</h3>
+            <h3 className="text-2xl font-bold mb-3">{t('loginTitle')}</h3>
             <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
-              Create a free account to generate creative variations of your images with AI.
+              {t('loginDescription')}
             </p>
             <div className="flex gap-4 justify-center">
               <a href="/auth/signin" className="inline-block px-8 py-3 bg-gradient-to-r from-violet-500 to-purple-500 hover:from-violet-600 hover:to-purple-600 rounded-lg font-medium transition">
-                Sign In
+                {t('signIn')}
               </a>
               <a href="/auth/signup" className="inline-block px-8 py-3 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-lg font-medium transition">
-                Sign Up Free
+                {t('signUpFree')}
               </a>
             </div>
           </div>
@@ -211,13 +215,13 @@ export default function ImageReimagine() {
             </div>
 
             <label htmlFor="file-upload" className="cursor-pointer inline-block px-8 py-3 bg-gradient-to-r from-violet-500 to-purple-500 hover:from-violet-600 hover:to-purple-600 rounded-lg font-medium transition mb-4">
-              Upload Image to Reimagine
+              {t('uploadButton')}
             </label>
 
-            <p className="text-gray-600 dark:text-gray-400 mt-4">or drop image anywhere</p>
+            <p className="text-gray-600 dark:text-gray-400 mt-4">{t('dropHint')}</p>
             <div className="mt-6 text-sm text-gray-500 dark:text-gray-500">
-              <p className="mb-2">Supported formats: PNG, JPEG, JPG, WEBP</p>
-              <p>Maximum file size: 20MB</p>
+              <p className="mb-2">{t('supportedFormats')}</p>
+              <p>{t('maxFileSize')}</p>
             </div>
           </div>
         </div>
@@ -238,7 +242,7 @@ export default function ImageReimagine() {
               {creditsRemaining !== null && (
                 <>
                   <span>-</span>
-                  <span className="text-violet-600 dark:text-violet-400">{creditsRemaining} credits remaining</span>
+                  <span className="text-violet-600 dark:text-violet-400">{creditsRemaining} {t('creditsRemaining')}</span>
                 </>
               )}
             </div>
@@ -249,13 +253,13 @@ export default function ImageReimagine() {
             <div className="bg-gray-100 dark:bg-gray-800/50 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
               <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                 <FaRandom className="text-violet-600 dark:text-violet-400" />
-                Variation Settings
+                {t('variationSettings')}
               </h3>
 
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
-                    Number of Variations ({calculateReimagineCost(numVariations)} credits)
+                    {t('numberOfVariations')} ({calculateReimagineCost(numVariations)} {t('credits')})
                   </label>
                   <div className="flex gap-2">
                     {[1, 2, 3, 4].map((num) => (
@@ -276,7 +280,7 @@ export default function ImageReimagine() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
-                    Variation Strength: {(strength * 100).toFixed(0)}%
+                    {t('variationStrength')}: {(strength * 100).toFixed(0)}%
                   </label>
                   <input
                     type="range"
@@ -288,21 +292,21 @@ export default function ImageReimagine() {
                     className="w-full"
                   />
                   <div className="flex justify-between text-xs text-gray-500 dark:text-gray-500 mt-1">
-                    <span>Subtle</span>
-                    <span>Creative</span>
+                    <span>{t('subtle')}</span>
+                    <span>{t('creative')}</span>
                   </div>
                 </div>
               </div>
 
               <div className="mt-4">
                 <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
-                  Guiding Prompt (optional)
+                  {t('guidingPrompt')}
                 </label>
                 <input
                   type="text"
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
-                  placeholder="e.g., 'make it more vibrant', 'add a dreamy atmosphere'"
+                  placeholder={t('promptPlaceholder')}
                   className="w-full px-4 py-3 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg focus:border-violet-500 focus:outline-none"
                 />
               </div>
@@ -313,24 +317,24 @@ export default function ImageReimagine() {
           <div className="bg-gray-100 dark:bg-gray-800/50 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
             {variations.length > 0 ? (
               <div>
-                <h3 className="text-lg font-semibold mb-4">Generated Variations</h3>
+                <h3 className="text-lg font-semibold mb-4">{t('generatedVariations')}</h3>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {/* Original */}
                   <div className="relative">
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Original</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{t('original')}</p>
                     <img
                       src={previewUrl || undefined}
-                      alt="Original"
+                      alt={t('original')}
                       className="w-full rounded-lg border-2 border-gray-300 dark:border-gray-600"
                     />
                   </div>
                   {/* Variations */}
                   {variations.map((variation, index) => (
                     <div key={index} className="relative">
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Variation {index + 1}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{t('variation')} {index + 1}</p>
                       <img
                         src={variation}
-                        alt={`Variation ${index + 1}`}
+                        alt={`${t('variation')} ${index + 1}`}
                         onClick={() => setSelectedVariation(index)}
                         className={`w-full rounded-lg border-2 cursor-pointer transition ${
                           selectedVariation === index
@@ -354,11 +358,11 @@ export default function ImageReimagine() {
             ) : (
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">Original Image</h3>
-                  <img src={previewUrl || undefined} alt="Original" className="w-full rounded-lg border border-gray-300 dark:border-gray-600" />
+                  <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">{t('originalImage')}</h3>
+                  <img src={previewUrl || undefined} alt={t('original')} className="w-full rounded-lg border border-gray-300 dark:border-gray-600" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">Variations Preview</h3>
+                  <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">{t('variationsPreview')}</h3>
                   <div className="w-full aspect-square bg-gray-200 dark:bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-600 flex items-center justify-center">
                     {processing ? (
                       <div className="text-center">
@@ -366,7 +370,7 @@ export default function ImageReimagine() {
                         <p className="text-gray-600 dark:text-gray-400">{progress}</p>
                       </div>
                     ) : (
-                      <p className="text-gray-500 dark:text-gray-500">Click &quot;Generate Variations&quot; to create</p>
+                      <p className="text-gray-500 dark:text-gray-500">{t('clickToGenerate')}</p>
                     )}
                   </div>
                 </div>
@@ -381,7 +385,9 @@ export default function ImageReimagine() {
                 disabled={processing}
                 className="px-12 py-5 bg-gradient-to-r from-violet-500 to-purple-500 hover:from-violet-600 hover:to-purple-600 disabled:from-gray-600 disabled:to-gray-600 disabled:cursor-not-allowed rounded-xl font-bold text-xl transition shadow-xl shadow-violet-500/30"
               >
-                {processing ? "Generating..." : `Generate ${numVariations} Variation${numVariations > 1 ? 's' : ''}`}
+                {processing ? t('generating') : (numVariations > 1
+                  ? t('generateVariationsPlural', { count: numVariations })
+                  : t('generateVariations', { count: numVariations }))}
               </button>
             ) : (
               <>
@@ -390,7 +396,7 @@ export default function ImageReimagine() {
                   icon="download"
                   accentColor="purple"
                 >
-                  Download Selected
+                  {t('downloadSelected')}
                 </ActionButton>
                 {imageId && <CopyLinkButton imageId={imageId} accentColor="purple" />}
                 <ActionButton
@@ -399,7 +405,7 @@ export default function ImageReimagine() {
                   icon="lightning"
                   accentColor="blue"
                 >
-                  Generate More
+                  {t('generateMore')}
                 </ActionButton>
               </>
             )}
@@ -410,14 +416,14 @@ export default function ImageReimagine() {
               variant="secondary"
               accentColor="gray"
             >
-              Upload New Image
+              {t('uploadNewImage')}
             </ActionButton>
           </div>
 
           <div className="text-center text-sm text-gray-500 dark:text-gray-500 flex items-center justify-center gap-2">
-            <span>Powered by FLUX Redux AI -</span>
+            <span>{t('poweredBy')} -</span>
             <CreditCostBadge tool="reimagine" size="xs" />
-            <span>per variation</span>
+            <span>{t('perVariation')}</span>
           </div>
         </div>
       )}

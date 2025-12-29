@@ -6700,5 +6700,199 @@
     "downloadAll": "Pobierz wszystkie",
     "tryAgain": "Spróbuj innych ustawień",
     "newImage": "Nowe zdjęcie"
+  },
+  "imageExpander": {
+    "loginTitle": "Zaloguj się, aby rozszerzać zdjęcia",
+    "loginDescription": "Załóż darmowe konto i zacznij rozszerzać zdjęcia z AI. Otrzymaj 3 darmowe kredyty!",
+    "features": ["3 darmowe kredyty", "Bez karty kredytowej", "AI Outpainting"],
+    "chooseExpandMode": "Wybierz tryb rozszerzania",
+    "presets": {
+      "zoom_1.5x": {
+        "name": "Oddal 1.5x",
+        "description": "Rozszerz płótno o 50%"
+      },
+      "zoom_2x": {
+        "name": "Oddal 2x",
+        "description": "Podwój rozmiar płótna"
+      },
+      "make_square": {
+        "name": "Zrób kwadrat",
+        "description": "Konwertuj do formatu kwadratowego"
+      },
+      "expand_horizontal": {
+        "name": "Rozszerz lewo i prawo",
+        "description": "Rozszerz obie strony naraz"
+      },
+      "expand_left": {
+        "name": "Rozszerz w lewo",
+        "description": "Rozszerz obraz w lewo"
+      },
+      "expand_right": {
+        "name": "Rozszerz w prawo",
+        "description": "Rozszerz obraz w prawo"
+      },
+      "expand_up": {
+        "name": "Rozszerz w górę",
+        "description": "Rozszerz obraz w górę"
+      },
+      "expand_down": {
+        "name": "Rozszerz w dół",
+        "description": "Rozszerz obraz w dół"
+      }
+    },
+    "credits": "kredytów",
+    "dropHere": "Upuść zdjęcie tutaj!",
+    "dragDropTitle": "Przeciągnij i upuść zdjęcie",
+    "orClickToBrowse": "lub kliknij, aby przeglądać",
+    "supportedFormats": "Obsługuje JPG, PNG, WEBP • Maks. 30MB",
+    "changeImage": "Zmień zdjęcie",
+    "expandButton": "Rozszerz zdjęcie",
+    "expanding": "Rozszerzanie... (10-20 sek)",
+    "original": "Oryginał",
+    "expanded": "Rozszerzone",
+    "successMessage": "Zdjęcie rozszerzone pomyślnie!",
+    "seedInfo": "Seed",
+    "download": "Pobierz",
+    "copyLink": "Kopiuj link",
+    "sameResult": "Ten sam wynik",
+    "tryDifferent": "Spróbuj innego",
+    "newImage": "Nowe zdjęcie"
+  },
+  "imageCompressor": {
+    "loginTitle": "Zaloguj się, aby kompresować zdjęcia",
+    "loginDescription": "Załóż darmowe konto, aby zacząć kompresować zdjęcia. Otrzymaj 3 darmowe kredyty na start!",
+    "signIn": "Zaloguj się",
+    "signUpFree": "Zarejestruj się za darmo",
+    "uploadTitle": "Kliknij lub przeciągnij zdjęcie do kompresji",
+    "uploadFormats": "JPG, PNG, WebP do 20MB",
+    "compressionSettings": "Ustawienia kompresji",
+    "quality": "Jakość",
+    "smallerFile": "Mniejszy plik",
+    "betterQuality": "Lepsza jakość",
+    "outputFormat": "Format wyjściowy",
+    "formatAuto": "Auto (Zalecane)",
+    "compressButton": "Kompresuj zdjęcie",
+    "compressing": "Kompresowanie...",
+    "uploadNewImage": "Wgraj nowe zdjęcie",
+    "original": "Oryginał",
+    "compressed": "Skompresowane",
+    "processing": "Przetwarzanie...",
+    "clickToStart": "Kliknij \"Kompresuj zdjęcie\", aby rozpocząć",
+    "compressionResults": "Wyniki kompresji",
+    "originalSize": "Rozmiar oryginalny",
+    "compressedSize": "Rozmiar po kompresji",
+    "spaceSaved": "Zaoszczędzone miejsce",
+    "format": "Format",
+    "downloadCompressed": "Pobierz skompresowane zdjęcie",
+    "errors": {
+      "invalidFileType": "Wgraj zdjęcie JPG, PNG lub WebP",
+      "fileTooLarge": "Rozmiar pliku musi być mniejszy niż 20MB",
+      "readFailed": "Nie udało się odczytać pliku",
+      "networkError": "Błąd sieci. Sprawdź połączenie i spróbuj ponownie.",
+      "compressionFailed": "Nie udało się skompresować zdjęcia"
+    },
+    "progress": {
+      "compressing": "Kompresowanie zdjęcia...",
+      "processing": "Przetwarzanie z AI..."
+    }
+  },
+  "imageFilters": {
+    "loginTitle": "Zaloguj się, aby stosować filtry",
+    "loginDescription": "Załóż darmowe konto, aby zacząć stosować filtry do zdjęć. Otrzymaj 3 darmowe kredyty na start!",
+    "signIn": "Zaloguj się",
+    "signUpFree": "Zarejestruj się za darmo",
+    "uploadTitle": "Kliknij lub przeciągnij zdjęcie, aby zastosować filtry",
+    "uploadFormats": "JPG, PNG, WebP do 20MB",
+    "filterSettings": "Ustawienia filtrów",
+    "presetFilter": "Gotowy filtr",
+    "presets": {
+      "none": "Brak",
+      "grayscale": "Skala szarości",
+      "sepia": "Sepia",
+      "vintage": "Vintage",
+      "cool": "Chłodny",
+      "warm": "Ciepły",
+      "dramatic": "Dramatyczny"
+    },
+    "brightness": "Jasność",
+    "darker": "Ciemniej",
+    "brighter": "Jaśniej",
+    "contrast": "Kontrast",
+    "lower": "Niższy",
+    "higher": "Wyższy",
+    "saturation": "Nasycenie",
+    "grayscale": "Skala szarości",
+    "vibrant": "Żywe kolory",
+    "blur": "Rozmycie",
+    "sharp": "Ostre",
+    "blurred": "Rozmyte",
+    "sharpen": "Wyostrzenie",
+    "normal": "Normalne",
+    "sharpened": "Wyostrzone",
+    "applyFilters": "Zastosuj filtry",
+    "applyingFilters": "Stosowanie filtrów...",
+    "resetFilters": "Resetuj filtry",
+    "uploadNewImage": "Wgraj nowe zdjęcie",
+    "original": "Oryginał",
+    "filtered": "Z filtrem",
+    "processing": "Przetwarzanie...",
+    "clickToApply": "Kliknij \"Zastosuj filtry\", aby zobaczyć wynik",
+    "downloadFiltered": "Pobierz zdjęcie z filtrem",
+    "errors": {
+      "invalidFileType": "Wgraj zdjęcie JPG, PNG lub WebP",
+      "fileTooLarge": "Rozmiar pliku musi być mniejszy niż 20MB",
+      "readFailed": "Nie udało się odczytać pliku",
+      "networkError": "Błąd sieci. Sprawdź połączenie i spróbuj ponownie.",
+      "applyFailed": "Nie udało się zastosować filtrów"
+    },
+    "progress": {
+      "applying": "Stosowanie filtrów...",
+      "processing": "Przetwarzanie z AI..."
+    }
+  },
+  "imageReimagine": {
+    "loginTitle": "Zaloguj się, aby użyć AI Reimagine",
+    "loginDescription": "Załóż darmowe konto, aby generować kreatywne warianty zdjęć z AI.",
+    "signIn": "Zaloguj się",
+    "signUpFree": "Zarejestruj się za darmo",
+    "uploadButton": "Wgraj zdjęcie do przetworzenia",
+    "dropHint": "lub upuść zdjęcie gdziekolwiek",
+    "supportedFormats": "Obsługiwane formaty: PNG, JPEG, JPG, WEBP",
+    "maxFileSize": "Maksymalny rozmiar pliku: 20MB",
+    "creditsRemaining": "pozostałych kredytów",
+    "variationSettings": "Ustawienia wariantów",
+    "numberOfVariations": "Liczba wariantów",
+    "credits": "kredytów",
+    "variationStrength": "Siła zmian",
+    "subtle": "Subtelne",
+    "creative": "Kreatywne",
+    "guidingPrompt": "Prompt kierunkowy (opcjonalny)",
+    "promptPlaceholder": "np. 'zrób to bardziej żywe', 'dodaj marzycielską atmosferę'",
+    "generatedVariations": "Wygenerowane warianty",
+    "original": "Oryginał",
+    "variation": "Wariant",
+    "originalImage": "Oryginalne zdjęcie",
+    "variationsPreview": "Podgląd wariantów",
+    "clickToGenerate": "Kliknij \"Generuj warianty\", aby utworzyć",
+    "generating": "Generowanie...",
+    "generateVariations": "Generuj {count} wariant",
+    "generateVariationsPlural": "Generuj {count} warianty",
+    "downloadSelected": "Pobierz wybrany",
+    "generateMore": "Generuj więcej",
+    "uploadNewImage": "Wgraj nowe zdjęcie",
+    "poweredBy": "Obsługiwane przez FLUX Redux AI",
+    "perVariation": "za wariant",
+    "errors": {
+      "invalidFileType": "Wgraj prawidłowy plik zdjęcia (PNG, JPG, JPEG, WEBP)",
+      "fileTooLarge": "Rozmiar pliku musi być mniejszy niż 20MB",
+      "reimagineFailed": "Nie udało się przetworzyć zdjęcia",
+      "downloadFailed": "Nie udało się pobrać zdjęcia"
+    },
+    "progress": {
+      "uploading": "Wysyłanie zdjęcia...",
+      "generating": "Generowanie {count} wariantu z FLUX AI...",
+      "generatingPlural": "Generowanie {count} wariantów z FLUX AI...",
+      "complete": "Warianty wygenerowane!"
+    }
   }
 }

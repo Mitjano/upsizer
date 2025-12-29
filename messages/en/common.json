@@ -6658,5 +6658,199 @@
     "downloadAll": "Download All",
     "tryAgain": "Try Different Settings",
     "newImage": "New Image"
+  },
+  "imageExpander": {
+    "loginTitle": "Sign in to Expand Images",
+    "loginDescription": "Create a free account to start expanding your images with AI. Get 3 free credits!",
+    "features": ["3 Free Credits", "No Credit Card", "AI Outpainting"],
+    "chooseExpandMode": "Choose Expand Mode",
+    "presets": {
+      "zoom_1.5x": {
+        "name": "Zoom Out 1.5x",
+        "description": "Expand canvas by 50%"
+      },
+      "zoom_2x": {
+        "name": "Zoom Out 2x",
+        "description": "Double the canvas size"
+      },
+      "make_square": {
+        "name": "Make Square",
+        "description": "Convert to square format"
+      },
+      "expand_horizontal": {
+        "name": "Expand Left & Right",
+        "description": "Extend both sides at once"
+      },
+      "expand_left": {
+        "name": "Expand Left",
+        "description": "Extend image to the left"
+      },
+      "expand_right": {
+        "name": "Expand Right",
+        "description": "Extend image to the right"
+      },
+      "expand_up": {
+        "name": "Expand Up",
+        "description": "Extend image upward"
+      },
+      "expand_down": {
+        "name": "Expand Down",
+        "description": "Extend image downward"
+      }
+    },
+    "credits": "credits",
+    "dropHere": "Drop your image here!",
+    "dragDropTitle": "Drag & drop your image",
+    "orClickToBrowse": "or click to browse",
+    "supportedFormats": "Supports JPG, PNG, WEBP • Max 30MB",
+    "changeImage": "Change Image",
+    "expandButton": "Expand Image",
+    "expanding": "Expanding... (10-20 sec)",
+    "original": "Original",
+    "expanded": "Expanded",
+    "successMessage": "Image expanded successfully!",
+    "seedInfo": "Seed",
+    "download": "Download",
+    "copyLink": "Copy Link",
+    "sameResult": "Same Result",
+    "tryDifferent": "Try Different",
+    "newImage": "New Image"
+  },
+  "imageCompressor": {
+    "loginTitle": "Sign in to Compress Images",
+    "loginDescription": "Create a free account to start compressing your images. Get 3 free credits to try it out!",
+    "signIn": "Sign In",
+    "signUpFree": "Sign Up Free",
+    "uploadTitle": "Click or drag image to compress",
+    "uploadFormats": "JPG, PNG, WebP up to 20MB",
+    "compressionSettings": "Compression Settings",
+    "quality": "Quality",
+    "smallerFile": "Smaller file",
+    "betterQuality": "Better quality",
+    "outputFormat": "Output Format",
+    "formatAuto": "Auto (Recommended)",
+    "compressButton": "Compress Image",
+    "compressing": "Compressing...",
+    "uploadNewImage": "Upload New Image",
+    "original": "Original",
+    "compressed": "Compressed",
+    "processing": "Processing...",
+    "clickToStart": "Click \"Compress Image\" to start",
+    "compressionResults": "Compression Results",
+    "originalSize": "Original Size",
+    "compressedSize": "Compressed Size",
+    "spaceSaved": "Space Saved",
+    "format": "Format",
+    "downloadCompressed": "Download Compressed Image",
+    "errors": {
+      "invalidFileType": "Please upload a JPG, PNG, or WebP image",
+      "fileTooLarge": "File size must be less than 20MB",
+      "readFailed": "Failed to read image file",
+      "networkError": "Network error. Please check your connection and try again.",
+      "compressionFailed": "Failed to compress image"
+    },
+    "progress": {
+      "compressing": "Compressing image...",
+      "processing": "Processing with AI..."
+    }
+  },
+  "imageFilters": {
+    "loginTitle": "Sign in to Apply Image Filters",
+    "loginDescription": "Create a free account to start applying filters to your images. Get 3 free credits to try it out!",
+    "signIn": "Sign In",
+    "signUpFree": "Sign Up Free",
+    "uploadTitle": "Click or drag image to apply filters",
+    "uploadFormats": "JPG, PNG, WebP up to 20MB",
+    "filterSettings": "Filter Settings",
+    "presetFilter": "Preset Filter",
+    "presets": {
+      "none": "None",
+      "grayscale": "Grayscale",
+      "sepia": "Sepia",
+      "vintage": "Vintage",
+      "cool": "Cool",
+      "warm": "Warm",
+      "dramatic": "Dramatic"
+    },
+    "brightness": "Brightness",
+    "darker": "Darker",
+    "brighter": "Brighter",
+    "contrast": "Contrast",
+    "lower": "Lower",
+    "higher": "Higher",
+    "saturation": "Saturation",
+    "grayscale": "Grayscale",
+    "vibrant": "Vibrant",
+    "blur": "Blur",
+    "sharp": "Sharp",
+    "blurred": "Blurred",
+    "sharpen": "Sharpen",
+    "normal": "Normal",
+    "sharpened": "Sharpened",
+    "applyFilters": "Apply Filters",
+    "applyingFilters": "Applying Filters...",
+    "resetFilters": "Reset Filters",
+    "uploadNewImage": "Upload New Image",
+    "original": "Original",
+    "filtered": "Filtered",
+    "processing": "Processing...",
+    "clickToApply": "Click \"Apply Filters\" to see result",
+    "downloadFiltered": "Download Filtered Image",
+    "errors": {
+      "invalidFileType": "Please upload a JPG, PNG, or WebP image",
+      "fileTooLarge": "File size must be less than 20MB",
+      "readFailed": "Failed to read image file",
+      "networkError": "Network error. Please check your connection and try again.",
+      "applyFailed": "Failed to apply filters"
+    },
+    "progress": {
+      "applying": "Applying filters...",
+      "processing": "Processing with AI..."
+    }
+  },
+  "imageReimagine": {
+    "loginTitle": "Sign in to Use AI Image Reimagine",
+    "loginDescription": "Create a free account to generate creative variations of your images with AI.",
+    "signIn": "Sign In",
+    "signUpFree": "Sign Up Free",
+    "uploadButton": "Upload Image to Reimagine",
+    "dropHint": "or drop image anywhere",
+    "supportedFormats": "Supported formats: PNG, JPEG, JPG, WEBP",
+    "maxFileSize": "Maximum file size: 20MB",
+    "creditsRemaining": "credits remaining",
+    "variationSettings": "Variation Settings",
+    "numberOfVariations": "Number of Variations",
+    "credits": "credits",
+    "variationStrength": "Variation Strength",
+    "subtle": "Subtle",
+    "creative": "Creative",
+    "guidingPrompt": "Guiding Prompt (optional)",
+    "promptPlaceholder": "e.g., 'make it more vibrant', 'add a dreamy atmosphere'",
+    "generatedVariations": "Generated Variations",
+    "original": "Original",
+    "variation": "Variation",
+    "originalImage": "Original Image",
+    "variationsPreview": "Variations Preview",
+    "clickToGenerate": "Click \"Generate Variations\" to create",
+    "generating": "Generating...",
+    "generateVariations": "Generate {count} Variation",
+    "generateVariationsPlural": "Generate {count} Variations",
+    "downloadSelected": "Download Selected",
+    "generateMore": "Generate More",
+    "uploadNewImage": "Upload New Image",
+    "poweredBy": "Powered by FLUX Redux AI",
+    "perVariation": "per variation",
+    "errors": {
+      "invalidFileType": "Please upload a valid image file (PNG, JPG, JPEG, WEBP)",
+      "fileTooLarge": "File size must be less than 20MB",
+      "reimagineFailed": "Failed to reimagine image",
+      "downloadFailed": "Failed to download image"
+    },
+    "progress": {
+      "uploading": "Uploading image...",
+      "generating": "Generating {count} variation with FLUX AI...",
+      "generatingPlural": "Generating {count} variations with FLUX AI...",
+      "complete": "Variations generated!"
+    }
   }
 }
