@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import { User, UserMetrics } from '@/lib/db';
 import toast from 'react-hot-toast';
 
@@ -12,6 +12,8 @@ interface UsersClientProps {
 
 export default function UsersClient({ users: initialUsers, stats }: UsersClientProps) {
   const router = useRouter();
+  const params = useParams();
+  const locale = params.locale || 'en';
   const [users, setUsers] = useState(initialUsers);
   const [search, setSearch] = useState('');
   const [filterRole, setFilterRole] = useState<string>('all');
@@ -19,7 +21,7 @@ export default function UsersClient({ users: initialUsers, stats }: UsersClientP
   const [editingCredits, setEditingCredits] = useState<{ [key: string]: number }>({});
 
   const navigateToUser = (userId: string) => {
-    router.push(`/admin/users/${userId}`);
+    router.push(`/${locale}/admin/users/${userId}`);
   };
 
   const filteredUsers = users.filter(user => {
