@@ -359,7 +359,7 @@ export default function ChatWindow() {
   const isModelFree = selectedModel?.tier === "free";
 
   return (
-    <div className="flex h-screen bg-white dark:bg-gray-900">
+    <div className="flex h-screen-safe bg-white dark:bg-gray-900">
       {/* Mobile sidebar overlay */}
       {!sidebarCollapsed && (
         <div

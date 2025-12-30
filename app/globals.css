@@ -64,6 +64,22 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+
+  /* Mobile viewport height fix - dvh with fallback for older browsers */
+  .h-screen-safe {
+    height: 100vh; /* Fallback for older browsers */
+    height: 100dvh; /* Dynamic viewport height - adjusts for mobile browser UI */
+  }
+
+  .min-h-screen-safe {
+    min-height: 100vh; /* Fallback */
+    min-height: 100dvh;
+  }
+
+  .max-h-screen-safe {
+    max-height: 100vh; /* Fallback */
+    max-height: 100dvh;
+  }
 }
 
 /* Skeleton shimmer animation */

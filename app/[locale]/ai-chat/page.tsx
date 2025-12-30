@@ -12,7 +12,7 @@ const ChatWindow = dynamic(
   () => import('@/components/ai-chat/ChatWindow'),
   {
     loading: () => (
-      <div className="flex items-center justify-center h-[calc(100vh-200px)]">
+      <div className="flex items-center justify-center h-[calc(100dvh-200px)]">
         <div className="flex flex-col items-center gap-4">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
           <p className="text-gray-400">Loading AI Chat...</p>

@@ -111,7 +111,7 @@ export default function AdminSidebar() {
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 z-40 w-64 h-screen transition-transform bg-gray-900 border-r border-gray-800 ${
+        className={`fixed top-0 left-0 z-40 w-64 h-screen-safe transition-transform bg-gray-900 border-r border-gray-800 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } lg:translate-x-0`}
       >
