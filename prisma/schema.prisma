@@ -258,6 +258,12 @@ enum ImageProcessingType {
   background_remove
   compress
   packshot
+  portrait_relight
+  product_relight
+  colorize
+  face_swap
+  style_transfer
+  ai_generation
 }
 
 model ImageHistory {

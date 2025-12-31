@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import toast from "react-hot-toast";
@@ -27,6 +27,7 @@ interface ImageHistory {
   originalUrl?: string;
   processedUrl?: string;
   createdAt: string;
+  filename?: string;
 }
 
 interface User {
@@ -134,6 +135,28 @@ export default function UserDetailClient({ user }: Props) {
   const [saving, setSaving] = useState(false);
   const [notes, setNotes] = useState(user.internalNotes || "");
   const [selectedImage, setSelectedImage] = useState<ImageHistory | null>(null);
+  const [processedImages, setProcessedImages] = useState<ImageHistory[]>([]);
+  const [loadingImages, setLoadingImages] = useState(false);
+
+  // Fetch processed images from ProcessedImagesDB
+  useEffect(() => {
+    const fetchProcessedImages = async () => {
+      setLoadingImages(true);
+      try {
+        const response = await fetch(`/api/admin/users/${user.id}/images`);
+        if (response.ok) {
+          const data = await response.json();
+          setProcessedImages(data.images || []);
+        }
+      } catch (error) {
+        console.error('Failed to fetch processed images:', error);
+      } finally {
+        setLoadingImages(false);
+      }
+    };
+
+    fetchProcessedImages();
+  }, [user.id]);
 
   const tabs = [
     { id: "overview", label: "Overview", icon: "👤" },
@@ -484,30 +507,63 @@ export default function UserDetailClient({ user }: Props) {
                 <table className="w-full">
                   <thead className="bg-gray-800">
                     <tr>
+                      <th className="text-left px-4 py-3 text-sm font-medium text-gray-400">Preview</th>
                       <th className="text-left px-4 py-3 text-sm font-medium text-gray-400">Tool</th>
                       <th className="text-left px-4 py-3 text-sm font-medium text-gray-400">Credits</th>
                       <th className="text-left px-4 py-3 text-sm font-medium text-gray-400">Date</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-700">
-                    {userData.usages.map((usage) => (
-                      <tr key={usage.id} className="hover:bg-gray-700/30">
-                        <td className="px-4 py-3 capitalize">
-                          {usage.toolType?.replace(/_/g, ' ') || 'Unknown'}
-                          {usage.creditsUsed === 0 && (
-                            <span className="ml-2 text-xs px-2 py-0.5 rounded bg-green-500/20 text-green-400">FREE</span>
-                          )}
-                        </td>
-                        <td className="px-4 py-3">
-                          {usage.creditsUsed === 0 ? (
-                            <span className="text-gray-500">0</span>
-                          ) : (
-                            <span className="text-yellow-400">-{usage.creditsUsed}</span>
-                          )}
-                        </td>
-                        <td className="px-4 py-3 text-gray-400">{formatDate(usage.createdAt)}</td>
-                      </tr>
-                    ))}
+                    {userData.usages.map((usage) => {
+                      // Find matching image from processedImages (by similar timestamp)
+                      const matchingImage = processedImages.find(img => {
+                        const usageTime = new Date(usage.createdAt).getTime();
+                        const imgTime = new Date(img.createdAt).getTime();
+                        const timeDiff = Math.abs(usageTime - imgTime);
+                        return timeDiff < 120000; // Within 2 minutes
+                      });
+
+                      return (
+                        <tr key={usage.id} className="hover:bg-gray-700/30">
+                          <td className="px-4 py-3">
+                            {matchingImage ? (
+                              <button
+                                onClick={() => setSelectedImage(matchingImage)}
+                                className="block w-12 h-12 rounded-lg overflow-hidden border border-gray-600 hover:border-green-500 transition bg-gray-900"
+                              >
+                                <img
+                                  src={matchingImage.processedUrl || matchingImage.originalUrl}
+                                  alt={usage.toolType || 'Image'}
+                                  className="w-full h-full object-cover"
+                                />
+                              </button>
+                            ) : loadingImages ? (
+                              <div className="w-12 h-12 rounded-lg bg-gray-700/50 flex items-center justify-center">
+                                <div className="w-4 h-4 border-2 border-gray-500 border-t-transparent rounded-full animate-spin" />
+                              </div>
+                            ) : (
+                              <div className="w-12 h-12 rounded-lg bg-gray-700/50 flex items-center justify-center text-gray-500 text-xs">
+                                —
+                              </div>
+                            )}
+                          </td>
+                          <td className="px-4 py-3 capitalize">
+                            {usage.toolType?.replace(/_/g, ' ') || 'Unknown'}
+                            {usage.creditsUsed === 0 && (
+                              <span className="ml-2 text-xs px-2 py-0.5 rounded bg-green-500/20 text-green-400">FREE</span>
+                            )}
+                          </td>
+                          <td className="px-4 py-3">
+                            {usage.creditsUsed === 0 ? (
+                              <span className="text-gray-500">0</span>
+                            ) : (
+                              <span className="text-yellow-400">-{usage.creditsUsed}</span>
+                            )}
+                          </td>
+                          <td className="px-4 py-3 text-gray-400">{formatDate(usage.createdAt)}</td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
@@ -519,12 +575,16 @@ export default function UserDetailClient({ user }: Props) {
         {activeTab === "images" && (
           <div className="space-y-6">
             <h3 className="text-lg font-semibold">User Created Images</h3>
-            {userData.imageHistory.length === 0 ? (
+            {loadingImages ? (
+              <div className="flex items-center justify-center py-12">
+                <div className="w-8 h-8 border-2 border-gray-500 border-t-green-500 rounded-full animate-spin" />
+              </div>
+            ) : processedImages.length === 0 ? (
               <p className="text-gray-400">No images processed yet</p>
             ) : (
               <>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {userData.imageHistory.map((img) => (
+                  {processedImages.map((img) => (
                     <div
                       key={img.id}
                       className="bg-gray-800/50 border border-gray-700 rounded-xl overflow-hidden cursor-pointer hover:border-green-500 transition"
@@ -534,13 +594,13 @@ export default function UserDetailClient({ user }: Props) {
                         {img.processedUrl ? (
                           <img
                             src={img.processedUrl}
-                            alt={img.toolType}
+                            alt={img.filename || 'Processed image'}
                             className="w-full h-full object-cover"
                           />
                         ) : img.originalUrl ? (
                           <img
                             src={img.originalUrl}
-                            alt={img.toolType}
+                            alt={img.filename || 'Original image'}
                             className="w-full h-full object-cover opacity-50"
                           />
                         ) : (
@@ -550,8 +610,8 @@ export default function UserDetailClient({ user }: Props) {
                         )}
                       </div>
                       <div className="p-3">
-                        <p className="text-sm font-medium capitalize truncate">
-                          {img.toolType?.replace(/_/g, ' ') || 'Unknown'}
+                        <p className="text-sm font-medium truncate">
+                          {img.filename || 'Processed Image'}
                         </p>
                         <p className="text-xs text-gray-500">{formatDate(img.createdAt)}</p>
                       </div>

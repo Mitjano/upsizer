@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
 
     // Build config
     const config: OrchestratorConfig = {
-      model: body.model || 'anthropic/claude-sonnet-4-20250514',
+      model: body.model || 'anthropic/claude-sonnet-4',
       systemPrompt: body.systemPrompt || DEFAULT_SYSTEM_PROMPT,
       temperature: body.temperature ?? 0.7,
       maxTokens: body.maxTokens ?? 4096,

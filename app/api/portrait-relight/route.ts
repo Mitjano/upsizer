@@ -6,6 +6,7 @@ import { imageProcessingLimiter, getClientIdentifier, rateLimitResponse } from '
 import { authenticateRequest } from '@/lib/api-auth'
 import { CREDIT_COSTS } from '@/lib/credits-config'
 import { ProcessedImagesDB } from '@/lib/processed-images-db'
+import { prisma } from '@/lib/prisma'
 
 // Configure fal.ai client
 fal.config({
@@ -153,6 +154,29 @@ export async function POST(request: NextRequest) {
       height: 0,
       isProcessed: true,
     })
+
+    // 8b. SAVE TO PRISMA IMAGE HISTORY (for admin panel)
+    try {
+      if (prisma) {
+        await prisma.imageHistory.create({
+          data: {
+            userId: user.id,
+            type: 'portrait_relight',
+            status: 'completed',
+            preset: preset || 'studio',
+            originalUrl: originalDataUrl,
+            originalSize: file.size,
+            originalFormat: file.type,
+            processedUrl: processedDataUrl,
+            processedFormat: 'image/png',
+            creditsUsed: creditsNeeded,
+            model: 'fal-ai/iclight-v2',
+          },
+        })
+      }
+    } catch (err) {
+      console.error('[Portrait Relight] Failed to save to ImageHistory:', err)
+    }
 
     // 9. DEDUCT CREDITS & LOG USAGE
     await createUsage({

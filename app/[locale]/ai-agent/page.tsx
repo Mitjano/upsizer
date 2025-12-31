@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
@@ -22,6 +23,11 @@ const AgentChat = dynamic(
 export default function AIAgentPage() {
   const t = useTranslations('aiAgentPage');
   const { data: session } = useSession();
+
+  // Scroll to top on page load
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <ToolsLayout>
