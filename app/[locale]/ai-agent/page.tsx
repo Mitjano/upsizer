@@ -3,7 +3,8 @@
 import dynamic from 'next/dynamic';
 import { useSession } from 'next-auth/react';
 import { useRef, useCallback, useEffect } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
+import { formatCreditCost } from '@/lib/credits-config';
 import ToolsLayout from '@/components/ToolsLayout';
 import Link from 'next/link';
 
@@ -92,6 +93,7 @@ const toolsList: ToolDisplay[] = [
 
 export default function AIAgentPage() {
   const t = useTranslations('aiAgentPage');
+  const locale = useLocale();
   const { data: session } = useSession();
   const chatRef = useRef<HTMLDivElement>(null);
 
@@ -251,7 +253,7 @@ export default function AIAgentPage() {
                       className="flex items-center justify-between text-sm"
                     >
                       <span className="text-gray-300">{tool.name.replace(/_/g, ' ')}</span>
-                      <span className="text-cyan-400">{tool.creditsRequired} kredytów</span>
+                      <span className="text-cyan-400">{formatCreditCost(tool.creditsRequired, locale)}</span>
                     </div>
                   ))}
                   {toolsByCategory[category].length > 4 && (
