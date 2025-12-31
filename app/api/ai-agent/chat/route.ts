@@ -6,6 +6,8 @@
 
 import { NextRequest } from 'next/server';
 import { auth } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
+import { createUsage } from '@/lib/db';
 import { createOrchestrator, getStateManager } from '@/lib/ai-agent';
 import type { AgentEvent } from '@/lib/ai-agent';
 
@@ -57,8 +59,28 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Get user credits (placeholder - integrate with your credits system)
-    const availableCredits = 100; // TODO: Get from user record
+    // Get user credits from database
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { credits: true },
+    });
+
+    if (!user) {
+      return new Response(JSON.stringify({ error: 'User not found' }), {
+        status: 404,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Check if user has enough credits (minimum 0.1 required)
+    if (user.credits < 0.1) {
+      return new Response(JSON.stringify({ error: 'Insufficient credits' }), {
+        status: 402,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    const availableCredits = user.credits;
 
     // Create orchestrator
     const orchestrator = createOrchestrator(
@@ -95,6 +117,15 @@ export async function POST(request: NextRequest) {
             totalCreditsUsed: updatedSession.totalCreditsUsed,
             messages: updatedSession.messages,
           });
+
+          // Deduct credits if any were used
+          if (updatedSession.totalCreditsUsed > 0) {
+            await createUsage({
+              userId: session.user.id,
+              type: 'ai_agent',
+              creditsUsed: updatedSession.totalCreditsUsed,
+            });
+          }
 
           controller.close();
         } catch (error) {

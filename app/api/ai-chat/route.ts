@@ -139,7 +139,8 @@ export async function POST(request: NextRequest) {
     let conversation: { id: string; messages: { role: string; content: string }[] };
 
     if (conversationId) {
-      // Pobierz istniejącą konwersację
+      // Pobierz istniejącą konwersację z ograniczoną historią (ostatnie 20 wiadomości = 10 par user/assistant)
+      // To zapobiega eksplozji tokenów przy długich konwersacjach
       const existingConversation = await prisma.chatConversation.findFirst({
         where: {
           id: conversationId,
@@ -147,11 +148,17 @@ export async function POST(request: NextRequest) {
         },
         include: {
           messages: {
-            orderBy: { createdAt: 'asc' },
+            orderBy: { createdAt: 'desc' },
+            take: 20, // Limit do ostatnich 20 wiadomości
             select: { role: true, content: true },
           },
         },
       });
+
+      // Odwróć kolejność - były pobrane od najnowszych, potrzebujemy chronologicznie
+      if (existingConversation) {
+        existingConversation.messages.reverse();
+      }
 
       if (!existingConversation) {
         return new Response(

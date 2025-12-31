@@ -4,6 +4,7 @@ import { writeFile, mkdir } from 'fs/promises';
 import { existsSync } from 'fs';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
+import sharp from 'sharp';
 
 export const maxDuration = 60;
 export const dynamic = 'force-dynamic';
@@ -33,25 +34,51 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'File too large. Maximum size is 10MB.' }, { status: 400 });
     }
 
+    // Convert file to buffer
+    const bytes = await file.arrayBuffer();
+    let buffer: Buffer = Buffer.from(bytes);
+
+    // Check image dimensions and resize if needed (max 2048px to reduce token usage)
+    const MAX_DIMENSION = 2048;
+    try {
+      const metadata = await sharp(buffer).metadata();
+      const { width, height } = metadata;
+
+      if (width && height && (width > MAX_DIMENSION || height > MAX_DIMENSION)) {
+        // Resize keeping aspect ratio
+        const resizedBuffer = await sharp(buffer)
+          .resize(MAX_DIMENSION, MAX_DIMENSION, {
+            fit: 'inside',
+            withoutEnlargement: true,
+          })
+          .jpeg({ quality: 85 })
+          .toBuffer();
+        buffer = resizedBuffer;
+      }
+    } catch {
+      // If sharp fails, continue with original buffer
+      console.warn('[ai-agent/upload] Could not process image with sharp, using original');
+    }
+
     // Create uploads directory if it doesn't exist
     const uploadsDir = path.join(process.cwd(), 'public', 'uploads', 'ai-agent');
     if (!existsSync(uploadsDir)) {
       await mkdir(uploadsDir, { recursive: true });
     }
 
-    // Generate unique filename
+    // Generate unique filename (use jpg if we resized, otherwise keep original extension)
     const ext = file.name.split('.').pop() || 'png';
     const filename = `${uuidv4()}.${ext}`;
     const filepath = path.join(uploadsDir, filename);
 
-    // Convert file to buffer and save
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
+    // Save the (possibly resized) buffer
     await writeFile(filepath, buffer);
 
     // Convert to base64 for AI model
+    // Use image/jpeg if we resized, otherwise keep original type
+    const mimeType = buffer.length !== bytes.byteLength ? 'image/jpeg' : file.type;
     const base64 = buffer.toString('base64');
-    const dataUrl = `data:${file.type};base64,${base64}`;
+    const dataUrl = `data:${mimeType};base64,${base64}`;
 
     // Return public URL and base64 for AI
     const url = `/uploads/ai-agent/${filename}`;
@@ -61,8 +88,9 @@ export async function POST(request: NextRequest) {
       url,
       dataUrl, // base64 data URL for AI model
       filename: file.name,
-      size: file.size,
-      type: file.type,
+      originalSize: file.size,
+      processedSize: buffer.length,
+      type: mimeType,
     });
   } catch (error) {
     console.error('Upload error:', error);

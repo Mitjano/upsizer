@@ -60,7 +60,9 @@ export type ToolType =
   | 'ai_chat_budget'
   | 'ai_chat_pro'
   | 'ai_chat_premium'
-  | 'ai_chat_reasoning';
+  | 'ai_chat_reasoning'
+  // AI Agent
+  | 'ai_agent';
 
 export interface ToolCreditConfig {
   /** Bazowy koszt w kredytach */
@@ -401,6 +403,19 @@ export const CREDIT_COSTS: Record<ToolType, ToolCreditConfig> = {
     displayName: 'AI Chat - Reasoning',
     description: 'Model rozumowania: DeepSeek R1 z chain-of-thought',
   },
+  // AI Agent
+  ai_agent: {
+    cost: 0.15,
+    minCost: 0.05,
+    maxCost: 5.0,
+    isDynamic: true,
+    costDescription: {
+      en: '~0.15 credits per 1K tokens (Claude Sonnet 4)',
+      pl: '~0.15 kredytów za 1K tokenów (Claude Sonnet 4)',
+    },
+    displayName: 'AI Agent PRO',
+    description: 'Autonomiczny agent AI z narzędziami do edycji obrazów',
+  },
 };
 
 /**
@@ -570,6 +585,10 @@ export const TOOL_API_KEYS: Record<string, ToolType> = {
   'ai_chat_premium': 'ai_chat_premium',
   'ai-chat-reasoning': 'ai_chat_reasoning',
   'ai_chat_reasoning': 'ai_chat_reasoning',
+  // AI Agent
+  'ai-agent': 'ai_agent',
+  'ai_agent': 'ai_agent',
+  'AI_AGENT': 'ai_agent',
 };
 
 /**
