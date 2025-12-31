@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import type { ChatMessage } from './AgentChat';
 import ToolExecutionCard from './ToolExecutionCard';
 
@@ -49,15 +48,17 @@ function MessageBubble({ message }: { message: ChatMessage }) {
                 href={url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block w-32 h-32 rounded-lg overflow-hidden border border-white/20 hover:border-white/40 transition"
+                className="block w-32 h-32 rounded-lg overflow-hidden border border-white/20 hover:border-white/40 transition bg-gray-800"
               >
-                <Image
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
                   src={url}
-                  alt={`Attached image ${idx + 1}`}
-                  width={128}
-                  height={128}
+                  alt={`Załączony obraz ${idx + 1}`}
                   className="w-full h-full object-cover"
-                  unoptimized
+                  onError={(e) => {
+                    // Fallback for broken images
+                    (e.target as HTMLImageElement).style.display = 'none';
+                  }}
                 />
               </a>
             ))}

@@ -6,7 +6,6 @@ import { useRef, useCallback, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import ToolsLayout from '@/components/ToolsLayout';
 import Link from 'next/link';
-import { getAllTools } from '@/lib/ai-agent/tools';
 
 // Lazy load heavy components
 const AgentChat = dynamic(
@@ -46,27 +45,72 @@ const categoryIcons: Record<string, string> = {
   utility: '⚙️',
 };
 
+// Static list of tools for display (to avoid importing server-side code)
+interface ToolDisplay {
+  name: string;
+  category: string;
+  creditsRequired: number;
+}
+
+const toolsList: ToolDisplay[] = [
+  // Image Editing
+  { name: 'remove_background', category: 'image_editing', creditsRequired: 1 },
+  { name: 'upscale_image', category: 'image_editing', creditsRequired: 2 },
+  { name: 'compress_image', category: 'image_editing', creditsRequired: 0 },
+  { name: 'convert_format', category: 'image_editing', creditsRequired: 0 },
+  { name: 'resize_image', category: 'image_editing', creditsRequired: 0 },
+  { name: 'crop_image', category: 'image_editing', creditsRequired: 0 },
+  { name: 'rotate_flip_image', category: 'image_editing', creditsRequired: 0 },
+  { name: 'add_watermark', category: 'image_editing', creditsRequired: 0 },
+  { name: 'adjust_colors', category: 'image_editing', creditsRequired: 0 },
+  { name: 'apply_filter', category: 'image_editing', creditsRequired: 0 },
+  // Image Generation
+  { name: 'generate_image', category: 'image_generation', creditsRequired: 3 },
+  { name: 'edit_image_ai', category: 'image_generation', creditsRequired: 2 },
+  { name: 'extend_image', category: 'image_generation', creditsRequired: 2 },
+  { name: 'create_variation', category: 'image_generation', creditsRequired: 2 },
+  { name: 'image_to_image', category: 'image_generation', creditsRequired: 2 },
+  // Image Analysis
+  { name: 'analyze_image', category: 'image_analysis', creditsRequired: 1 },
+  { name: 'extract_text', category: 'image_analysis', creditsRequired: 1 },
+  { name: 'detect_faces', category: 'image_analysis', creditsRequired: 1 },
+  { name: 'get_metadata', category: 'image_analysis', creditsRequired: 0 },
+  // Text Processing
+  { name: 'translate_text', category: 'translation', creditsRequired: 0 },
+  { name: 'generate_caption', category: 'text_processing', creditsRequired: 1 },
+  { name: 'rewrite_text', category: 'text_processing', creditsRequired: 0 },
+  // File Management
+  { name: 'create_zip', category: 'file_management', creditsRequired: 0 },
+  { name: 'batch_process', category: 'file_management', creditsRequired: 0 },
+  // Social Media
+  { name: 'resize_for_social', category: 'social_media', creditsRequired: 0 },
+  { name: 'generate_social_pack', category: 'social_media', creditsRequired: 2 },
+  // Utility
+  { name: 'get_credits', category: 'utility', creditsRequired: 0 },
+  { name: 'get_session_history', category: 'utility', creditsRequired: 0 },
+];
+
 export default function AIAgentPage() {
   const t = useTranslations('aiAgentPage');
   const { data: session } = useSession();
   const chatRef = useRef<HTMLDivElement>(null);
 
-  // Get all available tools
-  const allTools = getAllTools();
-  const toolsByCategory = allTools.reduce((acc, tool) => {
+  // Build tools by category from static list
+  const toolsByCategory = toolsList.reduce((acc, tool) => {
     if (!acc[tool.category]) {
       acc[tool.category] = [];
     }
     acc[tool.category].push(tool);
     return acc;
-  }, {} as Record<string, typeof allTools>);
+  }, {} as Record<string, ToolDisplay[]>);
 
   const categories = Object.keys(toolsByCategory);
-  const totalTools = allTools.length;
+  const totalTools = toolsList.length;
 
-  // Function to scroll to chat
+  // Function to scroll to chat - scroll to top of page first, then to chat
   const scrollToChat = useCallback(() => {
-    chatRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // Scroll to top of page first for better UX
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
   // Scroll to top on page load
@@ -203,10 +247,10 @@ export default function AIAgentPage() {
                 <div className="space-y-2">
                   {toolsByCategory[category].slice(0, 4).map((tool) => (
                     <div
-                      key={tool.definition.function.name}
+                      key={tool.name}
                       className="flex items-center justify-between text-sm"
                     >
-                      <span className="text-gray-300">{tool.definition.function.name.replace(/_/g, ' ')}</span>
+                      <span className="text-gray-300">{tool.name.replace(/_/g, ' ')}</span>
                       <span className="text-cyan-400">{tool.creditsRequired} cr</span>
                     </div>
                   ))}
