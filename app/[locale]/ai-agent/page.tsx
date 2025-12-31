@@ -251,7 +251,7 @@ export default function AIAgentPage() {
                       className="flex items-center justify-between text-sm"
                     >
                       <span className="text-gray-300">{tool.name.replace(/_/g, ' ')}</span>
-                      <span className="text-cyan-400">{tool.creditsRequired} cr</span>
+                      <span className="text-cyan-400">{tool.creditsRequired} kredytów</span>
                     </div>
                   ))}
                   {toolsByCategory[category].length > 4 && (
