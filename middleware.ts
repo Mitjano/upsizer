@@ -11,11 +11,14 @@ const { auth } = NextAuth(authConfig);
 const ALLOWED_ORIGINS = [
   'https://pixelift.pl',
   'https://www.pixelift.pl',
+  // Admin Hub origin for cross-service communication
+  process.env.ADMIN_HUB_ORIGIN || 'https://admin.juvestore.group',
   ...(process.env.NODE_ENV === 'development' ? [
     'http://localhost:3000',
     'http://127.0.0.1:3000',
+    'http://localhost:3001', // Admin Hub dev
   ] : []),
-];
+].filter(Boolean);
 
 // Create the intl middleware
 const intlMiddleware = createIntlMiddleware({
@@ -44,8 +47,8 @@ export default auth((req) => {
       const origin = req.headers.get("origin");
       const referer = req.headers.get("referer");
 
-      // Skip CSRF check for internal NextAuth routes
-      if (!pathname.startsWith("/api/auth/")) {
+      // Skip CSRF check for internal NextAuth routes and external API (uses own auth)
+      if (!pathname.startsWith("/api/auth/") && !pathname.startsWith("/api/external")) {
         const isAllowedOrigin = origin
           ? ALLOWED_ORIGINS.some(allowed => origin.startsWith(allowed))
           : referer
